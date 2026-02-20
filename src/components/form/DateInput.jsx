@@ -8,7 +8,7 @@ function tryOpenPicker(target) {
   }
 }
 
-export default function DateInput({ onClick, onFocus, ...props }) {
+export default function DateInput({ onClick, onFocus, onChange, ...props }) {
   const handleClick = (e) => {
     tryOpenPicker(e.currentTarget);
     onClick?.(e);
@@ -19,5 +19,18 @@ export default function DateInput({ onClick, onFocus, ...props }) {
     onFocus?.(e);
   };
 
-  return <input type="date" {...props} onClick={handleClick} onFocus={handleFocus} />;
+  const handleChange = (e) => {
+    // If an onChange callback is provided, call it with the value (YYYY-MM-DD string)
+    if (onChange) onChange(e.target.value);
+  };
+
+  return (
+    <input
+      type="date"
+      {...props}
+      onClick={handleClick}
+      onFocus={handleFocus}
+      onChange={handleChange}
+    />
+  );
 }

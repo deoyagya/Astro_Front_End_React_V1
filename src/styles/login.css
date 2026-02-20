@@ -157,19 +157,210 @@
     text-decoration: underline;
 }
 
+/* ===== IDENTIFIER INPUT GROUP (Phase 20B) ===== */
+.identifier-group {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 15px;
+}
+
+.identifier-input {
+    flex: 1;
+    padding: 15px;
+    background: rgba(40, 44, 60, 0.8);
+    border: 1px solid #3a3f50;
+    border-radius: 8px;
+    color: #e0e0e0;
+    font-size: 1rem;
+}
+
+.identifier-input:focus {
+    outline: none;
+    border-color: #7b5bff;
+}
+
+.identifier-input.with-code {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
+
+.country-code-select {
+    width: 110px;
+    padding: 15px 8px;
+    background: rgba(40, 44, 60, 0.8);
+    border: 1px solid #3a3f50;
+    border-radius: 8px 0 0 8px;
+    color: #9d7bff;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.country-code-select:focus {
+    outline: none;
+    border-color: #7b5bff;
+}
+
+.input-type-hint {
+    color: #9d7bff;
+    font-size: 0.85rem;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+/* Login Error */
+.login-error {
+    background: rgba(255, 71, 87, 0.12);
+    border: 1px solid rgba(255, 71, 87, 0.3);
+    border-radius: 8px;
+    padding: 12px 16px;
+    color: #ff4757;
+    font-size: 0.9rem;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* OTP Label */
+.otp-label {
+    display: block;
+    color: #b0b7c3;
+    margin-bottom: 12px;
+    text-align: center;
+}
+
+/* OTP Actions (resend + back) */
+.otp-actions {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.btn-resend,
+.btn-back {
+    background: none;
+    border: none;
+    color: #9d7bff;
+    font-size: 0.9rem;
+    cursor: pointer;
+    padding: 8px 12px;
+    border-radius: 6px;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.btn-resend:hover,
+.btn-back:hover {
+    background: rgba(123, 91, 255, 0.1);
+}
+
+.btn-resend:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.btn-send {
+    width: 100%;
+    padding: 15px;
+    background: linear-gradient(90deg, #7b5bff, #9d7bff);
+    border: none;
+    border-radius: 8px;
+    color: white;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.btn-verify:disabled,
+.btn-send:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* ===== NAME + CONSENT GROUP (Phase 21A) ===== */
+.consent-group {
+    margin: 16px 0;
+}
+
+.name-input {
+    width: 100%;
+    padding: 12px 15px;
+    background: rgba(40, 44, 60, 0.8);
+    border: 1px solid #3a3f50;
+    border-radius: 8px;
+    color: #e0e0e0;
+    font-size: 0.95rem;
+    margin-bottom: 12px;
+}
+
+.name-input:focus {
+    outline: none;
+    border-color: #7b5bff;
+}
+
+.name-input::placeholder {
+    color: #6b7280;
+}
+
+.consent-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    color: #b0b7c3;
+    font-size: 0.9rem;
+}
+
+.consent-checkbox input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: #7b5bff;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.consent-checkbox span {
+    line-height: 1.4;
+}
+
 /* Responsive */
 @media (max-width: 500px) {
     .login-card {
         padding: 30px 20px;
     }
-    
-    .email-group {
+
+    .identifier-group {
         flex-direction: column;
     }
-    
+
+    .country-code-select {
+        width: 100%;
+        border-radius: 8px;
+    }
+
+    .identifier-input.with-code {
+        border-radius: 8px;
+    }
+
     .otp-box {
         width: 40px;
         height: 50px;
         font-size: 1.2rem;
+    }
+
+    .otp-actions {
+        flex-direction: column;
+        align-items: center;
     }
 }

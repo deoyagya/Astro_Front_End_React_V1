@@ -393,6 +393,148 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
     color: #b0b7c3;
 }
 
+/* ===== PLACE AUTOCOMPLETE (Phase 20C) ===== */
+.place-autocomplete {
+    position: relative;
+    width: 100%;
+}
+
+.place-input-wrapper {
+    position: relative;
+}
+
+.place-input-wrapper input {
+    width: 100%;
+    padding: 14px 16px;
+    padding-right: 36px;
+    background: rgba(40, 44, 60, 0.9);
+    border: 1px solid #3a3f50;
+    border-radius: 10px;
+    color: #e0e0e0;
+    font-size: 1rem;
+    transition: all 0.3s;
+}
+
+.place-input-wrapper input:focus {
+    outline: none;
+    border-color: #7b5bff;
+    box-shadow: 0 0 0 3px rgba(123, 91, 255, 0.2);
+}
+
+.place-loading {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #9d7bff;
+    font-size: 0.9rem;
+}
+
+.place-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    background: rgba(30, 33, 48, 0.98);
+    border: 1px solid #3a3f50;
+    border-top: none;
+    border-radius: 0 0 10px 10px;
+    max-height: 300px;
+    overflow-y: auto;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+}
+
+.place-item {
+    padding: 12px 16px;
+    cursor: pointer;
+    color: #e0e0e0;
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: background 0.2s;
+    border-bottom: 1px solid rgba(42, 47, 62, 0.5);
+}
+
+.place-item:last-child {
+    border-bottom: none;
+}
+
+.place-item i {
+    color: #9d7bff;
+    font-size: 0.85rem;
+    flex-shrink: 0;
+}
+
+.place-item:hover,
+.place-item.active {
+    background: rgba(123, 91, 255, 0.12);
+}
+
+/* ===== API LOADING STATE ===== */
+.api-loading {
+    text-align: center;
+    padding: 40px 20px;
+    color: #9d7bff;
+}
+
+.api-loading i {
+    font-size: 2rem;
+    margin-bottom: 15px;
+}
+
+.api-loading p {
+    color: #b0b7c3;
+}
+
+.api-error {
+    background: rgba(255, 71, 87, 0.1);
+    border: 1px solid rgba(255, 71, 87, 0.3);
+    border-radius: 10px;
+    padding: 20px;
+    color: #ff4757;
+    text-align: center;
+    margin: 20px 0;
+}
+
+.api-error i {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+}
+
+/* ===== CHART SVG ===== */
+.south-indian-chart {
+    display: block;
+    margin: 0 auto;
+}
+
+/* Button disabled state */
+.btn-generate:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.btn-generate:disabled:hover {
+    transform: none;
+    box-shadow: none;
+}
+
+/* Dasha item cursor */
+.dasha-item {
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.dasha-item:hover {
+    background: rgba(123, 91, 255, 0.08);
+}
+
 /* Responsive */
 @media (max-width: 768px) {
     .two-column {

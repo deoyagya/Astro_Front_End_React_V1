@@ -62,6 +62,63 @@
     border: 1px solid rgba(123, 91, 255, 0.3);
 }
 
+/* ===== NAV USER BADGE & AUTH ===== */
+.nav-user-info {
+    display: flex;
+    align-items: center;
+}
+
+.nav-user-badge {
+    color: #9d7bff;
+    font-size: 0.9rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    border: 1px solid rgba(157, 123, 255, 0.3);
+    border-radius: 20px;
+    background: rgba(123, 91, 255, 0.08);
+    max-width: 180px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.nav-logout {
+    color: #ff6b6b !important;
+}
+
+.nav-logout:hover {
+    background: rgba(255, 107, 107, 0.15) !important;
+    color: #ff4757 !important;
+}
+
+/* ===== LOADING OVERLAY (Protected Route) ===== */
+.loading-overlay {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    background: #0a0e17;
+}
+
+.loading-spinner {
+    text-align: center;
+    color: #9d7bff;
+}
+
+.loading-spinner i {
+    font-size: 3rem;
+    margin-bottom: 15px;
+}
+
+.loading-spinner p {
+    color: #b0b7c3;
+    font-size: 1.1rem;
+    letter-spacing: 1px;
+}
+
 /* ===== STARS BACKGROUND ===== */
 .stars {
     position: fixed;

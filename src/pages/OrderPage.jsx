@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import PageShell from '../components/PageShell';
+import { api } from '../api/client';
 import { useSharedEffects } from '../hooks/useSharedEffects';
 import '../styles/report-pages.css';
 
@@ -17,6 +18,8 @@ export default function OrderPage() {
   useSharedEffects();
   const navigate = useNavigate();
   const [cart, setCart] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     const saved = JSON.parse(localStorage.getItem('cart') || '[]');
@@ -27,6 +30,7 @@ export default function OrderPage() {
     localStorage.setItem('cart', JSON.stringify(cart));
   }, [cart]);
 
+  /* Total in rupees (display) */
   const total = useMemo(() => cart.reduce((sum, item) => sum + item.price, 0), [cart]);
 
   const hasReport = (id) => cart.some((item) => item.id === id);
@@ -44,12 +48,31 @@ export default function OrderPage() {
     setCart((prev) => prev.filter((item) => item.id !== id));
   };
 
-  const proceedToPayment = () => {
+  /* Create Razorpay order on backend then navigate to payment */
+  const proceedToPayment = async () => {
     if (!cart.length) {
-      window.alert('Please select at least one report.');
+      setError('Please select at least one report.');
       return;
     }
-    navigate('/payment');
+    setError('');
+    setLoading(true);
+
+    try {
+      const orderData = await api.post('/v1/payment/razorpay/create-order', {
+        amount: total * 100,          // Convert ₹ to paisa
+        currency: 'INR',
+        items: cart.map((item) => ({ id: item.id, name: item.name, price: item.price * 100 })),
+        receipt: `vedic_order_${Date.now()}`,
+      });
+
+      // Store order details for PaymentPage
+      localStorage.setItem('razorpay_order', JSON.stringify(orderData));
+      navigate('/payment');
+    } catch (err) {
+      setError(err.message || 'Failed to create order. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -101,8 +124,17 @@ export default function OrderPage() {
             <div className="total-amount">
               Total: <span id="totalPrice">₹{total}</span>
             </div>
-            <button className="btn place-order-btn" id="placeOrderBtn" onClick={proceedToPayment}>
-              Place Order
+
+            {error && <p style={{ color: '#ff6b6b', margin: '10px 0', fontSize: '14px' }}>{error}</p>}
+
+            <button
+              className="btn place-order-btn"
+              id="placeOrderBtn"
+              onClick={proceedToPayment}
+              disabled={loading}
+              style={loading ? { opacity: 0.6, cursor: 'not-allowed' } : {}}
+            >
+              {loading ? 'Creating Order...' : 'Place Order'}
             </button>
           </div>
         </div>
