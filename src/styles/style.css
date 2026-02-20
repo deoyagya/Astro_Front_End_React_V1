@@ -1,0 +1,290 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Montserrat:wght@300;400;500;600;700&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  font-family: 'Montserrat', sans-serif;
+  background: #0a0d14;
+  color: #e0e0e0;
+  line-height: 1.6;
+}
+
+a {
+  color: inherit;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+.container {
+  width: min(1200px, 92%);
+  margin: 0 auto;
+}
+
+.section-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.section-header h2 {
+  font-family: 'Cinzel', serif;
+  font-size: 2.2rem;
+  color: #fff;
+  margin-bottom: 10px;
+}
+
+.section-header p {
+  color: #b0b7c3;
+  font-size: 1.05rem;
+}
+
+.highlight {
+  color: #9d7bff;
+}
+
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 3000;
+  padding: 20px;
+}
+
+.modal.show {
+  display: flex;
+}
+
+.modal-content {
+  width: min(820px, 96vw);
+  max-height: 90vh;
+  overflow: auto;
+  background: #141a27;
+  border: 1px solid #2a2f3e;
+  border-radius: 14px;
+  padding: 24px;
+  position: relative;
+  box-shadow: 0 16px 50px rgba(0, 0, 0, 0.45);
+}
+
+.modal-content h2 {
+  font-family: 'Cinzel', serif;
+  color: #fff;
+  margin-bottom: 14px;
+}
+
+.modal-content h3 {
+  color: #9d7bff;
+  margin: 16px 0 8px;
+}
+
+.modal-content p,
+.modal-content li {
+  color: #c7cfdd;
+}
+
+.modal-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 34px;
+  height: 34px;
+  border: 1px solid #384055;
+  border-radius: 50%;
+  background: #1a2232;
+  color: #d7def0;
+  cursor: pointer;
+}
+
+.modal-close:hover {
+  background: #243047;
+}
+
+.modal-body {
+  margin-top: 12px;
+}
+
+.report-page .cart-header,
+.report-page .payment-header {
+  text-align: center;
+  margin-bottom: 28px;
+}
+
+.report-page .cart-header h1,
+.report-page .payment-header h1 {
+  font-family: 'Cinzel', serif;
+  font-size: 2.2rem;
+  color: #fff;
+}
+
+.report-page .cart-header p,
+.report-page .payment-header p {
+  color: #b0b7c3;
+}
+
+.report-page .report-list {
+  display: grid;
+  gap: 14px;
+  margin-bottom: 24px;
+}
+
+.report-page .report-item {
+  display: grid;
+  grid-template-columns: auto 1fr auto auto;
+  gap: 14px;
+  align-items: center;
+  background: rgba(30, 33, 48, 0.9);
+  border: 1px solid #2a2f3e;
+  border-radius: 12px;
+  padding: 14px;
+}
+
+.report-page .report-item input[type='checkbox'] {
+  width: 20px;
+  height: 20px;
+  accent-color: #7b5bff;
+}
+
+.report-page .report-info h3 {
+  color: #fff;
+  font-size: 1.05rem;
+}
+
+.report-page .report-info p {
+  color: #b0b7c3;
+  font-size: 0.9rem;
+}
+
+.report-page .report-price {
+  color: #fff;
+  font-weight: 700;
+}
+
+.report-page .delete-btn {
+  border: 1px solid #4f4258;
+  background: rgba(255, 71, 87, 0.14);
+  color: #ff7f8e;
+  border-radius: 8px;
+  width: 36px;
+  height: 36px;
+  cursor: pointer;
+}
+
+.report-page .cart-summary,
+.report-page .payment-methods {
+  background: rgba(30, 33, 48, 0.9);
+  border: 1px solid #2a2f3e;
+  border-radius: 12px;
+  padding: 18px;
+}
+
+.report-page .cart-summary h3 {
+  color: #fff;
+  margin-bottom: 12px;
+}
+
+.report-page .empty-cart {
+  color: #8a8f9d;
+}
+
+.report-page .total-amount {
+  margin-top: 12px;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.report-page .place-order-btn {
+  margin-top: 12px;
+  width: 100%;
+}
+
+.report-page .method {
+  display: block;
+  border: 1px solid #2a2f3e;
+  border-radius: 10px;
+  background: rgba(20, 25, 38, 0.65);
+  padding: 14px;
+  margin-bottom: 10px;
+  cursor: pointer;
+}
+
+.report-page .method.selected {
+  border-color: #7b5bff;
+  background: rgba(123, 91, 255, 0.1);
+}
+
+.report-page .method input {
+  display: none;
+}
+
+.report-page .method-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.report-page .method-content i {
+  color: #9d7bff;
+  font-size: 1.3rem;
+}
+
+.report-page .method-content h3 {
+  color: #fff;
+}
+
+.report-page .method-content p {
+  color: #b0b7c3;
+  font-size: 0.9rem;
+}
+
+.report-page .payment-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 14px;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 900px) {
+  .section-header h2 {
+    font-size: 1.9rem;
+  }
+
+  .report-page .report-item {
+    grid-template-columns: auto 1fr;
+  }
+
+  .report-page .report-price,
+  .report-page .delete-btn {
+    grid-column: 2;
+    justify-self: start;
+  }
+}
+
+@media (max-width: 640px) {
+  .section-header h2 {
+    font-size: 1.6rem;
+  }
+
+  .modal-content {
+    padding: 18px;
+  }
+
+  .report-page .payment-actions {
+    flex-direction: column;
+  }
+}

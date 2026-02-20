@@ -1,0 +1,417 @@
+/* ===== TOOLS PAGES (Birth Chart, Dasha, Compatibility, Horoscope) ===== */
+.tool-page {
+    padding: 60px 0;
+    min-height: calc(100vh - 200px);
+}
+
+.tool-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.tool-header h1 {
+    font-family: 'Cinzel', serif;
+    font-size: 2.5rem;
+    color: #fff;
+    margin-bottom: 10px;
+}
+
+.tool-header p {
+    color: #b0b7c3;
+    font-size: 1.1rem;
+}
+
+.two-column {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+}
+
+/* Birth Chart page layout tuning */
+.birth-chart-layout {
+    grid-template-columns: 0.95fr 1.05fr;
+    align-items: start;
+}
+
+.birth-form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-bottom: 20px;
+}
+
+.birth-form-row .form-group {
+    margin-bottom: 0;
+}
+
+.birth-chart-layout .chart-placeholder {
+    min-height: 420px;
+    height: 420px;
+}
+
+@media (max-width: 1024px) {
+    .birth-chart-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .birth-chart-layout .chart-placeholder {
+        min-height: 360px;
+        height: 360px;
+    }
+}
+
+/* Form Card */
+.form-card {
+    background: rgba(30, 33, 48, 0.9);
+    border: 1px solid #2a2f3e;
+    border-radius: 15px;
+    padding: 30px;
+}
+
+.form-card h2 {
+    font-family: 'Cinzel', serif;
+    color: #9d7bff;
+    margin-bottom: 20px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    color: #b0b7c3;
+    margin-bottom: 8px;
+    font-weight: 500;
+}
+
+/* Form fields - interactive */
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 14px 16px;
+    background: rgba(40, 44, 60, 0.9);
+    border: 1px solid #3a3f50;
+    border-radius: 10px;
+    color: #e0e0e0;
+    font-size: 1rem;
+    transition: all 0.3s;
+    cursor: pointer;
+}
+
+.form-group input:hover,
+.form-group select:hover {
+    border-color: #7b5bff;
+    background: rgba(50, 54, 70, 0.9);
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: #7b5bff;
+    box-shadow: 0 0 0 3px rgba(123, 91, 255, 0.2);
+    background: rgba(50, 54, 70, 0.95);
+}
+
+/* Date picker styling */
+input[type="date"] {
+    position: relative;
+    cursor: pointer;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+    opacity: 0.5;
+    cursor: pointer;
+    padding: 5px;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator:hover {
+    opacity: 1;
+}
+
+.time-group {
+    display: grid;
+    grid-template-columns: 1fr 1fr 80px;
+    gap: 10px;
+}
+
+.btn-generate {
+    width: 100%;
+    padding: 16px 20px;
+    background: linear-gradient(90deg, #7b5bff, #9d7bff);
+    border: none;
+    border-radius: 10px;
+    color: white;
+    font-weight: 600;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    margin-top: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.btn-generate:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(123, 91, 255, 0.4);
+}
+
+.preview-note {
+    color: #ffa502;
+    margin-top: 15px;
+    text-align: center;
+    font-size: 0.95rem;
+}
+
+.preview-note i {
+    margin-right: 5px;
+}
+
+/* Chart Card */
+.chart-card {
+    background: rgba(30, 33, 48, 0.9);
+    border: 1px solid #2a2f3e;
+    border-radius: 15px;
+    padding: 30px;
+}
+
+.chart-card h2 {
+    font-family: 'Cinzel', serif;
+    color: #9d7bff;
+    margin-bottom: 20px;
+}
+
+.section-subtitle {
+    font-family: 'Cinzel', serif;
+    color: #9d7bff;
+    margin: 25px 0 15px;
+    font-size: 1.2rem;
+}
+
+.chart-placeholder {
+    width: 100%;
+    height: 300px;
+    border: 2px dashed #7b5bff;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.chart-preview {
+    text-align: center;
+}
+
+.chart-preview i {
+    font-size: 3rem;
+    color: #7b5bff;
+    margin-bottom: 10px;
+}
+
+.chart-preview p {
+    color: #b0b7c3;
+}
+
+.planet-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.planet-table th,
+.planet-table td {
+    padding: 12px 10px;
+    text-align: left;
+    border-bottom: 1px solid #2a2f3e;
+}
+
+.planet-table th {
+    color: #9d7bff;
+    font-weight: 600;
+}
+
+.planet-table td {
+    color: #e0e0e0;
+}
+
+/* Dasha Specific */
+.dasha-timeline {
+    margin-top: 20px;
+}
+
+.dasha-item {
+    background: rgba(40, 44, 60, 0.6);
+    border-left: 4px solid #7b5bff;
+    padding: 15px;
+    margin-bottom: 10px;
+    border-radius: 0 8px 8px 0;
+}
+
+.dasha-item.current {
+    border-left-color: #2ed573;
+    background: rgba(46, 213, 115, 0.1);
+}
+
+.dasha-item .period {
+    font-weight: 600;
+    color: #9d7bff;
+    margin-bottom: 5px;
+}
+
+.dasha-item .dates {
+    color: #b0b7c3;
+    font-size: 0.9rem;
+}
+
+/* Compatibility Specific */
+.compatibility-score {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.score-circle {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    background: conic-gradient(#2ed573 0deg 216deg, #ffa502 216deg 324deg, #ff4757 324deg 360deg);
+    margin: 20px auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.score-circle::before {
+    content: '';
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: #1a1f2e;
+    position: absolute;
+}
+
+.score-circle span {
+    position: relative;
+    z-index: 2;
+    font-size: 2rem;
+    font-weight: 700;
+    color: #fff;
+}
+
+.guna-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.guna-item {
+    background: rgba(40, 44, 60, 0.6);
+    padding: 10px;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.guna-item .guna-name {
+    color: #b0b7c3;
+    font-size: 0.85rem;
+    margin-bottom: 5px;
+}
+
+.guna-item .guna-score {
+    font-weight: 600;
+    color: #9d7bff;
+}
+
+/* Horoscope Specific */
+.horoscope-selector {
+    margin-bottom: 30px;
+}
+
+.sign-select {
+    width: 100%;
+    padding: 15px;
+    background: rgba(40, 44, 60, 0.9);
+    border: 1px solid #3a3f50;
+    border-radius: 10px;
+    color: #e0e0e0;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+.sign-select:hover {
+    border-color: #7b5bff;
+}
+
+.sign-select:focus {
+    outline: none;
+    border-color: #7b5bff;
+    box-shadow: 0 0 0 3px rgba(123, 91, 255, 0.2);
+}
+
+.horoscope-card {
+    background: rgba(40, 44, 60, 0.6);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.horoscope-card h3 {
+    color: #9d7bff;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.horoscope-card p {
+    color: #e0e0e0;
+    line-height: 1.8;
+}
+
+.transit-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 1px solid #2a2f3e;
+}
+
+.transit-item:last-child {
+    border-bottom: none;
+}
+
+.transit-item .planet {
+    color: #9d7bff;
+    font-weight: 600;
+}
+
+.transit-item .effect {
+    color: #b0b7c3;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .two-column {
+        grid-template-columns: 1fr;
+    }
+
+    .birth-form-row {
+        grid-template-columns: 1fr;
+    }
+    
+    .tool-header h1 {
+        font-size: 2rem;
+    }
+    
+    .time-group {
+        grid-template-columns: 1fr;
+    }
+    
+    .guna-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}

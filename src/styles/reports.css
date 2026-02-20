@@ -1,0 +1,359 @@
+/* ===== REPORTS PAGE ===== */
+.reports-section {
+    padding: 60px 0;
+    min-height: calc(100vh - 200px);
+}
+
+.sample-note {
+    color: #9d7bff;
+    margin-top: 10px;
+    font-size: 0.95rem;
+}
+
+.sample-note i {
+    margin-right: 5px;
+}
+
+/* Reports Grid */
+.reports-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 25px;
+    margin-bottom: 40px;
+}
+
+.report-card {
+    background: rgba(30, 33, 48, 0.9);
+    border: 1px solid #2a2f3e;
+    border-radius: 15px;
+    padding: 25px;
+    transition: all 0.3s;
+    position: relative;
+}
+
+.report-card:hover {
+    transform: translateY(-5px);
+    border-color: #7b5bff;
+    box-shadow: 0 10px 30px rgba(123, 91, 255, 0.2);
+}
+
+.card-badge {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: #9d7bff;
+    color: white;
+    padding: 5px 15px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.report-icon {
+    font-size: 2.5rem;
+    color: #9d7bff;
+    margin-bottom: 15px;
+}
+
+.report-card h3 {
+    font-family: 'Cinzel', serif;
+    font-size: 1.4rem;
+    color: #fff;
+    margin-bottom: 10px;
+}
+
+.report-desc {
+    color: #b0b7c3;
+    font-size: 0.95rem;
+    margin-bottom: 20px;
+    line-height: 1.6;
+}
+
+.report-meta {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 15px;
+}
+
+.report-meta span {
+    color: #b0b7c3;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.report-meta i {
+    color: #9d7bff;
+}
+
+.report-price {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 20px;
+}
+
+.report-actions {
+    display: flex;
+    gap: 10px;
+}
+
+/* FIXED BUTTON SIZES - MATCHING LANDING PAGE */
+.btn-sample,
+.btn-order {
+    flex: 1;
+    padding: 14px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    border: none;
+    font-size: 1rem;
+    letter-spacing: 0.3px;
+}
+
+.btn-sample {
+    background: transparent;
+    border: 1px solid #7b5bff;
+    color: #e0e0e0;
+}
+
+.btn-sample:hover {
+    background: rgba(123, 91, 255, 0.1);
+}
+
+.btn-order {
+    background: linear-gradient(90deg, #7b5bff, #9d7bff);
+    color: white;
+}
+
+.btn-order:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(123, 91, 255, 0.3);
+}
+
+/* Bundle Card */
+.bundle-card {
+    background: linear-gradient(135deg, #1a1f2e, #2a1f3e);
+    border: 2px solid #9d7bff;
+    border-radius: 20px;
+    padding: 40px;
+    text-align: center;
+    margin-top: 40px;
+}
+
+.bundle-content h3 {
+    font-family: 'Cinzel', serif;
+    font-size: 2rem;
+    color: #fff;
+    margin-bottom: 15px;
+}
+
+.bundle-content h3 i {
+    color: #ffd700;
+    margin-right: 10px;
+}
+
+.bundle-content p {
+    color: #b0b7c3;
+    font-size: 1.1rem;
+    margin-bottom: 20px;
+}
+
+.bundle-price {
+    margin-bottom: 25px;
+}
+
+.original {
+    color: #8a8f9d;
+    text-decoration: line-through;
+    font-size: 1.5rem;
+    margin-right: 15px;
+}
+
+.discounted {
+    color: #fff;
+    font-size: 2.5rem;
+    font-weight: 700;
+}
+
+.btn-bundle {
+    padding: 16px 45px;
+    background: linear-gradient(90deg, #7b5bff, #9d7bff);
+    border: none;
+    border-radius: 30px;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-size: 1.1rem;
+    letter-spacing: 0.5px;
+}
+
+.btn-bundle:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(123, 91, 255, 0.4);
+}
+
+/* Sample Modal Content */
+.sample-header {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.sample-header i {
+    font-size: 2.5rem;
+    color: #9d7bff;
+    margin-bottom: 10px;
+}
+
+.sample-header h2 {
+    font-family: 'Cinzel', serif;
+    color: #fff;
+    margin-bottom: 5px;
+}
+
+.sample-warning {
+    background: rgba(255, 71, 87, 0.1);
+    border-left: 4px solid #ff4757;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 25px;
+}
+
+.sample-warning h3 {
+    color: #ff4757;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.sample-warning ul {
+    list-style: none;
+}
+
+.sample-warning li {
+    color: #e0e0e0;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.sample-warning li i {
+    color: #ff4757;
+}
+
+.sample-planets {
+    margin-bottom: 25px;
+}
+
+.sample-planets h3 {
+    color: #9d7bff;
+    margin-bottom: 15px;
+}
+
+.planet-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+}
+
+.planet-item {
+    background: rgba(40, 44, 60, 0.6);
+    padding: 12px;
+    border-radius: 8px;
+    border-left: 3px solid;
+}
+
+.planet-item.afflicted {
+    border-left-color: #ff4757;
+}
+
+.planet-item.beneficial {
+    border-left-color: #2ed573;
+}
+
+.sample-remedies {
+    background: rgba(46, 213, 115, 0.1);
+    border-left: 4px solid #2ed573;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 25px;
+}
+
+.sample-remedies h3 {
+    color: #2ed573;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.sample-remedies ul {
+    list-style: none;
+}
+
+.sample-remedies li {
+    color: #e0e0e0;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.sample-remedies li i {
+    color: #2ed573;
+}
+
+.sample-footer {
+    text-align: center;
+    padding-top: 20px;
+    border-top: 1px solid #2a2f3e;
+}
+
+.sample-footer p {
+    color: #b0b7c3;
+    margin-bottom: 15px;
+}
+
+.sample-footer .btn-order {
+    padding: 16px 30px;
+    font-size: 1.1rem;
+    width: auto;
+    display: inline-flex;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .reports-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .report-actions {
+        flex-direction: column;
+    }
+    
+    .btn-sample, .btn-order {
+        padding: 16px 20px;
+        font-size: 1rem;
+    }
+    
+    .bundle-content h3 {
+        font-size: 1.5rem;
+    }
+    
+    .discounted {
+        font-size: 2rem;
+    }
+    
+    .planet-grid {
+        grid-template-columns: 1fr;
+    }
+}

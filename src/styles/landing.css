@@ -1,0 +1,753 @@
+/* ===== LANDING PAGE STYLES - COMPLETE FILE ===== */
+
+/* ===== HERO SECTION ===== */
+.hero {
+    padding: 80px 0;
+    background: radial-gradient(circle at 70% 30%, rgba(123, 91, 255, 0.1), transparent);
+}
+
+.hero-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    align-items: center;
+}
+
+.hero-content h1 {
+    font-family: 'Cinzel', serif;
+    font-size: 3.5rem;
+    line-height: 1.2;
+    background: linear-gradient(135deg, #fff, #c7b5ff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 20px;
+}
+
+.hero-content p {
+    font-size: 1.1rem;
+    color: #b0b7c3;
+    margin-bottom: 30px;
+}
+
+.hero-buttons {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 30px;
+    border-radius: 30px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+.btn-primary {
+    background: linear-gradient(90deg, #7b5bff, #9d7bff);
+    color: white;
+    box-shadow: 0 4px 15px rgba(123, 91, 255, 0.3);
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(123, 91, 255, 0.4);
+}
+
+.btn-secondary {
+    background: transparent;
+    border: 1px solid #7b5bff;
+    color: #e0e0e0;
+}
+
+.btn-secondary:hover {
+    background: rgba(123, 91, 255, 0.1);
+}
+
+/* Stats Section */
+.trust-badges {
+    display: flex;
+    gap: 30px;
+    flex-wrap: wrap;
+}
+
+.trust-badges span {
+    color: #b0b7c3;
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.trust-badges i {
+    color: #2ed573;
+    font-size: 1.1rem;
+}
+
+/* ===== COSMIC CIRCLE WITH SHIVA IMAGE ===== */
+.cosmic-circle {
+    width: 500px;
+    height: 500px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+}
+
+.circle-content {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: transparent;
+    border: 3px solid rgba(157, 123, 255, 0.6);
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 80px rgba(123, 91, 255, 0.4);
+    overflow: hidden;
+}
+
+/* 12 Rashis around the circle */
+.rashi-container {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    animation: slowRotate 50s linear infinite;
+    z-index: 10;
+}
+
+@keyframes slowRotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.rashi-item {
+    position: absolute;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+    background: rgba(10, 13, 20, 0.7);
+    border-radius: 50%;
+    backdrop-filter: blur(4px);
+    border: 2px solid;
+    box-shadow: 0 0 20px rgba(0,0,0,0.5);
+    z-index: 15;
+    transition: all 0.3s ease;
+}
+
+.rashi-item:hover {
+    transform: scale(1.2);
+    filter: brightness(1.3);
+    z-index: 20;
+}
+
+/* Rashi positions */
+.rashi-1 { top: 3%; left: 50%; transform: translateX(-50%); }
+.rashi-2 { top: 12%; right: 16%; }
+.rashi-3 { top: 28%; right: 5%; }
+.rashi-4 { bottom: 28%; right: 5%; }
+.rashi-5 { bottom: 12%; right: 16%; }
+.rashi-6 { bottom: 3%; left: 50%; transform: translateX(-50%); }
+.rashi-7 { bottom: 12%; left: 16%; }
+.rashi-8 { bottom: 28%; left: 5%; }
+.rashi-9 { top: 28%; left: 5%; }
+.rashi-10 { top: 12%; left: 16%; }
+.rashi-11 { top: 18%; left: 35%; }
+.rashi-12 { top: 18%; right: 35%; }
+
+/* Rashi symbols with different VIBRANT colors */
+.rashi-1::before { content: "♈"; } /* Aries - Ram */
+.rashi-1 { 
+    color: #ff4d4d;  /* Bright Red */
+    border-color: #ff4d4d;
+    text-shadow: 0 0 15px #ff4d4d;
+}
+
+.rashi-2::before { content: "♉"; } /* Taurus - Bull */
+.rashi-2 { 
+    color: #4ecdc4;  /* Turquoise */
+    border-color: #4ecdc4;
+    text-shadow: 0 0 15px #4ecdc4;
+}
+
+.rashi-3::before { content: "♊"; } /* Gemini - Twins */
+.rashi-3 { 
+    color: #ffe66d;  /* Yellow */
+    border-color: #ffe66d;
+    text-shadow: 0 0 15px #ffe66d;
+}
+
+.rashi-4::before { content: "♋"; } /* Cancer - Crab */
+.rashi-4 { 
+    color: #ff9ff3;  /* Pink */
+    border-color: #ff9ff3;
+    text-shadow: 0 0 15px #ff9ff3;
+}
+
+.rashi-5::before { content: "♌"; } /* Leo - Lion */
+.rashi-5 { 
+    color: #feca57;  /* Orange-Yellow */
+    border-color: #feca57;
+    text-shadow: 0 0 15px #feca57;
+}
+
+.rashi-6::before { content: "♍"; } /* Virgo - Virgin */
+.rashi-6 { 
+    color: #54a0ff;  /* Bright Blue */
+    border-color: #54a0ff;
+    text-shadow: 0 0 15px #54a0ff;
+}
+
+.rashi-7::before { content: "♎"; } /* Libra - Scales */
+.rashi-7 { 
+    color: #5f27cd;  /* Purple */
+    border-color: #5f27cd;
+    text-shadow: 0 0 15px #5f27cd;
+}
+
+.rashi-8::before { content: "♏"; } /* Scorpio - Scorpion */
+.rashi-8 { 
+    color: #00d2d3;  /* Cyan */
+    border-color: #00d2d3;
+    text-shadow: 0 0 15px #00d2d3;
+}
+
+.rashi-9::before { content: "♐"; } /* Sagittarius - Archer */
+.rashi-9 { 
+    color: #ff9f43;  /* Orange */
+    border-color: #ff9f43;
+    text-shadow: 0 0 15px #ff9f43;
+}
+
+.rashi-10::before { content: "♑"; } /* Capricorn - Sea-goat */
+.rashi-10 { 
+    color: #8395a7;  /* Silver-Grey */
+    border-color: #8395a7;
+    text-shadow: 0 0 15px #8395a7;
+}
+
+.rashi-11::before { content: "♒"; } /* Aquarius - Water bearer */
+.rashi-11 { 
+    color: #10ac84;  /* Green */
+    border-color: #10ac84;
+    text-shadow: 0 0 15px #10ac84;
+}
+
+.rashi-12::before { content: "♓"; } /* Pisces - Fish */
+.rashi-12 { 
+    color: #ff6b9d;  /* Rose Pink */
+    border-color: #ff6b9d;
+    text-shadow: 0 0 15px #ff6b9d;
+}
+
+/* Shiva Image Container */
+.shiva-image-container {
+    position: relative;
+    width: 280px;
+    height: 280px;
+    border-radius: 50%;
+    overflow: hidden;
+    z-index: 20;
+    box-shadow: 0 0 50px rgba(157, 123, 255, 0.6);
+    border: 2px solid rgba(255, 215, 0, 0.3);
+}
+
+/* Shiva Image - Shows full image without trimming */
+.shiva-image {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: center;
+    display: block;
+    border-radius: 50%;
+    background: transparent;
+}
+
+/* Meditation glow behind Shiva */
+.shiva-glow {
+    position: absolute;
+    width: 320px;
+    height: 320px;
+    background: radial-gradient(circle at center, rgba(157, 123, 255, 0.3), transparent 70%);
+    border-radius: 50%;
+    animation: shivaPulse 4s ease-in-out infinite;
+    z-index: 5;
+}
+
+@keyframes shivaPulse {
+    0%, 100% { transform: scale(1); opacity: 0.3; }
+    50% { transform: scale(1.1); opacity: 0.5; }
+}
+
+/* Begin Journey Button */
+.circle-cta {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 30px;
+    background: linear-gradient(90deg, #7b5bff, #9d7bff);
+    border: none;
+    border-radius: 40px;
+    color: white;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1.1rem;
+    transition: all 0.3s;
+    z-index: 40;
+    box-shadow: 0 4px 25px rgba(123, 91, 255, 0.5);
+    white-space: nowrap;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(5px);
+}
+
+.circle-cta:hover {
+    transform: translateX(-50%) translateY(-5px);
+    box-shadow: 0 8px 35px rgba(123, 91, 255, 0.8);
+    background: linear-gradient(90deg, #6a4aff, #8a6aff);
+}
+
+.circle-cta i {
+    font-size: 1rem;
+    transition: transform 0.3s;
+}
+
+.circle-cta:hover i {
+    transform: translateX(5px);
+}
+
+.glow {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: radial-gradient(circle at center, rgba(123, 91, 255, 0.2), transparent 70%);
+    filter: blur(40px);
+    z-index: 1;
+}
+
+/* ===== FREE TOOLS SECTION ===== */
+.free-tools {
+    padding: 80px 0;
+    background: rgba(20, 23, 36, 0.5);
+}
+
+.section-header {
+    text-align: center;
+    margin-bottom: 50px;
+}
+
+.section-header h2 {
+    font-family: 'Cinzel', serif;
+    font-size: 2.5rem;
+    color: #fff;
+    margin-bottom: 15px;
+}
+
+.section-header .highlight {
+    color: #9d7bff;
+}
+
+.section-header p {
+    color: #b0b7c3;
+    font-size: 1.1rem;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.tools-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 25px;
+}
+
+.tool-card {
+    background: rgba(30, 33, 48, 0.8);
+    border: 1px solid #2a2f3e;
+    border-radius: 15px;
+    padding: 25px;
+    transition: all 0.3s;
+    position: relative;
+}
+
+.tool-card:hover {
+    transform: translateY(-5px);
+    border-color: #7b5bff;
+    box-shadow: 0 10px 30px rgba(123, 91, 255, 0.2);
+}
+
+.tool-card.popular {
+    border: 2px solid #9d7bff;
+}
+
+.popular-badge {
+    position: absolute;
+    top: -10px;
+    right: 20px;
+    background: #9d7bff;
+    color: white;
+    padding: 5px 15px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.tool-icon {
+    font-size: 2.5rem;
+    color: #9d7bff;
+    margin-bottom: 20px;
+}
+
+.tool-card h3 {
+    font-family: 'Cinzel', serif;
+    font-size: 1.3rem;
+    margin-bottom: 10px;
+    color: #fff;
+}
+
+.tool-card p {
+    color: #b0b7c3;
+    font-size: 0.95rem;
+    margin-bottom: 15px;
+}
+
+.tool-card ul {
+    list-style: none;
+    margin-bottom: 20px;
+}
+
+.tool-card li {
+    color: #b0b7c3;
+    font-size: 0.9rem;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.tool-card li i {
+    color: #7b5bff;
+    font-size: 0.8rem;
+}
+
+.tool-link {
+    color: #9d7bff;
+    text-decoration: none;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: gap 0.3s;
+    font-size: 1rem;
+}
+
+.tool-link:hover {
+    gap: 12px;
+}
+
+/* ===== LIFE AREAS SECTION ===== */
+.life-areas {
+    padding: 80px 0;
+}
+
+.areas-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+}
+
+.area-card {
+    background: rgba(30, 33, 48, 0.8);
+    border: 1px solid #2a2f3e;
+    border-radius: 12px;
+    padding: 25px 20px;
+    text-align: center;
+    text-decoration: none;
+    transition: all 0.3s;
+}
+
+.area-card:hover {
+    transform: translateY(-5px);
+    border-color: #7b5bff;
+    background: rgba(123, 91, 255, 0.1);
+}
+
+.area-card i {
+    font-size: 2rem;
+    color: #9d7bff;
+    margin-bottom: 15px;
+}
+
+.area-card h4 {
+    color: #fff;
+    margin-bottom: 8px;
+    font-size: 1.1rem;
+}
+
+.area-card p {
+    color: #b0b7c3;
+    font-size: 0.85rem;
+}
+
+/* ===== TESTIMONIALS SECTION ===== */
+.testimonials {
+    padding: 80px 0;
+    background: rgba(20, 23, 36, 0.5);
+}
+
+.testimonials-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 30px;
+    margin-top: 40px;
+}
+
+.testimonial-card {
+    background: rgba(30, 33, 48, 0.8);
+    border: 1px solid #2a2f3e;
+    border-radius: 15px;
+    padding: 25px;
+}
+
+.stars {
+    color: #ffd700;
+    margin-bottom: 15px;
+}
+
+.stars i {
+    margin-right: 2px;
+}
+
+.testimonial-card p {
+    color: #e0e0e0;
+    font-style: italic;
+    margin-bottom: 20px;
+    line-height: 1.6;
+}
+
+.client {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.client i {
+    font-size: 2.5rem;
+    color: #9d7bff;
+}
+
+.client strong {
+    display: block;
+    color: #fff;
+    font-size: 1rem;
+}
+
+.client span {
+    color: #b0b7c3;
+    font-size: 0.85rem;
+}
+
+/* ===== FINAL CTA SECTION ===== */
+.final-cta {
+    padding: 80px 0;
+    text-align: center;
+    background: linear-gradient(135deg, #1a1f2e, #0f121c);
+    border-top: 1px solid #2a2f3e;
+    border-bottom: 1px solid #2a2f3e;
+}
+
+.final-cta h2 {
+    font-family: 'Cinzel', serif;
+    font-size: 2.5rem;
+    color: #fff;
+    margin-bottom: 15px;
+}
+
+.final-cta p {
+    color: #b0b7c3;
+    font-size: 1.2rem;
+    margin-bottom: 30px;
+}
+
+.cta-buttons {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 992px) {
+    .hero-grid {
+        gap: 40px;
+    }
+    
+    .cosmic-circle {
+        width: 450px;
+        height: 450px;
+    }
+    
+    .shiva-image-container {
+        width: 250px;
+        height: 250px;
+    }
+    
+    .shiva-glow {
+        width: 290px;
+        height: 290px;
+    }
+}
+
+@media (max-width: 768px) {
+    .hero-grid {
+        grid-template-columns: 1fr;
+        text-align: center;
+    }
+    
+    .hero-content h1 {
+        font-size: 2.5rem;
+    }
+    
+    .hero-buttons {
+        justify-content: center;
+    }
+    
+    .trust-badges {
+        justify-content: center;
+    }
+    
+    .cosmic-circle {
+        width: 400px;
+        height: 400px;
+        margin: 0 auto;
+    }
+    
+    .shiva-image-container {
+        width: 220px;
+        height: 220px;
+    }
+    
+    .shiva-glow {
+        width: 260px;
+        height: 260px;
+    }
+    
+    .rashi-item {
+        width: 36px;
+        height: 36px;
+        font-size: 1.5rem;
+    }
+    
+    .circle-cta {
+        padding: 10px 25px;
+        font-size: 1rem;
+    }
+    
+    .section-header h2 {
+        font-size: 2rem;
+    }
+    
+    .final-cta h2 {
+        font-size: 2rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .cosmic-circle {
+        width: 320px;
+        height: 320px;
+    }
+    
+    .shiva-image-container {
+        width: 180px;
+        height: 180px;
+    }
+    
+    .shiva-glow {
+        width: 220px;
+        height: 220px;
+    }
+    
+    .rashi-item {
+        width: 30px;
+        height: 30px;
+        font-size: 1.2rem;
+    }
+    
+    .circle-cta {
+        padding: 8px 20px;
+        font-size: 0.9rem;
+        bottom: 15px;
+    }
+    
+    .testimonials-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ===== ANIMATIONS ===== */
+@keyframes slideIn {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes slideOut {
+    from { transform: translateX(0); opacity: 1; }
+    to { transform: translateX(100%); opacity: 0; }
+}
+
+/* ===== UTILITY CLASSES ===== */
+.text-gradient {
+    background: linear-gradient(90deg, #9d7bff, #7b5bff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.bg-blur {
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+/* ===== NOTIFICATION STYLES ===== */
+.notification {
+    position: fixed;
+    top: 100px;
+    right: 20px;
+    padding: 15px 25px;
+    border-radius: 8px;
+    color: white;
+    z-index: 9999;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    animation: slideIn 0.3s ease;
+    font-size: 1rem;
+}
+
+.notification.success {
+    background: #2ed573;
+}
+
+.notification.error {
+    background: #ff4757;
+}
+
+.notification.info {
+    background: #1e90ff;
+}
