@@ -335,16 +335,39 @@
     color: #fff;
     margin-right: 20px;
 }
-.report-page .delete-btn {
-    background: none;
-    border: none;
-    color: #ff4757;
-    font-size: 1.2rem;
-    cursor: pointer;
-    transition: color 0.3s;
+/* Order page 2-column layout */
+.report-page .order-layout {
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    gap: 30px;
+    align-items: start;
 }
-.report-page .delete-btn:hover {
-    color: #ff6b81;
+.report-page .order-summary-col {
+    position: sticky;
+    top: 20px;
+}
+.report-page .reports-loading {
+    text-align: center;
+    padding: 60px 20px;
+    color: #b0b7c3;
+    font-size: 1.1rem;
+}
+.report-page .reports-loading i {
+    display: block;
+    font-size: 2rem;
+    color: #7b5bff;
+    margin-bottom: 15px;
+    animation: spin 1s linear infinite;
+}
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+.report-page .validation-note {
+    font-size: 0.85rem;
+    color: #2ed573;
+    margin-top: 8px;
+    text-align: right;
 }
 .report-page .cart-summary {
     background: rgba(30,33,48,0.9);
@@ -370,7 +393,7 @@
 .report-page .place-order-btn {
     padding: 15px 40px;
     font-size: 1.2rem;
-    background: linear-gradient(90deg, #2ed573, #7b5bff);
+    background: linear-gradient(90deg, #7b5bff, #9d7bff);
 }
 .report-page .empty-cart {
     text-align: center;
@@ -451,6 +474,8 @@
     .report-page .print-btn { width: 50px; height: 50px; font-size: 1.2rem; bottom: 20px; right: 20px; }
     .report-page .report-item { flex-wrap: wrap; }
     .report-page .report-price { margin-top: 10px; }
+    .report-page .order-layout { grid-template-columns: 1fr; }
+    .report-page .order-summary-col { position: static; }
 }
 
 @media print {

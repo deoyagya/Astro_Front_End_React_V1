@@ -1,5 +1,20 @@
-import { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
 import { api } from '../api/client';
+import SessionTimeoutModal from '../components/SessionTimeoutModal';
+
+/* ===== Session timeout constants ===== */
+const WARNING_BEFORE_EXPIRY_SEC = 300;  // Show modal 5 minutes before expiry
+const CHECK_INTERVAL_MS = 15000;        // Check expiry every 15 seconds
+
+/** Decode JWT exp claim (seconds since epoch). Returns null on failure. */
+function getTokenExpiry(token) {
+  try {
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    return payload.exp || null;
+  } catch {
+    return null;
+  }
+}
 
 const AuthContext = createContext(null);
 
@@ -28,6 +43,13 @@ export function AuthProvider({ children }) {
   });
   const [token, setToken] = useState(() => localStorage.getItem('auth_token'));
   const [loading, setLoading] = useState(true);
+
+  // Session timeout modal state
+  const [showTimeoutModal, setShowTimeoutModal] = useState(false);
+  const [remainingSeconds, setRemainingSeconds] = useState(WARNING_BEFORE_EXPIRY_SEC);
+  const [refreshing, setRefreshing] = useState(false);
+  const sessionTimerRef = useRef(null);
+  const countdownRef = useRef(null);
 
   // On mount (or token change): validate token by fetching /me
   useEffect(() => {
@@ -90,6 +112,147 @@ export function AuthProvider({ children }) {
     }
   }, []);
 
+  /**
+   * Refresh session — called by "Stay Logged In" button.
+   * Calls the refresh endpoint, stores new tokens, hides modal.
+   */
+  const refreshSession = useCallback(async () => {
+    const refreshToken = localStorage.getItem('auth_refresh_token');
+    if (!refreshToken) {
+      logout();
+      return;
+    }
+    setRefreshing(true);
+    try {
+      const data = await api.postEmpty(
+        `/v1/auth/refresh?refresh_token=${encodeURIComponent(refreshToken)}`
+      );
+      // Store new tokens
+      localStorage.setItem('auth_token', data.access_token);
+      localStorage.setItem('auth_refresh_token', data.refresh_token);
+      setToken(data.access_token);
+      // Broadcast to other tabs
+      localStorage.setItem('session_refresh_event', Date.now().toString());
+      // Hide modal and reset countdown
+      setShowTimeoutModal(false);
+      setRemainingSeconds(WARNING_BEFORE_EXPIRY_SEC);
+      if (countdownRef.current) {
+        clearInterval(countdownRef.current);
+        countdownRef.current = null;
+      }
+    } catch {
+      // Refresh failed — force logout
+      logout();
+    } finally {
+      setRefreshing(false);
+    }
+  }, [logout]);
+
+  /* ===== Session Expiry Monitor (15-second interval) ===== */
+  useEffect(() => {
+    if (!token) {
+      // No token — clear any running timers
+      if (sessionTimerRef.current) {
+        clearInterval(sessionTimerRef.current);
+        sessionTimerRef.current = null;
+      }
+      setShowTimeoutModal(false);
+      return;
+    }
+
+    function checkExpiry() {
+      const currentToken = localStorage.getItem('auth_token');
+      if (!currentToken) return;
+
+      const exp = getTokenExpiry(currentToken);
+      if (!exp) return;
+
+      const nowSec = Math.floor(Date.now() / 1000);
+      const remaining = exp - nowSec;
+
+      if (remaining <= 0) {
+        // Already expired — logout
+        logout();
+        return;
+      }
+
+      if (remaining <= WARNING_BEFORE_EXPIRY_SEC && !showTimeoutModal) {
+        // Enter warning zone — show modal
+        setRemainingSeconds(remaining);
+        setShowTimeoutModal(true);
+      }
+    }
+
+    // Run immediately and then every 15 seconds
+    checkExpiry();
+    sessionTimerRef.current = setInterval(checkExpiry, CHECK_INTERVAL_MS);
+
+    return () => {
+      if (sessionTimerRef.current) {
+        clearInterval(sessionTimerRef.current);
+        sessionTimerRef.current = null;
+      }
+    };
+  }, [token, logout, showTimeoutModal]);
+
+  /* ===== Countdown Timer (1-second interval when modal visible) ===== */
+  useEffect(() => {
+    if (!showTimeoutModal) {
+      if (countdownRef.current) {
+        clearInterval(countdownRef.current);
+        countdownRef.current = null;
+      }
+      return;
+    }
+
+    countdownRef.current = setInterval(() => {
+      setRemainingSeconds((prev) => {
+        if (prev <= 1) {
+          // Countdown reached zero — auto-logout
+          clearInterval(countdownRef.current);
+          countdownRef.current = null;
+          logout();
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => {
+      if (countdownRef.current) {
+        clearInterval(countdownRef.current);
+        countdownRef.current = null;
+      }
+    };
+  }, [showTimeoutModal, logout]);
+
+  /* ===== Cross-Tab Sync (localStorage events) ===== */
+  useEffect(() => {
+    function handleStorageChange(e) {
+      if (e.key === 'session_refresh_event') {
+        // Another tab refreshed the session — re-read token, hide modal
+        const newToken = localStorage.getItem('auth_token');
+        if (newToken) {
+          setToken(newToken);
+          setShowTimeoutModal(false);
+          setRemainingSeconds(WARNING_BEFORE_EXPIRY_SEC);
+          if (countdownRef.current) {
+            clearInterval(countdownRef.current);
+            countdownRef.current = null;
+          }
+        }
+      } else if (e.key === 'auth_token' && !e.newValue) {
+        // Another tab logged out — clear local state
+        setToken(null);
+        setUser(null);
+        setShowTimeoutModal(false);
+      }
+    }
+
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
+  }, []);
+
   const value = {
     user,
     token,
@@ -100,7 +263,18 @@ export function AuthProvider({ children }) {
     refreshUser,
   };
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider value={value}>
+      {children}
+      <SessionTimeoutModal
+        visible={showTimeoutModal}
+        remainingSeconds={remainingSeconds}
+        onStayLoggedIn={refreshSession}
+        onEndSession={logout}
+        refreshing={refreshing}
+      />
+    </AuthContext.Provider>
+  );
 }
 
 /**

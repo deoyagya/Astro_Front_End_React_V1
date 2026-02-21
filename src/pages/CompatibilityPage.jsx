@@ -132,9 +132,6 @@ export default function CompatibilityPage() {
         dob,
         tob: to24Hour(hour, min, ampm),
         place_of_birth: place.name,
-        ...(place.lat != null && place.lon != null && place.timezone
-          ? { lat: place.lat, lon: place.lon, tz_id: place.timezone }
-          : {}),
       });
 
       const params = new URLSearchParams({

@@ -4,12 +4,46 @@
  * Features:
  * - Base URL from environment (VITE_API_BASE_URL)
  * - JWT Authorization header injection
- * - 401 auto-logout (clears token, redirects to /login)
+ * - 401 silent refresh interceptor (uses refresh token before redirecting)
  * - JSON parsing with error normalization
  * - Query parameter helper for POST endpoints
  */
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
+
+/**
+ * Attempt a silent token refresh using the stored refresh token.
+ * Returns true if the refresh succeeded (new tokens stored), false otherwise.
+ */
+async function attemptSilentRefresh() {
+  const refreshToken = localStorage.getItem('auth_refresh_token');
+  if (!refreshToken) return false;
+  try {
+    const resp = await fetch(
+      `${API_BASE}/v1/auth/refresh?refresh_token=${encodeURIComponent(refreshToken)}`,
+      { method: 'POST', headers: { 'Content-Type': 'application/json' } }
+    );
+    if (resp.ok) {
+      const data = await resp.json();
+      localStorage.setItem('auth_token', data.access_token);
+      localStorage.setItem('auth_refresh_token', data.refresh_token);
+      // Signal to other tabs that we refreshed
+      localStorage.setItem('session_refresh_event', Date.now().toString());
+      return true;
+    }
+  } catch {
+    // fall through
+  }
+  return false;
+}
+
+/** Clear all auth state and redirect to login page. */
+function clearAuthAndRedirect() {
+  localStorage.removeItem('auth_token');
+  localStorage.removeItem('auth_refresh_token');
+  localStorage.removeItem('auth_user');
+  window.location.href = '/login';
+}
 
 /**
  * Core request function — all API calls go through here.
@@ -32,12 +66,15 @@ async function apiRequest(endpoint, options = {}) {
     headers,
   });
 
-  // 401 → session expired → clear token and redirect
+  // 401 → attempt silent refresh, retry once, then redirect
   if (response.status === 401) {
-    localStorage.removeItem('auth_token');
-    localStorage.removeItem('auth_refresh_token');
-    localStorage.removeItem('auth_user');
-    window.location.href = '/login';
+    if (!options._isRetry) {
+      const refreshed = await attemptSilentRefresh();
+      if (refreshed) {
+        return apiRequest(endpoint, { ...options, _isRetry: true });
+      }
+    }
+    clearAuthAndRedirect();
     throw new Error('Session expired. Please log in again.');
   }
 
@@ -49,7 +86,16 @@ async function apiRequest(endpoint, options = {}) {
   // Other errors
   if (!response.ok) {
     const error = await response.json().catch(() => ({}));
-    throw new Error(error.detail || error.error || `Request failed (${response.status})`);
+    // detail can be a string or an array of { field, message } objects (FastAPI validation)
+    let msg = '';
+    if (typeof error.detail === 'string') {
+      msg = error.detail;
+    } else if (Array.isArray(error.detail) && error.detail.length > 0) {
+      msg = error.detail.map((d) => d.message || d.msg || JSON.stringify(d)).join('; ');
+    } else if (typeof error.error === 'string') {
+      msg = error.error;
+    }
+    throw new Error(msg || `Request failed (${response.status})`);
   }
 
   // Handle empty responses (204 No Content)
@@ -104,8 +150,13 @@ export const api = {
     }
     const response = await fetch(`${API_BASE}${endpoint}`, { ...options, headers });
     if (response.status === 401) {
-      localStorage.removeItem('auth_token');
-      window.location.href = '/login';
+      if (!options._isRetry) {
+        const refreshed = await attemptSilentRefresh();
+        if (refreshed) {
+          return api.raw(endpoint, { ...options, _isRetry: true });
+        }
+      }
+      clearAuthAndRedirect();
       throw new Error('Session expired.');
     }
     if (!response.ok) {
@@ -127,8 +178,11 @@ export const api = {
     }
     const response = await fetch(`${API_BASE}${endpoint}`, { headers });
     if (response.status === 401) {
-      localStorage.removeItem('auth_token');
-      window.location.href = '/login';
+      const refreshed = await attemptSilentRefresh();
+      if (refreshed) {
+        return api.download(endpoint, filename);
+      }
+      clearAuthAndRedirect();
       throw new Error('Session expired.');
     }
     if (!response.ok) {

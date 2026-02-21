@@ -8,16 +8,17 @@ const MAX_RESULTS = 8;
 /**
  * PlaceAutocomplete — Debounced typeahead for birth place input.
  *
+ * Backend API: GET /v1/location/search?query=<text>
+ * Response:    [{ display_name, lat, lon, osm_value }, ...]
+ *
  * Props:
  *   id          — input element ID
  *   placeholder — input placeholder text
+ *   value       — externally controlled display value (optional)
  *   onSelect    — callback: ({ name, lat, lon, timezone }) => void
- *   value       — controlled value (optional)
- *
- * Uses: GET /v1/location/search?query=<text> (Photon geocoding via backend)
  */
-export default function PlaceAutocomplete({ id, placeholder, onSelect, value: controlledValue }) {
-  const [query, setQuery] = useState(controlledValue || '');
+export default function PlaceAutocomplete({ id, placeholder, onSelect, value = '' }) {
+  const [query, setQuery] = useState(value || '');
   const [results, setResults] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -26,10 +27,9 @@ export default function PlaceAutocomplete({ id, placeholder, onSelect, value: co
   const containerRef = useRef(null);
   const debounceRef = useRef(null);
 
-  // Sync with controlled value
   useEffect(() => {
-    if (controlledValue !== undefined) setQuery(controlledValue);
-  }, [controlledValue]);
+    setQuery(value || '');
+  }, [value]);
 
   // Click outside → close dropdown
   useEffect(() => {
@@ -43,34 +43,31 @@ export default function PlaceAutocomplete({ id, placeholder, onSelect, value: co
   }, []);
 
   // Debounced search
-  const handleSearch = useCallback(
-    (text) => {
-      if (debounceRef.current) clearTimeout(debounceRef.current);
+  const handleSearch = useCallback((text) => {
+    if (debounceRef.current) clearTimeout(debounceRef.current);
 
-      if (text.length < MIN_CHARS) {
+    if (text.length < MIN_CHARS) {
+      setResults([]);
+      setIsOpen(false);
+      return;
+    }
+
+    debounceRef.current = setTimeout(async () => {
+      setLoading(true);
+      try {
+        const data = await api.get(`/v1/location/search?query=${encodeURIComponent(text)}`);
+        const items = (Array.isArray(data) ? data : []).slice(0, MAX_RESULTS);
+        setResults(items);
+        setIsOpen(items.length > 0);
+        setActiveIndex(-1);
+      } catch {
         setResults([]);
         setIsOpen(false);
-        return;
+      } finally {
+        setLoading(false);
       }
-
-      debounceRef.current = setTimeout(async () => {
-        setLoading(true);
-        try {
-          const data = await api.get(`/v1/location/search?query=${encodeURIComponent(text)}`);
-          const items = (Array.isArray(data) ? data : []).slice(0, MAX_RESULTS);
-          setResults(items);
-          setIsOpen(items.length > 0);
-          setActiveIndex(-1);
-        } catch {
-          setResults([]);
-          setIsOpen(false);
-        } finally {
-          setLoading(false);
-        }
-      }, DEBOUNCE_MS);
-    },
-    []
-  );
+    }, DEBOUNCE_MS);
+  }, []);
 
   const handleInputChange = (e) => {
     const text = e.target.value;
@@ -79,16 +76,17 @@ export default function PlaceAutocomplete({ id, placeholder, onSelect, value: co
   };
 
   const handleSelect = (item) => {
-    const displayName = formatPlace(item);
+    // Backend returns: { display_name, lat, lon, osm_value }
+    const displayName = item.display_name || '';
     setQuery(displayName);
     setIsOpen(false);
     setResults([]);
     if (onSelect) {
       onSelect({
         name: displayName,
-        lat: item.lat || item.geometry?.coordinates?.[1],
-        lon: item.lon || item.geometry?.coordinates?.[0],
-        timezone: item.tz_offset || item.timezone || null,
+        lat: item.lat,
+        lon: item.lon,
+        timezone: null, // resolved by backend from lat/lon via resolve_location
       });
     }
   };
@@ -112,13 +110,6 @@ export default function PlaceAutocomplete({ id, placeholder, onSelect, value: co
     }
   };
 
-  const formatPlace = (item) => {
-    // Backend returns { name, state, country } or { properties: { name, state, country } }
-    const props = item.properties || item;
-    const parts = [props.name, props.state, props.country].filter(Boolean);
-    return parts.join(', ');
-  };
-
   return (
     <div className="place-autocomplete" ref={containerRef}>
       <div className="place-input-wrapper">
@@ -140,12 +131,12 @@ export default function PlaceAutocomplete({ id, placeholder, onSelect, value: co
           {results.map((item, idx) => (
             <li
               key={idx}
-              className={`place-item ${idx === activeIndex ? 'active' : ''}`}
+              className={`place-item${idx === activeIndex ? ' active' : ''}`}
               onClick={() => handleSelect(item)}
               onMouseEnter={() => setActiveIndex(idx)}
             >
               <i className="fas fa-map-marker-alt"></i>
-              <span>{formatPlace(item)}</span>
+              <span>{item.display_name || 'Unknown'}</span>
             </li>
           ))}
         </ul>

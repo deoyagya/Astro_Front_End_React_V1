@@ -38,15 +38,18 @@
     grid-template-columns: 1fr 1fr;
     gap: 14px;
     margin-bottom: 20px;
+    overflow: visible;
 }
 
 .birth-form-row .form-group {
     margin-bottom: 0;
+    overflow: visible;
+    position: relative;
 }
 
 .birth-chart-layout .chart-placeholder {
-    min-height: 420px;
-    height: 420px;
+    min-height: auto;
+    height: auto;
 }
 
 @media (max-width: 1024px) {
@@ -55,8 +58,8 @@
     }
 
     .birth-chart-layout .chart-placeholder {
-        min-height: 360px;
-        height: 360px;
+        min-height: auto;
+        height: auto;
     }
 }
 
@@ -66,6 +69,7 @@
     border: 1px solid #2a2f3e;
     border-radius: 15px;
     padding: 30px;
+    overflow: visible;
 }
 
 .form-card h2 {
@@ -97,6 +101,13 @@
     font-size: 1rem;
     transition: all 0.3s;
     cursor: pointer;
+}
+
+/* Native <option> elements need explicit bg/color for dark themes */
+.form-group select option {
+    background: #1e2130;
+    color: #e0e0e0;
+    padding: 8px;
 }
 
 .form-group input:hover,
@@ -193,14 +204,13 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
 
 .chart-placeholder {
     width: 100%;
-    height: 300px;
-    border: 2px dashed #7b5bff;
+    min-height: 200px;
     border-radius: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
     margin-bottom: 20px;
-    background: rgba(0, 0, 0, 0.2);
+    background: transparent;
 }
 
 .chart-preview {
@@ -397,6 +407,7 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
 .place-autocomplete {
     position: relative;
     width: 100%;
+    z-index: 50;
 }
 
 .place-input-wrapper {
@@ -407,18 +418,24 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
     width: 100%;
     padding: 14px 16px;
     padding-right: 36px;
-    background: rgba(40, 44, 60, 0.9);
+    background: rgba(40, 44, 60, 0.9) !important;
     border: 1px solid #3a3f50;
     border-radius: 10px;
-    color: #e0e0e0;
+    color: #fff !important;
     font-size: 1rem;
     transition: all 0.3s;
+    cursor: text !important;
+}
+
+.place-input-wrapper input::placeholder {
+    color: #8a8f9d;
 }
 
 .place-input-wrapper input:focus {
     outline: none;
     border-color: #7b5bff;
     box-shadow: 0 0 0 3px rgba(123, 91, 255, 0.2);
+    background: rgba(50, 54, 70, 0.95) !important;
 }
 
 .place-loading {
@@ -432,26 +449,25 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
 
 .place-dropdown {
     position: absolute;
-    top: 100%;
+    top: calc(100% + 2px);
     left: 0;
     right: 0;
-    z-index: 100;
-    background: rgba(30, 33, 48, 0.98);
-    border: 1px solid #3a3f50;
-    border-top: none;
-    border-radius: 0 0 10px 10px;
+    z-index: 9999;
+    background: #1a1f2e;
+    border: 1px solid #7b5bff;
+    border-radius: 10px;
     max-height: 300px;
     overflow-y: auto;
     list-style: none;
-    padding: 0;
+    padding: 4px 0;
     margin: 0;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.7);
 }
 
 .place-item {
     padding: 12px 16px;
     cursor: pointer;
-    color: #e0e0e0;
+    color: #fff;
     font-size: 0.95rem;
     display: flex;
     align-items: center;
@@ -472,7 +488,12 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
 
 .place-item:hover,
 .place-item.active {
-    background: rgba(123, 91, 255, 0.12);
+    background: rgba(123, 91, 255, 0.2);
+    color: #fff;
+}
+
+.place-item span {
+    color: #fff;
 }
 
 /* ===== API LOADING STATE ===== */
@@ -555,5 +576,571 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
     
     .guna-grid {
         grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* ===== CHART STYLE TOGGLE (Phase 22) ===== */
+.chart-style-toggle {
+    display: flex;
+    justify-content: center;
+    gap: 0;
+    margin-bottom: 16px;
+}
+
+.chart-style-toggle button {
+    padding: 8px 20px;
+    background: rgba(40, 44, 60, 0.6);
+    border: 1px solid #3a3f50;
+    color: #b0b7c3;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.chart-style-toggle button:first-child {
+    border-radius: 20px 0 0 20px;
+}
+
+.chart-style-toggle button:last-child {
+    border-radius: 0 20px 20px 0;
+}
+
+.chart-style-toggle button:hover {
+    background: rgba(123, 91, 255, 0.1);
+    border-color: rgba(123, 91, 255, 0.3);
+}
+
+.chart-style-toggle button.active {
+    background: rgba(123, 91, 255, 0.2);
+    border-color: #7b5bff;
+    color: #9d7bff;
+    font-weight: 600;
+}
+
+/* ===== NORTH INDIAN CHART SVG ===== */
+.north-indian-chart {
+    display: block;
+    width: 100%;
+}
+
+.ni-house {
+    cursor: pointer;
+    transition: fill 0.15s ease;
+}
+
+.ni-house:hover {
+    fill: rgba(123, 91, 255, 0.12) !important;
+}
+
+.ni-house.selected {
+    fill: rgba(123, 91, 255, 0.2) !important;
+}
+
+.ni-house.lagna {
+    fill: rgba(123, 91, 255, 0.1);
+}
+
+/* ===== HOUSE DETAIL PANEL ===== */
+.house-detail-panel {
+    background: rgba(30, 33, 48, 0.9);
+    border: 1px solid #2a2f3e;
+    border-radius: 12px;
+    padding: 20px;
+    margin-top: 16px;
+    animation: panelSlideIn 0.2s ease-out;
+}
+
+@keyframes panelSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.house-detail-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.house-detail-header h4 {
+    color: #9d7bff;
+    font-family: 'Cinzel', serif;
+    margin: 0;
+    font-size: 1.1rem;
+}
+
+.house-detail-close {
+    background: none;
+    border: none;
+    color: #b0b7c3;
+    cursor: pointer;
+    font-size: 1.2rem;
+    padding: 4px 8px;
+    border-radius: 4px;
+    transition: all 0.2s;
+}
+
+.house-detail-close:hover {
+    color: #ff4757;
+    background: rgba(255, 71, 87, 0.1);
+}
+
+.planet-detail-card {
+    background: rgba(40, 44, 60, 0.5);
+    border-radius: 8px;
+    padding: 12px 14px;
+    margin-bottom: 8px;
+    transition: background 0.2s;
+}
+
+.planet-detail-card:hover {
+    background: rgba(40, 44, 60, 0.7);
+}
+
+.planet-detail-name {
+    color: #e0e0e0;
+    font-weight: 600;
+    font-size: 0.95rem;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 4px;
+}
+
+.planet-detail-row {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    color: #b0b7c3;
+    font-size: 0.85rem;
+}
+
+.premium-lock {
+    text-align: center;
+    color: #ffa502;
+    padding: 14px 12px;
+    font-size: 0.9rem;
+    background: rgba(255, 165, 2, 0.05);
+    border-radius: 8px;
+    margin-top: 8px;
+}
+
+.premium-lock a {
+    color: #9d7bff;
+    text-decoration: underline;
+    font-weight: 600;
+}
+
+.premium-lock a:hover {
+    color: #7b5bff;
+}
+
+/* Dignity & status badges */
+.dignity-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+}
+
+.dignity-exalted {
+    background: rgba(46, 213, 115, 0.15);
+    color: #2ed573;
+}
+
+.dignity-debilitated {
+    background: rgba(255, 71, 87, 0.15);
+    color: #ff4757;
+}
+
+.dignity-own {
+    background: rgba(123, 91, 255, 0.15);
+    color: #9d7bff;
+}
+
+.badge-retro {
+    background: rgba(255, 107, 107, 0.15);
+    color: #ff6b6b;
+}
+
+.badge-combust {
+    background: rgba(255, 165, 2, 0.15);
+    color: #ffa502;
+}
+
+/* ===== PLACE AUTOCOMPLETE FIX — force text visibility ===== */
+.place-item span {
+    color: #e0e0e0 !important;
+    font-size: 0.9rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-width: 0;
+    flex: 1;
+}
+
+/* ===== CHART HINT TEXT (premium) ===== */
+.chart-hint-text {
+    color: #c9a84c;
+    font-size: 0.85rem;
+    text-align: center;
+    padding: 10px;
+    margin: 12px 0;
+    background: rgba(201, 168, 76, 0.06);
+    border-radius: 8px;
+    border: 1px dashed rgba(201, 168, 76, 0.2);
+}
+
+/* ===== HOUSE EXPLORE PAGE LAYOUT ===== */
+.house-explore-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    align-items: start;
+}
+@media (max-width: 900px) {
+    .house-explore-layout {
+        grid-template-columns: 1fr;
+    }
+}
+
+.house-explore-left,
+.house-explore-right {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+/* Chart section */
+.chart-section {
+    background: rgba(30, 33, 48, 0.6);
+    border: 1px solid #2a2f3e;
+    border-radius: 12px;
+    padding: 16px;
+}
+.chart-section-title {
+    color: #c9a84c;
+    font-family: 'Cinzel', serif;
+    font-size: 1rem;
+    margin: 0 0 10px 0;
+}
+.chart-section-title i {
+    margin-right: 8px;
+}
+.chart-section-desc {
+    color: #8a8f9d;
+    font-size: 0.82rem;
+    margin: 0 0 10px 0;
+}
+.chart-hint {
+    color: #8a8f9d;
+    font-size: 0.75rem;
+    font-weight: 400;
+    font-family: inherit;
+}
+.chart-svg-wrapper {
+    display: flex;
+    justify-content: center;
+}
+
+/* ===== LIFE AREAS CARD ===== */
+.life-areas-card {
+    background: rgba(30, 33, 48, 0.9);
+    border: 1px solid #2a2f3e;
+    border-radius: 12px;
+    padding: 20px;
+}
+.life-areas-card h4 {
+    color: #c9a84c;
+    font-family: 'Cinzel', serif;
+    margin: 0 0 6px 0;
+    font-size: 1rem;
+}
+.life-areas-card h4 i {
+    margin-right: 8px;
+}
+.life-areas-subtitle {
+    color: #8a8f9d;
+    font-size: 0.82rem;
+    margin: 0 0 14px 0;
+}
+.life-areas-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+.life-area-btn {
+    padding: 8px 14px;
+    background: rgba(40, 44, 60, 0.7);
+    border: 1px solid #3a3f50;
+    border-radius: 20px;
+    color: #b0b7c3;
+    font-size: 0.82rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.life-area-btn:hover {
+    background: rgba(201, 168, 76, 0.1);
+    border-color: rgba(201, 168, 76, 0.3);
+    color: #e0e0e0;
+}
+.life-area-btn.active {
+    background: rgba(201, 168, 76, 0.15);
+    border-color: #c9a84c;
+    color: #c9a84c;
+    font-weight: 600;
+}
+
+/* ===== TIME SLIDER ===== */
+.time-slider-card {
+    background: rgba(30, 33, 48, 0.9);
+    border: 1px solid #2a2f3e;
+    border-radius: 12px;
+    padding: 20px;
+}
+.time-slider-label {
+    color: #b0b7c3;
+    font-size: 0.9rem;
+    display: block;
+    margin-bottom: 10px;
+}
+.time-slider-label i {
+    margin-right: 6px;
+    color: #c9a84c;
+}
+.time-slider {
+    width: 100%;
+    -webkit-appearance: none;
+    appearance: none;
+    height: 6px;
+    background: rgba(201, 168, 76, 0.2);
+    border-radius: 3px;
+    outline: none;
+    cursor: pointer;
+}
+.time-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #c9a84c;
+    cursor: pointer;
+    border: 2px solid #1a1f2e;
+    box-shadow: 0 0 8px rgba(201, 168, 76, 0.4);
+}
+.time-slider::-moz-range-thumb {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #c9a84c;
+    cursor: pointer;
+    border: 2px solid #1a1f2e;
+}
+.time-slider-labels {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 6px;
+    color: #8a8f9d;
+    font-size: 0.72rem;
+}
+.time-slider-labels span.active {
+    color: #c9a84c;
+    font-weight: 600;
+}
+
+/* ===== PREDICTION AREA ===== */
+.life-area-prediction {
+    background: rgba(201, 168, 76, 0.04);
+    border: 1px solid rgba(201, 168, 76, 0.15);
+    border-radius: 10px;
+    padding: 16px;
+    margin-top: 16px;
+}
+.prediction-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+}
+.prediction-header strong {
+    color: #e0e0e0;
+}
+.prediction-meta {
+    color: #8a8f9d;
+    font-size: 0.78rem;
+}
+.prediction-body {
+    color: #b0b7c3;
+    font-size: 0.85rem;
+    line-height: 1.5;
+}
+.prediction-placeholder {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #8a8f9d;
+    font-size: 0.82rem;
+    padding: 12px;
+    background: rgba(40, 44, 60, 0.5);
+    border-radius: 8px;
+    margin-top: 10px;
+}
+.prediction-placeholder i {
+    color: #c9a84c;
+}
+
+/* ===== HOUSE INFO CARD ===== */
+.house-info-card {
+    background: rgba(30, 33, 48, 0.9);
+    border: 1px solid #2a2f3e;
+    border-radius: 12px;
+    padding: 16px 20px;
+}
+.house-info-card h4 {
+    color: #c9a84c;
+    font-family: 'Cinzel', serif;
+    margin: 0 0 12px 0;
+    font-size: 0.95rem;
+}
+.house-info-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+    border-bottom: 1px solid rgba(42, 47, 62, 0.4);
+    font-size: 0.85rem;
+}
+.house-info-row:last-child {
+    border-bottom: none;
+}
+.house-info-label {
+    color: #8a8f9d;
+}
+.house-info-value {
+    color: #e0e0e0;
+    font-weight: 500;
+}
+
+/* ===== SMALL BUTTONS ===== */
+.btn-sm {
+    padding: 8px 16px;
+    background: rgba(40, 44, 60, 0.7);
+    border: 1px solid #3a3f50;
+    border-radius: 8px;
+    color: #b0b7c3;
+    font-size: 0.82rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.btn-sm:hover {
+    background: rgba(123, 91, 255, 0.15);
+    border-color: #7b5bff;
+    color: #9d7bff;
+}
+.btn-sm i {
+    margin-right: 6px;
+}
+
+/* ============================================================
+   PHASE 24 — HOUSE EXPLORE PAGE: FONT SIZE OVERRIDES + BUTTON
+   ============================================================ */
+
+/* ===== Scoped font-size increases (30-35%) — HouseExplorePage only ===== */
+.house-explore-page .tool-header h1 {
+    font-size: 3.3rem;
+}
+.house-explore-page .tool-header p {
+    font-size: 1.45rem;
+}
+.house-explore-page .birth-datetime {
+    font-size: 1.45rem;
+    color: #b0b7c3;
+    margin-top: 6px;
+}
+.house-explore-page .chart-section-title {
+    font-size: 1.3rem;
+}
+.house-explore-page .chart-hint {
+    font-size: 1rem;
+}
+.house-explore-page .life-areas-card h4 {
+    font-size: 1.3rem;
+}
+.house-explore-page .life-areas-subtitle {
+    font-size: 1.1rem;
+}
+.house-explore-page .life-area-btn {
+    font-size: 1.1rem;
+}
+.house-explore-page .time-slider-label {
+    font-size: 1.2rem;
+}
+.house-explore-page .time-slider-labels {
+    font-size: 1rem;
+}
+.house-explore-page .prediction-meta {
+    font-size: 1.05rem;
+}
+.house-explore-page .prediction-body {
+    font-size: 1.15rem;
+}
+.house-explore-page .prediction-placeholder {
+    font-size: 1.1rem;
+}
+.house-explore-page .house-info-card h4 {
+    font-size: 1.3rem;
+}
+.house-explore-page .house-info-row {
+    font-size: 1.15rem;
+}
+.house-explore-page .preview-note {
+    font-size: 1.25rem;
+}
+
+/* ===== "Back to Birth Chart" button — matches "Place Order" theme ===== */
+.btn-back-to-chart {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    padding: 15px 40px;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: white;
+    background: linear-gradient(90deg, #7b5bff, #9d7bff);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s;
+    margin-top: 8px;
+}
+.btn-back-to-chart:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 20px rgba(123, 91, 255, 0.4);
+}
+.btn-back-to-chart i {
+    font-size: 1rem;
+}
+
+/* ===== Mobile responsive overrides ===== */
+@media (max-width: 768px) {
+    .house-explore-page .tool-header h1 {
+        font-size: 2.4rem;
+    }
+    .house-explore-page .tool-header p,
+    .house-explore-page .birth-datetime {
+        font-size: 1.15rem;
     }
 }

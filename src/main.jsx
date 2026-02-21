@@ -8,6 +8,7 @@ import './styles/landing.css';
 import './styles/login.css';
 import './styles/reports.css';
 import './styles/tools.css';
+import './styles/session-timeout.css';
 
 createRoot(document.getElementById('root')).render(
   <React.StrictMode>

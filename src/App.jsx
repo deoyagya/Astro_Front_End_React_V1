@@ -17,6 +17,7 @@ import FamilyChildrenReportPage from './pages/FamilyChildrenReportPage';
 import MyReportsPage from './pages/MyReportsPage';
 import OrderPage from './pages/OrderPage';
 import PaymentPage from './pages/PaymentPage';
+import HouseExplorePage from './pages/HouseExplorePage';
 
 export default function App() {
   return (
@@ -29,6 +30,7 @@ export default function App() {
         {/* Protected routes — require authentication */}
         <Route path="/reports" element={<ProtectedRoute><ReportsPage /></ProtectedRoute>} />
         <Route path="/birth-chart" element={<ProtectedRoute><BirthChartPage /></ProtectedRoute>} />
+        <Route path="/birth-chart/house/:houseNum" element={<ProtectedRoute><HouseExplorePage /></ProtectedRoute>} />
         <Route path="/dasha" element={<ProtectedRoute><DashaPage /></ProtectedRoute>} />
         <Route path="/compatibility" element={<ProtectedRoute><CompatibilityPage /></ProtectedRoute>} />
         <Route path="/horoscope" element={<ProtectedRoute><HoroscopePage /></ProtectedRoute>} />

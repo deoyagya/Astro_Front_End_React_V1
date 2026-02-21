@@ -6,7 +6,7 @@ import { useAuth } from '../context/AuthContext';
 import { api } from '../api/client';
 
 const OTP_LENGTH = 6;
-const TIMER_SECONDS = 60;
+const TIMER_SECONDS = 120;
 
 export default function LoginPage() {
   useSharedEffects();
@@ -163,6 +163,10 @@ export default function LoginPage() {
       setError('Please enter the complete 6-digit code');
       return;
     }
+    if (!fullName.trim()) {
+      setError('Please enter your name');
+      return;
+    }
 
     setError('');
     setLoading(true);
@@ -170,7 +174,7 @@ export default function LoginPage() {
       const result = await api.post('/v1/auth/otp/verify', {
         identifier: getFullIdentifier(),
         otp_code: code,
-        full_name: fullName.trim() || undefined,
+        full_name: fullName.trim(),
         marketing_consent: marketingConsent,
       });
       // Login (stores token, triggers user fetch)
@@ -300,9 +304,10 @@ export default function LoginPage() {
                   <input
                     type="text"
                     className="name-input"
-                    placeholder="Your name (optional)"
+                    placeholder="Your full name"
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
+                    required
                   />
                   <label className="consent-checkbox">
                     <input

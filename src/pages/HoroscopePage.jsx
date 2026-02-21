@@ -66,9 +66,6 @@ export default function HoroscopePage() {
       dob: birthDate,
       tob,
       place_of_birth: birthPlace.name,
-      ...(birthPlace.lat != null && birthPlace.lon != null && birthPlace.timezone
-        ? { lat: birthPlace.lat, lon: birthPlace.lon, tz_id: birthPlace.timezone }
-        : {}),
     };
 
     setLoading(true);

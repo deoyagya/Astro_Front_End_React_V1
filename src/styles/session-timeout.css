@@ -1,0 +1,181 @@
+/* ===== SESSION TIMEOUT WARNING MODAL ===== */
+
+.session-timeout-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 15000;
+  padding: 20px;
+  animation: sessionFadeIn 0.3s ease-out;
+}
+
+@keyframes sessionFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.session-timeout-modal {
+  background: linear-gradient(135deg, #1e2130, #151825);
+  border: 2px solid #7b5bff;
+  border-radius: 20px;
+  padding: 40px;
+  max-width: 420px;
+  width: 100%;
+  text-align: center;
+  box-shadow:
+    0 20px 60px rgba(123, 91, 255, 0.2),
+    0 0 40px rgba(123, 91, 255, 0.1);
+}
+
+.session-timeout-icon {
+  font-size: 2.5rem;
+  color: #ffa502;
+  margin-bottom: 16px;
+  animation: stPulse 2s infinite;
+}
+
+@keyframes stPulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.1); opacity: 0.8; }
+}
+
+.session-timeout-modal h2 {
+  font-family: 'Cinzel', serif;
+  color: #fff;
+  font-size: 1.5rem;
+  margin: 0 0 8px;
+}
+
+.session-timeout-message {
+  color: #b0b7c3;
+  font-size: 0.95rem;
+  margin-bottom: 20px;
+}
+
+/* Circular countdown ring */
+.session-timeout-countdown {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  margin: 0 auto 20px;
+}
+
+.countdown-ring {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.countdown-ring-bg {
+  fill: none;
+  stroke: #2a2f3e;
+  stroke-width: 4;
+}
+
+.countdown-ring-progress {
+  fill: none;
+  stroke: #9d7bff;
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-dasharray: 283; /* 2 * pi * 45 */
+  transition: stroke-dashoffset 1s linear;
+}
+
+.countdown-ring-progress.warning {
+  stroke: #ffa502;
+}
+
+.countdown-ring-progress.critical {
+  stroke: #ff4757;
+}
+
+.countdown-time {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #fff;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.session-timeout-sub {
+  color: #8a8f9d;
+  font-size: 0.85rem;
+  margin-bottom: 24px;
+}
+
+/* Action buttons */
+.session-timeout-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.btn-stay-logged-in {
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(90deg, #7b5bff, #9d7bff);
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.btn-stay-logged-in:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 20px rgba(123, 91, 255, 0.4);
+}
+
+.btn-stay-logged-in:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-end-session {
+  width: 100%;
+  padding: 12px;
+  background: transparent;
+  border: 1px solid #3a3f50;
+  border-radius: 8px;
+  color: #b0b7c3;
+  font-weight: 500;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.btn-end-session:hover {
+  border-color: #ff4757;
+  color: #ff4757;
+  background: rgba(255, 71, 87, 0.08);
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .session-timeout-modal {
+    padding: 30px 20px;
+  }
+  .session-timeout-countdown {
+    width: 100px;
+    height: 100px;
+  }
+  .countdown-time {
+    font-size: 1.4rem;
+  }
+}
