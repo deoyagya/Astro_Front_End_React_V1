@@ -26,6 +26,12 @@ const REPORTS = [
       { name: 'Rahu', house: '10th', status: 'mixed', effect: 'Unconventional career paths & foreign connections' },
       { name: 'Ketu', house: '4th', status: 'mixed', effect: 'Detachment from comfort, spiritual workplace' },
     ],
+    warnings: [
+      'Saturn in 10th may cause career delays & setbacks between ages 28\u201335',
+      'Rahu\u2019s influence can create confusion about true career calling',
+      'Mars in 6th indicates workplace conflicts & intense competition',
+      '2nd house affliction may cause financial instability in early career',
+    ],
     remedies: [
       'Surya Namaskar & Aditya Hridayam for career authority',
       'Shani mantras & Saturday practices for steady progress',
@@ -210,6 +216,18 @@ export default function ReportsPage() {
                 ))}
               </ul>
             </div>
+
+            {/* Critical areas of concern */}
+            {sampleReport.warnings && sampleReport.warnings.length > 0 && (
+              <div className="sample-warning">
+                <h3><i className="fas fa-exclamation-triangle"></i> Critical Areas of Concern</h3>
+                <ul>
+                  {sampleReport.warnings.map((w, i) => (
+                    <li key={i}><i className="fas fa-exclamation-circle"></i> {w}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
 
             {/* Planet analysis preview */}
             <div className="sample-planets">
