@@ -8,13 +8,32 @@ const REPORTS = [
     id: 'career', title: 'Career & Finance', icon: 'fa-briefcase',
     desc: 'In-depth analysis of your professional path, growth periods, and financial potential based on 10th house, 2nd house, and planetary periods.',
     pages: '25+', price: 1499, badge: 'Best Seller', route: '/career-report',
-    highlights: ['10th house career analysis', 'Financial growth windows', 'Professional timing & dasha periods'],
-    planets: [
-      { name: 'Sun', house: '10th', status: 'key', effect: 'Authority & leadership potential' },
-      { name: 'Saturn', house: '10th', status: 'key', effect: 'Career discipline & timing' },
-      { name: 'Jupiter', house: '2nd', status: 'key', effect: 'Financial growth & abundance' },
+    highlights: [
+      'Complete 10th house career analysis with planetary influences',
+      'Financial growth windows based on Dasha periods (2024\u20132034)',
+      'Professional strengths & natural career inclinations',
+      'Business vs. service aptitude assessment',
+      'Wealth accumulation periods & 2nd/11th house analysis',
+      'Timing guidance for job changes, promotions & ventures',
     ],
-    remedies: ['Strengthen Sun for career authority', 'Saturn remedies for steady progress', 'Jupiter mantras for financial growth'],
+    planets: [
+      { name: 'Sun', house: '10th', status: 'beneficial', effect: 'Authority, leadership & government favour' },
+      { name: 'Saturn', house: '10th', status: 'afflicted', effect: 'Career discipline, delays & ultimate success' },
+      { name: 'Jupiter', house: '2nd', status: 'beneficial', effect: 'Financial growth, wealth & family prosperity' },
+      { name: 'Mercury', house: '10th', status: 'beneficial', effect: 'Communication skills & business acumen' },
+      { name: 'Mars', house: '6th', status: 'afflicted', effect: 'Competition handling & workplace dynamics' },
+      { name: 'Venus', house: '11th', status: 'beneficial', effect: 'Income through arts, luxury & partnerships' },
+      { name: 'Rahu', house: '10th', status: 'mixed', effect: 'Unconventional career paths & foreign connections' },
+      { name: 'Ketu', house: '4th', status: 'mixed', effect: 'Detachment from comfort, spiritual workplace' },
+    ],
+    remedies: [
+      'Surya Namaskar & Aditya Hridayam for career authority',
+      'Shani mantras & Saturday practices for steady progress',
+      'Lakshmi-Kubera prayers for financial abundance',
+      'Gemstone recommendations based on your specific chart',
+      'Career-specific yantra & ritual guidance',
+    ],
+    footerNote: 'This is a sample preview. The full report includes personalized analysis based on your exact birth chart with complete remedies, timing windows, and actionable career guidance.',
   },
   {
     id: 'love', title: 'Love & Marriage', icon: 'fa-heart',
@@ -220,11 +239,10 @@ export default function ReportsPage() {
 
             <div className="sample-footer">
               <p>
-                This is a sample preview. The full report includes personalized analysis
-                based on your exact birth chart with complete remedies and timing windows.
+                {sampleReport.footerNote || 'This is a sample preview. The full report includes personalized analysis based on your exact birth chart with complete remedies and timing windows.'}
               </p>
               <button className="btn-order" onClick={() => orderReport(sampleReport)}>
-                Order Full Report — ₹{sampleReport.price.toLocaleString('en-IN')}
+                <i className="fas fa-file-invoice"></i> Order Full Report — ₹{sampleReport.price.toLocaleString('en-IN')}
               </button>
             </div>
           </div>

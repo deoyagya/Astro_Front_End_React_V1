@@ -280,6 +280,10 @@
     border-left-color: #2ed573;
 }
 
+.planet-item.mixed {
+    border-left-color: #ffa502;
+}
+
 .sample-remedies {
     background: rgba(46, 213, 115, 0.1);
     border-left: 4px solid #2ed573;
