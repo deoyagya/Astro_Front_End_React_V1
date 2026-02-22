@@ -207,17 +207,7 @@ export default function ReportsPage() {
               <h2>{sampleReport.title} — Sample Preview</h2>
             </div>
 
-            {/* Key highlights */}
-            <div className="sample-remedies" style={{ marginBottom: '25px' }}>
-              <h3><i className="fas fa-star"></i> Report Highlights</h3>
-              <ul>
-                {sampleReport.highlights.map((h, i) => (
-                  <li key={i}><i className="fas fa-check-circle"></i> {h}</li>
-                ))}
-              </ul>
-            </div>
-
-            {/* Critical areas of concern */}
+            {/* Critical areas of concern — shown first */}
             {sampleReport.warnings && sampleReport.warnings.length > 0 && (
               <div className="sample-warning">
                 <h3><i className="fas fa-exclamation-triangle"></i> Critical Areas of Concern</h3>
@@ -228,6 +218,16 @@ export default function ReportsPage() {
                 </ul>
               </div>
             )}
+
+            {/* Key highlights */}
+            <div className="sample-remedies" style={{ marginBottom: '25px' }}>
+              <h3><i className="fas fa-star"></i> Report Highlights</h3>
+              <ul>
+                {sampleReport.highlights.map((h, i) => (
+                  <li key={i}><i className="fas fa-check-circle"></i> {h}</li>
+                ))}
+              </ul>
+            </div>
 
             {/* Planet analysis preview */}
             <div className="sample-planets">
