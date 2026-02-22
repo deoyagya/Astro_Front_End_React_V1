@@ -97,6 +97,10 @@ export default function LoginPage() {
         identifier: getFullIdentifier(),
       });
       setMaskedId(result.masked);
+      // Pre-fill name for returning users
+      if (result.full_name) {
+        setFullName(result.full_name);
+      }
       setStep('otp');
       setTimer(TIMER_SECONDS);
       setOtp(Array(OTP_LENGTH).fill(''));
@@ -118,6 +122,9 @@ export default function LoginPage() {
         identifier: getFullIdentifier(),
       });
       setMaskedId(result.masked);
+      if (result.full_name) {
+        setFullName(result.full_name);
+      }
       setTimer(TIMER_SECONDS);
       setOtp(Array(OTP_LENGTH).fill(''));
       setTimeout(() => otpRefs.current[0]?.focus(), 100);
