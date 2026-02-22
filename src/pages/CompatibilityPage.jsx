@@ -5,21 +5,13 @@ import DateInput from '../components/form/DateInput';
 import TimeSelectGroup from '../components/form/TimeSelectGroup';
 import PlaceAutocomplete from '../components/PlaceAutocomplete';
 import { api } from '../api/client';
+import { useBirthData, to24Hour } from '../hooks/useBirthData';
 
 const SIGN_NAMES = {
   1: 'Aries', 2: 'Taurus', 3: 'Gemini', 4: 'Cancer',
   5: 'Leo', 6: 'Virgo', 7: 'Libra', 8: 'Scorpio',
   9: 'Sagittarius', 10: 'Capricorn', 11: 'Aquarius', 12: 'Pisces',
 };
-
-/** Convert 12h AM/PM → 24h time string "HH:MM" */
-function to24Hour(hour, minute, ampm) {
-  let h = parseInt(hour, 10);
-  const m = parseInt(minute, 10);
-  if (ampm === 'AM' && h === 12) h = 0;
-  else if (ampm === 'PM' && h !== 12) h += 12;
-  return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
-}
 
 /** Simple Guna Milan score calculator based on avakhada data */
 function computeGunaMilan(avakhadaA, avakhadaB) {
@@ -93,13 +85,16 @@ function computeGunaMilan(avakhadaA, avakhadaB) {
 export default function CompatibilityPage() {
   const navigate = useNavigate();
 
-  // Person A state
-  const [nameA, setNameA] = useState('');
-  const [dobA, setDobA] = useState('');
-  const [hourA, setHourA] = useState('06');
-  const [minuteA, setMinuteA] = useState('00');
-  const [ampmA, setAmpmA] = useState('AM');
-  const [placeA, setPlaceA] = useState(null);
+  // Person A state — pre-filled from saved data
+  const {
+    fullName: nameA, setFullName: setNameA,
+    birthDate: dobA, setBirthDate: setDobA,
+    hour: hourA, setHour: setHourA,
+    minute: minuteA, setMinute: setMinuteA,
+    ampm: ampmA, setAmpm: setAmpmA,
+    birthPlace: placeA, setBirthPlace: setPlaceA,
+    saveBirthData,
+  } = useBirthData({ reportType: 'compatibility' });
 
   // Person B state
   const [nameB, setNameB] = useState('');
@@ -149,12 +144,13 @@ export default function CompatibilityPage() {
 
       setResultA(dataA);
       setResultB(dataB);
+      saveBirthData();
     } catch (err) {
       setError(err.message || 'Failed to compute compatibility.');
     } finally {
       setLoading(false);
     }
-  }, [nameA, dobA, hourA, minuteA, ampmA, placeA, nameB, dobB, hourB, minuteB, ampmB, placeB]);
+  }, [nameA, dobA, hourA, minuteA, ampmA, placeA, nameB, dobB, hourB, minuteB, ampmB, placeB, saveBirthData]);
 
   // Compute Guna Milan from avakhada data
   const gunaResult = useMemo(() => {
@@ -189,18 +185,19 @@ export default function CompatibilityPage() {
                 </div>
                 <div className="form-group">
                   <label>Date of Birth</label>
-                  <DateInput id="dobA" onChange={setDobA} />
+                  <DateInput id="dobA" value={dobA} onChange={setDobA} />
                 </div>
                 <div className="form-group">
                   <label>Time of Birth</label>
                   <TimeSelectGroup
                     hourId="hourA" minuteId="minuteA" ampmId="ampmA"
                     onHourChange={setHourA} onMinuteChange={setMinuteA} onAmpmChange={setAmpmA}
+                    hourValue={hourA} minuteValue={minuteA} ampmValue={ampmA}
                   />
                 </div>
                 <div className="form-group">
                   <label>Place of Birth</label>
-                  <PlaceAutocomplete id="placeA" placeholder="Enter birth city" onSelect={setPlaceA} />
+                  <PlaceAutocomplete id="placeA" placeholder="Enter birth city" value={placeA?.name || ''} onSelect={setPlaceA} />
                 </div>
               </form>
 

@@ -4,15 +4,7 @@ import DateInput from '../components/form/DateInput';
 import TimeSelectGroup from '../components/form/TimeSelectGroup';
 import PlaceAutocomplete from '../components/PlaceAutocomplete';
 import { api } from '../api/client';
-
-/** Convert 12h AM/PM → 24h time string "HH:MM" */
-function to24Hour(hour, minute, ampm) {
-  let h = parseInt(hour, 10);
-  const m = parseInt(minute, 10);
-  if (ampm === 'AM' && h === 12) h = 0;
-  else if (ampm === 'PM' && h !== 12) h += 12;
-  return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
-}
+import { useBirthData, to24Hour } from '../hooks/useBirthData';
 
 /** Recursively render dasha tree nodes */
 function DashaNode({ node, depth = 0 }) {
@@ -58,12 +50,15 @@ function DashaNode({ node, depth = 0 }) {
 }
 
 export default function DashaPage() {
-  const [fullName, setFullName] = useState('');
-  const [birthDate, setBirthDate] = useState('');
-  const [hour, setHour] = useState('06');
-  const [minute, setMinute] = useState('00');
-  const [ampm, setAmpm] = useState('AM');
-  const [birthPlace, setBirthPlace] = useState(null);
+  const {
+    fullName, setFullName,
+    birthDate, setBirthDate,
+    hour, setHour,
+    minute, setMinute,
+    ampm, setAmpm,
+    birthPlace, setBirthPlace,
+    saveBirthData,
+  } = useBirthData({ reportType: 'dasha' });
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -95,12 +90,13 @@ export default function DashaPage() {
     try {
       const data = await api.post(`/v1/chart/create?${params}`, payload);
       setDashaData(data);
+      saveBirthData();
     } catch (err) {
       setError(err.message || 'Failed to generate dasha timeline.');
     } finally {
       setLoading(false);
     }
-  }, [fullName, birthDate, hour, minute, ampm, birthPlace]);
+  }, [fullName, birthDate, hour, minute, ampm, birthPlace, saveBirthData]);
 
   const dashaTree = dashaData?.bundle?.dasha_tree || [];
 
@@ -136,7 +132,7 @@ export default function DashaPage() {
 
                 <div className="form-group">
                   <label>Date of Birth</label>
-                  <DateInput id="birthDate" onChange={setBirthDate} />
+                  <DateInput id="birthDate" value={birthDate} onChange={setBirthDate} />
                 </div>
 
                 <div className="form-group">
@@ -144,6 +140,7 @@ export default function DashaPage() {
                   <TimeSelectGroup
                     hourId="hour" minuteId="minute" ampmId="ampm"
                     onHourChange={setHour} onMinuteChange={setMinute} onAmpmChange={setAmpm}
+                    hourValue={hour} minuteValue={minute} ampmValue={ampm}
                   />
                 </div>
 
@@ -152,6 +149,7 @@ export default function DashaPage() {
                   <PlaceAutocomplete
                     id="birthPlace"
                     placeholder="Enter birth city"
+                    value={birthPlace?.name || ''}
                     onSelect={setBirthPlace}
                   />
                 </div>

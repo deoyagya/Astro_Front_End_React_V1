@@ -4,6 +4,7 @@ import DateInput from '../components/form/DateInput';
 import TimeSelectGroup from '../components/form/TimeSelectGroup';
 import PlaceAutocomplete from '../components/PlaceAutocomplete';
 import { api } from '../api/client';
+import { useBirthData, to24Hour } from '../hooks/useBirthData';
 
 const MOON_SIGNS = [
   { value: 1, label: 'Aries (Mesha)' },
@@ -20,25 +21,20 @@ const MOON_SIGNS = [
   { value: 12, label: 'Pisces (Meena)' },
 ];
 
-/** Convert 12h AM/PM → 24h time string "HH:MM" */
-function to24Hour(hour, minute, ampm) {
-  let h = parseInt(hour, 10);
-  const m = parseInt(minute, 10);
-  if (ampm === 'AM' && h === 12) h = 0;
-  else if (ampm === 'PM' && h !== 12) h += 12;
-  return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
-}
-
 /** Maps subdomain IDs for horoscope-relevant domains */
 const HOROSCOPE_SUBDOMAIN = 100; // Career > General (use as default general prediction)
 
 export default function HoroscopePage() {
-  const [fullName, setFullName] = useState('');
-  const [birthDate, setBirthDate] = useState('');
-  const [hour, setHour] = useState('06');
-  const [minute, setMinute] = useState('00');
-  const [ampm, setAmpm] = useState('AM');
-  const [birthPlace, setBirthPlace] = useState(null);
+  const {
+    fullName, setFullName,
+    birthDate, setBirthDate,
+    hour, setHour,
+    minute, setMinute,
+    ampm, setAmpm,
+    birthPlace, setBirthPlace,
+    saveBirthData,
+  } = useBirthData({ reportType: 'horoscope' });
+
   const [selectedSign, setSelectedSign] = useState('');
 
   const [loading, setLoading] = useState(false);
@@ -81,12 +77,13 @@ export default function HoroscopePage() {
 
       // Extract prediction cards
       setPrediction(evalData?.prediction || null);
+      saveBirthData();
     } catch (err) {
       setError(err.message || 'Failed to generate horoscope.');
     } finally {
       setLoading(false);
     }
-  }, [fullName, birthDate, hour, minute, ampm, birthPlace]);
+  }, [fullName, birthDate, hour, minute, ampm, birthPlace, saveBirthData]);
 
   // Extract prediction data
   const cards = prediction?.cards || [];
@@ -142,7 +139,7 @@ export default function HoroscopePage() {
 
                 <div className="form-group">
                   <label>Date of Birth</label>
-                  <DateInput id="horoscopeDob" onChange={setBirthDate} />
+                  <DateInput id="horoscopeDob" value={birthDate} onChange={setBirthDate} />
                 </div>
 
                 <div className="form-group">
@@ -150,6 +147,7 @@ export default function HoroscopePage() {
                   <TimeSelectGroup
                     hourId="horoscopeHour" minuteId="horoscopeMinute" ampmId="horoscopeAmpm"
                     onHourChange={setHour} onMinuteChange={setMinute} onAmpmChange={setAmpm}
+                    hourValue={hour} minuteValue={minute} ampmValue={ampm}
                   />
                 </div>
 
@@ -158,6 +156,7 @@ export default function HoroscopePage() {
                   <PlaceAutocomplete
                     id="horoscopePlace"
                     placeholder="Enter birth city"
+                    value={birthPlace?.name || ''}
                     onSelect={setBirthPlace}
                   />
                 </div>

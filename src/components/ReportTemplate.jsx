@@ -22,15 +22,7 @@ import DateInput from './form/DateInput';
 import TimeSelectGroup from './form/TimeSelectGroup';
 import PlaceAutocomplete from './PlaceAutocomplete';
 import { api } from '../api/client';
-
-/** Convert 12h AM/PM → 24h time string "HH:MM" */
-function to24Hour(hour, minute, ampm) {
-  let h = parseInt(hour, 10);
-  const m = parseInt(minute, 10);
-  if (ampm === 'AM' && h === 12) h = 0;
-  else if (ampm === 'PM' && h !== 12) h += 12;
-  return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
-}
+import { useBirthData, to24Hour } from '../hooks/useBirthData';
 
 export default function ReportTemplate({
   title,
@@ -41,12 +33,15 @@ export default function ReportTemplate({
 }) {
   const navigate = useNavigate();
 
-  const [fullName, setFullName] = useState('');
-  const [birthDate, setBirthDate] = useState('');
-  const [hour, setHour] = useState('06');
-  const [minute, setMinute] = useState('00');
-  const [ampm, setAmpm] = useState('AM');
-  const [birthPlace, setBirthPlace] = useState(null);
+  const {
+    fullName, setFullName,
+    birthDate, setBirthDate,
+    hour, setHour,
+    minute, setMinute,
+    ampm, setAmpm,
+    birthPlace, setBirthPlace,
+    saveBirthData,
+  } = useBirthData({ reportType: 'report' });
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -84,12 +79,13 @@ export default function ReportTemplate({
     try {
       const data = await api.post(`/v1/predict/report?${params}`, payload);
       setReportData(data);
+      saveBirthData();
     } catch (err) {
       setError(err.message || 'Failed to generate report.');
     } finally {
       setLoading(false);
     }
-  }, [fullName, birthDate, hour, minute, ampm, birthPlace, subdomainId]);
+  }, [fullName, birthDate, hour, minute, ampm, birthPlace, subdomainId, saveBirthData]);
 
   const prediction = reportData?.prediction || {};
   const cards = prediction.cards || [];
@@ -129,6 +125,7 @@ export default function ReportTemplate({
               <label style={{ color: '#b0b7c3', display: 'block', marginBottom: 8 }}>Date of Birth</label>
               <DateInput
                 id={`report-dob-${subdomainId}`}
+                value={birthDate}
                 onChange={setBirthDate}
                 style={{ width: '100%', padding: '12px 16px', background: 'rgba(40,44,60,0.9)', border: '1px solid #3a3f50', borderRadius: 10, color: '#e0e0e0', fontSize: '1rem' }}
               />
@@ -142,6 +139,9 @@ export default function ReportTemplate({
                 onHourChange={setHour}
                 onMinuteChange={setMinute}
                 onAmpmChange={setAmpm}
+                hourValue={hour}
+                minuteValue={minute}
+                ampmValue={ampm}
               />
             </div>
             <div className="form-group">
@@ -149,6 +149,7 @@ export default function ReportTemplate({
               <PlaceAutocomplete
                 id={`report-place-${subdomainId}`}
                 placeholder="Enter birth city"
+                value={birthPlace?.name || ''}
                 onSelect={setBirthPlace}
               />
             </div>

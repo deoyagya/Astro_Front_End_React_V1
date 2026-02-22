@@ -7,6 +7,8 @@ import PlaceAutocomplete from '../components/PlaceAutocomplete';
 import NorthIndianChart from '../components/NorthIndianChart';
 import SouthIndianChart from '../components/SouthIndianChart';
 import { api } from '../api/client';
+import { useAuth } from '../context/AuthContext';
+import { useBirthData, to24Hour } from '../hooks/useBirthData';
 import {
   SIGN_NAMES,
   MALEFICS,
@@ -35,24 +37,6 @@ const chartOptions = [
   { value: 'd45', label: 'Akshavedamsha (D-45)', key: 'D45', description: 'Reflects on character, conduct, and finer aspects of moral ethics.' },
   { value: 'd60', label: 'Shashtyamsha (D-60)', key: 'D60', description: 'A deeply spiritual chart representing past-life karma and the ultimate outcome of all life events.' },
 ];
-
-const PRESET_BIRTH_DETAILS = {
-  fullName: 'User',
-  birthDate: '1973-08-09',
-  hour: '9',
-  minute: '41',
-  ampm: 'PM',
-  place: { name: 'Etah, Uttar Pradesh, India' },
-};
-
-/** Convert 12h AM/PM to 24h time string "HH:MM" */
-function to24Hour(hour, minute, ampm) {
-  let h = parseInt(hour, 10);
-  const m = parseInt(minute, 10);
-  if (ampm === 'AM' && h === 12) h = 0;
-  else if (ampm === 'PM' && h !== 12) h += 12;
-  return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
-}
 
 /**
  * Enrich D1 chart placements with per-planet metadata
@@ -83,16 +67,20 @@ function enrichD1WithPlanetData(d1Chart, natalPlanets) {
 
 export default function BirthChartPage() {
   const navigate = useNavigate();
+  const { user } = useAuth();
 
-  /* Form state */
+  /* Form state — pre-filled from saved data via useBirthData hook */
+  const {
+    fullName, setFullName,
+    birthDate, setBirthDate,
+    hour, setHour,
+    minute, setMinute,
+    ampm, setAmpm,
+    birthPlace, setBirthPlace,
+    saveBirthData,
+  } = useBirthData({ reportType: 'full' });
+
   const [selectedChart, setSelectedChart] = useState('d1');
-  const [fullName, setFullName] = useState(PRESET_BIRTH_DETAILS.fullName);
-  const [birthDate, setBirthDate] = useState(PRESET_BIRTH_DETAILS.birthDate);
-  const [hour, setHour] = useState(PRESET_BIRTH_DETAILS.hour);
-  const [minute, setMinute] = useState(PRESET_BIRTH_DETAILS.minute);
-  const [ampm, setAmpm] = useState(PRESET_BIRTH_DETAILS.ampm);
-  const [birthPlace, setBirthPlace] = useState(PRESET_BIRTH_DETAILS.place);
-
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [chartBundle, setChartBundle] = useState(null);
@@ -130,12 +118,13 @@ export default function BirthChartPage() {
     try {
       const data = await api.post(`/v1/chart/create?${params}`, payload);
       setChartBundle(data);
+      saveBirthData();
     } catch (err) {
       setError(err.message || 'Failed to generate chart. Please try again.');
     } finally {
       setLoading(false);
     }
-  }, [fullName, birthDate, hour, minute, ampm, birthPlace]);
+  }, [fullName, birthDate, hour, minute, ampm, birthPlace, saveBirthData]);
 
   /* ===== Extract data from bundle ===== */
   const bundle = chartBundle?.bundle || {};
@@ -241,7 +230,7 @@ export default function BirthChartPage() {
       <section className="tool-page">
         <div className="container">
           <div className="tool-header">
-            <h1>Birth Chart (Kundli)</h1>
+            <h1>Birth Chart (Kundli){user?.full_name ? ` for ${user.full_name}` : ''}</h1>
             <p>Enter your birth details to generate your Vedic birth chart</p>
           </div>
 
