@@ -1,6 +1,7 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
+import AdminProtectedRoute from './components/AdminProtectedRoute';
 import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
 import ReportsPage from './pages/ReportsPage';
@@ -18,6 +19,10 @@ import MyReportsPage from './pages/MyReportsPage';
 import OrderPage from './pages/OrderPage';
 import PaymentPage from './pages/PaymentPage';
 import HouseExplorePage from './pages/HouseExplorePage';
+import AdminThemesPage from './pages/admin/AdminThemesPage';
+import AdminLifeAreasPage from './pages/admin/AdminLifeAreasPage';
+import AdminQuestionsPage from './pages/admin/AdminQuestionsPage';
+import AdminQuestionListPage from './pages/admin/AdminQuestionListPage';
 
 export default function App() {
   return (
@@ -43,6 +48,12 @@ export default function App() {
         <Route path="/my-reports" element={<ProtectedRoute><MyReportsPage /></ProtectedRoute>} />
         <Route path="/order" element={<ProtectedRoute><OrderPage /></ProtectedRoute>} />
         <Route path="/payment" element={<ProtectedRoute><PaymentPage /></ProtectedRoute>} />
+
+        {/* Admin routes — require admin role */}
+        <Route path="/admin/themes" element={<AdminProtectedRoute><AdminThemesPage /></AdminProtectedRoute>} />
+        <Route path="/admin/themes/:themeId/life-areas" element={<AdminProtectedRoute><AdminLifeAreasPage /></AdminProtectedRoute>} />
+        <Route path="/admin/questions/add" element={<AdminProtectedRoute><AdminQuestionsPage /></AdminProtectedRoute>} />
+        <Route path="/admin/questions" element={<AdminProtectedRoute><AdminQuestionListPage /></AdminProtectedRoute>} />
 
         {/* Catch-all */}
         <Route path="*" element={<Navigate to="/" replace />} />

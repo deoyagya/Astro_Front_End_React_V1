@@ -137,6 +137,26 @@ export const api = {
     }),
 
   /**
+   * PUT request with JSON body.
+   * @param {string} url  — endpoint path
+   * @param {object} data — request body
+   */
+  put: (url, data) =>
+    apiRequest(url, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    }),
+
+  /**
+   * DELETE request.
+   * @param {string} url — endpoint path
+   */
+  del: (url) =>
+    apiRequest(url, {
+      method: 'DELETE',
+    }),
+
+  /**
    * Raw request for non-JSON responses (e.g. PDF downloads).
    * Returns the raw Response object.
    * @param {string} endpoint — endpoint path
