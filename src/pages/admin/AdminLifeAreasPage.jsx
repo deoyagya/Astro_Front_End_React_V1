@@ -4,6 +4,26 @@ import PageShell from '../../components/PageShell';
 import { api } from '../../api/client';
 import '../../styles/admin.css';
 
+// 16 Shodashvarga divisional charts (standard Vedic astrology set)
+const DIVISIONAL_CHARTS = [
+  { value: 'D1',  label: 'D1 — Rashi (Birth Chart)' },
+  { value: 'D2',  label: 'D2 — Hora (Wealth)' },
+  { value: 'D3',  label: 'D3 — Drekkana (Siblings)' },
+  { value: 'D4',  label: 'D4 — Chaturthamsha (Property)' },
+  { value: 'D7',  label: 'D7 — Saptamsha (Children)' },
+  { value: 'D9',  label: 'D9 — Navamsha (Marriage)' },
+  { value: 'D10', label: 'D10 — Dashamsha (Career)' },
+  { value: 'D12', label: 'D12 — Dwadashamsha (Parents)' },
+  { value: 'D16', label: 'D16 — Shodashamsha (Vehicles)' },
+  { value: 'D20', label: 'D20 — Vimshamsha (Spirituality)' },
+  { value: 'D24', label: 'D24 — Chaturvimshamsha (Education)' },
+  { value: 'D27', label: 'D27 — Saptavimshamsha (Strength)' },
+  { value: 'D30', label: 'D30 — Trimshamsha (Misfortune)' },
+  { value: 'D40', label: 'D40 — Khavedamsha (Auspiciousness)' },
+  { value: 'D45', label: 'D45 — Akshavedamsha (Character)' },
+  { value: 'D60', label: 'D60 — Shashtiamsha (Past Karma)' },
+];
+
 export default function AdminLifeAreasPage() {
   const { themeId } = useParams();
   const navigate = useNavigate();
@@ -12,7 +32,7 @@ export default function AdminLifeAreasPage() {
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [editingArea, setEditingArea] = useState(null);
-  const [formData, setFormData] = useState({ name: '', description: '', rule_file: '', primary_houses: '', primary_planets: '', display_order: 0 });
+  const [formData, setFormData] = useState({ name: '', description: '', rule_file: '', primary_houses: '', primary_planets: '', divisional_charts: [], display_order: 0 });
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
   const [toast, setToast] = useState(null);
@@ -42,7 +62,7 @@ export default function AdminLifeAreasPage() {
 
   const openAdd = () => {
     setEditingArea(null);
-    setFormData({ name: '', description: '', rule_file: '', primary_houses: '', primary_planets: '', display_order: 0 });
+    setFormData({ name: '', description: '', rule_file: '', primary_houses: '', primary_planets: '', divisional_charts: [], display_order: 0 });
     setError('');
     setShowModal(true);
   };
@@ -55,6 +75,7 @@ export default function AdminLifeAreasPage() {
       rule_file: area.rule_file || '',
       primary_houses: area.primary_houses ? area.primary_houses.join(', ') : '',
       primary_planets: area.primary_planets ? area.primary_planets.join(', ') : '',
+      divisional_charts: area.divisional_charts || [],
       display_order: area.display_order,
     });
     setError('');
@@ -63,6 +84,18 @@ export default function AdminLifeAreasPage() {
 
   const parseHouses = (str) => str ? str.split(',').map((s) => parseInt(s.trim(), 10)).filter(Boolean) : null;
   const parsePlanets = (str) => str ? str.split(',').map((s) => s.trim()).filter(Boolean) : null;
+
+  const toggleChart = (chartValue) => {
+    setFormData((prev) => {
+      const selected = prev.divisional_charts || [];
+      return {
+        ...prev,
+        divisional_charts: selected.includes(chartValue)
+          ? selected.filter((c) => c !== chartValue)
+          : [...selected, chartValue],
+      };
+    });
+  };
 
   const handleSave = async () => {
     if (!formData.name.trim()) { setError('Name is required.'); return; }
@@ -76,6 +109,7 @@ export default function AdminLifeAreasPage() {
         rule_file: formData.rule_file.trim() || null,
         primary_houses: parseHouses(formData.primary_houses),
         primary_planets: parsePlanets(formData.primary_planets),
+        divisional_charts: formData.divisional_charts.length > 0 ? formData.divisional_charts : null,
         display_order: Number(formData.display_order) || 0,
       };
       if (editingArea) {
@@ -142,6 +176,7 @@ export default function AdminLifeAreasPage() {
                   <th>Name</th>
                   <th>Rule File</th>
                   <th>Houses</th>
+                  <th>Charts</th>
                   <th>Questions</th>
                   <th>Status</th>
                   <th>Actions</th>
@@ -156,6 +191,7 @@ export default function AdminLifeAreasPage() {
                     </td>
                     <td style={{ color: '#8a8f9d', fontSize: '0.85rem' }}>{area.rule_file || '—'}</td>
                     <td style={{ color: '#9d7bff' }}>{area.primary_houses?.join(', ') || '—'}</td>
+                    <td style={{ color: '#9d7bff', fontSize: '0.85rem' }}>{area.divisional_charts?.join(', ') || '—'}</td>
                     <td>{area.question_count}</td>
                     <td>
                       {area.is_active
@@ -205,6 +241,25 @@ export default function AdminLifeAreasPage() {
             <div className="form-group">
               <label>Primary Planets (comma-separated)</label>
               <input type="text" value={formData.primary_planets} onChange={(e) => setFormData({ ...formData, primary_planets: e.target.value })} placeholder="Sun, Saturn, Rahu" />
+            </div>
+            <div className="form-group">
+              <label>Divisional Charts {formData.divisional_charts.length > 0 && <span style={{ color: '#9d7bff', fontWeight: 400 }}>({formData.divisional_charts.length} selected)</span>}</label>
+              <div className="chart-picker-grid">
+                {DIVISIONAL_CHARTS.map((chart) => (
+                  <label
+                    key={chart.value}
+                    className={`chart-chip ${formData.divisional_charts.includes(chart.value) ? 'selected' : ''}`}
+                  >
+                    <input
+                      type="checkbox"
+                      checked={formData.divisional_charts.includes(chart.value)}
+                      onChange={() => toggleChart(chart.value)}
+                    />
+                    <span className="chip-label">{chart.value}</span>
+                    <span className="chip-desc">{chart.label.split('—')[1]?.trim()}</span>
+                  </label>
+                ))}
+              </div>
             </div>
             <div className="form-group">
               <label>Display Order</label>

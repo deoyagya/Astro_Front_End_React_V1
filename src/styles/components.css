@@ -200,6 +200,34 @@
     color: #ff4757 !important;
 }
 
+/* Admin role badge in dropdown */
+.dropdown-role-badge {
+    display: inline-block;
+    background: linear-gradient(90deg, #7b5bff, #9d7bff);
+    color: #fff;
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 2px 8px;
+    border-radius: 10px;
+    margin-top: 3px;
+}
+
+/* Admin menu items in dropdown */
+.dropdown-admin-item {
+    color: #9d7bff !important;
+}
+
+.dropdown-admin-item i {
+    color: #9d7bff !important;
+}
+
+.dropdown-admin-item:hover {
+    background: rgba(123, 91, 255, 0.15) !important;
+    color: #c4b0ff !important;
+}
+
 /* ===== LOADING OVERLAY (Protected Route) ===== */
 .loading-overlay {
     display: flex;
