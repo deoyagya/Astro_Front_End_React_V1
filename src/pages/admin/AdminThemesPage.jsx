@@ -4,13 +4,42 @@ import PageShell from '../../components/PageShell';
 import { api } from '../../api/client';
 import '../../styles/admin.css';
 
+// Curated icon list for Vedic astrology themes
+const ICON_OPTIONS = [
+  { value: 'fa-star',           label: 'General / Default' },
+  { value: 'fa-briefcase',      label: 'Career' },
+  { value: 'fa-heart',          label: 'Love & Marriage' },
+  { value: 'fa-coins',          label: 'Wealth & Money' },
+  { value: 'fa-user',           label: 'Self & Body' },
+  { value: 'fa-graduation-cap', label: 'Education' },
+  { value: 'fa-baby',           label: 'Children' },
+  { value: 'fa-home',           label: 'Home & Property' },
+  { value: 'fa-heartbeat',      label: 'Health' },
+  { value: 'fa-pray',           label: 'Spirituality' },
+  { value: 'fa-users',          label: 'Family' },
+  { value: 'fa-gavel',          label: 'Legal & Justice' },
+  { value: 'fa-plane',          label: 'Travel' },
+  { value: 'fa-handshake',      label: 'Partnerships' },
+  { value: 'fa-shield-alt',     label: 'Protection' },
+  { value: 'fa-brain',          label: 'Mind & Intelligence' },
+  { value: 'fa-om',             label: 'Dharma' },
+  { value: 'fa-eye',            label: 'Mysticism' },
+  { value: 'fa-crown',          label: 'Authority & Power' },
+  { value: 'fa-bolt',           label: 'Energy & Action' },
+  { value: 'fa-moon',           label: 'Emotions' },
+  { value: 'fa-sun',            label: 'Vitality' },
+  { value: 'fa-compass',        label: 'Direction' },
+  { value: 'fa-gem',            label: 'Luxury & Beauty' },
+  { value: 'fa-scroll',         label: 'Tradition' },
+];
+
 export default function AdminThemesPage() {
   const navigate = useNavigate();
   const [themes, setThemes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [editingTheme, setEditingTheme] = useState(null);
-  const [formData, setFormData] = useState({ name: '', description: '', icon: 'fa-star', domain_id: '', display_order: 0 });
+  const [formData, setFormData] = useState({ name: '', description: '', icon: 'fa-star' });
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
   const [toast, setToast] = useState(null);
@@ -39,7 +68,7 @@ export default function AdminThemesPage() {
 
   const openAdd = () => {
     setEditingTheme(null);
-    setFormData({ name: '', description: '', icon: 'fa-star', domain_id: '', display_order: 0 });
+    setFormData({ name: '', description: '', icon: 'fa-star' });
     setError('');
     setShowModal(true);
   };
@@ -50,8 +79,6 @@ export default function AdminThemesPage() {
       name: theme.name,
       description: theme.description || '',
       icon: theme.icon || 'fa-star',
-      domain_id: theme.domain_id || '',
-      display_order: theme.display_order,
     });
     setError('');
     setShowModal(true);
@@ -65,14 +92,13 @@ export default function AdminThemesPage() {
       const body = {
         name: formData.name.trim(),
         description: formData.description.trim() || null,
-        icon: formData.icon.trim() || null,
-        domain_id: formData.domain_id ? Number(formData.domain_id) : null,
-        display_order: Number(formData.display_order) || 0,
+        icon: formData.icon || null,
       };
       if (editingTheme) {
         await api.put(`/v1/admin/taxonomy/themes/${editingTheme.id}`, body);
         setToast({ type: 'success', msg: 'Theme updated!' });
       } else {
+        // domain_id + display_order are auto-assigned by the backend
         await api.post('/v1/admin/taxonomy/themes', body);
         setToast({ type: 'success', msg: 'Theme created!' });
       }
@@ -121,6 +147,7 @@ export default function AdminThemesPage() {
             <table className="admin-table">
               <thead>
                 <tr>
+                  <th>#</th>
                   <th>Name</th>
                   <th>Icon</th>
                   <th>Domain ID</th>
@@ -132,6 +159,7 @@ export default function AdminThemesPage() {
               <tbody>
                 {themes.map((theme) => (
                   <tr key={theme.id} className={!theme.is_active ? 'deleted-row' : ''}>
+                    <td style={{ color: '#8a8f9d' }}>{theme.display_order}</td>
                     <td>
                       <strong>{theme.name}</strong>
                       {theme.description && <div style={{ color: '#8a8f9d', fontSize: '0.85rem' }}>{theme.description}</div>}
@@ -184,17 +212,35 @@ export default function AdminThemesPage() {
               <textarea value={formData.description} onChange={(e) => setFormData({ ...formData, description: e.target.value })} placeholder="Brief description..." />
             </div>
             <div className="form-group">
-              <label>Icon (FontAwesome class)</label>
-              <input type="text" value={formData.icon} onChange={(e) => setFormData({ ...formData, icon: e.target.value })} placeholder="fa-briefcase" />
+              <label>Icon *</label>
+              <div className="icon-picker-row">
+                <select
+                  value={formData.icon}
+                  onChange={(e) => setFormData({ ...formData, icon: e.target.value })}
+                >
+                  {ICON_OPTIONS.map((opt) => (
+                    <option key={opt.value} value={opt.value}>
+                      {opt.label} ({opt.value})
+                    </option>
+                  ))}
+                </select>
+                <div className="icon-preview">
+                  <i className={`fas ${formData.icon}`}></i>
+                </div>
+              </div>
             </div>
-            <div className="form-group">
-              <label>Domain ID (legacy mapping)</label>
-              <input type="number" value={formData.domain_id} onChange={(e) => setFormData({ ...formData, domain_id: e.target.value })} placeholder="e.g., 100, 200" />
-            </div>
-            <div className="form-group">
-              <label>Display Order</label>
-              <input type="number" value={formData.display_order} onChange={(e) => setFormData({ ...formData, display_order: e.target.value })} />
-            </div>
+            {editingTheme && (
+              <div className="form-group">
+                <label>Domain ID</label>
+                <div className="readonly-field">{editingTheme.domain_id || 'Auto-assigned'}</div>
+              </div>
+            )}
+            {editingTheme && (
+              <div className="form-group">
+                <label>Display Order</label>
+                <div className="readonly-field">{editingTheme.display_order}</div>
+              </div>
+            )}
             {error && <div className="api-error"><i className="fas fa-exclamation-circle"></i><p>{error}</p></div>}
             <div className="admin-modal-actions">
               <button className="btn-modal-cancel" onClick={() => setShowModal(false)}>Cancel</button>

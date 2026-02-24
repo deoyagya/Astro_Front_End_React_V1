@@ -321,6 +321,55 @@
     color: #e0e0e0;
 }
 
+/* Icon picker row */
+.icon-picker-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.icon-picker-row select {
+    flex: 1;
+    padding: 10px 14px;
+    background: rgba(40, 44, 60, 0.8);
+    border: 1px solid #2a2f3e;
+    border-radius: 8px;
+    color: #e0e0e0;
+    font-size: 0.95rem;
+}
+
+.icon-picker-row select:focus {
+    border-color: #7b5bff;
+    outline: none;
+}
+
+.icon-preview {
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(123, 91, 255, 0.15);
+    border: 1px solid #7b5bff;
+    border-radius: 8px;
+    flex-shrink: 0;
+}
+
+.icon-preview i {
+    font-size: 1.3rem;
+    color: #9d7bff;
+}
+
+/* Read-only field (system-generated values) */
+.readonly-field {
+    padding: 10px 14px;
+    background: rgba(40, 44, 60, 0.4);
+    border: 1px dashed #2a2f3e;
+    border-radius: 8px;
+    color: #8a8f9d;
+    font-size: 0.95rem;
+}
+
 /* JSON Editor */
 .json-editor-area {
     width: 100%;
