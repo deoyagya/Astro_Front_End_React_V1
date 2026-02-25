@@ -1,19 +1,46 @@
 import { useState, useRef, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+
+const ADMIN_MENU_ITEMS = [
+  { label: 'Themes',       icon: 'fa-layer-group',     href: '/admin/themes' },
+  { label: 'Life Areas',   icon: 'fa-sitemap',         href: '/admin/life-areas' },
+  { label: 'Questions',    icon: 'fa-question-circle',  href: '/admin/questions' },
+  { label: 'Add Question', icon: 'fa-plus-circle',      href: '/admin/questions/add' },
+  { label: 'Reports',      icon: 'fa-file-invoice',     href: '/admin/reports' },
+  { label: 'Prompts',      icon: 'fa-robot',            href: '/admin/prompts' },
+];
+
+const isItemActive = (itemHref, pathname) => {
+  if (pathname === itemHref) return true;
+  // /admin/themes also matches /admin/themes/{id}/life-areas (drill-down)
+  if (itemHref === '/admin/themes' && pathname.startsWith('/admin/themes/')) return true;
+  return false;
+};
 
 export default function SiteHeader({ active = 'home' }) {
   const { isAuthenticated, user, logout } = useAuth();
+  const location = useLocation();
+  const pathname = location.pathname;
   const freeToolsHref = active === 'home' ? '#free-tools' : '/#free-tools';
 
-  // User dropdown state
-  const [dropdownOpen, setDropdownOpen] = useState(false);
-  const dropdownRef = useRef(null);
+  const isAdmin = user?.role === 'admin';
+  const displayName = user?.full_name || user?.email?.split('@')[0] || user?.phone || 'Account';
 
-  // Close dropdown on outside click
+  // Dropdown states
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [manageMenuOpen, setManageMenuOpen] = useState(false);
+  const dropdownRef = useRef(null);
+  const manageMenuRef = useRef(null);
+
+  // Close menus on outside click
   useEffect(() => {
     const handler = (e) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
         setDropdownOpen(false);
+      }
+      if (manageMenuRef.current && !manageMenuRef.current.contains(e.target)) {
+        setManageMenuOpen(false);
       }
     };
     document.addEventListener('mousedown', handler);
@@ -27,56 +54,45 @@ export default function SiteHeader({ active = 'home' }) {
     window.location.href = '/';
   };
 
-  const displayName = user?.full_name || user?.email?.split('@')[0] || user?.phone || 'Account';
-  const isAdmin = user?.role === 'admin';
-  const isAdminPage = active === 'admin';
-
   return (
     <header className="header">
       <div className="container">
         <div className="header-content">
           <div className="logo">
             <h1><i className="fas fa-star-and-crescent"></i> Vedic Astro</h1>
-            <p>{isAdminPage ? 'Admin Panel' : 'Charts · Dashas · Guidance'}</p>
+            <p>{isAdmin ? 'Admin Panel' : 'Charts · Dashas · Guidance'}</p>
           </div>
           <nav className="nav">
             <ul>
-              {isAdminPage ? (
-                /* ---- Admin navigation ---- */
-                <>
-                  <li>
-                    <a href="/" className="">
-                      <i className="fas fa-home"></i> Home
-                    </a>
-                  </li>
-                  <li>
-                    <a href="/admin/themes" className={active === 'admin' ? 'active' : ''}>
-                      <i className="fas fa-layer-group"></i> Themes
-                    </a>
-                  </li>
-                  <li>
-                    <a href="/admin/questions" className="">
-                      <i className="fas fa-question-circle"></i> Questions
-                    </a>
-                  </li>
-                  <li>
-                    <a href="/admin/questions/add" className="">
-                      <i className="fas fa-plus-circle"></i> Add Question
-                    </a>
-                  </li>
-                  <li>
-                    <a href="/admin/reports" className="">
-                      <i className="fas fa-file-invoice"></i> Reports
-                    </a>
-                  </li>
-                  <li>
-                    <a href="/admin/prompts" className="">
-                      <i className="fas fa-robot"></i> Prompts
-                    </a>
-                  </li>
-                </>
+              {isAdmin ? (
+                /* ---- Admin: single "Manage Data" with submenu ---- */
+                <li className="nav-manage-data" ref={manageMenuRef}>
+                  <button
+                    className={`nav-manage-trigger ${manageMenuOpen ? 'open' : ''}`}
+                    onClick={() => setManageMenuOpen(!manageMenuOpen)}
+                  >
+                    <i className="fas fa-cogs"></i>
+                    <span>Manage Data</span>
+                    <i className={`fas fa-caret-${manageMenuOpen ? 'up' : 'down'} nav-chevron`}></i>
+                  </button>
+                  {manageMenuOpen && (
+                    <div className="manage-data-menu">
+                      {ADMIN_MENU_ITEMS.map((item) => (
+                        <a
+                          key={item.href}
+                          href={item.href}
+                          className={`manage-data-item ${isItemActive(item.href, pathname) ? 'active' : ''}`}
+                          onClick={() => setManageMenuOpen(false)}
+                        >
+                          <i className={`fas ${item.icon}`}></i>
+                          {item.label}
+                        </a>
+                      ))}
+                    </div>
+                  )}
+                </li>
               ) : (
-                /* ---- End-user navigation ---- */
+                /* ---- Regular user navigation ---- */
                 <>
                   <li>
                     <a href="/" className={active === 'home' ? 'active' : ''}>
@@ -117,33 +133,20 @@ export default function SiteHeader({ active = 'home' }) {
                         </div>
                       </div>
                       <div className="dropdown-divider"></div>
-                      {isAdmin && (
+                      {!isAdmin && (
                         <>
-                          <a href="/admin/themes" className="dropdown-item dropdown-admin-item" onClick={() => setDropdownOpen(false)}>
-                            <i className="fas fa-layer-group"></i> Manage Themes
+                          <a href="/my-reports" className="dropdown-item" onClick={() => setDropdownOpen(false)}>
+                            <i className="fas fa-download"></i> My Reports
                           </a>
-                          <a href="/admin/questions" className="dropdown-item dropdown-admin-item" onClick={() => setDropdownOpen(false)}>
-                            <i className="fas fa-question-circle"></i> Manage Questions
+                          <a href="/birth-chart" className="dropdown-item" onClick={() => setDropdownOpen(false)}>
+                            <i className="fas fa-star"></i> My Astro
                           </a>
-                          <a href="/admin/reports" className="dropdown-item dropdown-admin-item" onClick={() => setDropdownOpen(false)}>
-                            <i className="fas fa-file-invoice"></i> Manage Reports
-                          </a>
-                          <a href="/admin/prompts" className="dropdown-item dropdown-admin-item" onClick={() => setDropdownOpen(false)}>
-                            <i className="fas fa-robot"></i> Manage Prompts
+                          <a href="/order" className="dropdown-item" onClick={() => setDropdownOpen(false)}>
+                            <i className="fas fa-shopping-cart"></i> My Orders
                           </a>
                           <div className="dropdown-divider"></div>
                         </>
                       )}
-                      <a href="/my-reports" className="dropdown-item" onClick={() => setDropdownOpen(false)}>
-                        <i className="fas fa-download"></i> My Reports
-                      </a>
-                      <a href="/birth-chart" className="dropdown-item" onClick={() => setDropdownOpen(false)}>
-                        <i className="fas fa-star"></i> My Astro
-                      </a>
-                      <a href="/order" className="dropdown-item" onClick={() => setDropdownOpen(false)}>
-                        <i className="fas fa-shopping-cart"></i> My Orders
-                      </a>
-                      <div className="dropdown-divider"></div>
                       <a href="#" className="dropdown-item dropdown-logout" onClick={handleLogout}>
                         <i className="fas fa-sign-out-alt"></i> Logout
                       </a>

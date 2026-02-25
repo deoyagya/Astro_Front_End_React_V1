@@ -21,6 +21,7 @@ import PaymentPage from './pages/PaymentPage';
 import HouseExplorePage from './pages/HouseExplorePage';
 import AdminThemesPage from './pages/admin/AdminThemesPage';
 import AdminLifeAreasPage from './pages/admin/AdminLifeAreasPage';
+import AdminLifeAreasListPage from './pages/admin/AdminLifeAreasListPage';
 import AdminQuestionsPage from './pages/admin/AdminQuestionsPage';
 import AdminQuestionListPage from './pages/admin/AdminQuestionListPage';
 import AdminReportsPage from './pages/admin/AdminReportsPage';
@@ -54,6 +55,7 @@ export default function App() {
         {/* Admin routes — require admin role */}
         <Route path="/admin/themes" element={<AdminProtectedRoute><AdminThemesPage /></AdminProtectedRoute>} />
         <Route path="/admin/themes/:themeId/life-areas" element={<AdminProtectedRoute><AdminLifeAreasPage /></AdminProtectedRoute>} />
+        <Route path="/admin/life-areas" element={<AdminProtectedRoute><AdminLifeAreasListPage /></AdminProtectedRoute>} />
         <Route path="/admin/questions/add" element={<AdminProtectedRoute><AdminQuestionsPage /></AdminProtectedRoute>} />
         <Route path="/admin/questions" element={<AdminProtectedRoute><AdminQuestionListPage /></AdminProtectedRoute>} />
         <Route path="/admin/reports" element={<AdminProtectedRoute><AdminReportsPage /></AdminProtectedRoute>} />
