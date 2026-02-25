@@ -12,6 +12,7 @@ export default function AdminQuestionsPage() {
   const [selectedArea, setSelectedArea] = useState('');
   const [questionText, setQuestionText] = useState('');
   const [rulesJson, setRulesJson] = useState('');
+  const [rulesJsonCompliant, setRulesJsonCompliant] = useState('');
   const [promptText, setPromptText] = useState('');
   const [costAmount, setCostAmount] = useState('');
   const [costCurrency, setCostCurrency] = useState('INR');
@@ -26,6 +27,10 @@ export default function AdminQuestionsPage() {
   const [showAreaModal, setShowAreaModal] = useState(false);
   const [newThemeName, setNewThemeName] = useState('');
   const [newAreaName, setNewAreaName] = useState('');
+  const [creatingTheme, setCreatingTheme] = useState(false);
+  const [creatingArea, setCreatingArea] = useState(false);
+  const [themeModalError, setThemeModalError] = useState('');
+  const [areaModalError, setAreaModalError] = useState('');
 
   const loadThemes = useCallback(async () => {
     try {
@@ -64,6 +69,10 @@ export default function AdminQuestionsPage() {
       const parsed = JSON.parse(rulesJson);
       const result = await api.post('/v1/admin/taxonomy/validate-rules', { rules_json: parsed });
       setValidationResult(result);
+      // Populate the compliant JSON textarea if auto-fix is available
+      if (result.fixed_json) {
+        setRulesJsonCompliant(JSON.stringify(result.fixed_json, null, 2));
+      }
     } catch (err) {
       if (err instanceof SyntaxError) {
         setValidationResult({ valid: false, errors: ['Invalid JSON syntax: ' + err.message], warnings: [] });
@@ -85,6 +94,7 @@ export default function AdminQuestionsPage() {
         life_area_id: selectedArea,
         question_text: questionText.trim(),
         rules_json: rulesJson.trim() ? JSON.parse(rulesJson) : null,
+        rules_json_compliant: rulesJsonCompliant.trim() ? JSON.parse(rulesJsonCompliant) : null,
         prompt_text: promptText.trim() || null,
         cost_amount: costAmount ? parseFloat(costAmount) : null,
         cost_currency: costAmount ? costCurrency : null,
@@ -95,6 +105,7 @@ export default function AdminQuestionsPage() {
       // Reset form
       setQuestionText('');
       setRulesJson('');
+      setRulesJsonCompliant('');
       setPromptText('');
       setCostAmount('');
       setValidationResult(null);
@@ -106,31 +117,41 @@ export default function AdminQuestionsPage() {
   };
 
   const handleCreateTheme = async () => {
-    if (!newThemeName.trim()) return;
+    if (!newThemeName.trim()) { setThemeModalError('Theme name is required.'); return; }
+    setCreatingTheme(true);
+    setThemeModalError('');
     try {
       const result = await api.post('/v1/admin/taxonomy/themes', { name: newThemeName.trim() });
       setShowThemeModal(false);
       setNewThemeName('');
+      setThemeModalError('');
       await loadThemes();
       setSelectedTheme(result.id);
       loadLifeAreas(result.id);
       setToast({ type: 'success', msg: 'Theme created!' });
     } catch (err) {
-      setToast({ type: 'error', msg: err.message });
+      setThemeModalError(err.message);
+    } finally {
+      setCreatingTheme(false);
     }
   };
 
   const handleCreateArea = async () => {
-    if (!newAreaName.trim() || !selectedTheme) return;
+    if (!newAreaName.trim() || !selectedTheme) { setAreaModalError('Life area name is required.'); return; }
+    setCreatingArea(true);
+    setAreaModalError('');
     try {
       const result = await api.post('/v1/admin/taxonomy/life-areas', { theme_id: selectedTheme, name: newAreaName.trim() });
       setShowAreaModal(false);
       setNewAreaName('');
+      setAreaModalError('');
       await loadLifeAreas(selectedTheme);
       setSelectedArea(result.id);
       setToast({ type: 'success', msg: 'Life area created!' });
     } catch (err) {
-      setToast({ type: 'error', msg: err.message });
+      setAreaModalError(err.message);
+    } finally {
+      setCreatingArea(false);
     }
   };
 
@@ -151,7 +172,7 @@ export default function AdminQuestionsPage() {
             <p>Create a new prediction question linked to a life area</p>
           </div>
 
-          <div className="admin-modal-content" style={{ maxWidth: 700, margin: '0 auto' }}>
+          <div className="admin-form-page">
             {/* Core Theme Selector */}
             <div className="form-group">
               <label>Core Theme *</label>
@@ -160,7 +181,7 @@ export default function AdminQuestionsPage() {
                   <option value="">Select theme...</option>
                   {themes.map((t) => <option key={t.id} value={t.id}>{t.name}</option>)}
                 </select>
-                <button className="btn-admin-add" style={{ whiteSpace: 'nowrap' }} onClick={() => setShowThemeModal(true)}>
+                <button className="btn-admin-add" style={{ whiteSpace: 'nowrap' }} onClick={() => { setShowThemeModal(true); setThemeModalError(''); setNewThemeName(''); }}>
                   <i className="fas fa-plus"></i> Create
                 </button>
               </div>
@@ -174,7 +195,7 @@ export default function AdminQuestionsPage() {
                   <option value="">Select life area...</option>
                   {lifeAreas.map((a) => <option key={a.id} value={a.id}>{a.name}</option>)}
                 </select>
-                <button className="btn-admin-add" style={{ whiteSpace: 'nowrap' }} onClick={() => setShowAreaModal(true)} disabled={!selectedTheme}>
+                <button className="btn-admin-add" style={{ whiteSpace: 'nowrap' }} onClick={() => { setShowAreaModal(true); setAreaModalError(''); setNewAreaName(''); }} disabled={!selectedTheme}>
                   <i className="fas fa-plus"></i> Create
                 </button>
               </div>
@@ -187,22 +208,38 @@ export default function AdminQuestionsPage() {
               <div className={`char-count ${questionText.length > 250 ? 'over-limit' : ''}`}>{questionText.length}/250</div>
             </div>
 
-            {/* Rules JSON */}
+            {/* Rules JSON — Dual Panel */}
             <div className="form-group">
               <label>Rules JSON (RDL Condition Tree)</label>
-              <textarea
-                className={`json-editor-area ${validationResult ? (validationResult.valid ? 'valid' : 'invalid') : ''}`}
-                value={rulesJson}
-                onChange={(e) => { setRulesJson(e.target.value); setValidationResult(null); }}
-                placeholder='{"type": "AND", "sub_rules": [...]}'
-              />
+              <div className="json-dual-panel">
+                <div className="json-panel">
+                  <label>Initial Rules JSON</label>
+                  <textarea
+                    className={`json-editor-area ${validationResult ? (validationResult.valid ? 'valid' : 'invalid') : ''}`}
+                    value={rulesJson}
+                    onChange={(e) => { setRulesJson(e.target.value); setValidationResult(null); }}
+                    placeholder='{"type": "AND", "sub_rules": [...]}'
+                    style={{ minHeight: 200 }}
+                  />
+                </div>
+                <div className="json-panel">
+                  <label className="compliant-label">Corrected / Compliant JSON</label>
+                  <textarea
+                    className={`json-editor-area ${rulesJsonCompliant.trim() ? 'valid' : ''}`}
+                    value={rulesJsonCompliant}
+                    onChange={(e) => setRulesJsonCompliant(e.target.value)}
+                    placeholder="Auto-populated after validation, or paste corrected JSON here"
+                    style={{ minHeight: 200 }}
+                  />
+                </div>
+              </div>
               <button
                 className="btn-admin-add"
-                style={{ marginTop: 8 }}
+                style={{ marginTop: 10 }}
                 onClick={handleValidateRules}
                 disabled={!rulesJson.trim()}
               >
-                <i className="fas fa-check-circle"></i> Validate JSON for Compliance
+                <i className="fas fa-check-circle"></i> Validate &amp; Auto-Fix
               </button>
               {validationResult && (
                 <div className={`validation-result ${validationResult.valid ? 'success' : 'error'}`}>
@@ -216,12 +253,6 @@ export default function AdminQuestionsPage() {
                   )}
                   {validationResult.warnings?.length > 0 && (
                     <ul>{validationResult.warnings.map((w, i) => <li key={i}><i className="fas fa-exclamation-triangle"></i> {w}</li>)}</ul>
-                  )}
-                  {validationResult.fixed_json && (
-                    <div style={{ marginTop: 10 }}>
-                      <label style={{ color: '#2ed573', fontSize: '0.85rem' }}>Auto-fixed compliant version:</label>
-                      <textarea className="json-editor-area valid" readOnly value={JSON.stringify(validationResult.fixed_json, null, 2)} style={{ marginTop: 5 }} />
-                    </div>
                   )}
                 </div>
               )}
@@ -276,12 +307,22 @@ export default function AdminQuestionsPage() {
           <div className="admin-modal-content" style={{ maxWidth: 400 }}>
             <h2>Create Theme</h2>
             <div className="form-group">
-              <label>Theme Name</label>
-              <input type="text" value={newThemeName} onChange={(e) => setNewThemeName(e.target.value)} placeholder="e.g., Health & Wellness" />
+              <label>Theme Name *</label>
+              <input
+                type="text"
+                value={newThemeName}
+                onChange={(e) => setNewThemeName(e.target.value)}
+                onKeyDown={(e) => { if (e.key === 'Enter') handleCreateTheme(); }}
+                placeholder="e.g., Health & Wellness"
+                autoFocus
+              />
             </div>
+            {themeModalError && <div className="confirm-warning"><p>{themeModalError}</p></div>}
             <div className="admin-modal-actions">
               <button className="btn-modal-cancel" onClick={() => setShowThemeModal(false)}>Cancel</button>
-              <button className="btn-modal-save" onClick={handleCreateTheme}>Create</button>
+              <button className="btn-modal-save" onClick={handleCreateTheme} disabled={creatingTheme}>
+                {creatingTheme ? <><i className="fas fa-spinner fa-spin"></i> Creating...</> : 'Create'}
+              </button>
             </div>
           </div>
         </div>
@@ -293,12 +334,22 @@ export default function AdminQuestionsPage() {
           <div className="admin-modal-content" style={{ maxWidth: 400 }}>
             <h2>Create Life Area</h2>
             <div className="form-group">
-              <label>Life Area Name</label>
-              <input type="text" value={newAreaName} onChange={(e) => setNewAreaName(e.target.value)} placeholder="e.g., Mental Wellness" />
+              <label>Life Area Name *</label>
+              <input
+                type="text"
+                value={newAreaName}
+                onChange={(e) => setNewAreaName(e.target.value)}
+                onKeyDown={(e) => { if (e.key === 'Enter') handleCreateArea(); }}
+                placeholder="e.g., Mental Wellness"
+                autoFocus
+              />
             </div>
+            {areaModalError && <div className="confirm-warning"><p>{areaModalError}</p></div>}
             <div className="admin-modal-actions">
               <button className="btn-modal-cancel" onClick={() => setShowAreaModal(false)}>Cancel</button>
-              <button className="btn-modal-save" onClick={handleCreateArea}>Create</button>
+              <button className="btn-modal-save" onClick={handleCreateArea} disabled={creatingArea}>
+                {creatingArea ? <><i className="fas fa-spinner fa-spin"></i> Creating...</> : 'Create'}
+              </button>
             </div>
           </div>
         </div>

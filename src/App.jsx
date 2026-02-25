@@ -23,6 +23,8 @@ import AdminThemesPage from './pages/admin/AdminThemesPage';
 import AdminLifeAreasPage from './pages/admin/AdminLifeAreasPage';
 import AdminQuestionsPage from './pages/admin/AdminQuestionsPage';
 import AdminQuestionListPage from './pages/admin/AdminQuestionListPage';
+import AdminReportsPage from './pages/admin/AdminReportsPage';
+import AdminPromptsPage from './pages/admin/AdminPromptsPage';
 
 export default function App() {
   return (
@@ -54,6 +56,8 @@ export default function App() {
         <Route path="/admin/themes/:themeId/life-areas" element={<AdminProtectedRoute><AdminLifeAreasPage /></AdminProtectedRoute>} />
         <Route path="/admin/questions/add" element={<AdminProtectedRoute><AdminQuestionsPage /></AdminProtectedRoute>} />
         <Route path="/admin/questions" element={<AdminProtectedRoute><AdminQuestionListPage /></AdminProtectedRoute>} />
+        <Route path="/admin/reports" element={<AdminProtectedRoute><AdminReportsPage /></AdminProtectedRoute>} />
+        <Route path="/admin/prompts" element={<AdminProtectedRoute><AdminPromptsPage /></AdminProtectedRoute>} />
 
         {/* Catch-all */}
         <Route path="*" element={<Navigate to="/" replace />} />

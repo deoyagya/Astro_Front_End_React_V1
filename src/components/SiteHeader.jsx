@@ -64,6 +64,16 @@ export default function SiteHeader({ active = 'home' }) {
                       <i className="fas fa-plus-circle"></i> Add Question
                     </a>
                   </li>
+                  <li>
+                    <a href="/admin/reports" className="">
+                      <i className="fas fa-file-invoice"></i> Reports
+                    </a>
+                  </li>
+                  <li>
+                    <a href="/admin/prompts" className="">
+                      <i className="fas fa-robot"></i> Prompts
+                    </a>
+                  </li>
                 </>
               ) : (
                 /* ---- End-user navigation ---- */
@@ -114,6 +124,12 @@ export default function SiteHeader({ active = 'home' }) {
                           </a>
                           <a href="/admin/questions" className="dropdown-item dropdown-admin-item" onClick={() => setDropdownOpen(false)}>
                             <i className="fas fa-question-circle"></i> Manage Questions
+                          </a>
+                          <a href="/admin/reports" className="dropdown-item dropdown-admin-item" onClick={() => setDropdownOpen(false)}>
+                            <i className="fas fa-file-invoice"></i> Manage Reports
+                          </a>
+                          <a href="/admin/prompts" className="dropdown-item dropdown-admin-item" onClick={() => setDropdownOpen(false)}>
+                            <i className="fas fa-robot"></i> Manage Prompts
                           </a>
                           <div className="dropdown-divider"></div>
                         </>
