@@ -249,6 +249,7 @@ export default function AdminLifeAreasPage() {
                   <label
                     key={chart.value}
                     className={`chart-chip ${formData.divisional_charts.includes(chart.value) ? 'selected' : ''}`}
+                    title={chart.label}
                   >
                     <input
                       type="checkbox"
@@ -256,7 +257,6 @@ export default function AdminLifeAreasPage() {
                       onChange={() => toggleChart(chart.value)}
                     />
                     <span className="chip-label">{chart.value}</span>
-                    <span className="chip-desc">{chart.label.split('—')[1]?.trim()}</span>
                   </label>
                 ))}
               </div>
