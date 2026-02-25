@@ -18,12 +18,6 @@ export default function AdminQuestionListPage() {
   const [toast, setToast] = useState(null);
   const [confirmDelete, setConfirmDelete] = useState(null);
 
-  // Edit modal state
-  const [editingQuestion, setEditingQuestion] = useState(null);
-  const [editForm, setEditForm] = useState({ question_text: '', cost_amount: '', cost_currency: 'INR', prompt_text: '' });
-  const [editSaving, setEditSaving] = useState(false);
-  const [editError, setEditError] = useState('');
-
   const loadThemes = useCallback(async () => {
     try {
       const data = await api.get('/v1/admin/taxonomy/themes');
@@ -72,39 +66,6 @@ export default function AdminQuestionListPage() {
     setSelectedTheme(themeId);
     setSelectedArea('');
     loadLifeAreas(themeId);
-  };
-
-  const openEdit = (q) => {
-    setEditingQuestion(q);
-    setEditForm({
-      question_text: q.question_text,
-      cost_amount: q.cost_amount != null ? String(q.cost_amount) : '',
-      cost_currency: q.cost_currency || 'INR',
-      prompt_text: q.prompt_text || '',
-    });
-    setEditError('');
-  };
-
-  const handleEditSave = async () => {
-    if (!editForm.question_text.trim()) { setEditError('Question text is required.'); return; }
-    setEditSaving(true);
-    setEditError('');
-    try {
-      const body = {
-        question_text: editForm.question_text.trim(),
-        cost_amount: editForm.cost_amount ? parseFloat(editForm.cost_amount) : null,
-        cost_currency: editForm.cost_amount ? editForm.cost_currency : null,
-        prompt_text: editForm.prompt_text.trim() || null,
-      };
-      await api.put(`/v1/admin/taxonomy/questions/${editingQuestion.id}`, body);
-      setEditingQuestion(null);
-      setToast({ type: 'success', msg: 'Question updated!' });
-      loadQuestions();
-    } catch (err) {
-      setEditError(err.message);
-    } finally {
-      setEditSaving(false);
-    }
   };
 
   const handleDelete = async (q) => {
@@ -182,12 +143,12 @@ export default function AdminQuestionListPage() {
                     <td>
                       {q.is_active
                         ? <span className="badge-active">Active</span>
-                        : <><span className="badge-deleted">Deleted</span></>
+                        : <span className="badge-deleted">Deleted</span>
                       }
                     </td>
                     <td>
                       <div className="actions-cell">
-                        <button className="btn-edit" onClick={() => openEdit(q)}>
+                        <button className="btn-edit" onClick={() => navigate(`/admin/questions/${q.id}/edit`)}>
                           <i className="fas fa-edit"></i> Edit
                         </button>
                         {q.is_active && (
@@ -205,46 +166,6 @@ export default function AdminQuestionListPage() {
           <p style={{ color: '#8a8f9d', fontSize: '0.85rem', marginTop: 10 }}>{questions.length} question(s) found</p>
         </div>
       </section>
-
-      {/* Edit Modal */}
-      {editingQuestion && (
-        <div className="admin-modal" onClick={(e) => { if (e.target === e.currentTarget) setEditingQuestion(null); }}>
-          <div className="admin-modal-content">
-            <h2>Edit Question — {editingQuestion.question_id_display}</h2>
-            <div className="form-group">
-              <label>Question Text *</label>
-              <input type="text" value={editForm.question_text} onChange={(e) => setEditForm({ ...editForm, question_text: e.target.value })} maxLength={250} />
-              <div className={`char-count ${editForm.question_text.length > 250 ? 'over-limit' : ''}`}>{editForm.question_text.length}/250</div>
-            </div>
-            <div className="cost-row">
-              <div className="form-group">
-                <label>Cost Amount</label>
-                <input type="number" step="0.01" min="0" value={editForm.cost_amount} onChange={(e) => setEditForm({ ...editForm, cost_amount: e.target.value })} />
-              </div>
-              <div className="form-group">
-                <label>Currency</label>
-                <select value={editForm.cost_currency} onChange={(e) => setEditForm({ ...editForm, cost_currency: e.target.value })}>
-                  <option value="INR">INR</option>
-                  <option value="USD">USD</option>
-                  <option value="EUR">EUR</option>
-                  <option value="GBP">GBP</option>
-                </select>
-              </div>
-            </div>
-            <div className="form-group">
-              <label>Prompt Text</label>
-              <textarea value={editForm.prompt_text} onChange={(e) => setEditForm({ ...editForm, prompt_text: e.target.value })} style={{ minHeight: 80 }} />
-            </div>
-            {editError && <div className="api-error"><i className="fas fa-exclamation-circle"></i><p>{editError}</p></div>}
-            <div className="admin-modal-actions">
-              <button className="btn-modal-cancel" onClick={() => setEditingQuestion(null)}>Cancel</button>
-              <button className="btn-modal-save" onClick={handleEditSave} disabled={editSaving}>
-                {editSaving ? <><i className="fas fa-spinner fa-spin"></i> Saving...</> : <><i className="fas fa-check"></i> Save</>}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* Delete Confirmation */}
       {confirmDelete && (
