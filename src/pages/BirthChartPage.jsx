@@ -86,6 +86,7 @@ export default function BirthChartPage() {
   const [chartBundle, setChartBundle] = useState(null);
 
   const [chartStyle, setChartStyle] = useState(() => localStorage.getItem('chart_style_preference') || 'north');
+  const [viewMode, setViewMode] = useState('chart'); // 'chart' | 'table'
   const [selectedHouse, setSelectedHouse] = useState(null);
 
   const selectedChartMeta = useMemo(
@@ -330,54 +331,72 @@ export default function BirthChartPage() {
                 {selectedChartMeta?.description || 'Select a chart type.'}
               </p>
 
+              {/* Chart View / Table View toggle */}
               {activeChartData && (
-                <div className="chart-style-toggle">
-                  <button className={chartStyle === 'north' ? 'active' : ''} onClick={() => handleStyleChange('north')}>
-                    North Indian
+                <div className="chart-style-toggle" style={{ marginBottom: 12 }}>
+                  <button className={viewMode === 'chart' ? 'active' : ''} onClick={() => setViewMode('chart')}>
+                    <i className="fas fa-chart-pie"></i> Chart View
                   </button>
-                  <button className={chartStyle === 'south' ? 'active' : ''} onClick={() => handleStyleChange('south')}>
-                    South Indian
+                  <button className={viewMode === 'table' ? 'active' : ''} onClick={() => setViewMode('table')}>
+                    <i className="fas fa-table"></i> Table View
                   </button>
                 </div>
               )}
 
-              <div className="chart-placeholder" id="chartPlaceholder">
-                {loading ? (
-                  <div className="api-loading">
-                    <i className="fas fa-spinner fa-spin"></i>
-                    <p>Computing chart...</p>
-                  </div>
-                ) : activeChartData ? (
-                  chartStyle === 'north' ? (
-                    <NorthIndianChart
-                      chartData={activeChartData}
-                      chartLabel={selectedChartMeta?.label || 'D1 Chart'}
-                      onHouseClick={handleHouseClick}
-                      selectedHouse={selectedHouse}
-                      d9Vargas={d9Vargas}
-                    />
-                  ) : (
-                    <SouthIndianChart
-                      chartData={activeChartData}
-                      onHouseClick={handleHouseClick}
-                      selectedHouse={selectedHouse}
-                      d9Vargas={d9Vargas}
-                    />
-                  )
-                ) : (
-                  <div className="chart-preview">
-                    <i className="fas fa-chart-pie"></i>
-                    <p>Enter details and click Generate</p>
-                  </div>
-                )}
-              </div>
+              {/* ===== CHART VIEW ===== */}
+              {viewMode === 'chart' && (
+                <>
+                  {activeChartData && (
+                    <div className="chart-style-toggle">
+                      <button className={chartStyle === 'north' ? 'active' : ''} onClick={() => handleStyleChange('north')}>
+                        North Indian
+                      </button>
+                      <button className={chartStyle === 'south' ? 'active' : ''} onClick={() => handleStyleChange('south')}>
+                        South Indian
+                      </button>
+                    </div>
+                  )}
 
-              {activeChartData && (selectedChartMeta?.key || 'D1') === 'D1' && (
-                <p className="chart-hint-text">
-                  <i className="fas fa-hand-pointer"></i> Click any house to open a dedicated divisional chart page for that house.
-                </p>
+                  <div className="chart-placeholder" id="chartPlaceholder">
+                    {loading ? (
+                      <div className="api-loading">
+                        <i className="fas fa-spinner fa-spin"></i>
+                        <p>Computing chart...</p>
+                      </div>
+                    ) : activeChartData ? (
+                      chartStyle === 'north' ? (
+                        <NorthIndianChart
+                          chartData={activeChartData}
+                          chartLabel={selectedChartMeta?.label || 'D1 Chart'}
+                          onHouseClick={handleHouseClick}
+                          selectedHouse={selectedHouse}
+                          d9Vargas={d9Vargas}
+                        />
+                      ) : (
+                        <SouthIndianChart
+                          chartData={activeChartData}
+                          onHouseClick={handleHouseClick}
+                          selectedHouse={selectedHouse}
+                          d9Vargas={d9Vargas}
+                        />
+                      )
+                    ) : (
+                      <div className="chart-preview">
+                        <i className="fas fa-chart-pie"></i>
+                        <p>Enter details and click Generate</p>
+                      </div>
+                    )}
+                  </div>
+
+                  {activeChartData && (selectedChartMeta?.key || 'D1') === 'D1' && (
+                    <p className="chart-hint-text">
+                      <i className="fas fa-hand-pointer"></i> Click any house to open a dedicated divisional chart page for that house.
+                    </p>
+                  )}
+                </>
               )}
 
+              {/* Ascendant info — visible in both views */}
               {activeAscendant && activeAscendant.sign && (
                 <div style={{ background: 'rgba(46,213,115,0.08)', padding: '12px 16px', borderRadius: 8, marginBottom: 20 }}>
                   <span style={{ color: '#2ed573', fontWeight: 600 }}>
@@ -388,69 +407,74 @@ export default function BirthChartPage() {
                 </div>
               )}
 
-              <h3 className="section-subtitle">
-                Planetary Positions {selectedChartMeta?.key !== 'D1' ? `(${selectedChartMeta?.label})` : ''}
-              </h3>
-              {planetRows.length > 0 ? (
-                <table className="planet-table" id="planetTable">
-                  <thead>
-                    <tr>
-                      <th>Planet</th>
-                      <th>Sign</th>
-                      <th>House</th>
-                      <th>Degree</th>
-                      <th>Status</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {planetRows.map((row) => (
-                      <tr key={row.name}>
-                        <td style={{ color: MALEFICS.has(row.name) ? '#ff6b6b' : '#2ed573', fontWeight: 600 }}>{row.name}</td>
-                        <td>{row.sign}</td>
-                        <td>
-                          {row.house}
-                          {row.house !== '—' ? getSuffix(row.house) : ''}
-                        </td>
-                        <td>{row.degree}</td>
-                        <td>
-                          {row.retro && (
-                            <span className="dignity-badge badge-retro" style={{ marginRight: 4 }}>
-                              R
-                            </span>
-                          )}
-                          {row.combust && (
-                            <span className="dignity-badge badge-combust" style={{ marginRight: 4 }}>
-                              C
-                            </span>
-                          )}
-                          {row.dignity === 'exalted' && <span className="dignity-badge dignity-exalted">Exalted</span>}
-                          {row.dignity === 'debilitated' && <span className="dignity-badge dignity-debilitated">Debil.</span>}
-                          {row.dignity === 'own' && <span className="dignity-badge dignity-own">Own</span>}
-                          {row.dignity === 'neutral' && !row.retro && !row.combust && <span style={{ color: '#555' }}>—</span>}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              ) : (
-                <table className="planet-table">
-                  <thead>
-                    <tr>
-                      <th>Planet</th>
-                      <th>Sign</th>
-                      <th>House</th>
-                      <th>Degree</th>
-                      <th>Status</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td colSpan={5} style={{ textAlign: 'center', color: '#b0b7c3' }}>
-                        Generate a chart to see positions
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
+              {/* ===== TABLE VIEW ===== */}
+              {viewMode === 'table' && (
+                <>
+                  <h3 className="section-subtitle">
+                    Planetary Positions {selectedChartMeta?.key !== 'D1' ? `(${selectedChartMeta?.label})` : ''}
+                  </h3>
+                  {planetRows.length > 0 ? (
+                    <table className="planet-table" id="planetTable">
+                      <thead>
+                        <tr>
+                          <th>Planet</th>
+                          <th>Sign</th>
+                          <th>House</th>
+                          <th>Degree</th>
+                          <th>Status</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {planetRows.map((row) => (
+                          <tr key={row.name}>
+                            <td style={{ color: MALEFICS.has(row.name) ? '#ff6b6b' : '#2ed573', fontWeight: 600 }}>{row.name}</td>
+                            <td>{row.sign}</td>
+                            <td>
+                              {row.house}
+                              {row.house !== '—' ? getSuffix(row.house) : ''}
+                            </td>
+                            <td>{row.degree}</td>
+                            <td>
+                              {row.retro && (
+                                <span className="dignity-badge badge-retro" style={{ marginRight: 4 }}>
+                                  R
+                                </span>
+                              )}
+                              {row.combust && (
+                                <span className="dignity-badge badge-combust" style={{ marginRight: 4 }}>
+                                  C
+                                </span>
+                              )}
+                              {row.dignity === 'exalted' && <span className="dignity-badge dignity-exalted">Exalted</span>}
+                              {row.dignity === 'debilitated' && <span className="dignity-badge dignity-debilitated">Debil.</span>}
+                              {row.dignity === 'own' && <span className="dignity-badge dignity-own">Own</span>}
+                              {row.dignity === 'neutral' && !row.retro && !row.combust && <span style={{ color: '#555' }}>—</span>}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  ) : (
+                    <table className="planet-table">
+                      <thead>
+                        <tr>
+                          <th>Planet</th>
+                          <th>Sign</th>
+                          <th>House</th>
+                          <th>Degree</th>
+                          <th>Status</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td colSpan={5} style={{ textAlign: 'center', color: '#b0b7c3' }}>
+                            Generate a chart to see positions
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  )}
+                </>
               )}
 
               <p className="preview-note">
