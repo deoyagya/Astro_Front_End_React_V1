@@ -280,6 +280,17 @@ export const api = {
     }),
 
   /**
+   * PATCH request with JSON body.
+   * @param {string} url  — endpoint path
+   * @param {object} data — partial update body
+   */
+  patch: (url, data) =>
+    apiRequest(url, {
+      method: 'PATCH',
+      body: JSON.stringify(data),
+    }),
+
+  /**
    * DELETE request.
    * @param {string} url — endpoint path
    */

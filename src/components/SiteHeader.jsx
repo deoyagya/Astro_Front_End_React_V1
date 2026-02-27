@@ -3,6 +3,8 @@ import { useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 const ADMIN_MENU_ITEMS = [
+  { label: 'Observability', icon: 'fa-tachometer-alt',  href: '/admin/observability' },
+  { label: 'Pipeline Wizard', icon: 'fa-flask',         href: '/admin/pipeline-wizard' },
   { label: 'Themes',       icon: 'fa-layer-group',     href: '/admin/themes' },
   { label: 'Life Areas',   icon: 'fa-sitemap',         href: '/admin/life-areas' },
   { label: 'Questions',    icon: 'fa-question-circle',  href: '/admin/questions' },

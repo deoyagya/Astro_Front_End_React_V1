@@ -1,0 +1,39 @@
+{
+  "expo": {
+    "name": "Astro Yagya",
+    "slug": "vedic-astro-mobile",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "dark",
+    "scheme": "vedicastro",
+    "splash": {
+      "image": "./assets/logo.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#050914"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-secure-store",
+      "expo-font",
+      "@react-native-community/datetimepicker"
+    ],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.deoyagya.vedicastromobile"
+    },
+    "android": {
+      "package": "com.deoyagya.vedicastromobile",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/icon.png",
+        "backgroundColor": "#050914"
+      }
+    },
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}

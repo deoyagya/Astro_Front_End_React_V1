@@ -28,7 +28,10 @@ import AdminQuestionsPage from './pages/admin/AdminQuestionsPage';
 import AdminQuestionListPage from './pages/admin/AdminQuestionListPage';
 import AdminQuestionEditPage from './pages/admin/AdminQuestionEditPage';
 import AdminReportsPage from './pages/admin/AdminReportsPage';
+import AdminReportWizardPage from './pages/admin/AdminReportWizardPage';
 import AdminPromptsPage from './pages/admin/AdminPromptsPage';
+import AdminObservabilityPage from './pages/admin/AdminObservabilityPage';
+import AdminPipelineWizardPage from './pages/admin/AdminPipelineWizardPage';
 
 export default function App() {
   return (
@@ -66,8 +69,12 @@ export default function App() {
         <Route path="/admin/questions/add" element={<AdminProtectedRoute><AdminQuestionsPage /></AdminProtectedRoute>} />
         <Route path="/admin/questions/:questionId/edit" element={<AdminProtectedRoute><AdminQuestionEditPage /></AdminProtectedRoute>} />
         <Route path="/admin/questions" element={<AdminProtectedRoute><AdminQuestionListPage /></AdminProtectedRoute>} />
+        <Route path="/admin/reports/create" element={<AdminProtectedRoute><AdminReportWizardPage /></AdminProtectedRoute>} />
+        <Route path="/admin/reports/:configId/edit" element={<AdminProtectedRoute><AdminReportWizardPage /></AdminProtectedRoute>} />
         <Route path="/admin/reports" element={<AdminProtectedRoute><AdminReportsPage /></AdminProtectedRoute>} />
         <Route path="/admin/prompts" element={<AdminProtectedRoute><AdminPromptsPage /></AdminProtectedRoute>} />
+        <Route path="/admin/observability" element={<AdminProtectedRoute><AdminObservabilityPage /></AdminProtectedRoute>} />
+        <Route path="/admin/pipeline-wizard" element={<AdminProtectedRoute><AdminPipelineWizardPage /></AdminProtectedRoute>} />
 
         {/* Catch-all */}
         <Route path="*" element={<Navigate to="/" replace />} />
