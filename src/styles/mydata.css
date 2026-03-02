@@ -1,0 +1,874 @@
+/* ===================================================================
+   MY DATA DASHBOARD — End-user profile & astrological data pages
+   Reuses: .form-card, .house-info-card/row/label/value, .api-loading,
+           .api-error, .btn-generate, .tool-header from tools.css
+   =================================================================== */
+
+/* --- Page container --- */
+.mydata-page {
+  padding: 30px 0 60px;
+  min-height: calc(100vh - 200px);
+}
+
+.mydata-page .container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* --- Header --- */
+.mydata-header {
+  text-align: center;
+  margin-bottom: 28px;
+}
+
+.mydata-header h1 {
+  font-family: 'Cinzel', serif;
+  font-size: 1.8rem;
+  color: #e8dff5;
+  margin-bottom: 6px;
+}
+
+.mydata-header h1 i {
+  color: #9d7bff;
+  margin-right: 10px;
+}
+
+.mydata-header p {
+  color: #8892a4;
+  font-size: 0.95rem;
+}
+
+/* --- Compact birth form (two rows on desktop: 5 fields + gender + buttons) --- */
+.mydata-birth-form {
+  background: linear-gradient(135deg, #1a1d2e 0%, #141726 100%);
+  border: 1px solid #2a2f3e;
+  border-radius: 12px;
+  padding: 20px 24px;
+  margin-bottom: 0;
+  display: grid;
+  grid-template-columns: 1.2fr 1fr 1fr 0.6fr 1.4fr auto auto;
+  gap: 14px;
+  align-items: end;
+}
+
+.mydata-birth-form .form-group {
+  margin-bottom: 0;
+}
+
+.mydata-birth-form .form-group label {
+  font-size: 0.78rem;
+  color: #8892a4;
+  margin-bottom: 4px;
+  display: block;
+}
+
+.mydata-birth-form .form-group input,
+.mydata-birth-form .form-group select {
+  background: #0d0f1a;
+  border: 1px solid #2a2f3e;
+  color: #e8dff5;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 0.88rem;
+  width: 100%;
+}
+
+.mydata-birth-form .form-group input:focus,
+.mydata-birth-form .form-group select:focus {
+  border-color: #7b5bff;
+  outline: none;
+}
+
+.mydata-birth-form .time-group {
+  display: flex;
+  gap: 6px;
+}
+
+.mydata-birth-form .time-group select {
+  flex: 1;
+  min-width: 0;
+}
+
+.mydata-birth-form .btn-load {
+  background: linear-gradient(135deg, #7b5bff 0%, #9d7bff 100%);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 20px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s;
+  height: 38px;
+}
+
+.mydata-birth-form .btn-load:hover {
+  background: linear-gradient(135deg, #6b4be0 0%, #8a6bef 100%);
+  transform: translateY(-1px);
+}
+
+.mydata-birth-form .btn-load:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.mydata-birth-form .btn-load i {
+  margin-right: 6px;
+}
+
+/* --- Dropdown navigation (replaces horizontal tabs) --- */
+.mydata-nav-dropdown {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 24px 0 20px;
+  padding: 14px 20px;
+  background: linear-gradient(135deg, #1a1d2e 0%, #141726 100%);
+  border: 1px solid #2a2f3e;
+  border-radius: 12px;
+}
+
+.mydata-nav-label {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #9d7bff;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.mydata-nav-label i {
+  font-size: 0.9rem;
+}
+
+.mydata-section-select {
+  flex: 1;
+  max-width: 320px;
+  background: #0d0f1a;
+  border: 1px solid #2a2f3e;
+  color: #e8dff5;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 0.92rem;
+  font-weight: 500;
+  cursor: pointer;
+  appearance: auto;
+  transition: border-color 0.2s;
+}
+
+.mydata-section-select:focus {
+  border-color: #7b5bff;
+  outline: none;
+}
+
+.mydata-section-select:hover {
+  border-color: rgba(123, 91, 255, 0.4);
+}
+
+/* --- Content area wrapping child pages --- */
+.mydata-content-area {
+  padding: 20px 0;
+  min-height: 200px;
+}
+
+/* --- (Kept for backward compat but no longer used) Tab navigation bar --- */
+.mydata-tabs {
+  display: flex;
+  gap: 0;
+  overflow-x: auto;
+  border-bottom: 2px solid #2a2f3e;
+  margin: 24px 0;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.mydata-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.mydata-tab {
+  padding: 12px 18px;
+  white-space: nowrap;
+  color: #8892a4;
+  text-decoration: none;
+  border-bottom: 3px solid transparent;
+  transition: all 0.2s;
+  font-size: 0.85rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.mydata-tab:hover {
+  color: #ccc;
+  background: rgba(123, 91, 255, 0.04);
+}
+
+.mydata-tab.active {
+  color: #9d7bff;
+  border-bottom-color: #7b5bff;
+  font-weight: 600;
+}
+
+.mydata-tab i {
+  font-size: 0.82rem;
+}
+
+/* --- Data table (key-value rows) --- */
+.mydata-table {
+  background: linear-gradient(135deg, #1a1d2e 0%, #141726 100%);
+  border: 1px solid #2a2f3e;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.mydata-table-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid #2a2f3e;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.mydata-table-header h3 {
+  font-family: 'Cinzel', serif;
+  font-size: 1.1rem;
+  color: #e8dff5;
+  margin: 0;
+}
+
+.mydata-table-header i {
+  color: #9d7bff;
+  font-size: 1rem;
+}
+
+.mydata-row {
+  display: flex;
+  align-items: center;
+  padding: 10px 20px;
+  border-bottom: 1px solid rgba(42, 47, 62, 0.5);
+  gap: 16px;
+}
+
+.mydata-row:last-child {
+  border-bottom: none;
+}
+
+.mydata-row:hover {
+  background: rgba(123, 91, 255, 0.03);
+}
+
+.mydata-row-label {
+  font-weight: 600;
+  color: #b0b7c3;
+  font-size: 0.88rem;
+  min-width: 160px;
+  flex-shrink: 0;
+}
+
+.mydata-row-value {
+  color: #e8dff5;
+  font-size: 0.92rem;
+  font-weight: 500;
+  flex: 1;
+}
+
+/* --- Placeholder (no birth data loaded) --- */
+.mydata-placeholder {
+  text-align: center;
+  padding: 80px 20px;
+  color: #6b728a;
+}
+
+.mydata-placeholder i {
+  font-size: 3rem;
+  color: #3d4058;
+  margin-bottom: 16px;
+  display: block;
+}
+
+.mydata-placeholder p {
+  font-size: 1rem;
+  margin-bottom: 4px;
+}
+
+.mydata-placeholder .hint {
+  font-size: 0.85rem;
+  color: #4e5572;
+}
+
+/* --- Section title inside pages --- */
+.mydata-section-title {
+  font-family: 'Cinzel', serif;
+  font-size: 1.15rem;
+  color: #e8dff5;
+  margin: 28px 0 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.mydata-section-title i {
+  color: #9d7bff;
+}
+
+/* --- Personality grid (2-col) --- */
+.personality-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-top: 16px;
+}
+
+.personality-card {
+  background: linear-gradient(135deg, #1a1d2e 0%, #141726 100%);
+  border: 1px solid #2a2f3e;
+  border-radius: 12px;
+  padding: 20px;
+  transition: border-color 0.2s;
+}
+
+.personality-card:hover {
+  border-color: rgba(123, 91, 255, 0.3);
+}
+
+.personality-card-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.personality-card-header i {
+  color: #9d7bff;
+  font-size: 1.1rem;
+}
+
+.personality-card-header h4 {
+  color: #e8dff5;
+  font-size: 0.95rem;
+  margin: 0;
+  font-family: 'Cinzel', serif;
+}
+
+.personality-card-body {
+  color: #b0b7c3;
+  font-size: 0.88rem;
+  line-height: 1.6;
+}
+
+.personality-card-score {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.personality-card-score.favorable { background: rgba(80, 200, 120, 0.15); color: #50c878; }
+.personality-card-score.mixed { background: rgba(255, 193, 7, 0.15); color: #ffc107; }
+.personality-card-score.unfavorable { background: rgba(255, 82, 82, 0.15); color: #ff5252; }
+.personality-card-score.neutral { background: rgba(176, 183, 195, 0.15); color: #b0b7c3; }
+
+/* --- Yoga cards --- */
+.yoga-category {
+  margin-bottom: 24px;
+}
+
+.yoga-category-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background: rgba(123, 91, 255, 0.06);
+  border: 1px solid #2a2f3e;
+  border-radius: 10px;
+  margin-bottom: 10px;
+  cursor: pointer;
+}
+
+.yoga-category-header h4 {
+  color: #e8dff5;
+  font-size: 0.95rem;
+  margin: 0;
+  font-family: 'Cinzel', serif;
+}
+
+.yoga-count-badge {
+  background: rgba(123, 91, 255, 0.2);
+  color: #9d7bff;
+  padding: 2px 10px;
+  border-radius: 12px;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.yoga-card {
+  background: linear-gradient(135deg, #1a1d2e 0%, #141726 100%);
+  border: 1px solid #2a2f3e;
+  border-radius: 10px;
+  padding: 14px 18px;
+  margin-bottom: 8px;
+}
+
+.yoga-card-name {
+  color: #e8dff5;
+  font-weight: 600;
+  font-size: 0.92rem;
+  margin-bottom: 4px;
+}
+
+.yoga-card-planets {
+  color: #9d7bff;
+  font-size: 0.82rem;
+  margin-bottom: 6px;
+}
+
+.yoga-card-desc {
+  color: #8892a4;
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+
+.yoga-card-ref {
+  color: #7b6ba0;
+  font-size: 0.78rem;
+  margin-top: 6px;
+  font-style: italic;
+}
+
+.yoga-card-ref i {
+  margin-right: 4px;
+  font-size: 0.72rem;
+}
+
+.yoga-summary-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 18px;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin-bottom: 20px;
+  background: rgba(80, 200, 120, 0.12);
+  color: #50c878;
+}
+
+.yoga-summary-badge i {
+  font-size: 1rem;
+}
+
+.yoga-strength-badge {
+  margin-left: 8px;
+  font-weight: 600;
+  font-size: 0.78rem;
+  text-transform: capitalize;
+}
+
+.yoga-card-name i {
+  margin-right: 6px;
+  color: #50c878;
+}
+
+/* --- Sade Sati status --- */
+.sade-sati-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 18px;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin-bottom: 20px;
+}
+
+.sade-sati-status.active {
+  background: rgba(255, 82, 82, 0.12);
+  color: #ff5252;
+  border: 1px solid rgba(255, 82, 82, 0.3);
+}
+
+.sade-sati-status.inactive {
+  background: rgba(80, 200, 120, 0.12);
+  color: #50c878;
+  border: 1px solid rgba(80, 200, 120, 0.3);
+}
+
+.sade-sati-status i {
+  font-size: 0.85rem;
+}
+
+/* --- Transit grid --- */
+.transit-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+/* --- Saved charts list --- */
+.saved-chart-item {
+  background: linear-gradient(135deg, #1a1d2e 0%, #141726 100%);
+  border: 1px solid #2a2f3e;
+  border-radius: 12px;
+  padding: 16px 20px;
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: border-color 0.2s;
+}
+
+.saved-chart-item:hover {
+  border-color: rgba(123, 91, 255, 0.3);
+}
+
+.saved-chart-info h4 {
+  color: #e8dff5;
+  font-size: 0.95rem;
+  margin: 0 0 4px;
+}
+
+.saved-chart-info p {
+  color: #8892a4;
+  font-size: 0.82rem;
+  margin: 0;
+}
+
+.saved-chart-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.saved-chart-actions button {
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  cursor: pointer;
+  border: none;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.btn-load-chart {
+  background: rgba(123, 91, 255, 0.15);
+  color: #9d7bff;
+}
+
+.btn-load-chart:hover {
+  background: rgba(123, 91, 255, 0.25);
+}
+
+/* --- Form error text --- */
+.mydata-form-error {
+  color: #ff5252;
+  font-size: 0.85rem;
+  text-align: center;
+  margin-top: 8px;
+}
+
+/* --- Chart Modal --- */
+.chart-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.75);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.chart-modal {
+  background: linear-gradient(135deg, #1a1d2e 0%, #141726 100%);
+  border: 1px solid #2a2f3e;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 700px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+  animation: slideUp 0.25s ease;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(30px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.chart-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 24px;
+  border-bottom: 1px solid #2a2f3e;
+}
+
+.chart-modal-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.chart-modal-title h2 {
+  font-family: 'Cinzel', serif;
+  font-size: 1.2rem;
+  color: #e8dff5;
+  margin: 0;
+}
+
+.chart-modal-title i {
+  color: #9d7bff;
+  font-size: 1.1rem;
+}
+
+.chart-modal-close {
+  background: rgba(255, 82, 82, 0.1);
+  border: 1px solid rgba(255, 82, 82, 0.2);
+  color: #ff5252;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  transition: all 0.2s;
+}
+
+.chart-modal-close:hover {
+  background: rgba(255, 82, 82, 0.2);
+  border-color: rgba(255, 82, 82, 0.4);
+}
+
+.chart-modal-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 24px;
+  gap: 16px;
+  border-bottom: 1px solid rgba(42, 47, 62, 0.5);
+}
+
+.chart-modal-selector {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.chart-modal-selector label {
+  color: #8892a4;
+  font-size: 0.85rem;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.chart-modal-selector select {
+  background: #0d0f1a;
+  border: 1px solid #2a2f3e;
+  color: #e8dff5;
+  padding: 7px 12px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  min-width: 180px;
+}
+
+.chart-modal-selector select:focus {
+  border-color: #7b5bff;
+  outline: none;
+}
+
+.chart-modal-style-toggle {
+  display: flex;
+  gap: 0;
+  border: 1px solid #2a2f3e;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.chart-modal-style-toggle button {
+  background: transparent;
+  border: none;
+  color: #8892a4;
+  padding: 7px 14px;
+  font-size: 0.82rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.chart-modal-style-toggle button.active {
+  background: rgba(123, 91, 255, 0.15);
+  color: #9d7bff;
+  font-weight: 600;
+}
+
+.chart-modal-style-toggle button:hover:not(.active) {
+  background: rgba(123, 91, 255, 0.06);
+  color: #ccc;
+}
+
+.chart-modal-body {
+  padding: 20px 24px 24px;
+}
+
+.chart-modal-chart {
+  max-width: 580px;
+  margin: 0 auto;
+}
+
+.chart-modal-empty {
+  text-align: center;
+  padding: 60px 20px;
+  color: #6b728a;
+}
+
+.chart-modal-empty i {
+  font-size: 2.5rem;
+  color: #3d4058;
+  margin-bottom: 12px;
+  display: block;
+}
+
+.chart-modal-asc-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(46, 213, 115, 0.08);
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin-top: 16px;
+  font-size: 0.9rem;
+  color: #2ed573;
+  font-weight: 500;
+}
+
+.chart-modal-asc-info i {
+  font-size: 0.9rem;
+}
+
+/* --- View Chart button in birth form --- */
+.btn-chart {
+  background: linear-gradient(135deg, #2ed573 0%, #26b960 100%);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 16px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.btn-chart:hover {
+  background: linear-gradient(135deg, #26b960 0%, #1fa84f 100%);
+  transform: translateY(-1px);
+}
+
+.btn-chart:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* --- Responsive --- */
+@media (max-width: 1000px) {
+  .mydata-birth-form {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+}
+
+@media (max-width: 700px) {
+  .mydata-birth-form {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .personality-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .transit-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .mydata-nav-dropdown {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+
+  .mydata-section-select {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 500px) {
+  .mydata-birth-form {
+    grid-template-columns: 1fr;
+    padding: 16px;
+  }
+
+  .mydata-header h1 {
+    font-size: 1.4rem;
+  }
+
+  .mydata-content-area {
+    padding: 16px 0;
+  }
+
+  .mydata-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+
+  .mydata-row-value {
+    text-align: left;
+  }
+
+  .chart-modal {
+    max-width: 100%;
+    border-radius: 12px;
+  }
+
+  .chart-modal-controls {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .chart-modal-selector select {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .chart-modal-style-toggle {
+    justify-content: center;
+  }
+
+  .chart-modal-body {
+    padding: 16px;
+  }
+}

@@ -183,9 +183,9 @@ const styles = StyleSheet.create({
     gap: 16,
   },
   title: {
-    ...typography.styles.h2,
+    ...typography.styles.h3,
     color: colors.text,
-    paddingTop: 12,
+    paddingTop: 8,
   },
   subtitle: {
     ...typography.styles.body,

@@ -30,8 +30,22 @@ import AdminQuestionEditPage from './pages/admin/AdminQuestionEditPage';
 import AdminReportsPage from './pages/admin/AdminReportsPage';
 import AdminReportWizardPage from './pages/admin/AdminReportWizardPage';
 import AdminPromptsPage from './pages/admin/AdminPromptsPage';
+import AdminMuhurtaPage from './pages/admin/AdminMuhurtaPage';
 import AdminObservabilityPage from './pages/admin/AdminObservabilityPage';
 import AdminPipelineWizardPage from './pages/admin/AdminPipelineWizardPage';
+import AdminRuleCVWizardPage from './pages/admin/AdminRuleCVWizardPage';
+import MuhurtaFinderPage from './pages/MuhurtaFinderPage';
+
+// My Data pages
+import MyDataLayout from './pages/mydata/MyDataLayout';
+import MyDetailsPage from './pages/mydata/MyDetailsPage';
+import AvakhadaChakraPage from './pages/mydata/AvakhadaChakraPage';
+import MyPersonalityPage from './pages/mydata/MyPersonalityPage';
+import SavedChartsPage from './pages/mydata/SavedChartsPage';
+import BirthDetailsPage from './pages/mydata/BirthDetailsPage';
+import YogasPage from './pages/mydata/YogasPage';
+import SadeSatiPage from './pages/mydata/SadeSatiPage';
+import TransitPage from './pages/mydata/TransitPage';
 
 export default function App() {
   return (
@@ -48,6 +62,7 @@ export default function App() {
         <Route path="/dasha" element={<ProtectedRoute><DashaPage /></ProtectedRoute>} />
         <Route path="/compatibility" element={<ProtectedRoute><CompatibilityPage /></ProtectedRoute>} />
         <Route path="/horoscope" element={<ProtectedRoute><HoroscopePage /></ProtectedRoute>} />
+        <Route path="/muhurta" element={<ProtectedRoute><MuhurtaFinderPage /></ProtectedRoute>} />
         <Route path="/career-report" element={<ProtectedRoute><CareerReportPage /></ProtectedRoute>} />
         <Route path="/love-marriage-report" element={<ProtectedRoute><LoveMarriageReportPage /></ProtectedRoute>} />
         <Route path="/education-report" element={<ProtectedRoute><EducationReportPage /></ProtectedRoute>} />
@@ -57,6 +72,19 @@ export default function App() {
         <Route path="/my-reports" element={<ProtectedRoute><MyReportsPage /></ProtectedRoute>} />
         <Route path="/order" element={<ProtectedRoute><OrderPage /></ProtectedRoute>} />
         <Route path="/payment" element={<ProtectedRoute><PaymentPage /></ProtectedRoute>} />
+
+        {/* My Data routes — nested under shared layout with birth data context */}
+        <Route path="/my-data" element={<ProtectedRoute><MyDataLayout /></ProtectedRoute>}>
+          <Route index element={<Navigate to="details" replace />} />
+          <Route path="details" element={<MyDetailsPage />} />
+          <Route path="avakhada" element={<AvakhadaChakraPage />} />
+          <Route path="personality" element={<MyPersonalityPage />} />
+          <Route path="saved-charts" element={<SavedChartsPage />} />
+          <Route path="birth-details" element={<BirthDetailsPage />} />
+          <Route path="yogas" element={<YogasPage />} />
+          <Route path="sade-sati" element={<SadeSatiPage />} />
+          <Route path="transit" element={<TransitPage />} />
+        </Route>
 
         {/* Admin routes — require admin role */}
         <Route path="/admin/themes/add" element={<AdminProtectedRoute><AdminThemeFormPage /></AdminProtectedRoute>} />
@@ -73,8 +101,10 @@ export default function App() {
         <Route path="/admin/reports/:configId/edit" element={<AdminProtectedRoute><AdminReportWizardPage /></AdminProtectedRoute>} />
         <Route path="/admin/reports" element={<AdminProtectedRoute><AdminReportsPage /></AdminProtectedRoute>} />
         <Route path="/admin/prompts" element={<AdminProtectedRoute><AdminPromptsPage /></AdminProtectedRoute>} />
+        <Route path="/admin/muhurta" element={<AdminProtectedRoute><AdminMuhurtaPage /></AdminProtectedRoute>} />
         <Route path="/admin/observability" element={<AdminProtectedRoute><AdminObservabilityPage /></AdminProtectedRoute>} />
         <Route path="/admin/pipeline-wizard" element={<AdminProtectedRoute><AdminPipelineWizardPage /></AdminProtectedRoute>} />
+        <Route path="/admin/rule-cv-wizard" element={<AdminProtectedRoute><AdminRuleCVWizardPage /></AdminProtectedRoute>} />
 
         {/* Catch-all */}
         <Route path="*" element={<Navigate to="/" replace />} />

@@ -215,8 +215,8 @@ function SampleModal({ report, onClose, onOrder }: { report: ReportType; onClose
 
 const styles = StyleSheet.create({
   scroll: { paddingBottom: 100, gap: 14 },
-  title: { ...typography.styles.h2, color: colors.text, paddingTop: 4 },
-  subtitle: { ...typography.styles.bodySmall, color: colors.muted },
+  title: { ...typography.styles.h3, color: colors.text, paddingTop: 4 },
+  subtitle: { ...typography.styles.caption, color: colors.muted },
   card: { gap: 12 },
   cardRow: { flexDirection: 'row', gap: 14 },
   iconCircle: { width: 54, height: 54, borderRadius: 14, alignItems: 'center', justifyContent: 'center' },

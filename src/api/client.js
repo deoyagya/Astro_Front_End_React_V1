@@ -24,9 +24,9 @@ const RETRYABLE_METHODS = new Set(['GET', 'POST']);
 // User-friendly messages (never show raw browser errors)
 const USER_MESSAGES = {
   offline: 'You appear to be offline. Please check your internet connection and try again.',
-  serverDown: 'Our server is temporarily unavailable. Please try again in a few moments.',
-  timeout: 'The request took too long. Please check your connection and try again.',
-  networkError: 'A connection error occurred. Please check your internet and try again.',
+  serverDown: 'Unable to reach the server. Please make sure the backend is running and try again.',
+  timeout: 'The request took too long. Please try again in a moment.',
+  networkError: 'A connection error occurred. Please try again or check if the server is running.',
   downloadFail: 'The download could not be completed. Please try again.',
 };
 
@@ -94,13 +94,79 @@ async function friendlyNetworkError(err) {
   }
 
   // 3. Network error — ping server to distinguish server-down vs client-side issue
-  if (isNetworkError(err)) {
-    const reachable = await isServerReachable();
-    return reachable ? USER_MESSAGES.networkError : USER_MESSAGES.serverDown;
-  }
+  const reachable = await isServerReachable();
+  return reachable ? USER_MESSAGES.networkError : USER_MESSAGES.serverDown;
+}
 
-  // 4. Fallback
-  return USER_MESSAGES.networkError;
+// ---------- Error sanitization ----------
+
+/**
+ * Technical patterns that should NEVER reach end-users.
+ * If any pattern matches (case-insensitive), the message is replaced
+ * with a generic user-friendly fallback.
+ */
+const TECHNICAL_PATTERNS = [
+  // Python exception names
+  'traceback', 'typeerror', 'keyerror', 'valueerror', 'attributeerror',
+  'nameerror', 'indexerror', 'importerror', 'runtimeerror', 'zerodivisionerror',
+  'overflowerror', 'stopiteration', 'assertionerror', 'notimplementederror',
+  // DB / ORM internals
+  'sqlalchemy', 'asyncpg', 'psycopg', 'integrityerror', 'operationalerror',
+  'programmingerror', 'deadlock',
+  // Python / framework internals
+  'pydantic', 'nonetype', 'object has no attribute', 'unexpected keyword',
+  'missing required', 'takes 0 positional', 'module ', 'cannot import',
+  // Stack trace markers
+  'file "/', 'line ', 'raise ', '__traceback__', 'in <module>',
+  // System errors
+  'errno', 'oserror', 'permission denied', 'broken pipe',
+  'connection refused', 'connection reset',
+  // PDF / rendering internals
+  'weasyprint', 'gobject', 'pango', 'cairo', 'fontconfig',
+  // LLM / external service internals
+  'openai', 'anthropic', 'rate_limit', 'insufficient_quota',
+];
+
+/**
+ * Convert raw backend error messages into user-friendly text.
+ * Defense-in-depth: even if backend leaks technical detail,
+ * this layer catches it before it reaches the UI.
+ */
+function sanitizeErrorMessage(raw, statusCode) {
+  if (!raw) return `Something went wrong. Please try again. (${statusCode})`;
+
+  const lower = raw.toLowerCase();
+
+  // Server errors — always generic
+  if (statusCode >= 500) return 'Something went wrong on our end. Please try again shortly.';
+
+  // Check for ANY technical pattern leaking through
+  if (TECHNICAL_PATTERNS.some((p) => lower.includes(p)))
+    return 'Please check your input and try again. If the problem persists, contact support.';
+
+  // Pydantic / FastAPI validation errors (broader catch)
+  if (lower.startsWith('value error') || lower.includes('validation error') || lower.includes('field required'))
+    return 'Please check your birth details and try again. Make sure all fields are filled in correctly.';
+
+  // Location / geocoding errors
+  if (lower.includes('lat') || lower.includes('lon') || lower.includes('tz_id') || lower.includes('timezone'))
+    return 'We could not resolve your birth location. Please re-select your place of birth from the dropdown.';
+
+  // Not found
+  if (statusCode === 404) return 'The requested data could not be found. Please try again.';
+
+  // Too large
+  if (statusCode === 413) return 'The request was too large. Please try with fewer options.';
+
+  // Conflict (duplicate)
+  if (statusCode === 409) return 'This item already exists. Please use a different name.';
+
+  // Message too long — likely a dump, not a user message
+  if (raw.length > 200)
+    return `Something went wrong. Please try again. (${statusCode})`;
+
+  // Passed all checks — safe to show
+  return raw;
 }
 
 // ---------- Auth helpers ----------
@@ -165,6 +231,9 @@ async function apiRequest(endpoint, options = {}) {
   const timeoutMs = options._timeoutMs || DEFAULT_TIMEOUT_MS;
   const { signal, clear } = createTimeout(timeoutMs);
 
+  // Signal user activity to AuthContext (session stays alive on API calls)
+  window.dispatchEvent(new Event('api-activity'));
+
   let response;
   try {
     response = await fetch(`${API_BASE}${endpoint}`, {
@@ -217,15 +286,15 @@ async function apiRequest(endpoint, options = {}) {
   if (!response.ok) {
     const error = await response.json().catch(() => ({}));
     // detail can be a string or an array of { field, message } objects (FastAPI validation)
-    let msg = '';
+    let rawMsg = '';
     if (typeof error.detail === 'string') {
-      msg = error.detail;
+      rawMsg = error.detail;
     } else if (Array.isArray(error.detail) && error.detail.length > 0) {
-      msg = error.detail.map((d) => d.message || d.msg || JSON.stringify(d)).join('; ');
+      rawMsg = error.detail.map((d) => d.message || d.msg || JSON.stringify(d)).join('; ');
     } else if (typeof error.error === 'string') {
-      msg = error.error;
+      rawMsg = error.error;
     }
-    throw new Error(msg || `Request failed (${response.status})`);
+    throw new Error(sanitizeErrorMessage(rawMsg, response.status));
   }
 
   // Handle empty responses (204 No Content)
@@ -257,6 +326,19 @@ export const api = {
     apiRequest(url, {
       method: 'POST',
       body: JSON.stringify(data),
+    }),
+
+  /**
+   * POST request with extended timeout (for long-running pipelines).
+   * @param {string} url       — endpoint path
+   * @param {object} data      — request body
+   * @param {number} timeoutMs — timeout in milliseconds (default: 120 s)
+   */
+  postLong: (url, data, timeoutMs = 120_000) =>
+    apiRequest(url, {
+      method: 'POST',
+      body: JSON.stringify(data),
+      _timeoutMs: timeoutMs,
     }),
 
   /**

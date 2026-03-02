@@ -58,7 +58,7 @@ export default function PaymentPage() {
       amount: order.amount,
       currency: order.currency,
       order_id: order.order_id,
-      name: 'Vedic Astro',
+      name: 'Astro Yagya',
       description: cart.map((r) => r.name).join(', ').slice(0, 255),
       prefill: {
         email: user?.email || '',

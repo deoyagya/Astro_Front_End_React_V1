@@ -8,15 +8,15 @@ export default function LegalModals() {
           <div className="modal-body">
             <p>Last updated: February 2025</p>
             <h3>1. Acceptance of Terms</h3>
-            <p>By accessing and using Vedic Astro services, you agree to be bound by these Terms of Use.</p>
+            <p>By accessing and using Astro Yagya services, you agree to be bound by these Terms of Use.</p>
             <h3>2. Service Description</h3>
-            <p>Vedic Astro provides astrological calculations, interpretations, and guidance based on Vedic astrology principles. All services are for entertainment and guidance purposes only.</p>
+            <p>Astro Yagya provides astrological calculations, interpretations, and guidance based on Vedic astrology principles. All services are for entertainment and guidance purposes only.</p>
             <h3>3. User Responsibilities</h3>
             <p>You agree to provide accurate birth information and use the services responsibly.</p>
             <h3>4. Privacy</h3>
             <p>Your data is protected as described in our Privacy Policy.</p>
             <h3>5. Limitation of Liability</h3>
-            <p>Vedic Astro is not liable for any decisions made based on astrological guidance.</p>
+            <p>Astro Yagya is not liable for any decisions made based on astrological guidance.</p>
           </div>
         </div>
       </div>

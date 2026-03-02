@@ -213,7 +213,7 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     paddingTop: 4,
   },
-  title: { ...typography.styles.h2, color: colors.text },
+  title: { ...typography.styles.h3, color: colors.text },
   subtitle: { ...typography.styles.bodySmall, color: colors.muted, marginTop: 2 },
   editBtn: {
     flexDirection: 'row',
@@ -229,7 +229,7 @@ const styles = StyleSheet.create({
   emptyCard: { alignItems: 'center', paddingVertical: 40, gap: 12 },
   emptyTitle: { ...typography.styles.h3, color: colors.text },
   emptySubtitle: {
-    ...typography.styles.body, color: colors.muted, textAlign: 'center', paddingHorizontal: 16,
+    ...typography.styles.bodySmall, color: colors.muted, textAlign: 'center', paddingHorizontal: 16,
   },
 
   summaryLabel: { ...typography.styles.label, color: colors.muted },

@@ -193,8 +193,8 @@ export default function MyReportsScreen() {
 
 const styles = StyleSheet.create({
   scroll: { paddingBottom: 100, gap: 12 },
-  title: { ...typography.styles.h2, color: colors.text, paddingTop: 12 },
-  subtitle: { ...typography.styles.bodySmall, color: colors.muted, marginBottom: 4 },
+  title: { ...typography.styles.h3, color: colors.text, paddingTop: 8 },
+  subtitle: { ...typography.styles.caption, color: colors.muted, marginBottom: 4 },
   emptyCard: { alignItems: 'center', paddingVertical: 40, gap: 12 },
   emptyTitle: { ...typography.styles.h3, color: colors.text },
   emptyText: { ...typography.styles.body, color: colors.muted, textAlign: 'center' },

@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import PageShell from '../components/PageShell';
+import ApiError from '../components/ApiError';
 import { api } from '../api/client';
 import { useSharedEffects } from '../hooks/useSharedEffects';
 import '../styles/report-pages.css';
@@ -116,7 +117,7 @@ export default function OrderPage() {
           name: it.name,
           price: it.price_paisa,
         })),
-        receipt: `vedic_order_${Date.now()}`,
+        receipt: `astroyagya_order_${Date.now()}`,
       });
 
       localStorage.setItem('razorpay_order', JSON.stringify(orderData));
@@ -204,7 +205,7 @@ export default function OrderPage() {
                     </p>
                   )}
 
-                  {error && <p style={{ color: '#ff6b6b', margin: '10px 0', fontSize: '14px' }}>{error}</p>}
+                  <ApiError message={error} onDismiss={() => setError('')} />
 
                   <button
                     className="btn place-order-btn"

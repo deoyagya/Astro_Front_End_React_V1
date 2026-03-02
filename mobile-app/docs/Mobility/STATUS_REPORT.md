@@ -39,6 +39,23 @@
 | M6 | Fix Chart Data Caching — Active Chart Store + Backend Update | COMPLETE | 2026-02-25 |
 | M6.1 | Fix SplashScreen Promise Rejection Error | COMPLETE | 2026-02-26 |
 | M7 | Compatibility Results Redesign — Donut Chart, Guna Grid & Dosha Detection | COMPLETE | 2026-02-26 |
+| M8 | My Data Hub Expansion — 8 New Screens | COMPLETE | 2026-02-28 |
+
+---
+
+## M8 My Data Hub Expansion — 8 New Screens — Task Completion
+
+| # | Task | File(s) | Status |
+|---|------|---------|--------|
+| 1 | Add YOGA, TRANSIT, PERSONALITY endpoints | `endpoints.ts` | COMPLETE |
+| 2 | Create My Details screen (Person Details table) | `my-data/my-details.tsx` (NEW) | COMPLETE |
+| 3 | Create Avkahada Chakra screen | `my-data/avkahada-chakra.tsx` (NEW) | COMPLETE |
+| 4 | Create My Personality screen (6 subdomains) | `my-data/my-personality.tsx` (NEW) | COMPLETE |
+| 5 | Create Yogas & Rajyogas screen (grouped by type) | `my-data/yogas.tsx` (NEW) | COMPLETE |
+| 6 | Create Sade Sati Report screen (status + timeline) | `my-data/sade-sati.tsx` (NEW) | COMPLETE |
+| 7 | Create Transit screen (table + hits) | `my-data/transit.tsx` (NEW) | COMPLETE |
+| 8 | Reorganize My Data hub (4 sections, 10 cards) | `my-data/index.tsx` | COMPLETE |
+| 9 | Build verification (2.81 MB, zero errors) | — | COMPLETE |
 
 ---
 

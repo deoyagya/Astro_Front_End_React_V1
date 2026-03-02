@@ -199,8 +199,8 @@ export default function OrderScreen() {
 
 const styles = StyleSheet.create({
   scroll: { paddingBottom: 100, gap: 12 },
-  title: { ...typography.styles.h2, color: colors.text, paddingTop: 12 },
-  subtitle: { ...typography.styles.bodySmall, color: colors.muted, marginBottom: 4 },
+  title: { ...typography.styles.h3, color: colors.text, paddingTop: 8 },
+  subtitle: { ...typography.styles.caption, color: colors.muted, marginBottom: 4 },
   reportRow: { flexDirection: 'row', alignItems: 'center', gap: 14 },
   checkbox: {
     width: 24, height: 24, borderRadius: 6, borderWidth: 2,

@@ -5,36 +5,86 @@ import {
   Image,
   Pressable,
   Modal,
+  ScrollView,
   StyleSheet,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { router } from 'expo-router';
+import { router, usePathname } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '@context/AuthContext';
 import { colors } from '@theme/colors';
 import { typography } from '@theme/typography';
 
-const MENU_ITEMS = [
-  { label: 'Home', icon: 'home-outline', route: '/(auth)/(tabs)' },
-  { label: 'Birth Chart', icon: 'planet-outline', route: '/(auth)/(tabs)/tools/birth-chart' },
-  { label: 'Dasha Timeline', icon: 'time-outline', route: '/(auth)/(tabs)/tools/dasha' },
-  { label: 'Compatibility', icon: 'heart-outline', route: '/(auth)/(tabs)/tools/compatibility' },
-  { label: 'Horoscope', icon: 'telescope-outline', route: '/(auth)/(tabs)/tools/horoscope' },
-  { label: 'Reports', icon: 'document-text-outline', route: '/(auth)/(tabs)/reports' },
-  { label: 'My Reports', icon: 'download-outline', route: '/(auth)/(tabs)/reports/my-reports' },
-  { label: 'My Data', icon: 'folder-outline', route: '/(auth)/(tabs)/my-data' },
-  { label: 'Profile', icon: 'person-outline', route: '/(auth)/(tabs)/profile' },
+interface MenuItem {
+  label: string;
+  icon: string;
+  route: string;
+}
+
+interface MenuSection {
+  title: string;
+  items: MenuItem[];
+}
+
+const MENU_SECTIONS: MenuSection[] = [
+  {
+    title: '',
+    items: [
+      { label: 'Home', icon: 'home-outline', route: '/' },
+    ],
+  },
+  {
+    title: 'TOOLS',
+    items: [
+      { label: 'Birth Chart', icon: 'planet-outline', route: '/tools/birth-chart' },
+      { label: 'Dasha Timeline', icon: 'time-outline', route: '/tools/dasha' },
+      { label: 'Compatibility', icon: 'heart-outline', route: '/tools/compatibility' },
+      { label: 'Horoscope', icon: 'telescope-outline', route: '/tools/horoscope' },
+    ],
+  },
+  {
+    title: 'MY DATA',
+    items: [
+      { label: 'My Details', icon: 'person-outline', route: '/my-data/my-details' },
+      { label: 'Avkahada Chakra', icon: 'star-outline', route: '/my-data/avkahada-chakra' },
+      { label: 'My Personality', icon: 'happy-outline', route: '/my-data/my-personality' },
+      { label: 'Yogas & Rajyogas', icon: 'trophy-outline', route: '/my-data/yogas' },
+      { label: 'Sade Sati', icon: 'planet-outline', route: '/my-data/sade-sati' },
+      { label: 'Transit', icon: 'navigate-outline', route: '/my-data/transit' },
+      { label: 'Saved Charts', icon: 'albums-outline', route: '/my-data/saved-charts' },
+    ],
+  },
+  {
+    title: 'REPORTS',
+    items: [
+      { label: 'Life Area Reports', icon: 'document-text-outline', route: '/reports' },
+      { label: 'My Reports', icon: 'download-outline', route: '/reports/my-reports' },
+    ],
+  },
+  {
+    title: '',
+    items: [
+      { label: 'Profile', icon: 'person-circle-outline', route: '/profile' },
+    ],
+  },
 ];
 
 export function AppHeader() {
   const [menuOpen, setMenuOpen] = useState(false);
   const { logout } = useAuth();
+  const pathname = usePathname();
 
   const navigateTo = (route: string) => {
     setMenuOpen(false);
-    setTimeout(() => {
+    // Use requestAnimationFrame to let the modal close before navigating
+    requestAnimationFrame(() => {
       router.navigate(route as any);
-    }, 150);
+    });
+  };
+
+  const isActive = (route: string) => {
+    if (route === '/') return pathname === '/' || pathname === '';
+    return pathname.startsWith(route);
   };
 
   return (
@@ -57,48 +107,70 @@ export function AppHeader() {
 
       {/* Slide-in Menu Modal */}
       <Modal visible={menuOpen} transparent animationType="fade">
-        <Pressable style={styles.menuOverlay} onPress={() => setMenuOpen(false)}>
+        <View style={styles.menuOverlay}>
+          {/* Tap outside to close */}
+          <Pressable style={styles.menuBackdrop} onPress={() => setMenuOpen(false)} />
+
           <SafeAreaView style={styles.menuPanel}>
-            <Pressable onPress={(e) => e.stopPropagation()}>
-              {/* Menu header */}
-              <View style={styles.menuHeader}>
-                <Image source={require('@assets/logo.png')} style={styles.menuLogoImg} resizeMode="contain" />
-                <View style={{ flex: 1 }}>
-                  <Text style={styles.menuAppName}>Astro Yagya</Text>
-                </View>
-                <Pressable onPress={() => setMenuOpen(false)} style={styles.closeBtn} hitSlop={10}>
-                  <Ionicons name="close" size={24} color={colors.muted} />
-                </Pressable>
+            {/* Menu header */}
+            <View style={styles.menuHeader}>
+              <Image source={require('@assets/logo.png')} style={styles.menuLogoImg} resizeMode="contain" />
+              <View style={{ flex: 1 }}>
+                <Text style={styles.menuAppName}>Astro Yagya</Text>
               </View>
-
-              {/* Menu Items */}
-              <View style={styles.menuList}>
-                {MENU_ITEMS.map((item) => (
-                  <Pressable
-                    key={item.label}
-                    onPress={() => navigateTo(item.route)}
-                    style={({ pressed }) => [
-                      styles.menuItem,
-                      pressed && styles.menuItemPressed,
-                    ]}
-                  >
-                    <Ionicons name={item.icon as any} size={20} color={colors.accent} />
-                    <Text style={styles.menuLabel}>{item.label}</Text>
-                  </Pressable>
-                ))}
-              </View>
-
-              {/* Logout */}
-              <Pressable
-                onPress={() => { setMenuOpen(false); logout(); }}
-                style={styles.logoutBtn}
-              >
-                <Ionicons name="log-out-outline" size={20} color={colors.error} />
-                <Text style={styles.logoutText}>Sign Out</Text>
+              <Pressable onPress={() => setMenuOpen(false)} style={styles.closeBtn} hitSlop={10}>
+                <Ionicons name="close" size={24} color={colors.muted} />
               </Pressable>
+            </View>
+
+            {/* Menu Items — Scrollable */}
+            <ScrollView showsVerticalScrollIndicator={false} style={styles.menuScroll}>
+              {MENU_SECTIONS.map((section, sIdx) => (
+                <View key={section.title || `s${sIdx}`}>
+                  {section.title ? (
+                    <Text style={styles.sectionTitle}>{section.title}</Text>
+                  ) : sIdx > 0 ? (
+                    <View style={styles.divider} />
+                  ) : null}
+
+                  {section.items.map((item) => {
+                    const active = isActive(item.route);
+                    return (
+                      <Pressable
+                        key={item.label}
+                        onPress={() => navigateTo(item.route)}
+                        style={({ pressed }) => [
+                          styles.menuItem,
+                          active && styles.menuItemActive,
+                          pressed && styles.menuItemPressed,
+                        ]}
+                      >
+                        <Ionicons
+                          name={item.icon as any}
+                          size={20}
+                          color={active ? colors.accent : colors.muted}
+                        />
+                        <Text style={[styles.menuLabel, active && styles.menuLabelActive]}>
+                          {item.label}
+                        </Text>
+                        {active && <View style={styles.activeIndicator} />}
+                      </Pressable>
+                    );
+                  })}
+                </View>
+              ))}
+            </ScrollView>
+
+            {/* Logout */}
+            <Pressable
+              onPress={() => { setMenuOpen(false); logout(); }}
+              style={styles.logoutBtn}
+            >
+              <Ionicons name="log-out-outline" size={20} color={colors.error} />
+              <Text style={styles.logoutText}>Sign Out</Text>
             </Pressable>
           </SafeAreaView>
-        </Pressable>
+        </View>
       </Modal>
     </>
   );
@@ -137,6 +209,14 @@ const styles = StyleSheet.create({
   // Menu overlay
   menuOverlay: {
     flex: 1,
+    flexDirection: 'row',
+  },
+  menuBackdrop: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
     backgroundColor: 'rgba(0,0,0,0.6)',
   },
   menuPanel: {
@@ -151,13 +231,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 12,
     paddingHorizontal: 20,
-    paddingVertical: 20,
+    paddingVertical: 16,
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
   },
   menuLogoImg: {
-    width: 44,
-    height: 44,
+    width: 40,
+    height: 40,
     borderRadius: 8,
   },
   menuAppName: {
@@ -165,29 +245,54 @@ const styles = StyleSheet.create({
     color: colors.text,
     fontWeight: '700',
   },
-  menuUserName: {
-    ...typography.styles.caption,
-    color: colors.muted,
-  },
   closeBtn: {
     marginLeft: 'auto',
   },
-  menuList: {
-    paddingVertical: 12,
+  menuScroll: {
+    flex: 1,
+  },
+  sectionTitle: {
+    ...typography.styles.caption,
+    color: colors.muted,
+    fontWeight: '700',
+    letterSpacing: 1.2,
+    paddingHorizontal: 20,
+    paddingTop: 16,
+    paddingBottom: 6,
+  },
+  divider: {
+    height: 1,
+    backgroundColor: colors.border,
+    marginHorizontal: 20,
+    marginVertical: 8,
   },
   menuItem: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 14,
     paddingHorizontal: 20,
-    paddingVertical: 14,
+    paddingVertical: 12,
   },
-  menuItemPressed: {
+  menuItemActive: {
     backgroundColor: 'rgba(123,91,255,0.08)',
   },
+  menuItemPressed: {
+    backgroundColor: 'rgba(123,91,255,0.15)',
+  },
   menuLabel: {
-    ...typography.styles.body,
+    ...typography.styles.bodySmall,
     color: colors.text,
+    flex: 1,
+  },
+  menuLabelActive: {
+    color: colors.accent,
+    fontWeight: '600',
+  },
+  activeIndicator: {
+    width: 4,
+    height: 4,
+    borderRadius: 2,
+    backgroundColor: colors.accent,
   },
   logoutBtn: {
     flexDirection: 'row',
@@ -195,12 +300,11 @@ const styles = StyleSheet.create({
     gap: 14,
     paddingHorizontal: 20,
     paddingVertical: 14,
-    marginTop: 8,
     borderTopWidth: 1,
     borderTopColor: colors.border,
   },
   logoutText: {
-    ...typography.styles.body,
+    ...typography.styles.bodySmall,
     color: colors.error,
   },
 });

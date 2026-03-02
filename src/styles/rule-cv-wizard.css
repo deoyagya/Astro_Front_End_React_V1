@@ -1,0 +1,850 @@
+/* =============================================================
+   Rule CV Wizard — Phase 41
+   Admin Rule Cross-Validation Wizard styles.
+   Reuses admin.css classes (admin-page, admin-header, admin-toast,
+   pipeline-stage-card, pipeline-input-form, form-group, btn-*,
+   json-editor-*, json-tree-*, admin-modal, etc.)
+   ============================================================= */
+
+/* ------ Wizard Stepper (horizontal numbered steps) ------ */
+
+.cv-wizard-stepper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  margin: 0 0 30px;
+  padding: 18px 24px;
+  background: rgba(26, 31, 46, 0.7);
+  border-radius: 12px;
+  border: 1px solid #2a2f3e;
+  overflow-x: auto;
+}
+
+.cv-wizard-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  cursor: default;
+  opacity: 0.4;
+  transition: opacity 0.2s;
+  min-width: 90px;
+}
+
+.cv-wizard-step.clickable {
+  cursor: pointer;
+}
+
+.cv-wizard-step.clickable:hover {
+  opacity: 0.8;
+}
+
+.cv-wizard-step.active,
+.cv-wizard-step.completed {
+  opacity: 1;
+}
+
+.cv-wizard-step-circle {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  font-weight: 700;
+  background: #2a2f3e;
+  color: #b0b7c3;
+  border: 2px solid #3a3f4e;
+  transition: all 0.25s;
+}
+
+.cv-wizard-step.active .cv-wizard-step-circle {
+  background: #7b5bff;
+  color: #fff;
+  border-color: #9d7bff;
+  box-shadow: 0 0 12px rgba(123, 91, 255, 0.4);
+}
+
+.cv-wizard-step.completed .cv-wizard-step-circle {
+  background: #2ed573;
+  color: #fff;
+  border-color: #2ed573;
+}
+
+.cv-wizard-step-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #8a8f9d;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.cv-wizard-step.active .cv-wizard-step-label {
+  color: #e0e0e0;
+}
+
+.cv-wizard-step.completed .cv-wizard-step-label {
+  color: #2ed573;
+}
+
+.cv-wizard-step-connector {
+  flex: 1;
+  height: 2px;
+  min-width: 24px;
+  max-width: 60px;
+  background: #2a2f3e;
+  margin: 0 2px;
+  margin-bottom: 22px;
+  transition: background 0.25s;
+}
+
+.cv-wizard-step-connector.completed {
+  background: #2ed573;
+}
+
+/* ------ Wizard Navigation ------ */
+
+.cv-wizard-nav {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid #2a2f3e;
+}
+
+/* ------ Rules Layout (2-column) ------ */
+
+.cv-rules-layout {
+  display: flex;
+  gap: 20px;
+  min-height: 400px;
+}
+
+.cv-rules-editor {
+  flex: 7;
+  min-width: 0;
+}
+
+.cv-sidebar {
+  flex: 3;
+  max-height: 550px;
+  overflow-y: auto;
+  background: rgba(26, 31, 46, 0.6);
+  border: 1px solid #2a2f3e;
+  border-radius: 10px;
+  padding: 14px;
+}
+
+.cv-sidebar-section {
+  margin-bottom: 14px;
+}
+
+.cv-sidebar-toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  padding: 6px 0;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #9d7bff;
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+}
+
+.cv-sidebar-toggle:hover {
+  color: #b89aff;
+}
+
+.cv-sidebar-items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 6px;
+  padding-left: 8px;
+}
+
+.cv-sidebar-chip {
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-size: 0.72rem;
+  font-family: 'Courier New', monospace;
+  background: rgba(123, 91, 255, 0.1);
+  color: #b0b7c3;
+  border: 1px solid #2a2f3e;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.cv-sidebar-chip:hover {
+  background: rgba(123, 91, 255, 0.25);
+  color: #e0e0e0;
+  border-color: #7b5bff;
+}
+
+/* ------ Validation Result ------ */
+
+.cv-validation-result {
+  margin-top: 12px;
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+}
+
+.cv-validation-result.valid {
+  background: rgba(46, 213, 115, 0.1);
+  border: 1px solid rgba(46, 213, 115, 0.3);
+  color: #2ed573;
+}
+
+.cv-validation-result.invalid {
+  background: rgba(255, 71, 87, 0.1);
+  border: 1px solid rgba(255, 71, 87, 0.3);
+  color: #ff4757;
+}
+
+.cv-validation-errors {
+  list-style: none;
+  padding: 0;
+  margin: 8px 0 0;
+}
+
+.cv-validation-errors li {
+  padding: 4px 0;
+  font-size: 0.82rem;
+  color: #ff6b81;
+}
+
+.cv-validation-errors li::before {
+  content: '✗ ';
+  color: #ff4757;
+}
+
+/* ------ Prompt Selection ------ */
+
+.cv-prompt-toggle {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.cv-prompt-toggle button {
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: 1px solid #2a2f3e;
+  background: transparent;
+  color: #b0b7c3;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: all 0.2s;
+}
+
+.cv-prompt-toggle button.active {
+  background: rgba(123, 91, 255, 0.2);
+  border-color: #7b5bff;
+  color: #e0e0e0;
+}
+
+.cv-prompt-preview {
+  background: rgba(30, 33, 48, 0.8);
+  border: 1px solid #2a2f3e;
+  border-radius: 8px;
+  padding: 14px;
+  font-family: 'Courier New', monospace;
+  font-size: 0.8rem;
+  color: #b0b7c3;
+  max-height: 300px;
+  overflow-y: auto;
+  white-space: pre-wrap;
+  line-height: 1.5;
+}
+
+/* ------ Summary Cards (Step 3) ------ */
+
+.cv-summary-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.cv-summary-card {
+  background: rgba(26, 31, 46, 0.7);
+  border: 1px solid #2a2f3e;
+  border-radius: 10px;
+  padding: 16px 20px;
+}
+
+.cv-summary-card h3 {
+  margin: 0 0 10px;
+  font-size: 0.9rem;
+  color: #9d7bff;
+  font-weight: 600;
+}
+
+.cv-summary-card p {
+  margin: 4px 0;
+  font-size: 0.85rem;
+  color: #b0b7c3;
+}
+
+.cv-summary-card .label {
+  color: #8a8f9d;
+  margin-right: 8px;
+}
+
+/* ------ Gate Decision Badges ------ */
+
+.cv-gate-decision {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 18px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+}
+
+.cv-gate-decision.pass {
+  background: rgba(46, 213, 115, 0.15);
+  color: #2ed573;
+  border: 1px solid rgba(46, 213, 115, 0.3);
+}
+
+.cv-gate-decision.pass-with-notes {
+  background: rgba(255, 165, 2, 0.15);
+  color: #ffa502;
+  border: 1px solid rgba(255, 165, 2, 0.3);
+}
+
+.cv-gate-decision.fail {
+  background: rgba(255, 71, 87, 0.15);
+  color: #ff4757;
+  border: 1px solid rgba(255, 71, 87, 0.3);
+}
+
+.cv-gate-decision.deadlocked {
+  background: rgba(155, 89, 182, 0.15);
+  color: #9b59b6;
+  border: 1px solid rgba(155, 89, 182, 0.3);
+}
+
+/* ------ Alignment Score Bar ------ */
+
+.cv-alignment-bar {
+  position: relative;
+  height: 28px;
+  background: #1a1f2e;
+  border-radius: 14px;
+  border: 1px solid #2a2f3e;
+  overflow: hidden;
+  min-width: 200px;
+}
+
+.cv-alignment-fill {
+  height: 100%;
+  border-radius: 14px;
+  transition: width 0.5s ease, background 0.5s ease;
+}
+
+.cv-alignment-fill.high {
+  background: linear-gradient(90deg, #2ed573, #44e088);
+}
+
+.cv-alignment-fill.medium {
+  background: linear-gradient(90deg, #ffa502, #ffbe33);
+}
+
+.cv-alignment-fill.low {
+  background: linear-gradient(90deg, #ff4757, #ff6b81);
+}
+
+.cv-alignment-label {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #fff;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+}
+
+/* ------ Result Top Bar ------ */
+
+.cv-result-topbar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin-bottom: 24px;
+  padding: 18px 20px;
+  background: rgba(26, 31, 46, 0.7);
+  border: 1px solid #2a2f3e;
+  border-radius: 12px;
+}
+
+.cv-result-stat {
+  text-align: center;
+}
+
+.cv-result-stat .stat-label {
+  font-size: 0.72rem;
+  color: #8a8f9d;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 4px;
+}
+
+.cv-result-stat .stat-value {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #e0e0e0;
+}
+
+/* ------ Round Cards ------ */
+
+.cv-round-card {
+  background: rgba(26, 31, 46, 0.5);
+  border: 1px solid #2a2f3e;
+  border-radius: 12px;
+  margin-bottom: 16px;
+  overflow: hidden;
+}
+
+.cv-round-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px;
+  cursor: pointer;
+  background: rgba(30, 33, 48, 0.6);
+  border-bottom: 1px solid transparent;
+  transition: background 0.2s;
+}
+
+.cv-round-header:hover {
+  background: rgba(30, 33, 48, 0.9);
+}
+
+.cv-round-header.expanded {
+  border-bottom-color: #2a2f3e;
+}
+
+.cv-round-header h3 {
+  margin: 0;
+  font-size: 0.95rem;
+  color: #e0e0e0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.cv-round-body {
+  padding: 20px;
+}
+
+.cv-round-section {
+  margin-bottom: 20px;
+}
+
+.cv-round-section:last-child {
+  margin-bottom: 0;
+}
+
+.cv-round-section-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #9d7bff;
+}
+
+.cv-round-section-title .model-badge {
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-size: 0.72rem;
+  font-weight: 500;
+  background: rgba(123, 91, 255, 0.12);
+  color: #b0b7c3;
+  font-family: 'Courier New', monospace;
+}
+
+/* ------ Recommendation Cards ------ */
+
+.cv-rec-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.cv-rec-card {
+  padding: 14px 16px;
+  border-radius: 8px;
+  border-left: 4px solid #3a3f4e;
+  background: rgba(30, 33, 48, 0.6);
+}
+
+.cv-rec-card.add-rules {
+  border-left-color: #3498db;
+}
+
+.cv-rec-card.code-changes {
+  border-left-color: #ffa502;
+}
+
+.cv-rec-card.incorrect-values {
+  border-left-color: #ff4757;
+}
+
+.cv-rec-card-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+}
+
+.cv-rec-type-badge {
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-size: 0.72rem;
+  font-weight: 600;
+}
+
+.cv-rec-type-badge.add-rules {
+  background: rgba(52, 152, 219, 0.15);
+  color: #3498db;
+}
+
+.cv-rec-type-badge.code-changes {
+  background: rgba(255, 165, 2, 0.15);
+  color: #ffa502;
+}
+
+.cv-rec-type-badge.incorrect-values {
+  background: rgba(255, 71, 87, 0.15);
+  color: #ff4757;
+}
+
+/* ------ Severity Badges ------ */
+
+.cv-severity {
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.cv-severity.critical {
+  background: rgba(255, 71, 87, 0.15);
+  color: #ff4757;
+}
+
+.cv-severity.high {
+  background: rgba(255, 165, 2, 0.15);
+  color: #ffa502;
+}
+
+.cv-severity.medium {
+  background: rgba(247, 183, 49, 0.15);
+  color: #f7b731;
+}
+
+.cv-severity.low {
+  background: rgba(52, 152, 219, 0.15);
+  color: #3498db;
+}
+
+.cv-severity.info {
+  background: rgba(138, 143, 157, 0.15);
+  color: #8a8f9d;
+}
+
+.cv-rec-field {
+  margin: 4px 0;
+  font-size: 0.82rem;
+  color: #b0b7c3;
+}
+
+.cv-rec-field .field-label {
+  font-weight: 600;
+  color: #8a8f9d;
+  margin-right: 6px;
+}
+
+/* ------ Verdict Badge ------ */
+
+.cv-verdict-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 10px;
+  border-radius: 6px;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.cv-verdict-badge.pass {
+  background: rgba(46, 213, 115, 0.15);
+  color: #2ed573;
+}
+
+.cv-verdict-badge.fail {
+  background: rgba(255, 71, 87, 0.15);
+  color: #ff4757;
+}
+
+.cv-verdict-badge.revise {
+  background: rgba(255, 165, 2, 0.15);
+  color: #ffa502;
+}
+
+/* ------ Cost / Token Grid ------ */
+
+.cv-cost-grid {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid #2a2f3e;
+}
+
+.cv-cost-item {
+  text-align: center;
+  min-width: 80px;
+}
+
+.cv-cost-item .cost-label {
+  font-size: 0.7rem;
+  color: #8a8f9d;
+  text-transform: uppercase;
+}
+
+.cv-cost-item .cost-value {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #e0e0e0;
+  font-family: 'Courier New', monospace;
+}
+
+/* ------ Delta Display ------ */
+
+.cv-delta-grid {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding: 12px 16px;
+  background: rgba(123, 91, 255, 0.05);
+  border-radius: 8px;
+  border: 1px solid rgba(123, 91, 255, 0.15);
+}
+
+.cv-delta-item {
+  font-size: 0.82rem;
+  color: #b0b7c3;
+}
+
+.cv-delta-item .delta-label {
+  color: #8a8f9d;
+  margin-right: 4px;
+}
+
+.cv-delta-item .delta-up {
+  color: #2ed573;
+}
+
+.cv-delta-item .delta-down {
+  color: #ff4757;
+}
+
+/* ------ Missed Rules ------ */
+
+.cv-missed-rules {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.cv-missed-rule-chip {
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-family: 'Courier New', monospace;
+  background: rgba(255, 71, 87, 0.1);
+  color: #ff6b81;
+  border: 1px solid rgba(255, 71, 87, 0.2);
+}
+
+/* ------ Baseline Actions (Step 5) ------ */
+
+.cv-baseline-banner {
+  padding: 18px 24px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 0.92rem;
+  font-weight: 600;
+}
+
+.cv-baseline-banner.pass {
+  background: rgba(46, 213, 115, 0.1);
+  border: 1px solid rgba(46, 213, 115, 0.3);
+  color: #2ed573;
+}
+
+.cv-baseline-banner.pass-with-notes {
+  background: rgba(255, 165, 2, 0.1);
+  border: 1px solid rgba(255, 165, 2, 0.3);
+  color: #ffa502;
+}
+
+.cv-baseline-banner.fail {
+  background: rgba(255, 71, 87, 0.1);
+  border: 1px solid rgba(255, 71, 87, 0.3);
+  color: #ff4757;
+}
+
+.cv-baseline-banner.deadlocked {
+  background: rgba(155, 89, 182, 0.1);
+  border: 1px solid rgba(155, 89, 182, 0.3);
+  color: #9b59b6;
+}
+
+.cv-baseline-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+  flex-wrap: wrap;
+}
+
+/* ------ Misc ------ */
+
+.cv-questions-list {
+  list-style: none;
+  padding: 0;
+  margin: 8px 0 0;
+}
+
+.cv-questions-list li {
+  padding: 4px 0;
+  font-size: 0.82rem;
+  color: #b0b7c3;
+}
+
+.cv-questions-list li::before {
+  content: '❓ ';
+}
+
+.cv-summary-text {
+  padding: 16px 20px;
+  background: rgba(26, 31, 46, 0.7);
+  border-left: 3px solid #7b5bff;
+  border-radius: 0 8px 8px 0;
+  font-size: 0.88rem;
+  color: #b0b7c3;
+  line-height: 1.6;
+  white-space: pre-wrap;
+}
+
+.cv-separator {
+  border: none;
+  border-top: 1px solid #2a2f3e;
+  margin: 16px 0;
+}
+
+/* ------ Query Type Button Group ------ */
+
+.cv-query-type-group {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.cv-query-type-btn {
+  padding: 6px 14px;
+  border-radius: 8px;
+  border: 1px solid #2a2f3e;
+  background: transparent;
+  color: #b0b7c3;
+  cursor: pointer;
+  font-size: 0.82rem;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.cv-query-type-btn:hover {
+  border-color: #7b5bff;
+  color: #e0e0e0;
+}
+
+.cv-query-type-btn.active {
+  background: rgba(123, 91, 255, 0.2);
+  border-color: #7b5bff;
+  color: #e0e0e0;
+}
+
+/* ------ Loading spinner for CV run ------ */
+
+.cv-running-indicator {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  padding: 40px 20px;
+  color: #b0b7c3;
+}
+
+.cv-running-indicator i {
+  font-size: 2rem;
+  color: #7b5bff;
+}
+
+.cv-running-indicator p {
+  font-size: 0.9rem;
+  color: #8a8f9d;
+}
+
+/* ------ Responsive ------ */
+
+@media (max-width: 768px) {
+  .cv-rules-layout {
+    flex-direction: column;
+  }
+
+  .cv-sidebar {
+    max-height: 250px;
+  }
+
+  .cv-result-topbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .cv-wizard-stepper {
+    padding: 12px 8px;
+  }
+
+  .cv-wizard-step {
+    min-width: 60px;
+  }
+
+  .cv-wizard-step-label {
+    font-size: 0.65rem;
+  }
+}

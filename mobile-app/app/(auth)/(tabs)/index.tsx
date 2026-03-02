@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, ScrollView, StyleSheet, Dimensions } from 'react-native';
+import { View, Text, ScrollView, StyleSheet, useWindowDimensions } from 'react-native';
 import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -8,8 +8,6 @@ import { AppHeader } from '@components/layout/AppHeader';
 import { GlassCard } from '@components/ui/GlassCard';
 import { colors } from '@theme/colors';
 import { typography } from '@theme/typography';
-
-const { width } = Dimensions.get('window');
 
 const QUICK_ACTIONS = [
   { label: 'Birth Chart', icon: 'planet', color: '#7b5bff', route: '/tools/birth-chart' },
@@ -32,6 +30,8 @@ const AFFIRMATIONS = [
 ];
 
 export default function HomeScreen() {
+  const { width } = useWindowDimensions();
+  const cardWidth = (width - 16 * 2 - 10) / 2;
   const todayAffirmation = AFFIRMATIONS[new Date().getDate() % AFFIRMATIONS.length];
 
   const navigateTo = (route: string) => {
@@ -48,7 +48,7 @@ export default function HomeScreen() {
         {/* Daily Alignment */}
         <GlassCard>
           <View style={styles.alignmentHeader}>
-            <Ionicons name="sparkles" size={20} color={colors.accent2} />
+            <Ionicons name="sparkles" size={18} color={colors.accent2} />
             <Text style={styles.alignmentTitle}>Daily Alignment</Text>
           </View>
           <Text style={styles.affirmation}>{todayAffirmation}</Text>
@@ -61,10 +61,10 @@ export default function HomeScreen() {
             <GlassCard
               key={action.label}
               onPress={() => navigateTo(action.route)}
-              style={styles.quickCard}
+              style={[styles.quickCard, { width: cardWidth }]}
             >
               <View style={[styles.quickIcon, { backgroundColor: `${action.color}20` }]}>
-                <Ionicons name={action.icon as any} size={48} color={action.color} />
+                <Ionicons name={action.icon as any} size={22} color={action.color} />
               </View>
               <Text style={styles.quickLabel}>{action.label}</Text>
             </GlassCard>
@@ -80,13 +80,13 @@ export default function HomeScreen() {
             style={styles.featuredCard}
           >
             <View style={styles.featuredIcon}>
-              <Ionicons name={item.icon as any} size={22} color={colors.accent} />
+              <Ionicons name={item.icon as any} size={20} color={colors.accent} />
             </View>
             <View style={styles.featuredText}>
               <Text style={styles.featuredLabel}>{item.label}</Text>
               <Text style={styles.featuredDesc}>{item.desc}</Text>
             </View>
-            <Ionicons name="chevron-forward" size={18} color={colors.border} />
+            <Ionicons name="chevron-forward" size={16} color={colors.border} />
           </GlassCard>
         ))}
 
@@ -107,41 +107,46 @@ export default function HomeScreen() {
 }
 
 const styles = StyleSheet.create({
-  scroll: { paddingBottom: 100, gap: 16 },
-  alignmentHeader: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 10 },
+  scroll: { paddingBottom: 100, gap: 12 },
+  alignmentHeader: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 8 },
   alignmentTitle: { ...typography.styles.label, color: colors.accent2 },
-  affirmation: { ...typography.styles.body, color: colors.text, fontStyle: 'italic', lineHeight: 26 },
+  affirmation: { ...typography.styles.bodySmall, color: colors.text, fontStyle: 'italic', lineHeight: 22 },
   sectionTitle: { ...typography.styles.h3, color: colors.text, marginTop: 4 },
-  quickGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 12 },
+  quickGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },
   quickCard: {
-    width: (width - 44) / 2,
     alignItems: 'center',
-    gap: 14,
-    paddingVertical: 24,
+    gap: 8,
+    paddingVertical: 18,
   },
   quickIcon: {
-    width: 96,
-    height: 96,
-    borderRadius: 28,
+    width: 40,
+    height: 40,
+    borderRadius: 12,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  quickLabel: { ...typography.styles.label, color: colors.text },
+  quickLabel: {
+    ...typography.styles.caption,
+    color: colors.text,
+    textAlign: 'center',
+    fontSize: 11,
+    fontWeight: '500',
+  },
   featuredCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 14,
+    gap: 12,
   },
   featuredIcon: {
-    width: 44,
-    height: 44,
-    borderRadius: 12,
+    width: 38,
+    height: 38,
+    borderRadius: 10,
     backgroundColor: 'rgba(123,91,255,0.12)',
     alignItems: 'center',
     justifyContent: 'center',
   },
   featuredText: { flex: 1 },
-  featuredLabel: { ...typography.styles.label, color: colors.text, fontWeight: '600' },
+  featuredLabel: { ...typography.styles.label, color: colors.text, fontWeight: '600', fontSize: 13 },
   featuredDesc: { ...typography.styles.caption, color: colors.muted },
   glowContainer: { position: 'absolute', top: 0, left: 0, right: 0, height: 300, zIndex: -1 },
   glow1: { position: 'absolute', top: -60, left: -40, width: 200, height: 200, borderRadius: 100 },

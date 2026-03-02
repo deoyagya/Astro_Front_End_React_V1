@@ -71,12 +71,12 @@ const styles = StyleSheet.create({
     gap: 16,
   },
   title: {
-    ...typography.styles.h1,
+    ...typography.styles.h3,
     color: colors.text,
     paddingTop: 4,
   },
   subtitle: {
-    ...typography.styles.bodySmall,
+    ...typography.styles.caption,
     color: colors.muted,
   },
   grid: {

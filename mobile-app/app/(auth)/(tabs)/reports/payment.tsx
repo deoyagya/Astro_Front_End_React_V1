@@ -205,8 +205,8 @@ export default function PaymentScreen() {
 
 const styles = StyleSheet.create({
   scroll: { paddingBottom: 100, gap: 16 },
-  title: { ...typography.styles.h2, color: colors.text, paddingTop: 12 },
-  subtitle: { ...typography.styles.bodySmall, color: colors.muted },
+  title: { ...typography.styles.h3, color: colors.text, paddingTop: 8 },
+  subtitle: { ...typography.styles.caption, color: colors.muted },
   recapCard: { gap: 10 },
   recapRow: { flexDirection: 'row', alignItems: 'center', gap: 10 },
   recapName: { ...typography.styles.body, color: colors.text, flex: 1 },

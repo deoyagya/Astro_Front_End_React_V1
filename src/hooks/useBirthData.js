@@ -30,7 +30,7 @@ export function to24Hour(hour, minute, ampm) {
 
 /** Convert 24h "HH:MM" to { hour, minute, ampm } for 12h form selects */
 export function from24Hour(tob) {
-  if (!tob || !tob.includes(':')) return { hour: '06', minute: '00', ampm: 'AM' };
+  if (!tob || !tob.includes(':')) return { hour: '6', minute: '00', ampm: 'AM' };
   let [h, m] = tob.split(':').map(Number);
   const ampm = h >= 12 ? 'PM' : 'AM';
   if (h === 0) h = 12;
@@ -54,9 +54,10 @@ export function useBirthData(options = {}) {
   // Form state
   const [fullName, setFullName] = useState('');
   const [birthDate, setBirthDate] = useState('');
-  const [hour, setHour] = useState('06');
+  const [hour, setHour] = useState('6');
   const [minute, setMinute] = useState('00');
   const [ampm, setAmpm] = useState('AM');
+  const [gender, setGender] = useState('female');
   const [birthPlace, setBirthPlace] = useState(null);
   const [loaded, setLoaded] = useState(false);
 
@@ -72,6 +73,7 @@ export function useBirthData(options = {}) {
       setMinute(m);
       setAmpm(ap);
     }
+    if (bd.gender) setGender(bd.gender);
     if (bd.place_of_birth) {
       setBirthPlace({
         name: bd.place_of_birth,
@@ -134,11 +136,12 @@ export function useBirthData(options = {}) {
     name: fullName.trim(),
     dob: birthDate,
     tob: to24Hour(hour, minute, ampm),
+    gender,
     place_of_birth: birthPlace?.name || '',
-    ...(birthPlace?.lat != null && birthPlace?.lon != null
+    ...(birthPlace?.lat != null && birthPlace?.lon != null && birthPlace?.timezone
       ? { lat: birthPlace.lat, lon: birthPlace.lon, tz_id: birthPlace.timezone }
       : {}),
-  }), [fullName, birthDate, hour, minute, ampm, birthPlace]);
+  }), [fullName, birthDate, hour, minute, ampm, gender, birthPlace]);
 
   // Validate form fields
   const validate = useCallback(() => {
@@ -182,11 +185,13 @@ export function useBirthData(options = {}) {
     hour, setHour,
     minute, setMinute,
     ampm, setAmpm,
+    gender, setGender,
     birthPlace, setBirthPlace,
     loaded,
     // Actions
     saveBirthData,
     buildPayload,
     validate,
+    applyBirthData,
   };
 }

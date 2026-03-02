@@ -36,6 +36,22 @@ export const REPORTS = {
   DOWNLOAD: (id: string) => `/v1/reports/${id}/download`,
 } as const;
 
+// Yoga
+export const YOGA = {
+  SCAN: '/v1/yogas/scan',
+} as const;
+
+// Transit
+export const TRANSIT = {
+  TABLE: '/v1/transit/table',
+  HITS: '/v1/transit/hits',
+} as const;
+
+// Personality
+export const PERSONALITY = {
+  PROFILE: '/v1/personality/profile',
+} as const;
+
 // Payment
 export const PAYMENT = {
   CREATE_ORDER: '/v1/payment/razorpay/create-order',

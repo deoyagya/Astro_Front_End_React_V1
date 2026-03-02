@@ -1,0 +1,1237 @@
+/* ═══════════════════════════════════════════════════════════════
+   Muhurta Finder — Electional Astrology Page Styles
+   Phase 35 — Dark theme consistent with existing pages
+   Rev2: birth data selector, audit trail, report email
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Event Type Grid */
+.muhurta-event-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.muhurta-event-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 14px 8px;
+  background: rgba(30, 33, 48, 0.6);
+  border: 1.5px solid rgba(123, 91, 255, 0.15);
+  border-radius: 10px;
+  color: #e0e0e0;
+  cursor: pointer;
+  transition: all 0.25s;
+  font-size: 0.82rem;
+  font-weight: 500;
+}
+
+.muhurta-event-btn i {
+  font-size: 1.3rem;
+}
+
+.muhurta-event-btn:hover {
+  border-color: rgba(123, 91, 255, 0.4);
+  background: rgba(123, 91, 255, 0.08);
+  transform: translateY(-2px);
+}
+
+.muhurta-event-btn.active {
+  border-width: 2px;
+  font-weight: 600;
+}
+
+/* Placeholder */
+.muhurta-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+  color: #b0b7c3;
+  text-align: center;
+  padding: 40px 20px;
+}
+
+/* Results */
+.muhurta-results-header {
+  margin-bottom: 16px;
+}
+
+.muhurta-results-header h3 {
+  margin: 0 0 4px;
+  color: #e0e0e0;
+}
+
+.muhurta-meta {
+  font-size: 0.8rem;
+  color: #888;
+}
+
+.muhurta-no-results {
+  text-align: center;
+  padding: 30px;
+  color: #ffa502;
+}
+
+.muhurta-no-results i {
+  font-size: 2rem;
+  margin-bottom: 10px;
+  display: block;
+}
+
+/* Window Cards */
+.muhurta-window {
+  background: rgba(30, 33, 48, 0.5);
+  border: 1px solid rgba(123, 91, 255, 0.12);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 12px;
+  transition: border-color 0.25s;
+}
+
+.muhurta-window:hover {
+  border-color: rgba(123, 91, 255, 0.3);
+}
+
+.muhurta-window.best {
+  border-color: rgba(46, 213, 115, 0.35);
+  background: rgba(46, 213, 115, 0.04);
+}
+
+.muhurta-window.best .time-range {
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.muhurta-window-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 10px;
+}
+
+.muhurta-window-date {
+  display: flex;
+  flex-direction: column;
+}
+
+.date-label {
+  font-weight: 600;
+  color: #e0e0e0;
+  font-size: 0.95rem;
+}
+
+.time-range {
+  color: #e0e0e0;
+  font-size: 0.85rem;
+  font-weight: 500;
+  margin-top: 2px;
+}
+
+.muhurta-window-score {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.muhurta-score-circle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  font-weight: 700;
+  font-size: 0.82rem;
+  color: #000000;
+  letter-spacing: -0.02em;
+  flex-shrink: 0;
+}
+
+/* Override: prevent tools.css conic-gradient donut from leaking in */
+.muhurta-score-circle::before {
+  display: none;
+}
+
+.quality-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.best-tag {
+  background: linear-gradient(135deg, #2ed573, #7bed9f);
+  color: #1e2130;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 10px;
+  text-transform: uppercase;
+}
+
+/* Panchang Chips */
+.muhurta-window-panchang {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.panchang-chip {
+  font-size: 0.75rem;
+  background: rgba(123, 91, 255, 0.1);
+  border: 1px solid rgba(123, 91, 255, 0.2);
+  padding: 3px 8px;
+  border-radius: 6px;
+  color: #b0b7c3;
+  text-transform: capitalize;
+}
+
+/* Special Yogas */
+.muhurta-special-yogas,
+.muhurta-audit-yogas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.yoga-badge {
+  font-size: 0.75rem;
+  background: rgba(255, 165, 2, 0.12);
+  border: 1px solid rgba(255, 165, 2, 0.3);
+  color: #ffa502;
+  padding: 3px 8px;
+  border-radius: 6px;
+}
+
+.yoga-badge i {
+  margin-right: 4px;
+}
+
+/* Doshas */
+.muhurta-doshas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.dosha-badge {
+  font-size: 0.75rem;
+  background: rgba(255, 71, 87, 0.1);
+  border: 1px solid rgba(255, 71, 87, 0.3);
+  color: #ff6348;
+  padding: 3px 8px;
+  border-radius: 6px;
+}
+
+.dosha-badge i {
+  margin-right: 4px;
+}
+
+/* Validate Button */
+.btn-validate {
+  background: transparent;
+  border: 1px solid rgba(123, 91, 255, 0.3);
+  color: #9d7bff;
+  padding: 6px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  transition: all 0.2s;
+  margin-top: 4px;
+}
+
+.btn-validate:hover {
+  background: rgba(123, 91, 255, 0.1);
+  border-color: rgba(123, 91, 255, 0.5);
+}
+
+.btn-validate:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   Birth Data Section
+   ═══════════════════════════════════════════════════════════════ */
+
+.muhurta-birth-section {
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(123, 91, 255, 0.12);
+}
+
+.muhurta-birth-section h3 {
+  margin: 0 0 4px;
+  font-size: 0.95rem;
+  color: #e0e0e0;
+}
+
+.muhurta-birth-section h3 i {
+  margin-right: 6px;
+  color: #9d7bff;
+}
+
+.birth-section-desc {
+  font-size: 0.8rem;
+  color: #888;
+  margin: 0 0 12px;
+}
+
+.birth-mode-selector {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.birth-mode-btn {
+  flex: 1;
+  padding: 8px 12px;
+  background: rgba(30, 33, 48, 0.5);
+  border: 1px solid rgba(123, 91, 255, 0.15);
+  border-radius: 8px;
+  color: #b0b7c3;
+  cursor: pointer;
+  font-size: 0.8rem;
+  transition: all 0.2s;
+}
+
+.birth-mode-btn i {
+  margin-right: 4px;
+}
+
+.birth-mode-btn:hover {
+  border-color: rgba(123, 91, 255, 0.35);
+}
+
+.birth-mode-btn.active {
+  border-color: #9d7bff;
+  color: #e0e0e0;
+  background: rgba(123, 91, 255, 0.1);
+}
+
+.charts-loading {
+  font-size: 0.8rem;
+  color: #888;
+  padding: 8px 0;
+}
+
+/* Saved Chart Selector */
+.saved-chart-selector {
+  margin-top: 8px;
+}
+
+.saved-chart-selector label {
+  display: block;
+  font-size: 0.8rem;
+  color: #b0b7c3;
+  margin-bottom: 4px;
+}
+
+.saved-chart-selector select {
+  width: 100%;
+  padding: 8px 10px;
+  background: rgba(30, 33, 48, 0.8);
+  border: 1px solid rgba(123, 91, 255, 0.2);
+  border-radius: 8px;
+  color: #e0e0e0;
+  font-size: 0.85rem;
+}
+
+.selected-chart-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+  padding: 10px 12px;
+  background: rgba(46, 213, 115, 0.06);
+  border: 1px solid rgba(46, 213, 115, 0.2);
+  border-radius: 8px;
+}
+
+.selected-chart-info i {
+  font-size: 1.2rem;
+  color: #2ed573;
+}
+
+.selected-chart-info div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.selected-chart-info strong {
+  color: #e0e0e0;
+  font-size: 0.9rem;
+}
+
+.selected-chart-info span {
+  color: #888;
+  font-size: 0.78rem;
+}
+
+/* Manual Birth Form */
+.manual-birth-form {
+  margin-top: 8px;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   Person Attribution Badge
+   ═══════════════════════════════════════════════════════════════ */
+
+.muhurta-person-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  background: rgba(157, 123, 255, 0.06);
+  border: 1px solid rgba(157, 123, 255, 0.2);
+  border-radius: 8px;
+  font-size: 0.85rem;
+  color: #b0b7c3;
+  margin-bottom: 14px;
+}
+
+.muhurta-person-badge i {
+  color: #9d7bff;
+}
+
+.muhurta-person-badge strong {
+  color: #e0e0e0;
+}
+
+.person-detail {
+  font-size: 0.78rem;
+  color: #888;
+  margin-left: 4px;
+}
+
+/* Personal Badges (tara/chandra on windows) */
+.muhurta-personal-badge {
+  margin-bottom: 4px;
+}
+
+.tara-badge,
+.chandra-badge {
+  display: inline-block;
+  font-size: 0.75rem;
+  padding: 3px 8px;
+  border-radius: 6px;
+}
+
+.tara-badge.favorable,
+.chandra-badge.favorable {
+  background: rgba(46, 213, 115, 0.1);
+  border: 1px solid rgba(46, 213, 115, 0.3);
+  color: #2ed573;
+}
+
+.tara-badge.unfavorable,
+.chandra-badge.unfavorable {
+  background: rgba(255, 71, 87, 0.1);
+  border: 1px solid rgba(255, 71, 87, 0.3);
+  color: #ff6348;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   Email Report Section
+   ═══════════════════════════════════════════════════════════════ */
+
+.muhurta-report-section {
+  margin-top: 24px;
+  padding: 16px;
+  background: rgba(30, 33, 48, 0.5);
+  border: 1px solid rgba(123, 91, 255, 0.15);
+  border-radius: 12px;
+}
+
+.muhurta-report-section h4 {
+  margin: 0 0 4px;
+  color: #e0e0e0;
+  font-size: 0.95rem;
+}
+
+.muhurta-report-section h4 i {
+  margin-right: 6px;
+  color: #ff6348;
+}
+
+.report-desc {
+  font-size: 0.8rem;
+  color: #888;
+  margin: 0 0 10px;
+}
+
+.report-form {
+  display: flex;
+  gap: 8px;
+}
+
+.report-form .form-input {
+  flex: 1;
+}
+
+.btn-email-report {
+  padding: 8px 16px;
+  background: linear-gradient(135deg, #7b5bff, #9d7bff);
+  border: none;
+  border-radius: 8px;
+  color: #fff;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s;
+  white-space: nowrap;
+}
+
+.btn-email-report:hover {
+  opacity: 0.9;
+}
+
+.btn-email-report:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.report-status {
+  font-size: 0.8rem;
+  margin-top: 8px;
+  padding: 6px 10px;
+  border-radius: 6px;
+}
+
+.report-status.success {
+  background: rgba(46, 213, 115, 0.1);
+  color: #2ed573;
+}
+
+.report-status.error {
+  background: rgba(255, 71, 87, 0.1);
+  color: #ff4757;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   Audit / Validate Detail View
+   ═══════════════════════════════════════════════════════════════ */
+
+.muhurta-audit {
+  margin-top: 20px;
+  background: rgba(30, 33, 48, 0.6);
+  border: 1px solid rgba(123, 91, 255, 0.2);
+  border-radius: 12px;
+  padding: 20px;
+}
+
+.muhurta-audit-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.muhurta-audit-header h4 {
+  margin: 0;
+  color: #e0e0e0;
+}
+
+.btn-close-audit {
+  background: transparent;
+  border: none;
+  color: #888;
+  cursor: pointer;
+  font-size: 1.1rem;
+  padding: 4px;
+}
+
+.btn-close-audit:hover {
+  color: #e0e0e0;
+}
+
+/* Verdict */
+.muhurta-verdict {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  border-left: 4px solid;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.2);
+  margin-bottom: 10px;
+}
+
+.verdict-label {
+  font-weight: 700;
+  font-size: 1rem;
+  color: #e0e0e0;
+  letter-spacing: 0.05em;
+}
+
+.verdict-score {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #9d7bff;
+}
+
+.verdict-reasoning {
+  font-size: 0.85rem;
+  color: #b0b7c3;
+  margin-bottom: 16px;
+  line-height: 1.5;
+}
+
+/* Element Scores */
+.muhurta-elements {
+  margin-bottom: 16px;
+}
+
+.muhurta-elements h5,
+.muhurta-audit-yogas h5,
+.muhurta-daily-periods h5,
+.muhurta-personal h5 {
+  color: #9d7bff;
+  font-size: 0.85rem;
+  margin: 0 0 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.element-row {
+  display: flex;
+  align-items: center;
+  padding: 6px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.element-name {
+  width: 90px;
+  font-size: 0.8rem;
+  color: #888;
+  text-transform: capitalize;
+}
+
+.element-value {
+  flex: 1;
+  font-size: 0.85rem;
+  color: #e0e0e0;
+}
+
+.element-score {
+  font-weight: 700;
+  font-size: 0.85rem;
+  width: 40px;
+  text-align: right;
+}
+
+.element-score.positive { color: #2ed573; }
+.element-score.negative { color: #ff4757; }
+
+/* Daily Periods Grid */
+.periods-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.period-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 10px;
+  background: rgba(0, 0, 0, 0.15);
+  border-radius: 6px;
+}
+
+.period-label {
+  font-size: 0.8rem;
+  color: #b0b7c3;
+}
+
+.period-time {
+  font-size: 0.8rem;
+  color: #e0e0e0;
+  font-weight: 500;
+}
+
+/* Personal (Tara Bala / Chandrabala) */
+.muhurta-personal {
+  margin-top: 12px;
+}
+
+.muhurta-personal p {
+  font-size: 0.85rem;
+  color: #b0b7c3;
+  margin: 0;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   Audit Trail Accordion
+   ═══════════════════════════════════════════════════════════════ */
+
+.muhurta-audit-trail {
+  margin-top: 20px;
+  border-top: 1px solid rgba(123, 91, 255, 0.12);
+  padding-top: 12px;
+}
+
+.btn-toggle-audit {
+  width: 100%;
+  padding: 10px 16px;
+  background: rgba(123, 91, 255, 0.06);
+  border: 1px solid rgba(123, 91, 255, 0.2);
+  border-radius: 8px;
+  color: #9d7bff;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-align: left;
+  transition: all 0.2s;
+}
+
+.btn-toggle-audit i {
+  margin-right: 8px;
+}
+
+.btn-toggle-audit:hover {
+  background: rgba(123, 91, 255, 0.1);
+  border-color: rgba(123, 91, 255, 0.35);
+}
+
+.audit-trail-steps {
+  margin-top: 12px;
+}
+
+.audit-step-card {
+  margin-bottom: 12px;
+  padding: 12px 14px;
+  background: rgba(0, 0, 0, 0.15);
+  border-left: 3px solid rgba(157, 123, 255, 0.5);
+  border-radius: 0 8px 8px 0;
+}
+
+.audit-step-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.audit-step-num {
+  background: rgba(123, 91, 255, 0.15);
+  color: #9d7bff;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.audit-step-header strong {
+  color: #e0e0e0;
+  font-size: 0.88rem;
+}
+
+.audit-step-desc {
+  font-size: 0.82rem;
+  color: #b0b7c3;
+  margin: 0 0 8px;
+  line-height: 1.45;
+}
+
+.audit-step-rules,
+.audit-step-sources {
+  font-size: 0.78rem;
+  margin-bottom: 6px;
+}
+
+.audit-step-rules strong {
+  color: #ffa502;
+}
+
+.audit-step-sources strong {
+  color: #70a1ff;
+}
+
+.audit-step-rules ul,
+.audit-step-sources ul {
+  margin: 4px 0 0 16px;
+  padding: 0;
+  list-style: disc;
+}
+
+.audit-step-rules li {
+  color: #b0b7c3;
+  margin-bottom: 2px;
+}
+
+.audit-step-sources li {
+  color: #888;
+  font-style: italic;
+  margin-bottom: 2px;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   Date Range Sliders
+   ═══════════════════════════════════════════════════════════════ */
+
+.muhurta-slider-section {
+  margin-top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.muhurta-slider-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.muhurta-slider-group label {
+  font-size: 0.82rem;
+  color: #b0b7c3;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.muhurta-slider-group label strong {
+  color: #e0e0e0;
+}
+
+.slider-date-preview {
+  margin-left: auto;
+  font-size: 0.78rem;
+  color: #9d7bff;
+  font-weight: 500;
+}
+
+.muhurta-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 6px;
+  background: rgba(123, 91, 255, 0.15);
+  border-radius: 3px;
+  outline: none;
+  cursor: pointer;
+}
+
+.muhurta-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #7b5bff, #9d7bff);
+  border: 2px solid #1e2130;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(123, 91, 255, 0.4);
+  transition: transform 0.15s;
+}
+
+.muhurta-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.15);
+}
+
+.muhurta-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #7b5bff, #9d7bff);
+  border: 2px solid #1e2130;
+  cursor: pointer;
+}
+
+.slider-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.7rem;
+  color: #666;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   Audit Step Result (JSON)
+   ═══════════════════════════════════════════════════════════════ */
+
+.audit-step-result {
+  margin-top: 6px;
+  font-size: 0.78rem;
+}
+
+.audit-step-result strong {
+  color: #2ed573;
+}
+
+.audit-step-result pre {
+  margin: 4px 0 0;
+  padding: 8px 10px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 6px;
+  font-size: 0.72rem;
+  color: #b0b7c3;
+  overflow-x: auto;
+  max-height: 160px;
+  line-height: 1.4;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   Pagination
+   ═══════════════════════════════════════════════════════════════ */
+
+.muhurta-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin: 16px 0;
+}
+
+.btn-page {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 18px;
+  background: rgba(123, 91, 255, 0.08);
+  border: 1px solid rgba(123, 91, 255, 0.25);
+  border-radius: 8px;
+  color: #9d7bff;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-page:hover:not(:disabled) {
+  background: rgba(123, 91, 255, 0.15);
+  border-color: rgba(123, 91, 255, 0.5);
+}
+
+.btn-page:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.page-info {
+  font-size: 0.85rem;
+  color: #b0b7c3;
+  font-weight: 500;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   Favourable Time Ranges (per window card)
+   ═══════════════════════════════════════════════════════════════ */
+
+.muhurta-favourable {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.favourable-label {
+  font-size: 0.78rem;
+  color: #2ed573;
+  font-weight: 700;
+}
+
+.favourable-label i {
+  margin-right: 4px;
+}
+
+.favourable-chip {
+  font-size: 0.78rem;
+  padding: 3px 10px;
+  background: rgba(46, 213, 115, 0.12);
+  border: 1px solid rgba(46, 213, 115, 0.35);
+  border-radius: 6px;
+  color: #2ed573;
+  font-weight: 600;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   Inauspicious Periods (per window card)
+   ═══════════════════════════════════════════════════════════════ */
+
+.muhurta-inauspicious {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.inauspicious-label {
+  font-size: 0.75rem;
+  color: #ff6348;
+  font-weight: 600;
+}
+
+.inauspicious-label i {
+  margin-right: 4px;
+}
+
+.inauspicious-chip {
+  font-size: 0.72rem;
+  padding: 2px 8px;
+  background: rgba(255, 71, 87, 0.08);
+  border: 1px solid rgba(255, 71, 87, 0.2);
+  border-radius: 6px;
+  color: #ff6348;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   Event Price Badge (Phase 36F)
+   ═══════════════════════════════════════════════════════════════ */
+
+.event-price-badge {
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, rgba(123, 91, 255, 0.25), rgba(157, 123, 255, 0.15));
+  color: #c4b5ff;
+  margin-top: 2px;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   LLM Interpretation Card (Phase 36G)
+   ═══════════════════════════════════════════════════════════════ */
+
+.muhurta-interpretation {
+  margin-bottom: 16px;
+  border: 1px solid rgba(123, 91, 255, 0.2);
+  border-radius: 12px;
+  overflow: hidden;
+  background: rgba(30, 33, 48, 0.4);
+}
+
+.interpretation-toggle {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background: rgba(123, 91, 255, 0.06);
+  border: none;
+  color: #e0e0e0;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: background 0.2s;
+}
+
+.interpretation-toggle:hover {
+  background: rgba(123, 91, 255, 0.12);
+}
+
+.interpretation-header-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.interpretation-header-left i {
+  color: #9d7bff;
+  font-size: 1rem;
+}
+
+.interpretation-body {
+  padding: 14px 16px;
+}
+
+.interpretation-body p {
+  font-size: 0.88rem;
+  line-height: 1.65;
+  color: #c4c9d6;
+  margin: 0 0 12px;
+}
+
+.interpretation-body p:last-child {
+  margin-bottom: 0;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   Paywall Banner (Phase 36F)
+   ═══════════════════════════════════════════════════════════════ */
+
+.muhurta-paywall-banner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 12px;
+  padding: 24px 20px;
+  margin-bottom: 16px;
+  background: linear-gradient(135deg, rgba(123, 91, 255, 0.08), rgba(157, 123, 255, 0.04));
+  border: 1.5px dashed rgba(123, 91, 255, 0.35);
+  border-radius: 14px;
+}
+
+.paywall-icon {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: rgba(123, 91, 255, 0.12);
+  color: #9d7bff;
+  font-size: 1.3rem;
+}
+
+.paywall-text h4 {
+  margin: 0 0 4px;
+  color: #e0e0e0;
+  font-size: 1rem;
+}
+
+.paywall-text p {
+  margin: 0;
+  font-size: 0.82rem;
+  color: #888;
+  max-width: 380px;
+}
+
+.paywall-price {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 4px 0;
+}
+
+.price-original {
+  text-decoration: line-through;
+  color: #666;
+  font-size: 0.95rem;
+}
+
+.price-effective {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #e0e0e0;
+}
+
+.discount-badge {
+  background: linear-gradient(135deg, #2ed573, #7bed9f);
+  color: #000;
+  font-size: 0.72rem;
+  font-weight: 800;
+  padding: 3px 10px;
+  border-radius: 10px;
+  text-transform: uppercase;
+}
+
+.btn-unlock {
+  padding: 12px 32px;
+  background: linear-gradient(135deg, #7b5bff, #9d7bff);
+  border: none;
+  border-radius: 10px;
+  color: #fff;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.25s;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 4px 16px rgba(123, 91, 255, 0.3);
+}
+
+.btn-unlock:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 24px rgba(123, 91, 255, 0.45);
+}
+
+.btn-unlock:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Blur overlay for gated content */
+.muhurta-blurred {
+  filter: blur(8px);
+  pointer-events: none;
+  user-select: none;
+  opacity: 0.6;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   Email Section — Locked State (Phase 36F)
+   ═══════════════════════════════════════════════════════════════ */
+
+.muhurta-report-section.report-locked {
+  opacity: 0.7;
+}
+
+.report-locked-msg {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  background: rgba(255, 165, 2, 0.06);
+  border: 1px solid rgba(255, 165, 2, 0.2);
+  border-radius: 8px;
+  margin-top: 8px;
+}
+
+.report-locked-msg i {
+  color: #ffa502;
+  font-size: 1rem;
+}
+
+.report-locked-msg span {
+  font-size: 0.82rem;
+  color: #b0b7c3;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   Responsive
+   ═══════════════════════════════════════════════════════════════ */
+
+@media (max-width: 1024px) {
+  .muhurta-event-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .muhurta-event-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .muhurta-event-btn {
+    padding: 10px 6px;
+    font-size: 0.75rem;
+  }
+
+  .muhurta-window-header {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .periods-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .birth-mode-selector {
+    flex-direction: column;
+  }
+
+  .report-form {
+    flex-direction: column;
+  }
+
+  .muhurta-paywall-banner {
+    padding: 20px 14px;
+  }
+
+  .paywall-price {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+}

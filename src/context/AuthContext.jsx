@@ -3,8 +3,10 @@ import { api } from '../api/client';
 import SessionTimeoutModal from '../components/SessionTimeoutModal';
 
 /* ===== Session timeout constants ===== */
-const WARNING_BEFORE_EXPIRY_SEC = 300;  // Show modal 5 minutes before expiry
+const WARNING_BEFORE_EXPIRY_SEC = 300;  // Show modal 5 min before expiry (if idle)
 const CHECK_INTERVAL_MS = 15000;        // Check expiry every 15 seconds
+const IDLE_THRESHOLD_MS = 25 * 60 * 1000; // 25 min idle = genuinely inactive
+const SILENT_REFRESH_BUFFER_SEC = 120;  // Silently refresh 2 min before expiry
 
 /** Decode JWT exp claim (seconds since epoch). Returns null on failure. */
 function getTokenExpiry(token) {
@@ -21,16 +23,10 @@ const AuthContext = createContext(null);
 /**
  * AuthProvider — wraps the app to provide authentication state.
  *
- * State:
- *   user           — user object from /v1/auth/me (or null)
- *   token          — JWT access token (persisted in localStorage)
- *   isAuthenticated — true when user is loaded
- *   loading        — true during initial token validation
- *
- * Methods:
- *   login(tokenData)  — store tokens + fetch user profile
- *   logout()          — clear everything, redirect to /login
- *   refreshUser()     — re-fetch user profile from /v1/auth/me
+ * Session management:
+ *   - Tracks user activity (mouse, keyboard, scroll, API calls)
+ *   - Silently refreshes token while user is active
+ *   - Only shows timeout modal when user is genuinely idle
  */
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(() => {
@@ -51,6 +47,32 @@ export function AuthProvider({ children }) {
   const sessionTimerRef = useRef(null);
   const countdownRef = useRef(null);
 
+  // Activity tracking
+  const lastActivityRef = useRef(Date.now());
+  const silentRefreshInFlightRef = useRef(false);
+
+  // --- Activity tracker: reset on any user interaction ---
+  const markActivity = useCallback(() => {
+    lastActivityRef.current = Date.now();
+  }, []);
+
+  useEffect(() => {
+    const events = ['mousemove', 'mousedown', 'keydown', 'scroll', 'touchstart'];
+    events.forEach((e) => window.addEventListener(e, markActivity, { passive: true }));
+    return () => events.forEach((e) => window.removeEventListener(e, markActivity));
+  }, [markActivity]);
+
+  // Also mark activity on API calls (patched into client.js via custom event)
+  useEffect(() => {
+    const onApiCall = () => markActivity();
+    window.addEventListener('api-activity', onApiCall);
+    return () => window.removeEventListener('api-activity', onApiCall);
+  }, [markActivity]);
+
+  function isUserIdle() {
+    return Date.now() - lastActivityRef.current > IDLE_THRESHOLD_MS;
+  }
+
   // On mount (or token change): validate token by fetching /me
   useEffect(() => {
     if (token) {
@@ -61,7 +83,6 @@ export function AuthProvider({ children }) {
           localStorage.setItem('auth_user', JSON.stringify(userData));
         })
         .catch(() => {
-          // Token invalid or expired — clear state
           setToken(null);
           setUser(null);
           localStorage.removeItem('auth_token');
@@ -74,22 +95,17 @@ export function AuthProvider({ children }) {
     }
   }, [token]);
 
-  /**
-   * Login — called after successful OTP verification.
-   * @param {{ access_token: string, refresh_token: string }} tokenData
-   */
+  /** Login — called after successful OTP verification. */
   const login = useCallback(async (tokenData) => {
     localStorage.setItem('auth_token', tokenData.access_token);
     if (tokenData.refresh_token) {
       localStorage.setItem('auth_refresh_token', tokenData.refresh_token);
     }
     setToken(tokenData.access_token);
-    // User will be fetched by the useEffect above when token changes
+    lastActivityRef.current = Date.now();
   }, []);
 
-  /**
-   * Logout — clear all auth state.
-   */
+  /** Logout — clear all auth state. */
   const logout = useCallback(() => {
     localStorage.removeItem('auth_token');
     localStorage.removeItem('auth_refresh_token');
@@ -98,9 +114,7 @@ export function AuthProvider({ children }) {
     setUser(null);
   }, []);
 
-  /**
-   * Re-fetch user profile (e.g. after role upgrade from payment).
-   */
+  /** Re-fetch user profile (e.g. after role upgrade from payment). */
   const refreshUser = useCallback(async () => {
     try {
       const userData = await api.get('/v1/auth/me');
@@ -113,8 +127,32 @@ export function AuthProvider({ children }) {
   }, []);
 
   /**
-   * Refresh session — called by "Stay Logged In" button.
-   * Calls the refresh endpoint, stores new tokens, hides modal.
+   * Silently refresh the session — no modal, no user action needed.
+   * Called automatically when user is active and token is near expiry.
+   */
+  const silentRefresh = useCallback(async () => {
+    if (silentRefreshInFlightRef.current) return;
+    const refreshToken = localStorage.getItem('auth_refresh_token');
+    if (!refreshToken) return;
+
+    silentRefreshInFlightRef.current = true;
+    try {
+      const data = await api.postEmpty(
+        `/v1/auth/refresh?refresh_token=${encodeURIComponent(refreshToken)}`
+      );
+      localStorage.setItem('auth_token', data.access_token);
+      localStorage.setItem('auth_refresh_token', data.refresh_token);
+      setToken(data.access_token);
+      localStorage.setItem('session_refresh_event', Date.now().toString());
+    } catch {
+      // Silent refresh failed — don't logout yet, the modal flow will handle it
+    } finally {
+      silentRefreshInFlightRef.current = false;
+    }
+  }, []);
+
+  /**
+   * Manual refresh — called by "Stay Logged In" button.
    */
   const refreshSession = useCallback(async () => {
     const refreshToken = localStorage.getItem('auth_refresh_token');
@@ -127,21 +165,18 @@ export function AuthProvider({ children }) {
       const data = await api.postEmpty(
         `/v1/auth/refresh?refresh_token=${encodeURIComponent(refreshToken)}`
       );
-      // Store new tokens
       localStorage.setItem('auth_token', data.access_token);
       localStorage.setItem('auth_refresh_token', data.refresh_token);
       setToken(data.access_token);
-      // Broadcast to other tabs
       localStorage.setItem('session_refresh_event', Date.now().toString());
-      // Hide modal and reset countdown
       setShowTimeoutModal(false);
       setRemainingSeconds(WARNING_BEFORE_EXPIRY_SEC);
+      lastActivityRef.current = Date.now();
       if (countdownRef.current) {
         clearInterval(countdownRef.current);
         countdownRef.current = null;
       }
     } catch {
-      // Refresh failed — force logout
       logout();
     } finally {
       setRefreshing(false);
@@ -151,7 +186,6 @@ export function AuthProvider({ children }) {
   /* ===== Session Expiry Monitor (15-second interval) ===== */
   useEffect(() => {
     if (!token) {
-      // No token — clear any running timers
       if (sessionTimerRef.current) {
         clearInterval(sessionTimerRef.current);
         sessionTimerRef.current = null;
@@ -171,19 +205,26 @@ export function AuthProvider({ children }) {
       const remaining = exp - nowSec;
 
       if (remaining <= 0) {
-        // Already expired — logout
         logout();
         return;
       }
 
-      if (remaining <= WARNING_BEFORE_EXPIRY_SEC && !showTimeoutModal) {
-        // Enter warning zone — show modal
+      // If modal is already showing, let the countdown handle it — don't interfere
+      if (showTimeoutModal) return;
+
+      // User is ACTIVE and token is approaching expiry → silent refresh
+      if (!isUserIdle() && remaining <= SILENT_REFRESH_BUFFER_SEC) {
+        silentRefresh();
+        return;
+      }
+
+      // User is IDLE and token is in warning zone → show modal
+      if (isUserIdle() && remaining <= WARNING_BEFORE_EXPIRY_SEC) {
         setRemainingSeconds(remaining);
         setShowTimeoutModal(true);
       }
     }
 
-    // Run immediately and then every 15 seconds
     checkExpiry();
     sessionTimerRef.current = setInterval(checkExpiry, CHECK_INTERVAL_MS);
 
@@ -193,7 +234,7 @@ export function AuthProvider({ children }) {
         sessionTimerRef.current = null;
       }
     };
-  }, [token, logout, showTimeoutModal]);
+  }, [token, logout, showTimeoutModal, silentRefresh]);
 
   /* ===== Countdown Timer (1-second interval when modal visible) ===== */
   useEffect(() => {
@@ -206,9 +247,10 @@ export function AuthProvider({ children }) {
     }
 
     countdownRef.current = setInterval(() => {
+      // Modal is visible — let the USER decide (Stay Logged In / End Session).
+      // Only auto-logout when the countdown reaches zero.
       setRemainingSeconds((prev) => {
         if (prev <= 1) {
-          // Countdown reached zero — auto-logout
           clearInterval(countdownRef.current);
           countdownRef.current = null;
           logout();
@@ -224,13 +266,12 @@ export function AuthProvider({ children }) {
         countdownRef.current = null;
       }
     };
-  }, [showTimeoutModal, logout]);
+  }, [showTimeoutModal, logout, silentRefresh]);
 
   /* ===== Cross-Tab Sync (localStorage events) ===== */
   useEffect(() => {
     function handleStorageChange(e) {
       if (e.key === 'session_refresh_event') {
-        // Another tab refreshed the session — re-read token, hide modal
         const newToken = localStorage.getItem('auth_token');
         if (newToken) {
           setToken(newToken);
@@ -242,7 +283,6 @@ export function AuthProvider({ children }) {
           }
         }
       } else if (e.key === 'auth_token' && !e.newValue) {
-        // Another tab logged out — clear local state
         setToken(null);
         setUser(null);
         setShowTimeoutModal(false);

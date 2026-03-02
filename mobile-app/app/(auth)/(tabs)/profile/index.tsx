@@ -224,9 +224,9 @@ const styles = StyleSheet.create({
     gap: 16,
   },
   title: {
-    ...typography.styles.h1,
+    ...typography.styles.h3,
     color: colors.text,
-    paddingTop: 12,
+    paddingTop: 8,
   },
   avatarRow: {
     flexDirection: 'row',

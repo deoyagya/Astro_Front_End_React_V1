@@ -166,13 +166,13 @@ async function request<T = any>(
       // All retries exhausted
       if (err.name === 'AbortError') {
         throw {
-          message: `Request timed out after ${TIMEOUT_MS / 1000}s. Check your WiFi connection and make sure the backend is running.`,
+          message: 'Request timed out. Please check your internet connection and try again.',
           status: 0,
         } as ApiError;
       }
 
       throw {
-        message: `Cannot reach server. Make sure:\n1. Backend is running (uvicorn)\n2. Phone & Mac are on the same WiFi\n3. Try restarting the Expo dev server`,
+        message: 'Unable to connect. Please check your internet connection and try again.',
         status: 0,
       } as ApiError;
     }

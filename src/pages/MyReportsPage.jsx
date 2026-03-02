@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import PageShell from '../components/PageShell';
+import ApiError from '../components/ApiError';
 import { useSharedEffects } from '../hooks/useSharedEffects';
 import { api } from '../api/client';
 import '../styles/report-pages.css';
@@ -94,12 +95,7 @@ export default function MyReportsPage() {
             </div>
           )}
 
-          {error && (
-            <div className="warning-box" style={{ marginBottom: '24px' }}>
-              <h4><i className="fas fa-exclamation-circle"></i> Error</h4>
-              <p>{error}</p>
-            </div>
-          )}
+          <ApiError message={error} onDismiss={() => setError('')} />
 
           {!loading && reports.length === 0 && !error && (
             <div className="empty-cart" style={{ padding: '60px 20px' }}>

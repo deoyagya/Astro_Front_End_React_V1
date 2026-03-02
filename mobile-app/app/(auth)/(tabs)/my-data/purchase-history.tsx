@@ -160,7 +160,7 @@ const styles = StyleSheet.create({
     paddingTop: 4,
     marginBottom: 4,
   },
-  title: { ...typography.styles.h2, color: colors.text },
+  title: { ...typography.styles.h3, color: colors.text },
   emptyCard: { alignItems: 'center', paddingVertical: 40, gap: 12 },
   emptyTitle: { ...typography.styles.h3, color: colors.text },
   emptySubtitle: {

@@ -490,6 +490,37 @@ Root Stack → Auth Stack → Tab Navigator (navigation prop here)
 
 ---
 
+### M8 — My Data Hub Expansion — 8 New Screens (COMPLETE, 2026-02-28)
+
+**Goal:** Expand the My Data tab from 4 cards to 10 cards across 4 organized sections, with 6 new data screens.
+
+**New Screens:**
+
+| Screen | Data Source | Key Features |
+|--------|-----------|-------------|
+| My Details | `POST /v1/chart/create?include_avakhada=true&include_panchang=true` | Person Details table (DOB, TOB, place, lagna, rasi, nakshatra, JD) |
+| Avkahada Chakra | `POST /v1/avakhada` | Full chakra table (Paya, Varna, Yoni, Gana, Vasya, Nadi, etc.) |
+| My Personality | `POST /v1/personality/profile?interpretation_mode=static` | 6-subdomain cards with icons, confidence badges, trait chips |
+| Yogas & Rajyogas | `POST /v1/yogas/scan` | Grouped by type, strength indicators, source references |
+| Sade Sati Report | `POST /v1/chart/create?include_sade_sati=true` | Active/inactive status, phase timeline, remedies |
+| Transit | `POST /v1/transit/table` + `POST /v1/transit/hits` | Live transit positions table + natal impact hits |
+
+**Hub Reorganization (4 sections):**
+```
+MY PROFILE — My Details, Avkahada Chakra, Birth Details, Saved Charts
+ANALYSIS   — My Personality, Yogas & Rajyogas
+TIMING     — Sade Sati Report, Transit
+ACCOUNT    — Purchase History, Download Reports
+```
+
+**Pattern:** All screens use `effectiveData = activeChartStore.getBirthData() ?? savedData` for active chart support.
+
+**New endpoints added:** `YOGA.SCAN`, `TRANSIT.TABLE`, `TRANSIT.HITS`, `PERSONALITY.PROFILE`
+
+**Files modified:** 2 existing + 6 new = 8 total
+
+---
+
 ## Architecture Overview
 
 ```

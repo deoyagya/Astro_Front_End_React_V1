@@ -10,7 +10,7 @@ export default function SiteFooter() {
         {!isAdmin && (
           <div className="footer-grid">
             <div className="footer-about">
-              <h4><i className="fas fa-star-and-crescent"></i> Vedic Astro</h4>
+              <h4><i className="fas fa-star-and-crescent"></i> Astro Yagya</h4>
               <p>Ancient Vedic wisdom for modern life. Accurate predictions, personalized guidance, and effective remedies.</p>
             </div>
 
@@ -36,14 +36,14 @@ export default function SiteFooter() {
 
             <div className="footer-contact">
               <h4>Contact</h4>
-              <p><i className="fas fa-envelope"></i> support@vedicastro.com</p>
+              <p><i className="fas fa-envelope"></i> support@stroyagya.com</p>
               <p><i className="fas fa-phone-alt"></i> +91 98765 43210</p>
             </div>
           </div>
         )}
 
         <div className="footer-bottom">
-          <p>© 2025 Vedic Astro. All rights reserved. | <a href="#" id="terms-link">Terms of Use</a> | <a href="#" id="privacy-link">Privacy Policy</a></p>
+          <p>© 2025 Astro Yagya. All rights reserved. | <a href="#" id="terms-link">Terms of Use</a> | <a href="#" id="privacy-link">Privacy Policy</a></p>
         </div>
       </div>
     </footer>

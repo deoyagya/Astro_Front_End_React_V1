@@ -413,7 +413,7 @@ export default function CompatibilityScreen() {
 
 const styles = StyleSheet.create({
   scroll: { paddingBottom: 100, gap: 16 },
-  title: { ...typography.styles.h2, color: colors.text, paddingTop: 4 },
+  title: { ...typography.styles.h3, color: colors.text, paddingTop: 4 },
   subtitle: { ...typography.styles.bodySmall, color: colors.muted },
   stepRow: { flexDirection: 'row', justifyContent: 'center', gap: 24, paddingVertical: 8 },
   stepItem: { alignItems: 'center', gap: 4 },

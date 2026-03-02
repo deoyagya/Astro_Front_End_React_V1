@@ -4,6 +4,40 @@ All notable changes to the mobile application are documented here.
 
 ---
 
+## [M8] My Data Hub Expansion — 8 New Screens — 2026-02-28
+
+### Added
+- **My Details screen** — Person Details table showing DOB, TOB, place, timezone, coordinates, Lagna, Rasi, Nakshatra-Pada, Nakshatra Lord, Julian Day, Sun Sign. Orange-accented header matching AstroSage reference design. Uses `POST /v1/chart/create?include_avakhada=true&include_panchang=true`.
+- **Avkahada Chakra screen** — Full Avkahada Chakra table showing Paya, Varna, Yoni, Gana, Vasya, Nadi, Tatva, Balance of Dasha, Lagna, Rasi, Nakshatra, Sun Sign, Julian Day. Uses `POST /v1/avakhada`.
+- **My Personality screen** — 6-subdomain personality profile (Social, Communication, Behavioral, Anger/Temperament, Health, Financial). Cards with icon, confidence badge, trait chips, and interpretation text. Uses `POST /v1/personality/profile?interpretation_mode=static`.
+- **Yogas & Rajyogas screen** — Classical yoga scanner results grouped by type (Raja, Dhana, Pancha Mahapurusha, etc.). Each yoga card shows name, strength indicator, description, involved planets/houses, and source reference. Uses `POST /v1/yogas/scan`.
+- **Sade Sati Report screen** — Saturn transit analysis showing active/inactive status badge, Moon sign, current Saturn sign, phase name, phase timeline with date ranges, and remedies. Uses `POST /v1/chart/create?include_sade_sati=true`.
+- **Transit screen** — Live planetary transit table (planet, sign, degree, retrograde status) + transit impact hits on natal chart (benefic/malefic nature, houses, descriptions). Uses `POST /v1/transit/table` + `POST /v1/transit/hits` in parallel.
+- **New API endpoints** — `YOGA.SCAN`, `TRANSIT.TABLE`, `TRANSIT.HITS`, `PERSONALITY.PROFILE` added to `endpoints.ts`.
+
+### Changed
+- **My Data hub reorganized** — 4 sections (My Profile, Analysis, Timing, Account) replacing flat 4-card grid. 10 total nav cards across sections. Section titles with uppercase letter-spacing.
+- **Birth Details** — Now accessible directly from My Data hub (My Profile section) in addition to the Tools tab.
+- **Card styling** — Slightly smaller padding (24px vs 28px) and font (13px) to accommodate more cards per section.
+
+### Files Created (6)
+| File | Description |
+|------|-------------|
+| `my-data/my-details.tsx` | Person Details table screen |
+| `my-data/avkahada-chakra.tsx` | Avkahada Chakra table screen |
+| `my-data/my-personality.tsx` | 6-subdomain personality cards |
+| `my-data/yogas.tsx` | Grouped yoga scanner results |
+| `my-data/sade-sati.tsx` | Sade Sati report with timeline |
+| `my-data/transit.tsx` | Live transit table + natal hits |
+
+### Files Modified (2)
+| File | Action |
+|------|--------|
+| `my-data/index.tsx` | Reorganized into 4 sections with 10 nav cards |
+| `src/api/endpoints.ts` | Added YOGA, TRANSIT, PERSONALITY endpoint groups |
+
+---
+
 ## [M7] Compatibility Results Redesign — Donut Chart, Guna Grid & Dosha Detection — 2026-02-26
 
 ### Changed
