@@ -329,23 +329,23 @@ export default function CompatibilityPage() {
                   </div>
                 )}
 
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 20 }}>
+                <div style={{ display: 'flex', gap: 12, marginTop: 20 }}>
                   <button
                     type="button"
                     onClick={handleBack}
+                    className="btn-generate"
                     style={{
                       background: 'rgba(40, 44, 60, 0.8)',
                       border: '1px solid rgba(255,255,255,0.1)',
                       color: '#b0b7c3',
-                      padding: '12px 24px',
-                      borderRadius: 8,
-                      cursor: 'pointer',
-                      fontSize: '0.95rem',
+                      flex: '0 0 auto',
+                      width: 'auto',
+                      padding: '0 24px',
                     }}
                   >
                     <i className="fas fa-arrow-left" style={{ marginRight: 8 }}></i> Back
                   </button>
-                  <button type="button" className="btn-generate" onClick={handleNext}>
+                  <button type="button" className="btn-generate" style={{ flex: 1 }} onClick={handleNext}>
                     <i className="fas fa-heart" style={{ marginRight: 8 }}></i> Check Compatibility
                   </button>
                 </div>
@@ -369,16 +369,15 @@ export default function CompatibilityPage() {
                     </div>
                     <button
                       type="button"
+                      className="btn-generate"
                       onClick={handleBack}
                       style={{
                         background: 'rgba(40, 44, 60, 0.8)',
                         border: '1px solid rgba(255,255,255,0.1)',
                         color: '#b0b7c3',
-                        padding: '12px 24px',
-                        borderRadius: 8,
-                        cursor: 'pointer',
                         marginTop: 16,
-                        fontSize: '0.95rem',
+                        width: 'auto',
+                        padding: '0 32px',
                       }}
                     >
                       <i className="fas fa-arrow-left" style={{ marginRight: 8 }}></i> Go Back &amp; Retry
@@ -499,16 +498,13 @@ export default function CompatibilityPage() {
                     <div style={{ display: 'flex', gap: 12, marginTop: 24 }}>
                       <button
                         type="button"
+                        className="btn-generate"
                         onClick={() => { setResult(null); setStep(1); }}
                         style={{
                           flex: 1,
                           background: 'rgba(40, 44, 60, 0.8)',
                           border: '1px solid rgba(255,255,255,0.1)',
                           color: '#b0b7c3',
-                          padding: '12px 20px',
-                          borderRadius: 8,
-                          cursor: 'pointer',
-                          fontSize: '0.95rem',
                         }}
                       >
                         <i className="fas fa-redo" style={{ marginRight: 8 }}></i> Start Over
