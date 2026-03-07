@@ -1,5 +1,5 @@
 import PageShell from '../components/PageShell';
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import DateInput from '../components/form/DateInput';
 import TimeSelectGroup from '../components/form/TimeSelectGroup';
@@ -7,80 +7,6 @@ import PlaceAutocomplete from '../components/PlaceAutocomplete';
 import { api } from '../api/client';
 import { useBirthData, to24Hour } from '../hooks/useBirthData';
 
-const SIGN_NAMES = {
-  1: 'Aries', 2: 'Taurus', 3: 'Gemini', 4: 'Cancer',
-  5: 'Leo', 6: 'Virgo', 7: 'Libra', 8: 'Scorpio',
-  9: 'Sagittarius', 10: 'Capricorn', 11: 'Aquarius', 12: 'Pisces',
-};
-
-/** Simple Guna Milan score calculator based on avakhada data */
-function computeGunaMilan(avakhadaA, avakhadaB) {
-  if (!avakhadaA || !avakhadaB) return null;
-
-  const gunas = [];
-  let totalScore = 0;
-
-  // 1. Varna (1 point)
-  const varnaOrder = ['Brahmin', 'Kshatriya', 'Vaishya', 'Shudra'];
-  const varnaA = varnaOrder.indexOf(avakhadaA.varan || '');
-  const varnaB = varnaOrder.indexOf(avakhadaB.varan || '');
-  const varnaScore = varnaA >= 0 && varnaB >= 0 && varnaA <= varnaB ? 1 : 0;
-  gunas.push({ name: 'Varna', score: varnaScore, max: 1 });
-  totalScore += varnaScore;
-
-  // 2. Vashya (2 points)
-  const vashyaA = avakhadaA.vashya || '';
-  const vashyaB = avakhadaB.vashya || '';
-  const vashyaScore = vashyaA === vashyaB ? 2 : 1;
-  gunas.push({ name: 'Vashya', score: vashyaScore, max: 2 });
-  totalScore += vashyaScore;
-
-  // 3. Tara (3 points) — based on nakshatra distance
-  const nakshatraScore = 2; // Default moderate
-  gunas.push({ name: 'Tara', score: nakshatraScore, max: 3 });
-  totalScore += nakshatraScore;
-
-  // 4. Yoni (4 points)
-  const yoniA = avakhadaA.yoni || '';
-  const yoniB = avakhadaB.yoni || '';
-  const yoniScore = yoniA === yoniB ? 4 : 2;
-  gunas.push({ name: 'Yoni', score: yoniScore, max: 4 });
-  totalScore += yoniScore;
-
-  // 5. Graha Maitri (5 points) — based on moon sign lords
-  const maitriScore = 3; // Default moderate
-  gunas.push({ name: 'Graha Maitri', score: maitriScore, max: 5 });
-  totalScore += maitriScore;
-
-  // 6. Gana (6 points)
-  const ganaA = avakhadaA.gana || '';
-  const ganaB = avakhadaB.gana || '';
-  const ganaScore = ganaA === ganaB ? 6 : ganaA !== 'Rakshasa' && ganaB !== 'Rakshasa' ? 3 : 0;
-  gunas.push({ name: 'Gana', score: ganaScore, max: 6 });
-  totalScore += ganaScore;
-
-  // 7. Bhakoot (7 points) — sign distance
-  const bhakootScore = 5; // Default moderate
-  gunas.push({ name: 'Bhakoot', score: bhakootScore, max: 7 });
-  totalScore += bhakootScore;
-
-  // 8. Nadi (8 points)
-  const nadiA = avakhadaA.nadi || '';
-  const nadiB = avakhadaB.nadi || '';
-  const nadiScore = nadiA !== nadiB ? 8 : 0;
-  gunas.push({ name: 'Nadi', score: nadiScore, max: 8 });
-  totalScore += nadiScore;
-
-  const totalMax = 36;
-  const percentage = Math.round((totalScore / totalMax) * 100);
-
-  let matchLabel, matchColor;
-  if (percentage >= 70) { matchLabel = 'Excellent Compatibility'; matchColor = '#2ed573'; }
-  else if (percentage >= 50) { matchLabel = 'Good Compatibility'; matchColor = '#ffa502'; }
-  else { matchLabel = 'Challenging Match'; matchColor = '#ff4757'; }
-
-  return { gunas, totalScore, totalMax, percentage, matchLabel, matchColor };
-}
 
 export default function CompatibilityPage() {
   const navigate = useNavigate();
@@ -96,6 +22,10 @@ export default function CompatibilityPage() {
     saveBirthData,
   } = useBirthData({ reportType: 'compatibility' });
 
+  // Gender state
+  const [genderA, setGenderA] = useState('');
+  const [genderB, setGenderB] = useState('');
+
   // Person B state
   const [nameB, setNameB] = useState('');
   const [dobB, setDobB] = useState('');
@@ -106,63 +36,85 @@ export default function CompatibilityPage() {
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [resultA, setResultA] = useState(null);
-  const [resultB, setResultB] = useState(null);
+  const [result, setResult] = useState(null);
 
   const handleCompare = useCallback(async () => {
     setError('');
 
     // Validate both persons
     if (!nameA.trim()) { setError('Please enter Person A\'s name.'); return; }
+    if (!genderA) { setError('Please select Person A\'s gender.'); return; }
     if (!dobA) { setError('Please select Person A\'s date of birth.'); return; }
     if (!placeA) { setError('Please select Person A\'s birth place.'); return; }
     if (!nameB.trim()) { setError('Please enter Person B\'s name.'); return; }
+    if (!genderB) { setError('Please select Person B\'s gender.'); return; }
     if (!dobB) { setError('Please select Person B\'s date of birth.'); return; }
     if (!placeB) { setError('Please select Person B\'s birth place.'); return; }
 
+    // Build person payloads
+    const personA = {
+      name: nameA.trim(),
+      gender: genderA,
+      dob: dobA,
+      tob: to24Hour(hourA, minuteA, ampmA),
+      place_of_birth: placeA.name,
+    };
+    const personB = {
+      name: nameB.trim(),
+      gender: genderB,
+      dob: dobB,
+      tob: to24Hour(hourB, minuteB, ampmB),
+      place_of_birth: placeB.name,
+    };
+
+    // Determine groom vs bride based on gender
+    // In Vedic Ashtakoota, the groom and bride roles are gender-determined
+    let groom, bride;
+    if (genderA === 'male' && genderB === 'female') {
+      groom = personA;
+      bride = personB;
+    } else if (genderA === 'female' && genderB === 'male') {
+      groom = personB;
+      bride = personA;
+    } else {
+      // Same gender — use positional (A=groom, B=bride) for calculation purposes
+      groom = personA;
+      bride = personB;
+    }
+
     setLoading(true);
     try {
-      const buildPayload = (name, dob, hour, min, ampm, place) => ({
-        name: name.trim(),
-        dob,
-        tob: to24Hour(hour, min, ampm),
-        place_of_birth: place.name,
-      });
-
-      const params = new URLSearchParams({
-        include_avakhada: 'true',
-        include_vargas: 'false',
-        include_dasha: 'false',
-        include_ashtakavarga: 'false',
-      });
-
-      // Fetch both charts in parallel
-      const [dataA, dataB] = await Promise.all([
-        api.post(`/v1/chart/create?${params}`, buildPayload(nameA, dobA, hourA, minuteA, ampmA, placeA)),
-        api.post(`/v1/chart/create?${params}`, buildPayload(nameB, dobB, hourB, minuteB, ampmB, placeB)),
-      ]);
-
-      setResultA(dataA);
-      setResultB(dataB);
+      // Call the backend compatibility endpoint (proper BPHS Guna Milan engine)
+      const data = await api.post('/v1/compatibility/check', { groom, bride });
+      setResult(data);
       saveBirthData();
     } catch (err) {
       setError(err.message || 'Failed to compute compatibility.');
     } finally {
       setLoading(false);
     }
-  }, [nameA, dobA, hourA, minuteA, ampmA, placeA, nameB, dobB, hourB, minuteB, ampmB, placeB, saveBirthData]);
+  }, [nameA, genderA, dobA, hourA, minuteA, ampmA, placeA, nameB, genderB, dobB, hourB, minuteB, ampmB, placeB, saveBirthData]);
 
-  // Compute Guna Milan from avakhada data
-  const gunaResult = useMemo(() => {
-    if (!resultA || !resultB) return null;
-    const avakhadaA = resultA.bundle?.avakhada;
-    const avakhadaB = resultB.bundle?.avakhada;
-    return computeGunaMilan(avakhadaA, avakhadaB);
-  }, [resultA, resultB]);
+  // Derive display values from backend response
+  const totalPoints = result?.total_points ?? 0;
+  const maxPoints = result?.max_points ?? 36;
+  const percentage = result?.percentage ?? 0;
+  const verdict = result?.verdict ?? '';
+  const verdictDesc = result?.verdict_description ?? '';
+  const kootas = result?.kootas ?? [];
+  const doshas = result?.doshas ?? [];
+  const manglikGroom = result?.manglik_groom;
+  const manglikBride = result?.manglik_bride;
 
-  // Extract moon signs for display
-  const moonSignA = resultA?.bundle?.natal?.planets?.Moon?.sign;
-  const moonSignB = resultB?.bundle?.natal?.planets?.Moon?.sign;
+  // Color/label based on percentage
+  let matchColor = '#ff4757';
+  let matchLabel = 'Challenging Match';
+  if (percentage >= 70) { matchColor = '#2ed573'; matchLabel = 'Excellent Compatibility'; }
+  else if (percentage >= 50) { matchColor = '#ffa502'; matchLabel = 'Good Compatibility'; }
+
+  // Names for display in groom/bride context
+  const groomName = (genderA === 'female' && genderB === 'male') ? nameB : nameA;
+  const brideName = (genderA === 'female' && genderB === 'male') ? nameA : nameB;
 
   return (
     <PageShell activeNav="tools">
@@ -175,13 +127,25 @@ export default function CompatibilityPage() {
 
           <div className="two-column">
 
-            {/* ─── Left: Forms ─── */}
+            {/* --- Left: Forms --- */}
             <div className="form-card">
               <h2>Person A Details</h2>
               <form onSubmit={(e) => e.preventDefault()}>
                 <div className="form-group">
                   <label>Full Name</label>
                   <input type="text" placeholder="Enter name" value={nameA} onChange={(e) => setNameA(e.target.value)} />
+                </div>
+                <div className="form-group">
+                  <label>Gender</label>
+                  <select
+                    value={genderA}
+                    onChange={(e) => setGenderA(e.target.value)}
+                    style={{ width: '100%', padding: '12px 14px', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.1)', background: 'rgba(40, 44, 60, 0.8)', color: '#e0e0e0', fontSize: '0.95rem' }}
+                  >
+                    <option value="">-- Select Gender --</option>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                  </select>
                 </div>
                 <div className="form-group">
                   <label>Date of Birth</label>
@@ -206,6 +170,18 @@ export default function CompatibilityPage() {
                 <div className="form-group">
                   <label>Full Name</label>
                   <input type="text" placeholder="Enter name" value={nameB} onChange={(e) => setNameB(e.target.value)} />
+                </div>
+                <div className="form-group">
+                  <label>Gender</label>
+                  <select
+                    value={genderB}
+                    onChange={(e) => setGenderB(e.target.value)}
+                    style={{ width: '100%', padding: '12px 14px', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.1)', background: 'rgba(40, 44, 60, 0.8)', color: '#e0e0e0', fontSize: '0.95rem' }}
+                  >
+                    <option value="">-- Select Gender --</option>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                  </select>
                 </div>
                 <div className="form-group">
                   <label>Date of Birth</label>
@@ -248,7 +224,7 @@ export default function CompatibilityPage() {
               </p>
             </div>
 
-            {/* ─── Right: Results ─── */}
+            {/* --- Right: Results --- */}
             <div className="chart-card">
               <h2>Compatibility Score</h2>
 
@@ -257,60 +233,112 @@ export default function CompatibilityPage() {
                   <i className="fas fa-spinner fa-spin"></i>
                   <p>Computing compatibility...</p>
                 </div>
-              ) : gunaResult ? (
+              ) : result ? (
                 <>
                   {/* Score circle */}
                   <div className="compatibility-score">
                     <div className="score-circle">
-                      <span>{gunaResult.totalScore}/{gunaResult.totalMax}</span>
+                      <span>{totalPoints}/{maxPoints}</span>
                     </div>
-                    <p style={{ color: gunaResult.matchColor, marginTop: '10px' }}>
-                      {gunaResult.percentage}% Match - {gunaResult.matchLabel}
+                    <p style={{ color: matchColor, marginTop: '10px', fontWeight: 600 }}>
+                      {percentage}% Match - {matchLabel}
                     </p>
+                    {verdictDesc && (
+                      <p style={{ color: '#b0b7c3', fontSize: '0.85rem', marginTop: '5px' }}>{verdictDesc}</p>
+                    )}
                   </div>
 
-                  {/* Moon sign comparison */}
-                  {(moonSignA || moonSignB) && (
-                    <div style={{ display: 'flex', justifyContent: 'center', gap: 30, marginBottom: 20 }}>
-                      {moonSignA && (
-                        <div style={{ textAlign: 'center' }}>
-                          <p style={{ color: '#b0b7c3', fontSize: '0.85rem' }}>{nameA || 'Person A'}</p>
-                          <p style={{ color: '#9d7bff', fontWeight: 600 }}>{SIGN_NAMES[parseInt(moonSignA, 10)] || '—'} Moon</p>
-                        </div>
-                      )}
-                      {moonSignB && (
-                        <div style={{ textAlign: 'center' }}>
-                          <p style={{ color: '#b0b7c3', fontSize: '0.85rem' }}>{nameB || 'Person B'}</p>
-                          <p style={{ color: '#9d7bff', fontWeight: 600 }}>{SIGN_NAMES[parseInt(moonSignB, 10)] || '—'} Moon</p>
-                        </div>
-                      )}
+                  {/* Partner names with roles */}
+                  <div style={{ display: 'flex', justifyContent: 'center', gap: 40, marginBottom: 20, padding: '10px 0' }}>
+                    <div style={{ textAlign: 'center' }}>
+                      <p style={{ color: '#64b5f6', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: 1 }}>Groom</p>
+                      <p style={{ color: '#e0e0e0', fontWeight: 600 }}>{groomName || 'Person A'}</p>
                     </div>
-                  )}
+                    <div style={{ color: '#7b5bff', display: 'flex', alignItems: 'center' }}>
+                      <i className="fas fa-heart"></i>
+                    </div>
+                    <div style={{ textAlign: 'center' }}>
+                      <p style={{ color: '#f48fb1', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: 1 }}>Bride</p>
+                      <p style={{ color: '#e0e0e0', fontWeight: 600 }}>{brideName || 'Person B'}</p>
+                    </div>
+                  </div>
 
-                  {/* Guna grid */}
-                  <h3 className="section-subtitle">Guna Milan</h3>
+                  {/* Koota grid (8 Ashtakoota from backend) */}
+                  <h3 className="section-subtitle">Guna Milan (Ashtakoota)</h3>
                   <div className="guna-grid" id="gunaGrid">
-                    {gunaResult.gunas.map((g) => (
-                      <div key={g.name} className="guna-item">
-                        <div className="guna-name">{g.name}</div>
+                    {kootas.map((k) => (
+                      <div key={k.koota_name} className="guna-item" title={k.description || ''}>
+                        <div className="guna-name">{k.koota_name}</div>
                         <div className="guna-score" style={{
-                          color: g.score === g.max ? '#2ed573' : g.score === 0 ? '#ff4757' : '#9d7bff',
+                          color: k.obtained_points === k.max_points ? '#2ed573' : k.obtained_points === 0 ? '#ff4757' : '#9d7bff',
                         }}>
-                          {g.score}/{g.max}
+                          {k.obtained_points}/{k.max_points}
                         </div>
+                        {k.groom_value && k.bride_value && (
+                          <div style={{ fontSize: '0.7rem', color: '#8a8f9e', marginTop: 3 }}>
+                            {k.groom_value} / {k.bride_value}
+                          </div>
+                        )}
+                        {k.has_dosha && k.dosha_name && (
+                          <div style={{ fontSize: '0.7rem', color: '#ff4757', marginTop: 2 }}>
+                            <i className="fas fa-exclamation-circle" style={{ marginRight: 3 }}></i>{k.dosha_name}
+                          </div>
+                        )}
                       </div>
                     ))}
                   </div>
 
-                  {/* Nadi dosha check */}
-                  {gunaResult.gunas.find(g => g.name === 'Nadi')?.score === 0 && (
+                  {/* Dosha alerts */}
+                  {doshas.length > 0 && (
                     <div style={{ background: 'rgba(255, 71, 87, 0.1)', padding: '15px', borderRadius: '8px', marginTop: '20px' }}>
                       <h4 style={{ color: '#ff4757', marginBottom: '10px' }}>
-                        <i className="fas fa-exclamation-triangle"></i> Nadi Dosha Detected
+                        <i className="fas fa-exclamation-triangle"></i> Dosha Detected
                       </h4>
-                      <p style={{ color: '#e0e0e0' }}>
-                        Both partners have the same Nadi. Special remedies may be required for marriage compatibility.
-                      </p>
+                      {doshas.map((d, i) => (
+                        <p key={i} style={{ color: '#e0e0e0', marginBottom: 4 }}>
+                          <i className="fas fa-dot-circle" style={{ color: '#ff4757', marginRight: 8, fontSize: '0.7rem' }}></i>
+                          {d}
+                        </p>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Manglik analysis */}
+                  {(manglikGroom || manglikBride) && (
+                    <div style={{ marginTop: '20px' }}>
+                      <h3 className="section-subtitle">Manglik (Kuja Dosha) Analysis</h3>
+                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                        {manglikGroom && (
+                          <div style={{
+                            background: manglikGroom.is_manglik ? 'rgba(255, 71, 87, 0.08)' : 'rgba(46, 213, 115, 0.08)',
+                            padding: 12, borderRadius: 8,
+                          }}>
+                            <p style={{ color: '#b0b7c3', fontSize: '0.75rem', marginBottom: 4 }}>{groomName || 'Groom'}</p>
+                            <p style={{
+                              color: manglikGroom.is_manglik ? '#ff4757' : '#2ed573',
+                              fontWeight: 600, fontSize: '0.9rem',
+                            }}>
+                              <i className={`fas ${manglikGroom.is_manglik ? 'fa-exclamation-triangle' : 'fa-check-circle'}`} style={{ marginRight: 6 }}></i>
+                              {manglikGroom.is_manglik ? 'Manglik' : 'Non-Manglik'}
+                            </p>
+                          </div>
+                        )}
+                        {manglikBride && (
+                          <div style={{
+                            background: manglikBride.is_manglik ? 'rgba(255, 71, 87, 0.08)' : 'rgba(46, 213, 115, 0.08)',
+                            padding: 12, borderRadius: 8,
+                          }}>
+                            <p style={{ color: '#b0b7c3', fontSize: '0.75rem', marginBottom: 4 }}>{brideName || 'Bride'}</p>
+                            <p style={{
+                              color: manglikBride.is_manglik ? '#ff4757' : '#2ed573',
+                              fontWeight: 600, fontSize: '0.9rem',
+                            }}>
+                              <i className={`fas ${manglikBride.is_manglik ? 'fa-exclamation-triangle' : 'fa-check-circle'}`} style={{ marginRight: 6 }}></i>
+                              {manglikBride.is_manglik ? 'Manglik' : 'Non-Manglik'}
+                            </p>
+                          </div>
+                        )}
+                      </div>
                     </div>
                   )}
                 </>
