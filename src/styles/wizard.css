@@ -1,0 +1,594 @@
+/* ============================================================
+   Chart Reading Wizard — Phase 43
+   Dark theme matching admin.css palette
+   All classes prefixed .wiz-*
+   ============================================================ */
+
+/* --- Layout shell --- */
+.wiz-page {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem 4rem;
+}
+.wiz-page-title {
+  font-family: 'Cinzel', serif;
+  font-size: 1.8rem;
+  color: #fff;
+  text-align: center;
+  margin-bottom: 0.25rem;
+}
+.wiz-page-subtitle {
+  text-align: center;
+  color: #b0b7c3;
+  font-size: 0.95rem;
+  margin-bottom: 2rem;
+}
+
+/* --- Stepper (progress bar) --- */
+.wiz-stepper {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  margin-bottom: 2rem;
+  padding: 0 0.5rem;
+  overflow-x: auto;
+}
+.wiz-step-dot {
+  width: 28px;
+  height: 28px;
+  min-width: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #6b7280;
+  background: #1e2130;
+  border: 2px solid #2a2f3e;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+  z-index: 1;
+}
+.wiz-step-dot.active {
+  background: #7b5bff;
+  border-color: #7b5bff;
+  color: #fff;
+  box-shadow: 0 0 12px rgba(123, 91, 255, 0.4);
+}
+.wiz-step-dot.completed {
+  background: #2ed573;
+  border-color: #2ed573;
+  color: #fff;
+}
+.wiz-step-dot.completed::after {
+  content: '\2713';
+  font-size: 0.75rem;
+}
+.wiz-step-line {
+  flex: 1;
+  height: 2px;
+  background: #2a2f3e;
+  min-width: 8px;
+}
+.wiz-step-line.completed {
+  background: #2ed573;
+}
+
+/* --- Category selector (Step 0) --- */
+.wiz-categories {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1.25rem;
+  margin-top: 1rem;
+}
+.wiz-cat-card {
+  background: rgba(30, 33, 48, 0.9);
+  border: 2px solid #2a2f3e;
+  border-radius: 12px;
+  padding: 1.5rem;
+  cursor: pointer;
+  transition: all 0.25s;
+  text-align: center;
+}
+.wiz-cat-card:hover {
+  border-color: #7b5bff;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(123, 91, 255, 0.15);
+}
+.wiz-cat-card.selected {
+  border-color: #7b5bff;
+  background: rgba(123, 91, 255, 0.1);
+}
+.wiz-cat-icon {
+  font-size: 2rem;
+  margin-bottom: 0.75rem;
+  display: block;
+}
+.wiz-cat-label {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #fff;
+  margin-bottom: 0.3rem;
+}
+.wiz-cat-desc {
+  font-size: 0.82rem;
+  color: #b0b7c3;
+  line-height: 1.45;
+  margin-bottom: 0.5rem;
+}
+.wiz-cat-steps {
+  font-size: 0.75rem;
+  color: #7b5bff;
+  font-weight: 500;
+}
+
+/* --- Step container --- */
+.wiz-step {
+  background: rgba(30, 33, 48, 0.85);
+  border: 1px solid #2a2f3e;
+  border-radius: 12px;
+  padding: 2rem;
+  margin-bottom: 1.5rem;
+}
+.wiz-step-header {
+  margin-bottom: 1.5rem;
+}
+.wiz-step-header h2 {
+  font-size: 1.3rem;
+  color: #fff;
+  margin: 0 0 0.3rem;
+}
+.wiz-step-header p {
+  color: #b0b7c3;
+  font-size: 0.88rem;
+  margin: 0;
+}
+
+/* --- Form elements --- */
+.wiz-field {
+  margin-bottom: 1.25rem;
+}
+.wiz-label {
+  display: block;
+  font-size: 0.85rem;
+  color: #e0e0e0;
+  margin-bottom: 0.4rem;
+  font-weight: 500;
+}
+.wiz-label .required {
+  color: #ff6b6b;
+  margin-left: 2px;
+}
+.wiz-input,
+.wiz-select,
+.wiz-textarea {
+  width: 100%;
+  padding: 0.6rem 0.8rem;
+  background: #161826;
+  border: 1px solid #2a2f3e;
+  border-radius: 8px;
+  color: #e0e0e0;
+  font-size: 0.9rem;
+  transition: border-color 0.2s;
+  box-sizing: border-box;
+}
+.wiz-input:focus,
+.wiz-select:focus,
+.wiz-textarea:focus {
+  outline: none;
+  border-color: #7b5bff;
+}
+.wiz-textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+.wiz-select {
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23b0b7c3' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.8rem center;
+  padding-right: 2.2rem;
+}
+.wiz-hint {
+  font-size: 0.78rem;
+  color: #6b7280;
+  margin-top: 0.3rem;
+}
+.wiz-error-text {
+  font-size: 0.78rem;
+  color: #ff6b6b;
+  margin-top: 0.3rem;
+}
+
+/* --- Row layouts --- */
+.wiz-row {
+  display: flex;
+  gap: 1rem;
+}
+.wiz-row > .wiz-field {
+  flex: 1;
+}
+
+/* --- Sign selector grid (12 signs) --- */
+.wiz-sign-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.6rem;
+}
+.wiz-sign-btn {
+  padding: 0.55rem 0.4rem;
+  background: #161826;
+  border: 1px solid #2a2f3e;
+  border-radius: 8px;
+  color: #b0b7c3;
+  font-size: 0.82rem;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.15s;
+}
+.wiz-sign-btn:hover {
+  border-color: #7b5bff;
+  color: #e0e0e0;
+}
+.wiz-sign-btn.selected {
+  background: rgba(123, 91, 255, 0.15);
+  border-color: #7b5bff;
+  color: #fff;
+  font-weight: 600;
+}
+
+/* --- Planet-house grid --- */
+.wiz-planet-grid {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.5rem 1rem;
+  align-items: center;
+}
+.wiz-planet-name {
+  font-size: 0.9rem;
+  color: #e0e0e0;
+  font-weight: 500;
+}
+.wiz-planet-house-select {
+  width: 100px;
+}
+
+/* --- Toggle grid (planet conditions) --- */
+.wiz-toggle-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 0.6rem;
+}
+.wiz-toggle-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  background: #161826;
+  border: 1px solid #2a2f3e;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+.wiz-toggle-item:hover {
+  border-color: #4a4f60;
+}
+.wiz-toggle-item.active {
+  border-color: #7b5bff;
+  background: rgba(123, 91, 255, 0.08);
+}
+.wiz-toggle-check {
+  width: 18px;
+  height: 18px;
+  border-radius: 4px;
+  border: 2px solid #4a4f60;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.65rem;
+  color: transparent;
+  transition: all 0.15s;
+}
+.wiz-toggle-item.active .wiz-toggle-check {
+  background: #7b5bff;
+  border-color: #7b5bff;
+  color: #fff;
+}
+.wiz-toggle-label {
+  font-size: 0.82rem;
+  color: #b0b7c3;
+}
+
+/* --- Nakshatra selector --- */
+.wiz-nakshatra-row {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-end;
+}
+.wiz-nakshatra-row .wiz-field {
+  flex: 2;
+}
+.wiz-nakshatra-row .wiz-field:last-child {
+  flex: 1;
+}
+
+/* --- Navigation buttons --- */
+.wiz-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+.wiz-nav-left {
+  display: flex;
+  gap: 0.75rem;
+}
+.wiz-nav-right {
+  display: flex;
+  gap: 0.75rem;
+}
+.wiz-btn {
+  padding: 0.6rem 1.4rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.wiz-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.wiz-btn-prev {
+  background: #2a2f3e;
+  color: #b0b7c3;
+}
+.wiz-btn-prev:hover:not(:disabled) {
+  background: #3a3f50;
+}
+.wiz-btn-next {
+  background: linear-gradient(135deg, #7b5bff, #9d7bff);
+  color: #fff;
+}
+.wiz-btn-next:hover:not(:disabled) {
+  box-shadow: 0 4px 16px rgba(123, 91, 255, 0.4);
+}
+.wiz-btn-save {
+  background: transparent;
+  border: 1px solid #2a2f3e;
+  color: #b0b7c3;
+}
+.wiz-btn-save:hover:not(:disabled) {
+  border-color: #7b5bff;
+  color: #e0e0e0;
+}
+.wiz-btn-submit {
+  background: linear-gradient(135deg, #2ed573, #26de81);
+  color: #0d0f1a;
+  font-weight: 600;
+}
+.wiz-btn-submit:hover:not(:disabled) {
+  box-shadow: 0 4px 16px rgba(46, 213, 115, 0.4);
+}
+.wiz-btn-danger {
+  background: transparent;
+  border: 1px solid #ff4757;
+  color: #ff6b6b;
+}
+.wiz-btn-danger:hover:not(:disabled) {
+  background: rgba(255, 71, 87, 0.1);
+}
+
+/* --- Visual aid panel --- */
+.wiz-visual-aid {
+  background: rgba(20, 22, 34, 0.8);
+  border: 1px solid #2a2f3e;
+  border-radius: 8px;
+  margin-bottom: 1.25rem;
+  overflow: hidden;
+}
+.wiz-visual-aid-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1rem;
+  background: none;
+  border: none;
+  color: #7b5bff;
+  font-size: 0.82rem;
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+}
+.wiz-visual-aid-toggle:hover {
+  color: #9d7bff;
+}
+.wiz-visual-aid-body {
+  padding: 0 1rem 1rem;
+}
+.wiz-visual-aid-body img {
+  max-width: 100%;
+  border-radius: 6px;
+}
+.wiz-visual-aid-body iframe {
+  width: 100%;
+  aspect-ratio: 16/9;
+  border-radius: 6px;
+  border: none;
+}
+
+/* --- Rule validation badges --- */
+.wiz-rule-badges {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-top: 0.75rem;
+}
+.wiz-rule-badge {
+  padding: 0.25rem 0.6rem;
+  border-radius: 12px;
+  font-size: 0.72rem;
+  font-weight: 500;
+}
+.wiz-rule-badge.matched {
+  background: rgba(46, 213, 115, 0.15);
+  color: #2ed573;
+  border: 1px solid rgba(46, 213, 115, 0.3);
+}
+.wiz-rule-badge.pending {
+  background: rgba(255, 165, 2, 0.15);
+  color: #ffa502;
+  border: 1px solid rgba(255, 165, 2, 0.3);
+}
+
+/* --- Review / summary --- */
+.wiz-review-section {
+  margin-bottom: 1.25rem;
+}
+.wiz-review-section h3 {
+  font-size: 1rem;
+  color: #e0e0e0;
+  margin: 0 0 0.5rem;
+}
+.wiz-review-grid {
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  gap: 0.3rem 1rem;
+  font-size: 0.85rem;
+}
+.wiz-review-label {
+  color: #6b7280;
+}
+.wiz-review-value {
+  color: #e0e0e0;
+}
+
+/* --- Interpretation result --- */
+.wiz-interpretation {
+  background: rgba(20, 22, 34, 0.9);
+  border: 1px solid #2a2f3e;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-top: 1.5rem;
+}
+.wiz-interpretation h3 {
+  color: #fff;
+  margin: 0 0 1rem;
+  font-size: 1.1rem;
+}
+.wiz-interpretation-text {
+  color: #e0e0e0;
+  font-size: 0.92rem;
+  line-height: 1.65;
+  white-space: pre-wrap;
+}
+.wiz-processing {
+  text-align: center;
+  padding: 3rem 1rem;
+}
+.wiz-processing-spinner {
+  width: 48px;
+  height: 48px;
+  border: 3px solid #2a2f3e;
+  border-top-color: #7b5bff;
+  border-radius: 50%;
+  animation: wiz-spin 0.8s linear infinite;
+  margin: 0 auto 1rem;
+}
+@keyframes wiz-spin {
+  to { transform: rotate(360deg); }
+}
+.wiz-processing-text {
+  color: #b0b7c3;
+  font-size: 0.9rem;
+}
+
+/* --- Resume modal --- */
+.wiz-resume-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+.wiz-resume-modal {
+  background: #1e2130;
+  border: 1px solid #2a2f3e;
+  border-radius: 12px;
+  padding: 2rem;
+  max-width: 420px;
+  width: 90%;
+  text-align: center;
+}
+.wiz-resume-modal h3 {
+  color: #fff;
+  margin: 0 0 0.5rem;
+  font-size: 1.1rem;
+}
+.wiz-resume-modal p {
+  color: #b0b7c3;
+  font-size: 0.88rem;
+  margin-bottom: 1.5rem;
+}
+.wiz-resume-actions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+}
+
+/* --- Error/status banners --- */
+.wiz-error {
+  background: rgba(255, 71, 87, 0.1);
+  border: 1px solid rgba(255, 71, 87, 0.3);
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  color: #ff6b6b;
+  font-size: 0.85rem;
+  margin-bottom: 1rem;
+}
+.wiz-success {
+  background: rgba(46, 213, 115, 0.1);
+  border: 1px solid rgba(46, 213, 115, 0.3);
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  color: #2ed573;
+  font-size: 0.85rem;
+  margin-bottom: 1rem;
+}
+
+/* --- Person label (multi-person categories) --- */
+.wiz-person-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: rgba(123, 91, 255, 0.12);
+  padding: 0.3rem 0.8rem;
+  border-radius: 6px;
+  font-size: 0.78rem;
+  color: #9d7bff;
+  font-weight: 500;
+  margin-bottom: 1rem;
+}
+
+/* --- Responsive --- */
+@media (max-width: 640px) {
+  .wiz-page { padding: 1rem 0.75rem 3rem; }
+  .wiz-page-title { font-size: 1.4rem; }
+  .wiz-categories { grid-template-columns: 1fr; }
+  .wiz-sign-grid { grid-template-columns: repeat(3, 1fr); }
+  .wiz-row { flex-direction: column; gap: 0; }
+  .wiz-step { padding: 1.25rem; }
+  .wiz-nav { flex-direction: column-reverse; }
+  .wiz-nav-left, .wiz-nav-right { width: 100%; justify-content: center; }
+  .wiz-nakshatra-row { flex-direction: column; }
+}

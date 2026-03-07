@@ -1,8 +1,11 @@
 import PageShell from '../components/PageShell';
 import { useSharedEffects } from '../hooks/useSharedEffects';
+import { useAuth } from '../context/AuthContext';
 
 export default function HomePage() {
   useSharedEffects();
+  const { isAuthenticated, user } = useAuth();
+  const isPremium = user?.role === 'premium' || user?.role === 'admin';
 
   return (
     <PageShell activeNav="home">
@@ -172,6 +175,96 @@ export default function HomePage() {
                 </section>
       
       
+            {/* ===== TEMPORAL FORECAST SHOWCASE ===== */}
+            <section className="tf-showcase">
+                <div className="container">
+                    <div className="tf-showcase-grid">
+                        <div className="tf-showcase-content">
+                            <span className="tf-showcase-badge">
+                                <i className="fas fa-crown"></i> Premium Feature
+                            </span>
+                            <h2>Temporal Forecast</h2>
+                            <p className="tf-showcase-tagline">
+                                Know when opportunity knocks &mdash; and when to guard against threats.
+                            </p>
+                            <p className="tf-showcase-desc">
+                                Our AI-powered temporal engine scans your planetary transits, Vimshottari Dasha,
+                                Sade Sati phase, and double transit patterns to classify 13 life areas into
+                                opportunity, threat, or mixed windows.
+                            </p>
+                            <div className="tf-showcase-features">
+                                <div className="tf-sf-row">
+                                    <i className="fas fa-heartbeat"></i>
+                                    <div>
+                                        <strong>13 Life Areas</strong>
+                                        <span>Health, Finance, Career, Education, Spiritual, Family &amp; more</span>
+                                    </div>
+                                </div>
+                                <div className="tf-sf-row">
+                                    <i className="fas fa-check-double"></i>
+                                    <div>
+                                        <strong>Double Transit Analysis</strong>
+                                        <span>Jupiter + Saturn alignment on key houses per BPHS</span>
+                                    </div>
+                                </div>
+                                <div className="tf-sf-row">
+                                    <i className="fas fa-brain"></i>
+                                    <div>
+                                        <strong>AI Interpretations</strong>
+                                        <span>Natural language insights from a classical Jyotish expert AI</span>
+                                    </div>
+                                </div>
+                                <div className="tf-sf-row">
+                                    <i className="fas fa-ring"></i>
+                                    <div>
+                                        <strong>Sade Sati Detection</strong>
+                                        <span>Automatic phase tracking with per-area impact assessment</span>
+                                    </div>
+                                </div>
+                            </div>
+                            {isPremium ? (
+                                <a href="/my-data/temporal-forecast" className="btn btn-primary tf-showcase-cta">
+                                    <i className="fas fa-hourglass-half"></i> View My Forecast
+                                </a>
+                            ) : (
+                                <a href={isAuthenticated ? '/reports' : '/login'} className="btn btn-primary tf-showcase-cta">
+                                    <i className="fas fa-arrow-up"></i> {isAuthenticated ? 'Upgrade to Premium' : 'Get Started'}
+                                </a>
+                            )}
+                        </div>
+                        <div className="tf-showcase-visual">
+                            <div className="tf-showcase-card tf-sc-opp">
+                                <div className="tf-sc-icon"><i className="fas fa-arrow-up"></i></div>
+                                <div className="tf-sc-body">
+                                    <h4>Career &amp; Profession</h4>
+                                    <span className="tf-sc-tag tf-sc-tag-opp">Opportunity</span>
+                                    <div className="tf-sc-bar"><div className="tf-sc-fill" style={{width: '78%', background: '#2ed573'}}></div></div>
+                                    <p>Jupiter transiting 10th house &mdash; strong career window</p>
+                                </div>
+                            </div>
+                            <div className="tf-showcase-card tf-sc-threat">
+                                <div className="tf-sc-icon"><i className="fas fa-arrow-down"></i></div>
+                                <div className="tf-sc-body">
+                                    <h4>Health &amp; Vitality</h4>
+                                    <span className="tf-sc-tag tf-sc-tag-threat">Threat</span>
+                                    <div className="tf-sc-bar"><div className="tf-sc-fill" style={{width: '62%', background: '#ff4757'}}></div></div>
+                                    <p>Saturn aspecting lagna &mdash; take extra care</p>
+                                </div>
+                            </div>
+                            <div className="tf-showcase-card tf-sc-mixed">
+                                <div className="tf-sc-icon"><i className="fas fa-arrows-alt-h"></i></div>
+                                <div className="tf-sc-body">
+                                    <h4>Finance &amp; Wealth</h4>
+                                    <span className="tf-sc-tag tf-sc-tag-mixed">Mixed</span>
+                                    <div className="tf-sc-bar"><div className="tf-sc-fill" style={{width: '55%', background: '#ffa502'}}></div></div>
+                                    <p>Double transit active &mdash; calculated risks may pay off</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
                 <section className="testimonials">
                     <div className="container">
                         <div className="section-header">

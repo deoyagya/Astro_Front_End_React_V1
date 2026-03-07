@@ -1,8 +1,10 @@
 /**
  * YogasPage — Classical yoga scan results grouped by yoga_type.
  *
- * API: POST /v1/yogas/scan
- * Response shape: { yogas: { "0": {...}, "1": {...}, ... }, total_yogas, ... }
+ * Data Source Priority:
+ *   1. chartBundle.yogas (if already loaded via chart/create?include_yogas=true)
+ *   2. POST /v1/yogas/scan (fallback — standalone endpoint)
+ *
  * Each yoga: { yoga_name, yoga_type, forming_planets[], mechanism, strength, classical_reference, commentary }
  *
  * Groups the flat list by yoga_type and renders category cards.
@@ -63,13 +65,25 @@ const STRENGTH_COLORS = {
 };
 
 export default function YogasPage() {
-  const { birthPayload, refreshKey, hasBirthData } = useMyData();
+  const { birthPayload, refreshKey, hasBirthData, chartBundle } = useMyData();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
   useEffect(() => {
     if (!birthPayload) return;
+
+    // Priority 1: Read from chart bundle if yogas are already available
+    const bundleInner = chartBundle?.bundle || chartBundle;
+    const bundleYogas = bundleInner?.yogas;
+    if (bundleYogas && Array.isArray(bundleYogas) && bundleYogas.length > 0) {
+      setData({ yogas: bundleYogas, total_yogas: bundleYogas.length });
+      setLoading(false);
+      setError('');
+      return;
+    }
+
+    // Priority 2: Fetch via dedicated yoga scan endpoint
     let cancelled = false;
     setLoading(true);
     setError('');

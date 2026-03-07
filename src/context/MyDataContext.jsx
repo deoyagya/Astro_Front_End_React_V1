@@ -25,11 +25,11 @@ export function MyDataProvider({ children }) {
 
   const hasBirthData = !!birthPayload;
 
-  const loadBirthData = useCallback((payload) => {
+  const loadBirthData = useCallback((payload, { triggerExternal = false } = {}) => {
     setBirthPayload(payload);
     setRefreshKey((prev) => prev + 1);
-    // Also sync the birth form fields if handler is registered
-    if (onExternalLoadRef.current) {
+    // Sync birth form fields ONLY when triggered by a child page (e.g. SavedCharts)
+    if (triggerExternal && onExternalLoadRef.current) {
       onExternalLoadRef.current(payload);
     }
   }, []);

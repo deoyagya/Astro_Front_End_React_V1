@@ -22,12 +22,10 @@ function formatDisplayTime(time24) {
   else if (h > 12) h -= 12;
   return `${String(h).padStart(2, '0')}:${mStr} ${suffix}`;
 }
+
 import PageShell from '../components/PageShell';
-import NorthIndianChart from '../components/NorthIndianChart';
-import SouthIndianChart from '../components/SouthIndianChart';
-import {
-  SIGN_NAMES, vargaToChartData, formatDegrees,
-} from '../utils/jyotish';
+import VedicChart, { enrichD1, VARGA_LABELS } from '../components/chart';
+import { SIGN_NAMES } from '../utils/jyotish';
 
 /* ===== House → Life Area mapping ===== */
 const HOUSE_LIFE_AREAS = {
@@ -51,51 +49,11 @@ const HOUSE_TO_VARGA = {
   7: 'D9', 8: 'D12', 9: 'D9', 10: 'D10', 11: 'D16', 12: 'D12',
 };
 
-const VARGA_LABELS = {
-  D1: 'Rashi (D-1)', D2: 'Hora (D-2)', D3: 'Drekkana (D-3)',
-  D4: 'Chaturthamsa (D-4)', D7: 'Saptamsa (D-7)', D9: 'Navamsa (D-9)',
-  D10: 'Dasamsa (D-10)', D12: 'Dwadashamsa (D-12)', D16: 'Shodashamsa (D-16)',
-  D20: 'Vimshamsa (D-20)', D24: 'Chaturvimshamsa (D-24)', D27: 'Saptavimshamsa (D-27)',
-  D30: 'Trimshamsa (D-30)', D40: 'Khavedamsha (D-40)', D45: 'Akshavedamsha (D-45)',
-  D60: 'Shashtyamsha (D-60)',
-};
-
-/**
- * Enrich D1 chart placements with per-planet metadata.
- */
-function enrichD1(d1Chart, natalPlanets) {
-  if (!d1Chart?.placements || !natalPlanets) return d1Chart;
-  const enriched = JSON.parse(JSON.stringify(d1Chart));
-  for (const [, hData] of Object.entries(enriched.placements)) {
-    hData.planetData = hData.planetData || {};
-    for (const pName of hData.planets || []) {
-      if (pName === 'Lagna') continue;
-      const pNatal = natalPlanets[pName];
-      if (!pNatal) continue;
-      const lon = pNatal.longitude ?? pNatal.lon;
-      const degInSign = lon != null ? (lon % 30) : (pNatal.degree ?? null);
-      hData.planetData[pName] = {
-        degree: degInSign,
-        longitude: lon,
-        isRetro: pNatal.is_retrograde || pNatal.retrograde || pNatal.is_retro || false,
-        isCombust: pNatal.derived?.combustion?.is_combust || false,
-        sign: parseInt(pNatal.sign, 10),
-      };
-    }
-  }
-  return enriched;
-}
-
 export default function HouseExplorePage() {
   const { houseNum: houseParam } = useParams();
   const houseNum = parseInt(houseParam, 10);
   const navigate = useNavigate();
 
-  const chartStyle = useMemo(() => {
-    try {
-      return sessionStorage.getItem('chartStylePreference') || localStorage.getItem('chart_style_preference') || 'north';
-    } catch { return 'north'; }
-  }, []);
   const [selectedLifeArea, setSelectedLifeArea] = useState(null);
   const [timelineYears, setTimelineYears] = useState(2);
 
@@ -117,10 +75,8 @@ export default function HouseExplorePage() {
   const bundle = chartBundle?.bundle || {};
   const natal = bundle.natal || {};
   const planets = natal.planets || {};
-  const ascendant = natal.ascendant || {};
-  const d9Vargas = bundle.vargas?.D9 || null;
 
-  // D1 chart data
+  // D1 chart data (for house info extraction)
   const d1ChartData = useMemo(() => {
     const raw = bundle.charts?.D1;
     if (!raw?.placements) return null;
@@ -130,13 +86,6 @@ export default function HouseExplorePage() {
   // Determine the corresponding divisional chart for this house
   const vargaKey = HOUSE_TO_VARGA[houseNum] || 'D1';
   const vargaLabel = VARGA_LABELS[vargaKey] || vargaKey;
-
-  const divisionalChartData = useMemo(() => {
-    if (vargaKey === 'D1') return d1ChartData;
-    const vargaData = bundle.vargas?.[vargaKey];
-    if (vargaData) return vargaToChartData(vargaData, vargaLabel);
-    return null;
-  }, [bundle, vargaKey, vargaLabel, d1ChartData]);
 
   // Life areas for this house
   const lifeAreas = HOUSE_LIFE_AREAS[houseNum] || [];
@@ -165,8 +114,6 @@ export default function HouseExplorePage() {
     );
   }
 
-  const ChartComponent = chartStyle === 'north' ? NorthIndianChart : SouthIndianChart;
-
   return (
     <PageShell activeNav="tools">
       <section className="tool-page">
@@ -184,20 +131,20 @@ export default function HouseExplorePage() {
 
             {/* ===== LEFT COLUMN: Divisional Chart ===== */}
             <div className="house-explore-left">
-
-              {/* Divisional Chart (ONLY chart shown) */}
               <div className="chart-section">
                 <h3 className="chart-section-title">
                   <i className="fas fa-layer-group"></i> {vargaLabel} Chart
                   <span className="chart-hint"> — House {houseNum}</span>
                 </h3>
                 <div className="chart-svg-wrapper">
-                  <ChartComponent
-                    chartData={vargaKey === 'D1' ? d1ChartData : (divisionalChartData || d1ChartData)}
-                    chartLabel={vargaLabel}
+                  <VedicChart
+                    chartBundle={chartBundle}
+                    chartKey={vargaKey}
                     onHouseClick={(h) => navigate(`/birth-chart/house/${h}`)}
                     selectedHouse={vargaKey === 'D1' ? houseNum : null}
-                    d9Vargas={d9Vargas}
+                    showControls={false}
+                    showAscendant={false}
+                    chartLabel={vargaLabel}
                   />
                 </div>
               </div>

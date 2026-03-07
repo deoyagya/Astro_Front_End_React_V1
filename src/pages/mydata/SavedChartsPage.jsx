@@ -77,7 +77,7 @@ export default function SavedChartsPage() {
       tz_id: bd.tz_id || bd.timezone || '',
       gender: bd.gender || '',
     };
-    loadBirthData(payload);
+    loadBirthData(payload, { triggerExternal: true });
   }
 
   function formatDate(dateStr) {

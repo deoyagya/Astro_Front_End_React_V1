@@ -90,6 +90,7 @@ export default function MyDetailsPage() {
   const panchang = data.panchang || {};
   const natal = data.natal || {};
   const asc = natal.ascendant || {};
+  const reqData = data.request || {};  // Backend echoes resolved lat/lon/tz_id in request
 
   // Build display rows — use safeStr() for all panchang fields
   // (backend returns objects like {weekday_name, tithi_name, lmt_str, sidereal_time_str})
@@ -100,9 +101,9 @@ export default function MyDetailsPage() {
     ['Day of Birth', safeStr(panchang.vara)],
     ['Ishtkaal', safeStr(panchang.ghati) !== '---' ? safeStr(panchang.ghati) : safeStr(panchang.sidereal_time)],
     ['Place of Birth', birthPayload.place_of_birth || '---'],
-    ['Time Zone', birthPayload.tz_id || '---'],
-    ['Latitude', birthPayload.lat != null ? `${birthPayload.lat}` : '---'],
-    ['Longitude', birthPayload.lon != null ? `${birthPayload.lon}` : '---'],
+    ['Time Zone', birthPayload.tz_id || reqData.tz_id || '---'],
+    ['Latitude', birthPayload.lat != null ? `${birthPayload.lat}` : (reqData.lat != null ? `${reqData.lat}` : '---')],
+    ['Longitude', birthPayload.lon != null ? `${birthPayload.lon}` : (reqData.lon != null ? `${reqData.lon}` : '---')],
     ['Local Mean Time (LMT)', safeStr(panchang.lmt) !== '---' ? safeStr(panchang.lmt) : safeStr(panchang.sunrise_local)],
     ['GMT at Birth', safeStr(panchang.gmt) !== '---' ? safeStr(panchang.gmt) : safeStr(meta.generated_at_utc)],
     ['Tithi', safeStr(panchang.tithi)],

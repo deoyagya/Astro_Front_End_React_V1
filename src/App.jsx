@@ -34,7 +34,10 @@ import AdminMuhurtaPage from './pages/admin/AdminMuhurtaPage';
 import AdminObservabilityPage from './pages/admin/AdminObservabilityPage';
 import AdminPipelineWizardPage from './pages/admin/AdminPipelineWizardPage';
 import AdminRuleCVWizardPage from './pages/admin/AdminRuleCVWizardPage';
+import AdminRuleBuilderPage from './pages/admin/AdminRuleBuilderPage';
+import AdminWizardContentPage from './pages/admin/AdminWizardContentPage';
 import MuhurtaFinderPage from './pages/MuhurtaFinderPage';
+import ChartWizardPage from './pages/ChartWizardPage';
 
 // My Data pages
 import MyDataLayout from './pages/mydata/MyDataLayout';
@@ -46,6 +49,7 @@ import BirthDetailsPage from './pages/mydata/BirthDetailsPage';
 import YogasPage from './pages/mydata/YogasPage';
 import SadeSatiPage from './pages/mydata/SadeSatiPage';
 import TransitPage from './pages/mydata/TransitPage';
+import TemporalForecastPage from './pages/mydata/TemporalForecastPage';
 
 export default function App() {
   return (
@@ -63,6 +67,7 @@ export default function App() {
         <Route path="/compatibility" element={<ProtectedRoute><CompatibilityPage /></ProtectedRoute>} />
         <Route path="/horoscope" element={<ProtectedRoute><HoroscopePage /></ProtectedRoute>} />
         <Route path="/muhurta" element={<ProtectedRoute><MuhurtaFinderPage /></ProtectedRoute>} />
+        <Route path="/chart-wizard" element={<ProtectedRoute><ChartWizardPage /></ProtectedRoute>} />
         <Route path="/career-report" element={<ProtectedRoute><CareerReportPage /></ProtectedRoute>} />
         <Route path="/love-marriage-report" element={<ProtectedRoute><LoveMarriageReportPage /></ProtectedRoute>} />
         <Route path="/education-report" element={<ProtectedRoute><EducationReportPage /></ProtectedRoute>} />
@@ -84,6 +89,7 @@ export default function App() {
           <Route path="yogas" element={<YogasPage />} />
           <Route path="sade-sati" element={<SadeSatiPage />} />
           <Route path="transit" element={<TransitPage />} />
+          <Route path="temporal-forecast" element={<TemporalForecastPage />} />
         </Route>
 
         {/* Admin routes — require admin role */}
@@ -105,6 +111,8 @@ export default function App() {
         <Route path="/admin/observability" element={<AdminProtectedRoute><AdminObservabilityPage /></AdminProtectedRoute>} />
         <Route path="/admin/pipeline-wizard" element={<AdminProtectedRoute><AdminPipelineWizardPage /></AdminProtectedRoute>} />
         <Route path="/admin/rule-cv-wizard" element={<AdminProtectedRoute><AdminRuleCVWizardPage /></AdminProtectedRoute>} />
+        <Route path="/admin/rule-builder" element={<AdminProtectedRoute><AdminRuleBuilderPage /></AdminProtectedRoute>} />
+        <Route path="/admin/wizard-content" element={<AdminProtectedRoute><AdminWizardContentPage /></AdminProtectedRoute>} />
 
         {/* Catch-all */}
         <Route path="*" element={<Navigate to="/" replace />} />

@@ -1,112 +1,39 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import PageShell from '../components/PageShell';
 import { useSharedEffects } from '../hooks/useSharedEffects';
-
-const REPORTS = [
-  {
-    id: 'career', title: 'Career & Finance', icon: 'fa-briefcase',
-    desc: 'In-depth analysis of your professional path, growth periods, and financial potential based on 10th house, 2nd house, and planetary periods.',
-    pages: '25+', price: 1499, badge: 'Best Seller', route: '/career-report',
-    highlights: [
-      'Complete 10th house career analysis with planetary influences',
-      'Financial growth windows based on Dasha periods (2024\u20132034)',
-      'Professional strengths & natural career inclinations',
-      'Business vs. service aptitude assessment',
-      'Wealth accumulation periods & 2nd/11th house analysis',
-      'Timing guidance for job changes, promotions & ventures',
-    ],
-    planets: [
-      { name: 'Sun', house: '10th', status: 'beneficial', effect: 'Authority, leadership & government favour' },
-      { name: 'Saturn', house: '10th', status: 'afflicted', effect: 'Career discipline, delays & ultimate success' },
-      { name: 'Jupiter', house: '2nd', status: 'beneficial', effect: 'Financial growth, wealth & family prosperity' },
-      { name: 'Mercury', house: '10th', status: 'beneficial', effect: 'Communication skills & business acumen' },
-      { name: 'Mars', house: '6th', status: 'afflicted', effect: 'Competition handling & workplace dynamics' },
-      { name: 'Venus', house: '11th', status: 'beneficial', effect: 'Income through arts, luxury & partnerships' },
-      { name: 'Rahu', house: '10th', status: 'mixed', effect: 'Unconventional career paths & foreign connections' },
-      { name: 'Ketu', house: '4th', status: 'mixed', effect: 'Detachment from comfort, spiritual workplace' },
-    ],
-    warnings: [
-      'Saturn in 10th may cause career delays & setbacks between ages 28\u201335',
-      'Rahu\u2019s influence can create confusion about true career calling',
-      'Mars in 6th indicates workplace conflicts & intense competition',
-      '2nd house affliction may cause financial instability in early career',
-    ],
-    remedies: [
-      'Surya Namaskar & Aditya Hridayam for career authority',
-      'Shani mantras & Saturday practices for steady progress',
-      'Lakshmi-Kubera prayers for financial abundance',
-      'Gemstone recommendations based on your specific chart',
-      'Career-specific yantra & ritual guidance',
-    ],
-    footerNote: 'This is a sample preview. The full report includes personalized analysis based on your exact birth chart with complete remedies, timing windows, and actionable career guidance.',
-  },
-  {
-    id: 'love', title: 'Love & Marriage', icon: 'fa-heart',
-    desc: 'Detailed compatibility analysis, marriage timing, relationship strengths, and challenges based on 7th house, Venus, and Jupiter.',
-    pages: '30+', price: 1799, badge: '', route: '/love-marriage-report',
-    highlights: ['7th house relationship analysis', 'Venus & marriage timing', 'Manglik dosha assessment'],
-    planets: [
-      { name: 'Venus', house: '7th', status: 'key', effect: 'Love & relationship harmony' },
-      { name: 'Mars', house: '1st', status: 'key', effect: 'Manglik dosha evaluation' },
-      { name: 'Jupiter', house: '7th', status: 'key', effect: 'Marriage blessings & timing' },
-    ],
-    remedies: ['Venus strengthening for harmony', 'Manglik dosha remedies if applicable', 'Jupiter mantras for marriage timing'],
-  },
-  {
-    id: 'education', title: 'Education & Intelligence', icon: 'fa-brain',
-    desc: 'Analysis of learning abilities, academic success periods, and intellectual strengths through 5th house, Mercury, and Jupiter influences.',
-    pages: '20+', price: 1299, badge: '', route: '/education-report',
-    highlights: ['5th house intellect analysis', 'Mercury & learning abilities', 'Academic timing windows'],
-    planets: [
-      { name: 'Mercury', house: '5th', status: 'key', effect: 'Intellectual capacity' },
-      { name: 'Jupiter', house: '9th', status: 'key', effect: 'Higher education & wisdom' },
-      { name: 'Moon', house: '4th', status: 'key', effect: 'Memory & emotional intelligence' },
-    ],
-    remedies: ['Mercury mantras for concentration', 'Saraswati prayers for knowledge', 'Study during favorable planetary hours'],
-  },
-  {
-    id: 'health', title: 'Health & Wellness', icon: 'fa-spa',
-    desc: 'Understand health predispositions, vitality periods, and preventive measures through 6th house, lagna, and planetary influences.',
-    pages: '22+', price: 1399, badge: 'New', route: '/health-report',
-    highlights: ['6th house health analysis', 'Lagna vitality assessment', 'Preventive guidance periods'],
-    planets: [
-      { name: 'Sun', house: '1st', status: 'key', effect: 'Vitality & constitution' },
-      { name: 'Moon', house: '4th', status: 'key', effect: 'Mental & emotional wellness' },
-      { name: 'Mars', house: '6th', status: 'key', effect: 'Physical strength & energy' },
-    ],
-    remedies: ['Sun mantras for vitality', 'Pranayama for Moon balance', 'Dietary guidance per Ayurvedic constitution'],
-  },
-  {
-    id: 'spiritual', title: 'Spiritual Growth', icon: 'fa-om',
-    desc: 'Explore your spiritual path, past life indicators, and evolution through 12th house, Ketu, and spiritual planetary influences.',
-    pages: '28+', price: 1599, badge: '', route: '/spiritual-growth-report',
-    highlights: ['12th house spiritual analysis', 'Ketu & past life indicators', 'Meditation & dharma path'],
-    planets: [
-      { name: 'Ketu', house: '12th', status: 'key', effect: 'Spiritual liberation path' },
-      { name: 'Jupiter', house: '9th', status: 'key', effect: 'Guru grace & dharma' },
-      { name: 'Moon', house: '12th', status: 'key', effect: 'Intuition & inner wisdom' },
-    ],
-    remedies: ['Ketu mantras for spiritual clarity', 'Meditation during favorable nakshatras', 'Guru-related prayers & practices'],
-  },
-  {
-    id: 'family', title: 'Family & Children', icon: 'fa-home',
-    desc: 'Analysis of family harmony, child timing, and relationships with parents through 4th house, 5th house, and benefic planets.',
-    pages: '26+', price: 1499, badge: '', route: '/family-children-report',
-    highlights: ['4th house family harmony', '5th house children & progeny', 'Parent relationship analysis'],
-    planets: [
-      { name: 'Moon', house: '4th', status: 'key', effect: 'Mother & domestic happiness' },
-      { name: 'Jupiter', house: '5th', status: 'key', effect: 'Children & progeny blessings' },
-      { name: 'Venus', house: '4th', status: 'key', effect: 'Domestic comfort & harmony' },
-    ],
-    remedies: ['Moon mantras for family peace', 'Jupiter prayers for progeny blessings', 'Venus remedies for domestic harmony'],
-  },
-];
+import { api } from '../api/client';
 
 export default function ReportsPage() {
   useSharedEffects();
   const navigate = useNavigate();
   const [sampleReport, setSampleReport] = useState(null);
+  const [reports, setReports] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  // Fetch report catalog from backend
+  useEffect(() => {
+    let cancelled = false;
+    setLoading(true);
+    setError('');
+
+    api.get('/v1/reports/catalog')
+      .then((res) => {
+        if (!cancelled) {
+          setReports(res.reports || []);
+          setLoading(false);
+        }
+      })
+      .catch((err) => {
+        if (!cancelled) {
+          setError(err.message || 'Failed to load reports');
+          setLoading(false);
+        }
+      });
+
+    return () => { cancelled = true; };
+  }, []);
 
   const getCart = () => {
     const parsed = JSON.parse(localStorage.getItem('cart') || '[]');
@@ -129,7 +56,7 @@ export default function ReportsPage() {
 
   const orderBundle = () => {
     const cart = getCart();
-    REPORTS.forEach((r) => {
+    reports.forEach((r) => {
       if (!cart.some((item) => item.id === r.id)) {
         cart.push({ id: r.id, name: r.title, price: r.price, icon: r.icon });
       }
@@ -137,6 +64,11 @@ export default function ReportsPage() {
     localStorage.setItem('cart', JSON.stringify(cart));
     navigate('/order');
   };
+
+  // Calculate bundle pricing from API data
+  const totalPrice = reports.reduce((sum, r) => sum + r.price, 0);
+  const bundleDiscount = 0.4; // 40% off
+  const bundlePrice = Math.round(totalPrice * (1 - bundleDiscount));
 
   return (
     <PageShell activeNav="reports">
@@ -153,43 +85,71 @@ export default function ReportsPage() {
             </p>
           </div>
 
-          {/* Reports Grid */}
-          <div className="reports-grid">
-            {REPORTS.map((report) => (
-              <div className="report-card" key={report.id} id={report.id}>
-                {report.badge && <div className="card-badge">{report.badge}</div>}
-                <div className="report-icon"><i className={`fas ${report.icon}`}></i></div>
-                <h3>{report.title}</h3>
-                <p className="report-desc">{report.desc}</p>
-                <div className="report-meta">
-                  <span><i className="fas fa-calendar-alt"></i> {report.pages} pages</span>
-                  <span><i className="fas fa-clock"></i> 24hrs delivery</span>
-                </div>
-                <div className="report-price">₹{report.price.toLocaleString('en-IN')} INR</div>
-                <div className="report-actions">
-                  <button className="btn-sample" onClick={() => setSampleReport(report)}>
-                    <i className="fas fa-eye"></i> View Sample
-                  </button>
-                  <button className="btn-order" onClick={() => orderReport(report)}>
-                    <i className="fas fa-file-invoice"></i> Order
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* Bundle Card */}
-          <div className="bundle-card">
-            <div className="bundle-content">
-              <h3><i className="fas fa-gift"></i> Complete Life Bundle</h3>
-              <p>Get all 6 life area reports at 40% off + free personalized birth chart analysis</p>
-              <div className="bundle-price">
-                <span className="original">₹8,994</span>
-                <span className="discounted">₹5,399</span>
-              </div>
-              <button className="btn-bundle" onClick={orderBundle}>Order Complete Bundle</button>
+          {/* Loading state */}
+          {loading && (
+            <div className="api-loading" style={{ textAlign: 'center', padding: '3rem' }}>
+              <i className="fas fa-spinner fa-spin" style={{ fontSize: '2rem', color: '#ffa502' }}></i>
+              <p style={{ marginTop: '1rem', color: '#ccc' }}>Loading reports...</p>
             </div>
-          </div>
+          )}
+
+          {/* Error state */}
+          {error && !loading && (
+            <div className="api-error" style={{ textAlign: 'center', padding: '2rem' }}>
+              <i className="fas fa-exclamation-triangle" style={{ fontSize: '2rem', color: '#ff4757' }}></i>
+              <p style={{ marginTop: '1rem', color: '#ff4757' }}>{error}</p>
+            </div>
+          )}
+
+          {/* Reports Grid */}
+          {!loading && !error && reports.length > 0 && (
+            <>
+              <div className="reports-grid">
+                {reports.map((report) => (
+                  <div className="report-card" key={report.id} id={report.id}>
+                    {report.badge && <div className="card-badge">{report.badge}</div>}
+                    <div className="report-icon"><i className={`fas ${report.icon}`}></i></div>
+                    <h3>{report.title}</h3>
+                    <p className="report-desc">{report.desc}</p>
+                    <div className="report-meta">
+                      <span><i className="fas fa-calendar-alt"></i> {report.pages} pages</span>
+                      <span><i className="fas fa-clock"></i> {report.delivery_hours || 24}hrs delivery</span>
+                    </div>
+                    <div className="report-price">₹{report.price.toLocaleString('en-IN')} INR</div>
+                    <div className="report-actions">
+                      <button className="btn-sample" onClick={() => setSampleReport(report)}>
+                        <i className="fas fa-eye"></i> View Sample
+                      </button>
+                      <button className="btn-order" onClick={() => orderReport(report)}>
+                        <i className="fas fa-file-invoice"></i> Order
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Bundle Card */}
+              <div className="bundle-card">
+                <div className="bundle-content">
+                  <h3><i className="fas fa-gift"></i> Complete Life Bundle</h3>
+                  <p>Get all {reports.length} life area reports at 40% off + free personalized birth chart analysis</p>
+                  <div className="bundle-price">
+                    <span className="original">₹{totalPrice.toLocaleString('en-IN')}</span>
+                    <span className="discounted">₹{bundlePrice.toLocaleString('en-IN')}</span>
+                  </div>
+                  <button className="btn-bundle" onClick={orderBundle}>Order Complete Bundle</button>
+                </div>
+              </div>
+            </>
+          )}
+
+          {/* Empty state */}
+          {!loading && !error && reports.length === 0 && (
+            <div style={{ textAlign: 'center', padding: '3rem', color: '#999' }}>
+              <i className="fas fa-file-alt" style={{ fontSize: '2rem' }}></i>
+              <p style={{ marginTop: '1rem' }}>No reports available at the moment.</p>
+            </div>
+          )}
         </div>
       </section>
 
@@ -220,40 +180,46 @@ export default function ReportsPage() {
             )}
 
             {/* Key highlights */}
-            <div className="sample-remedies" style={{ marginBottom: '25px' }}>
-              <h3><i className="fas fa-star"></i> Report Highlights</h3>
-              <ul>
-                {sampleReport.highlights.map((h, i) => (
-                  <li key={i}><i className="fas fa-check-circle"></i> {h}</li>
-                ))}
-              </ul>
-            </div>
+            {sampleReport.highlights && sampleReport.highlights.length > 0 && (
+              <div className="sample-remedies" style={{ marginBottom: '25px' }}>
+                <h3><i className="fas fa-star"></i> Report Highlights</h3>
+                <ul>
+                  {sampleReport.highlights.map((h, i) => (
+                    <li key={i}><i className="fas fa-check-circle"></i> {h}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
 
             {/* Planet analysis preview */}
-            <div className="sample-planets">
-              <h3>Key Planetary Analysis</h3>
-              <div className="planet-grid">
-                {sampleReport.planets.map((p, i) => (
-                  <div className={`planet-item ${p.status}`} key={i}>
-                    <strong>{p.name}</strong> in {p.house}
-                    <p style={{ fontSize: '0.9rem', marginTop: '5px' }}>{p.effect}</p>
-                  </div>
-                ))}
+            {sampleReport.planets && sampleReport.planets.length > 0 && (
+              <div className="sample-planets">
+                <h3>Key Planetary Analysis</h3>
+                <div className="planet-grid">
+                  {sampleReport.planets.map((p, i) => (
+                    <div className={`planet-item ${p.status}`} key={i}>
+                      <strong>{p.name}</strong> in {p.house}
+                      <p style={{ fontSize: '0.9rem', marginTop: '5px' }}>{p.effect}</p>
+                    </div>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
 
             {/* Remedies preview */}
-            <div className="sample-remedies">
-              <h3><i className="fas fa-shield-heart"></i> Included Remedies</h3>
-              <ul>
-                {sampleReport.remedies.map((r, i) => (
-                  <li key={i}><i className="fas fa-check-circle"></i> {r}</li>
-                ))}
-              </ul>
-              <p style={{ color: '#ffa502', marginTop: '15px' }}>
-                <i className="fas fa-lock"></i> 12+ more personalized remedies in full report
-              </p>
-            </div>
+            {sampleReport.remedies && sampleReport.remedies.length > 0 && (
+              <div className="sample-remedies">
+                <h3><i className="fas fa-shield-heart"></i> Included Remedies</h3>
+                <ul>
+                  {sampleReport.remedies.map((r, i) => (
+                    <li key={i}><i className="fas fa-check-circle"></i> {r}</li>
+                  ))}
+                </ul>
+                <p style={{ color: '#ffa502', marginTop: '15px' }}>
+                  <i className="fas fa-lock"></i> 12+ more personalized remedies in full report
+                </p>
+              </div>
+            )}
 
             <div className="sample-footer">
               <p>

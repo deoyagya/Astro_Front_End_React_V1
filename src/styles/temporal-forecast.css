@@ -1,0 +1,812 @@
+/* ==========================================================================
+   Temporal Forecast — Opportunity & Threat Window Timeline
+   Phase 43B — Premium feature visualization
+   ========================================================================== */
+
+/* ── Container ── */
+.tf-container {
+  padding: 0 0 40px 0;
+}
+
+/* ── Header ── */
+.tf-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 20px;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.tf-header h2 {
+  font-size: 1.35rem;
+  color: #e0e0e0;
+  margin: 0 0 4px 0;
+  font-weight: 600;
+}
+
+.tf-header h2 i {
+  color: #7b5bff;
+  margin-right: 8px;
+}
+
+.tf-subtitle {
+  color: #b0b7c3;
+  font-size: 0.85rem;
+  margin: 0;
+}
+
+.tf-overall-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  border: 1.5px solid;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  color: #e0e0e0;
+}
+
+.tf-score {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-left: 4px;
+  opacity: 0.9;
+}
+
+/* ── Summary Strip ── */
+.tf-summary-strip {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.tf-summary-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  background: rgba(30, 33, 48, 0.6);
+  border: 1px solid rgba(123, 91, 255, 0.12);
+  border-radius: 8px;
+  font-size: 0.82rem;
+  color: #b0b7c3;
+}
+
+.tf-summary-item strong {
+  color: #e0e0e0;
+}
+
+.tf-summary-sade-sati {
+  border-color: rgba(255, 165, 2, 0.3);
+  background: rgba(255, 165, 2, 0.06);
+}
+
+.tf-summary-sade-sati strong {
+  color: #ffa502;
+}
+
+/* ── Filter Tabs ── */
+.tf-filters {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.tf-filter-btn {
+  padding: 8px 16px;
+  background: rgba(30, 33, 48, 0.6);
+  border: 1.5px solid rgba(123, 91, 255, 0.15);
+  border-radius: 8px;
+  color: #b0b7c3;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 0.82rem;
+  font-weight: 500;
+}
+
+.tf-filter-btn:hover {
+  background: rgba(123, 91, 255, 0.08);
+  color: #e0e0e0;
+}
+
+.tf-filter-btn.active {
+  background: rgba(123, 91, 255, 0.15);
+  border-color: #7b5bff;
+  color: #e0e0e0;
+  font-weight: 600;
+}
+
+/* ── Cards Grid ── */
+.tf-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 14px;
+}
+
+/* ── Forecast Card ── */
+.tf-card {
+  background: rgba(30, 33, 48, 0.6);
+  border: 1.5px solid rgba(123, 91, 255, 0.12);
+  border-radius: 12px;
+  padding: 16px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  position: relative;
+}
+
+.tf-card:hover {
+  background: rgba(30, 33, 48, 0.8);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+}
+
+.tf-card-expanded {
+  grid-column: 1 / -1;
+  max-width: 100%;
+}
+
+/* Card Header */
+.tf-card-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.tf-card-icon {
+  font-size: 1.3rem;
+  width: 36px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.tf-card-title {
+  flex: 1;
+  min-width: 0;
+}
+
+.tf-card-title h3 {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #e0e0e0;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tf-card-domain {
+  font-size: 0.72rem;
+  color: #8891a5;
+  display: block;
+  margin-top: 2px;
+}
+
+.tf-card-badge-group {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+/* Badges */
+.tf-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  border: 1px solid transparent;
+  white-space: nowrap;
+}
+
+.tf-badge-type i {
+  font-size: 0.65rem;
+}
+
+.tf-badge-high {
+  background: rgba(255, 71, 87, 0.12);
+  color: #ff6b81;
+  border-color: rgba(255, 71, 87, 0.3);
+}
+
+.tf-badge-moderate {
+  background: rgba(255, 165, 2, 0.12);
+  color: #ffa502;
+  border-color: rgba(255, 165, 2, 0.3);
+}
+
+.tf-badge-low {
+  background: rgba(123, 91, 255, 0.12);
+  color: #a78bfa;
+  border-color: rgba(123, 91, 255, 0.3);
+}
+
+/* Score Bar */
+.tf-score-bar {
+  margin-bottom: 10px;
+}
+
+.tf-score-track {
+  height: 6px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 3px;
+  overflow: hidden;
+  display: flex;
+  margin-bottom: 4px;
+}
+
+.tf-score-fill-opp {
+  height: 100%;
+  background: linear-gradient(90deg, #2ed573, #26c866);
+  border-radius: 3px 0 0 3px;
+  transition: width 0.5s ease;
+}
+
+.tf-score-fill-threat {
+  height: 100%;
+  background: linear-gradient(90deg, #ff4757, #ff6b81);
+  border-radius: 0 3px 3px 0;
+  transition: width 0.5s ease;
+  margin-left: auto;
+}
+
+.tf-score-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.68rem;
+  color: #8891a5;
+}
+
+.tf-score-total {
+  font-weight: 700;
+  color: #e0e0e0;
+  font-size: 0.78rem;
+}
+
+/* Summary text */
+.tf-card-summary {
+  font-size: 0.8rem;
+  color: #b0b7c3;
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* Expand hint */
+.tf-card-expand-hint {
+  text-align: center;
+  margin-top: 8px;
+  color: #5a6175;
+  font-size: 0.7rem;
+}
+
+/* ── Expanded Details ── */
+.tf-card-details {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(123, 91, 255, 0.12);
+}
+
+.tf-detail-section {
+  margin-bottom: 16px;
+}
+
+.tf-detail-section h4 {
+  font-size: 0.82rem;
+  color: #b0b7c3;
+  margin: 0 0 8px 0;
+  font-weight: 600;
+}
+
+.tf-detail-section h4 i {
+  color: #7b5bff;
+  margin-right: 6px;
+}
+
+/* Transit List */
+.tf-transit-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.tf-transit-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 6px;
+  font-size: 0.78rem;
+  flex-wrap: wrap;
+}
+
+.tf-transit-planet {
+  font-weight: 600;
+  color: #e0e0e0;
+  min-width: 60px;
+}
+
+.tf-transit-sign {
+  color: #b0b7c3;
+}
+
+.tf-retro-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: rgba(255, 165, 2, 0.15);
+  color: #ffa502;
+  font-size: 0.65rem;
+  font-weight: 700;
+}
+
+.tf-nature-badge {
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 0.65rem;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+.tf-nature-yoga-karaka {
+  background: rgba(46, 213, 115, 0.15);
+  color: #2ed573;
+}
+
+.tf-nature-functional-benefic {
+  background: rgba(46, 213, 115, 0.1);
+  color: #7bed9f;
+}
+
+.tf-nature-functional-malefic {
+  background: rgba(255, 71, 87, 0.1);
+  color: #ff6b81;
+}
+
+.tf-nature-natural-malefic {
+  background: rgba(255, 71, 87, 0.08);
+  color: #ff7979;
+}
+
+.tf-nature-neutral {
+  background: rgba(123, 91, 255, 0.08);
+  color: #a78bfa;
+}
+
+/* Indicators */
+.tf-indicators {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.tf-indicator {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 6px;
+  font-size: 0.76rem;
+  color: #b0b7c3;
+}
+
+.tf-indicator i {
+  color: #7b5bff;
+  font-size: 0.7rem;
+}
+
+.tf-indicator-positive {
+  background: rgba(46, 213, 115, 0.08);
+  border: 1px solid rgba(46, 213, 115, 0.2);
+}
+
+.tf-indicator-positive i {
+  color: #2ed573;
+}
+
+.tf-indicator-warning {
+  background: rgba(255, 165, 2, 0.08);
+  border: 1px solid rgba(255, 165, 2, 0.2);
+}
+
+.tf-indicator-warning i {
+  color: #ffa502;
+}
+
+/* LLM Interpretation */
+.tf-interpretation {
+  margin-top: 16px;
+  padding: 16px;
+  background: rgba(123, 91, 255, 0.06);
+  border: 1px solid rgba(123, 91, 255, 0.15);
+  border-radius: 10px;
+}
+
+.tf-interpretation h4 {
+  font-size: 0.82rem;
+  color: #a78bfa;
+  margin: 0 0 10px 0;
+  font-weight: 600;
+}
+
+.tf-interpretation h4 i {
+  color: #7b5bff;
+  margin-right: 6px;
+}
+
+.tf-interpretation p {
+  font-size: 0.84rem;
+  color: #d0d4dc;
+  line-height: 1.7;
+  margin: 0;
+}
+
+/* Premium Upsell */
+.tf-premium-upsell {
+  margin-top: 16px;
+  padding: 14px 18px;
+  background: linear-gradient(135deg, rgba(123, 91, 255, 0.08), rgba(255, 165, 2, 0.06));
+  border: 1px dashed rgba(255, 165, 2, 0.3);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.82rem;
+  color: #ffa502;
+}
+
+.tf-premium-upsell i {
+  font-size: 1.1rem;
+}
+
+/* Empty Filter */
+.tf-empty-filter {
+  text-align: center;
+  padding: 40px 20px;
+  color: #8891a5;
+}
+
+.tf-empty-filter i {
+  font-size: 2rem;
+  margin-bottom: 12px;
+  display: block;
+  opacity: 0.5;
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .tf-header {
+    flex-direction: column;
+  }
+
+  .tf-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .tf-card-expanded {
+    grid-column: auto;
+  }
+
+  .tf-summary-strip {
+    flex-direction: column;
+  }
+
+  .tf-card-badge-group {
+    flex-wrap: wrap;
+  }
+
+  .tf-indicators {
+    flex-direction: column;
+  }
+
+  .tf-card-header {
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 480px) {
+  .tf-filters {
+    flex-direction: column;
+  }
+
+  .tf-filter-btn {
+    width: 100%;
+    text-align: center;
+  }
+}
+
+/* ── Premium Gate ── */
+.tf-premium-gate {
+  text-align: center;
+  padding: 60px 30px;
+  max-width: 560px;
+  margin: 0 auto;
+}
+
+.tf-premium-gate > i {
+  font-size: 3rem;
+  color: #ffa502;
+  margin-bottom: 20px;
+  display: block;
+}
+
+.tf-premium-gate h2 {
+  font-size: 1.5rem;
+  color: #e0e0e0;
+  margin: 0 0 12px 0;
+  font-weight: 700;
+}
+
+.tf-premium-gate > p {
+  color: #b0b7c3;
+  font-size: 0.92rem;
+  line-height: 1.7;
+  margin: 0 0 28px 0;
+}
+
+.tf-premium-features {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 32px;
+  text-align: left;
+  max-width: 320px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.tf-pf-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.88rem;
+  color: #d0d4dc;
+}
+
+.tf-pf-item i {
+  color: #2ed573;
+  font-size: 0.85rem;
+}
+
+.btn-upgrade-tf {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 28px;
+  background: linear-gradient(135deg, #7b5bff, #9d7bff);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.btn-upgrade-tf:hover {
+  background: linear-gradient(135deg, #6b4ce0, #8d6bef);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(123, 91, 255, 0.3);
+}
+
+/* ==========================================================================
+   Timeline Section — inline date-range chart in expanded cards
+   ========================================================================== */
+
+.tf-timeline-section {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(123, 91, 255, 0.12);
+}
+
+.tf-timeline-section h4 {
+  font-size: 0.85rem;
+  color: #b0b7c3;
+  margin: 0 0 12px 0;
+  font-weight: 600;
+}
+
+.tf-timeline-section h4 i {
+  color: #7b5bff;
+  margin-right: 6px;
+}
+
+/* ── Controls ── */
+.tf-timeline-controls {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+}
+
+.tf-range-label {
+  font-size: 0.82rem;
+  color: #e0e0e0;
+  font-weight: 600;
+  min-width: 80px;
+}
+
+.tf-range-slider-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 200px;
+}
+
+.tf-range-end-label {
+  font-size: 0.7rem;
+  color: #8891a5;
+  white-space: nowrap;
+}
+
+.tf-range-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  flex: 1;
+  height: 6px;
+  background: rgba(123, 91, 255, 0.15);
+  border-radius: 3px;
+  outline: none;
+  cursor: pointer;
+}
+
+.tf-range-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #7b5bff;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  cursor: pointer;
+  transition: transform 0.15s;
+}
+
+.tf-range-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.15);
+}
+
+.tf-range-slider::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #7b5bff;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  cursor: pointer;
+}
+
+.tf-timeline-load-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 16px;
+  background: rgba(123, 91, 255, 0.15);
+  border: 1.5px solid rgba(123, 91, 255, 0.3);
+  border-radius: 8px;
+  color: #a78bfa;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.tf-timeline-load-btn:hover:not(:disabled) {
+  background: rgba(123, 91, 255, 0.25);
+  color: #e0e0e0;
+}
+
+.tf-timeline-load-btn:disabled {
+  opacity: 0.5;
+  cursor: wait;
+}
+
+/* ── Error ── */
+.tf-timeline-error {
+  padding: 10px 14px;
+  background: rgba(255, 71, 87, 0.08);
+  border: 1px solid rgba(255, 71, 87, 0.2);
+  border-radius: 8px;
+  color: #ff6b81;
+  font-size: 0.78rem;
+  margin-bottom: 12px;
+}
+
+.tf-timeline-error i { margin-right: 6px; }
+
+/* ── Chart wrapper ── */
+.tf-timeline-chart-wrapper { margin-top: 8px; }
+
+/* ── Peaks ── */
+.tf-timeline-peaks {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+
+.tf-peak-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 12px;
+  border-radius: 10px;
+  font-size: 0.72rem;
+  font-weight: 600;
+}
+
+.tf-peak-opp {
+  background: rgba(46, 213, 115, 0.1);
+  color: #2ed573;
+  border: 1px solid rgba(46, 213, 115, 0.25);
+}
+
+.tf-peak-threat {
+  background: rgba(255, 71, 87, 0.1);
+  color: #ff4757;
+  border: 1px solid rgba(255, 71, 87, 0.25);
+}
+
+/* ── Stats bar ── */
+.tf-timeline-stats {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 10px;
+  font-size: 0.76rem;
+  color: #b0b7c3;
+}
+
+.tf-timeline-stats i { margin-right: 4px; }
+
+.tf-timeline-interval {
+  margin-left: auto;
+  color: #8891a5;
+  font-style: italic;
+}
+
+/* ── Tooltip ── */
+.tf-timeline-tooltip {
+  background: rgba(20, 22, 35, 0.95);
+  border: 1px solid rgba(123, 91, 255, 0.2);
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 0.78rem;
+  color: #e0e0e0;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  min-width: 160px;
+}
+
+.tf-tt-date {
+  font-weight: 700;
+  margin-bottom: 6px;
+  color: #a78bfa;
+}
+
+.tf-tt-type { margin-bottom: 4px; font-weight: 600; }
+.tf-tt-type i { margin-right: 4px; }
+.tf-tt-score, .tf-tt-opp, .tf-tt-threat, .tf-tt-trigger { color: #b0b7c3; line-height: 1.5; }
+.tf-tt-trigger { margin-top: 4px; font-style: italic; color: #8891a5; }
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .tf-timeline-controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .tf-range-slider-row { min-width: 100%; }
+  .tf-timeline-load-btn { width: 100%; justify-content: center; }
+  .tf-timeline-peaks { flex-direction: column; }
+  .tf-timeline-stats { flex-wrap: wrap; gap: 8px; }
+}

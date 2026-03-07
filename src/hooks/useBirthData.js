@@ -132,16 +132,25 @@ export function useBirthData(options = {}) {
   }, [isAuthenticated, user, skipAutoLoad, applyBirthData]);
 
   // Build API payload from current form state
-  const buildPayload = useCallback(() => ({
-    name: fullName.trim(),
-    dob: birthDate,
-    tob: to24Hour(hour, minute, ampm),
-    gender,
-    place_of_birth: birthPlace?.name || '',
-    ...(birthPlace?.lat != null && birthPlace?.lon != null && birthPlace?.timezone
-      ? { lat: birthPlace.lat, lon: birthPlace.lon, tz_id: birthPlace.timezone }
-      : {}),
-  }), [fullName, birthDate, hour, minute, ampm, gender, birthPlace]);
+  const buildPayload = useCallback(() => {
+    const payload = {
+      name: fullName.trim(),
+      dob: birthDate,
+      tob: to24Hour(hour, minute, ampm),
+      gender,
+      place_of_birth: birthPlace?.name || '',
+    };
+    // Always include lat/lon if available (backend resolves tz from lat/lon)
+    if (birthPlace?.lat != null && birthPlace?.lon != null) {
+      payload.lat = birthPlace.lat;
+      payload.lon = birthPlace.lon;
+    }
+    // Include tz_id if known (optional — backend resolves from lat/lon if missing)
+    if (birthPlace?.timezone) {
+      payload.tz_id = birthPlace.timezone;
+    }
+    return payload;
+  }, [fullName, birthDate, hour, minute, ampm, gender, birthPlace]);
 
   // Validate form fields
   const validate = useCallback(() => {

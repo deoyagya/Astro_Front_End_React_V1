@@ -33,7 +33,6 @@
     display: flex;
     list-style: none;
     gap: 5px;
-    margin-left: 80px;
     align-items: center;
 }
 
@@ -47,6 +46,7 @@
     display: flex;
     align-items: center;
     gap: 8px;
+    white-space: nowrap;
 }
 
 .nav a i {
@@ -200,6 +200,92 @@
 .dropdown-logout:hover {
     background: rgba(255, 107, 107, 0.1) !important;
     color: #ff4757 !important;
+}
+
+/* My Astro submenu trigger — styled like a dropdown-item but as button */
+.dropdown-submenu-trigger {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    padding: 11px 18px;
+    color: #b0b7c3;
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: all 0.2s;
+    cursor: pointer;
+    background: none;
+    border: none;
+    text-align: left;
+    font-family: inherit;
+}
+
+.dropdown-submenu-trigger:hover {
+    background: rgba(123, 91, 255, 0.1);
+    color: #fff;
+}
+
+.dropdown-submenu-trigger i:first-child {
+    width: 18px;
+    text-align: center;
+    color: #9d7bff;
+    font-size: 0.9rem;
+}
+
+.dropdown-submenu-trigger.expanded {
+    background: rgba(123, 91, 255, 0.08);
+    color: #fff;
+}
+
+.submenu-chevron {
+    margin-left: auto;
+    font-size: 0.7rem;
+    color: #666;
+    transition: transform 0.2s;
+}
+
+/* Expandable submenu inside user dropdown */
+.dropdown-submenu {
+    background: rgba(15, 18, 30, 0.6);
+    border-left: 2px solid #7b5bff;
+    margin: 0 8px 4px 8px;
+    border-radius: 0 0 8px 8px;
+    overflow: hidden;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.dropdown-submenu-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 16px 9px 22px;
+    color: #8a90a0;
+    text-decoration: none;
+    font-size: 0.84rem;
+    transition: all 0.2s;
+    cursor: pointer;
+}
+
+.dropdown-submenu-item:hover {
+    background: rgba(123, 91, 255, 0.12);
+    color: #d0d4e0;
+}
+
+.dropdown-submenu-item.active {
+    color: #9d7bff;
+    background: rgba(123, 91, 255, 0.08);
+}
+
+.dropdown-submenu-item i {
+    width: 16px;
+    text-align: center;
+    color: #6b5bb8;
+    font-size: 0.8rem;
+}
+
+.dropdown-submenu-item:hover i {
+    color: #9d7bff;
 }
 
 /* Admin role badge in dropdown */
@@ -591,6 +677,90 @@
 .modal .btn-order:hover {
     transform: translateY(-2px);
     box-shadow: 0 5px 20px rgba(123, 91, 255, 0.4);
+}
+
+/* ===== RESPONSIVE HEADER ===== */
+@media (max-width: 1100px) {
+    .nav a {
+        padding: 8px 10px;
+        font-size: 0.88rem;
+    }
+
+    .nav-manage-trigger {
+        padding: 8px 10px;
+        font-size: 0.88rem;
+    }
+
+    .nav-user-trigger {
+        padding: 6px 12px;
+        font-size: 0.88rem;
+    }
+}
+
+@media (max-width: 900px) {
+    .header-content {
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .nav {
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .nav ul {
+        gap: 2px;
+    }
+
+    .nav a {
+        padding: 6px 8px;
+        font-size: 0.82rem;
+    }
+
+    .nav-manage-trigger {
+        padding: 6px 8px;
+        font-size: 0.82rem;
+    }
+
+    .nav-user-trigger {
+        padding: 5px 10px;
+        font-size: 0.82rem;
+    }
+
+    .logo h1 {
+        font-size: 1.4rem;
+    }
+
+    .logo p {
+        font-size: 0.75rem;
+    }
+}
+
+@media (max-width: 600px) {
+    .header {
+        padding: 10px 0;
+    }
+
+    .header-content {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    .nav {
+        width: 100%;
+    }
+
+    .nav ul {
+        flex-wrap: wrap;
+        gap: 4px;
+    }
+
+    .nav a {
+        padding: 6px 10px;
+        font-size: 0.8rem;
+    }
 }
 
 /* ===== RESPONSIVE FOOTER ===== */

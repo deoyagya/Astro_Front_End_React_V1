@@ -1,0 +1,218 @@
+/**
+ * VedicChart — self-contained styles.
+ * Mobile-first, responsive, touch-friendly.
+ */
+
+/* ===== ROOT ===== */
+.vc-root {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.vc-root.vc-compact {
+  gap: 8px;
+}
+
+/* ===== CONTROLS ROW ===== */
+.vc-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 0 4px;
+}
+
+.vc-selector {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.vc-selector label {
+  color: #b0b7c3;
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.vc-selector select {
+  background: #1e2130;
+  color: #e0e0e0;
+  border: 1px solid #3a3f55;
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 14px;
+  cursor: pointer;
+  min-width: 160px;
+}
+
+.vc-selector select:focus {
+  outline: none;
+  border-color: #7b5bff;
+}
+
+/* ===== STYLE TOGGLE ===== */
+.vc-style-toggle {
+  display: flex;
+  border: 1px solid #3a3f55;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.vc-style-toggle button {
+  background: #1e2130;
+  color: #b0b7c3;
+  border: none;
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  min-height: 36px;
+}
+
+.vc-style-toggle button:first-child {
+  border-right: 1px solid #3a3f55;
+}
+
+.vc-style-toggle button.active {
+  background: #7b5bff;
+  color: #fff;
+}
+
+.vc-style-toggle button:not(.active):hover {
+  background: rgba(123, 91, 255, 0.12);
+}
+
+/* ===== CHART WRAPPER ===== */
+.vc-chart-wrapper {
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* ===== EMPTY STATE ===== */
+.vc-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 60px 20px;
+  color: #555;
+}
+
+.vc-empty i {
+  font-size: 2.5rem;
+  opacity: 0.5;
+}
+
+.vc-empty p {
+  font-size: 14px;
+}
+
+/* ===== ASCENDANT INFO ===== */
+.vc-asc-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  background: rgba(46, 213, 115, 0.08);
+  border-radius: 8px;
+  color: #2ed573;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.vc-asc-info i {
+  font-size: 16px;
+}
+
+/* ===== COMPACT MODE ===== */
+.vc-compact .vc-controls {
+  gap: 6px;
+}
+
+.vc-compact .vc-selector select {
+  padding: 6px 10px;
+  font-size: 13px;
+  min-width: 140px;
+}
+
+.vc-compact .vc-style-toggle button {
+  padding: 6px 12px;
+  font-size: 12px;
+  min-height: 32px;
+}
+
+.vc-compact .vc-asc-info {
+  padding: 8px 12px;
+  font-size: 13px;
+}
+
+/* ===== MOBILE — TOUCH-FRIENDLY ===== */
+@media (max-width: 600px) {
+  .vc-controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .vc-selector {
+    width: 100%;
+  }
+
+  .vc-selector select {
+    flex: 1;
+    min-width: 0;
+    padding: 10px 12px;
+    font-size: 15px;
+    /* Larger touch target on mobile */
+    min-height: 44px;
+  }
+
+  .vc-style-toggle {
+    width: 100%;
+  }
+
+  .vc-style-toggle button {
+    flex: 1;
+    padding: 10px 8px;
+    font-size: 14px;
+    /* 44px minimum touch target (Apple HIG) */
+    min-height: 44px;
+  }
+
+  .vc-chart-wrapper {
+    /* Use full width on mobile, no max constraint */
+    max-width: none;
+  }
+
+  .vc-asc-info {
+    font-size: 13px;
+    padding: 10px 12px;
+  }
+}
+
+/* ===== SMALL MOBILE (iPhone SE, etc.) ===== */
+@media (max-width: 375px) {
+  .vc-selector label {
+    font-size: 13px;
+  }
+
+  .vc-selector select {
+    font-size: 14px;
+  }
+
+  .vc-style-toggle button {
+    font-size: 13px;
+    padding: 8px 6px;
+  }
+
+  .vc-asc-info {
+    font-size: 12px;
+    gap: 6px;
+  }
+}

@@ -2,6 +2,8 @@ import { useState, useRef, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
+const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
+
 const ADMIN_MENU_ITEMS = [
   { label: 'Observability', icon: 'fa-tachometer-alt',  href: '/admin/observability' },
   { label: 'Pipeline Wizard', icon: 'fa-flask',         href: '/admin/pipeline-wizard' },
@@ -13,6 +15,10 @@ const ADMIN_MENU_ITEMS = [
   { label: 'Prompts',      icon: 'fa-robot',            href: '/admin/prompts' },
   { label: 'Muhurta',      icon: 'fa-clock',            href: '/admin/muhurta' },
   { label: 'Rule CV Wizard', icon: 'fa-balance-scale',  href: '/admin/rule-cv-wizard' },
+  { label: 'Rule Builder',  icon: 'fa-project-diagram', href: '/admin/rule-builder' },
+  { label: 'Rule Admin',    icon: 'fa-gavel',           href: `${API_BASE}/admin`, external: true },
+  { label: 'DB Admin',      icon: 'fa-database',        href: `${API_BASE}/db-admin`, external: true },
+  { label: 'Wizard Content', icon: 'fa-photo-video',    href: '/admin/wizard-content' },
 ];
 
 const MY_DATA_MENU_ITEMS = [
@@ -24,6 +30,7 @@ const MY_DATA_MENU_ITEMS = [
   { label: 'Yogas & Rajyogas', icon: 'fa-sun',           href: '/my-data/yogas' },
   { label: 'Sade Sati',        icon: 'fa-moon',          href: '/my-data/sade-sati' },
   { label: 'Transit',          icon: 'fa-globe',         href: '/my-data/transit' },
+  { label: 'Temporal Forecast', icon: 'fa-hourglass-half', href: '/my-data/temporal-forecast', premium: true },
 ];
 
 const isItemActive = (itemHref, pathname) => {
@@ -40,27 +47,25 @@ export default function SiteHeader({ active = 'home' }) {
   const freeToolsHref = active === 'home' ? '#free-tools' : '/#free-tools';
 
   const isAdmin = user?.role === 'admin';
+  const isPremium = user?.role === 'premium' || isAdmin;
   const displayName = user?.full_name || user?.email?.split('@')[0] || user?.phone || 'Account';
 
   // Dropdown states
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [manageMenuOpen, setManageMenuOpen] = useState(false);
-  const [myDataMenuOpen, setMyDataMenuOpen] = useState(false);
+  const [myAstroExpanded, setMyAstroExpanded] = useState(false);
   const dropdownRef = useRef(null);
   const manageMenuRef = useRef(null);
-  const myDataMenuRef = useRef(null);
 
   // Close menus on outside click
   useEffect(() => {
     const handler = (e) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
         setDropdownOpen(false);
+        setMyAstroExpanded(false);
       }
       if (manageMenuRef.current && !manageMenuRef.current.contains(e.target)) {
         setManageMenuOpen(false);
-      }
-      if (myDataMenuRef.current && !myDataMenuRef.current.contains(e.target)) {
-        setMyDataMenuOpen(false);
       }
     };
     document.addEventListener('mousedown', handler);
@@ -72,6 +77,11 @@ export default function SiteHeader({ active = 'home' }) {
     setDropdownOpen(false);
     logout();
     window.location.href = '/login';
+  };
+
+  const handleMyAstroToggle = (e) => {
+    e.preventDefault();
+    setMyAstroExpanded(!myAstroExpanded);
   };
 
   return (
@@ -103,16 +113,18 @@ export default function SiteHeader({ active = 'home' }) {
                           href={item.href}
                           className={`manage-data-item ${isItemActive(item.href, pathname) ? 'active' : ''}`}
                           onClick={() => setManageMenuOpen(false)}
+                          {...(item.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
                         >
                           <i className={`fas ${item.icon}`}></i>
                           {item.label}
+                          {item.external && <i className="fas fa-external-link-alt" style={{ fontSize: '0.65em', marginLeft: 4, opacity: 0.5 }}></i>}
                         </a>
                       ))}
                     </div>
                   )}
                 </li>
               ) : (
-                /* ---- Regular user navigation ---- */
+                /* ---- Regular user navigation (NO "My Data" — moved to user dropdown) ---- */
                 <>
                   <li>
                     <a href="/" className={active === 'home' ? 'active' : ''}>
@@ -130,44 +142,22 @@ export default function SiteHeader({ active = 'home' }) {
                     </a>
                   </li>
                   <li>
+                    <a href="/chart-wizard" className={active === 'wizard' ? 'active' : ''}>
+                      <i className="fas fa-magic"></i> Chart Wizard
+                    </a>
+                  </li>
+                  <li>
                     <a href="/reports" className={active === 'reports' ? 'active' : ''}>
                       <i className="fas fa-file-alt"></i> Reports
                     </a>
                   </li>
-                  {isAuthenticated && (
-                    <li className="nav-manage-data" ref={myDataMenuRef}>
-                      <button
-                        className={`nav-manage-trigger ${myDataMenuOpen ? 'open' : ''}`}
-                        onClick={() => setMyDataMenuOpen(!myDataMenuOpen)}
-                      >
-                        <i className="fas fa-database"></i>
-                        <span>My Data</span>
-                        <i className={`fas fa-caret-${myDataMenuOpen ? 'up' : 'down'} nav-chevron`}></i>
-                      </button>
-                      {myDataMenuOpen && (
-                        <div className="manage-data-menu">
-                          {MY_DATA_MENU_ITEMS.map((item) => (
-                            <a
-                              key={item.href}
-                              href={item.href}
-                              className={`manage-data-item ${pathname.startsWith(item.href) ? 'active' : ''}`}
-                              onClick={() => setMyDataMenuOpen(false)}
-                            >
-                              <i className={`fas ${item.icon}`}></i>
-                              {item.label}
-                            </a>
-                          ))}
-                        </div>
-                      )}
-                    </li>
-                  )}
                 </>
               )}
               {isAuthenticated ? (
                 <li className="nav-user-dropdown" ref={dropdownRef}>
                   <button
                     className="nav-user-trigger"
-                    onClick={() => setDropdownOpen(!dropdownOpen)}
+                    onClick={() => { setDropdownOpen(!dropdownOpen); setMyAstroExpanded(false); }}
                     aria-expanded={dropdownOpen}
                   >
                     <i className="fas fa-user-circle"></i>
@@ -190,9 +180,33 @@ export default function SiteHeader({ active = 'home' }) {
                           <a href="/my-reports" className="dropdown-item" onClick={() => setDropdownOpen(false)}>
                             <i className="fas fa-download"></i> My Reports
                           </a>
-                          <a href="/birth-chart" className="dropdown-item" onClick={() => setDropdownOpen(false)}>
+
+                          {/* My Astro — expandable submenu with all My Data items */}
+                          <button
+                            className={`dropdown-item dropdown-submenu-trigger ${myAstroExpanded ? 'expanded' : ''}`}
+                            onClick={handleMyAstroToggle}
+                          >
                             <i className="fas fa-star"></i> My Astro
-                          </a>
+                            <i className={`fas fa-chevron-${myAstroExpanded ? 'up' : 'down'} submenu-chevron`}></i>
+                          </button>
+                          {myAstroExpanded && (
+                            <div className="dropdown-submenu">
+                              {MY_DATA_MENU_ITEMS
+                                .filter((item) => !item.premium || isPremium)
+                                .map((item) => (
+                                  <a
+                                    key={item.href}
+                                    href={item.href}
+                                    className={`dropdown-submenu-item ${pathname.startsWith(item.href) ? 'active' : ''}`}
+                                    onClick={() => { setDropdownOpen(false); setMyAstroExpanded(false); }}
+                                  >
+                                    <i className={`fas ${item.icon}`}></i>
+                                    {item.label}
+                                  </a>
+                                ))}
+                            </div>
+                          )}
+
                           <a href="/order" className="dropdown-item" onClick={() => setDropdownOpen(false)}>
                             <i className="fas fa-shopping-cart"></i> My Orders
                           </a>

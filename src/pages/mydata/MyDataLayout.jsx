@@ -19,6 +19,7 @@ import TimeSelectGroup from '../../components/form/TimeSelectGroup';
 import ChartModal from '../../components/ChartModal';
 import { useBirthData } from '../../hooks/useBirthData';
 import { MyDataProvider, useMyData } from '../../context/MyDataContext';
+import { useAuth } from '../../context/AuthContext';
 import { api } from '../../api/client';
 import '../../styles/mydata.css';
 
@@ -31,26 +32,38 @@ const TABS = [
   { label: 'Yogas & Rajyogas', icon: 'fa-sun',          to: '/my-data/yogas' },
   { label: 'Sade Sati',        icon: 'fa-moon',         to: '/my-data/sade-sati' },
   { label: 'Transit',          icon: 'fa-globe',        to: '/my-data/transit' },
+  { label: 'Temporal Forecast', icon: 'fa-hourglass-half', to: '/my-data/temporal-forecast', premium: true },
 ];
 
 /* ---- Inner layout (needs MyDataContext) ---- */
 function MyDataInner() {
   const bd = useBirthData({ reportType: 'mydata' });
   const { loadBirthData, setChartBundle, chartBundle, registerExternalLoadHandler } = useMyData();
+  const { user } = useAuth();
+  const isPremium = user?.role === 'premium' || user?.role === 'admin';
   const [formError, setFormError] = useState('');
   const [chartLoading, setChartLoading] = useState(false);
   const [chartModalOpen, setChartModalOpen] = useState(false);
   const autoLoaded = useRef(false);
+  const skipNextCancelRef = useRef(false);
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Register form-sync handler so SavedCharts Load updates form fields
+  // Register form-sync handler so SavedCharts Load updates form fields,
+  // fetches chart data, opens modal, and navigates to Details.
   useEffect(() => {
     registerExternalLoadHandler((payload) => {
       bd.applyBirthData(payload);
+      // Skip the next location-change cancellation so the in-flight fetch
+      // triggered here isn't killed by the navigate() below.
+      skipNextCancelRef.current = true;
+      if (fetchChartDataRef.current) {
+        fetchChartDataRef.current(payload, true);
+      }
+      navigate('/my-data/details');
     });
     return () => registerExternalLoadHandler(null);
-  }, [bd.applyBirthData, registerExternalLoadHandler]);
+  }, [bd.applyBirthData, registerExternalLoadHandler, navigate]);
 
   // Auto-load birth data on mount when saved data is already available
   useEffect(() => {
@@ -71,13 +84,18 @@ function MyDataInner() {
    * @param {object} payload - Birth data payload
    * @param {boolean} openModal - Whether to auto-open modal after fetch
    */
+  const fetchChartDataRef = useRef(null);
+  const fetchRequestId = useRef(0);
   const fetchChartData = async (payload, openModal = true) => {
+    const thisRequest = ++fetchRequestId.current;
     setChartLoading(true);
     try {
       const data = await api.post(
-        '/v1/chart/create?include_vargas=true&include_dasha=true&include_panchang=true',
+        '/v1/chart/create?include_vargas=true&include_dasha=true&include_panchang=true&include_yogas=true',
         payload
       );
+      // Only apply result if this is still the latest request (prevents stale modal opens)
+      if (thisRequest !== fetchRequestId.current) return;
       setChartBundle(data);
       if (openModal) {
         setChartModalOpen(true);
@@ -85,9 +103,12 @@ function MyDataInner() {
     } catch (err) {
       console.error('Chart fetch failed:', err);
     } finally {
-      setChartLoading(false);
+      if (thisRequest === fetchRequestId.current) {
+        setChartLoading(false);
+      }
     }
   };
+  fetchChartDataRef.current = fetchChartData;
 
   const handleLoad = () => {
     setFormError('');
@@ -100,13 +121,29 @@ function MyDataInner() {
     fetchChartData(payload, true);
   };
 
+  // Close chart modal and cancel in-flight chart fetches when navigating.
+  // Skip cancellation when the navigation was triggered by the external load
+  // handler (Saved Charts → Load), since that handler starts its own fetch
+  // that must not be invalidated.
+  useEffect(() => {
+    if (skipNextCancelRef.current) {
+      skipNextCancelRef.current = false;
+      return;
+    }
+    setChartModalOpen(false);
+    fetchRequestId.current++;          // invalidate any pending fetchChartData
+  }, [location.pathname]);
+
   // Dropdown navigation handler
   const handleTabChange = (e) => {
     navigate(e.target.value);
   };
 
+  // Filter tabs by premium access
+  const visibleTabs = TABS.filter((t) => !t.premium || isPremium);
+
   // Current tab path for the dropdown value
-  const currentTab = TABS.find((t) => location.pathname.startsWith(t.to))?.to || TABS[0].to;
+  const currentTab = visibleTabs.find((t) => location.pathname.startsWith(t.to))?.to || visibleTabs[0].to;
 
   return (
     <PageShell activeNav="my-data">
@@ -204,7 +241,7 @@ function MyDataInner() {
               value={currentTab}
               onChange={handleTabChange}
             >
-              {TABS.map((tab) => (
+              {visibleTabs.map((tab) => (
                 <option key={tab.to} value={tab.to}>
                   {tab.label}
                 </option>
