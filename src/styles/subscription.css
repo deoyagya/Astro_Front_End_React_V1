@@ -1,0 +1,429 @@
+/* ================================================================
+   SubscriptionPage.css — Manage subscription (My Data sub-page)
+   ================================================================ */
+
+.subscription-page {
+  padding: 8px 0;
+}
+
+/* ---- Section cards ---- */
+.sub-section {
+  background: rgba(20, 23, 36, 0.85);
+  border: 1px solid #2a2f3e;
+  border-radius: 16px;
+  padding: 28px;
+  margin-bottom: 24px;
+}
+.sub-section h2 {
+  font-family: 'Cinzel', serif;
+  color: #9d7bff;
+  font-size: 1.3rem;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.sub-section h2 i {
+  font-size: 1.1rem;
+}
+
+/* ---- Current plan card ---- */
+.current-plan-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+}
+.current-plan-icon {
+  font-size: 3rem;
+  line-height: 1;
+}
+.current-plan-info {
+  flex: 1;
+}
+.current-plan-info .plan-name-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+.current-plan-info .plan-name-row h3 {
+  font-family: 'Cinzel', serif;
+  font-size: 1.4rem;
+  color: #fff;
+  margin: 0;
+}
+.current-plan-info .plan-name-row .status-badge {
+  display: inline-block;
+  padding: 3px 12px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.status-badge.active {
+  background: rgba(46, 213, 115, 0.15);
+  color: #2ed573;
+  border: 1px solid rgba(46, 213, 115, 0.3);
+}
+.status-badge.cancelled {
+  background: rgba(255, 71, 87, 0.15);
+  color: #ff4757;
+  border: 1px solid rgba(255, 71, 87, 0.3);
+}
+.status-badge.pending {
+  background: rgba(255, 165, 2, 0.15);
+  color: #ffa502;
+  border: 1px solid rgba(255, 165, 2, 0.3);
+}
+.status-badge.free {
+  background: rgba(136, 146, 164, 0.15);
+  color: #8892a4;
+  border: 1px solid rgba(136, 146, 164, 0.3);
+}
+.current-plan-info .billing-info {
+  color: #8892a4;
+  font-size: 0.88rem;
+  margin-bottom: 4px;
+}
+.current-plan-info .billing-info strong {
+  color: #c0c7d3;
+}
+.current-plan-actions {
+  display: flex;
+  gap: 10px;
+  flex-shrink: 0;
+}
+.sub-btn {
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.88rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
+  font-family: 'Montserrat', sans-serif;
+}
+.sub-btn.primary {
+  background: linear-gradient(90deg, #7b5bff, #9d7bff);
+  color: #fff;
+}
+.sub-btn.primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(123, 91, 255, 0.3);
+}
+.sub-btn.outline {
+  background: transparent;
+  border: 1px solid #3a3f4e;
+  color: #b0b7c3;
+}
+.sub-btn.outline:hover {
+  border-color: #7b5bff;
+  color: #e0e0e0;
+}
+.sub-btn.danger {
+  background: transparent;
+  border: 1px solid rgba(255, 71, 87, 0.4);
+  color: #ff4757;
+}
+.sub-btn.danger:hover {
+  background: rgba(255, 71, 87, 0.1);
+}
+.sub-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ---- Features list ---- */
+.plan-features-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 10px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.plan-features-list li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: rgba(40, 44, 60, 0.5);
+  border-radius: 8px;
+  font-size: 0.85rem;
+  color: #c0c7d3;
+}
+.plan-features-list li i.fa-check-circle {
+  color: #2ed573;
+  flex-shrink: 0;
+}
+.plan-features-list li i.fa-times-circle {
+  color: #555;
+  flex-shrink: 0;
+}
+.plan-features-list li .feature-limit {
+  margin-left: auto;
+  color: #ffa502;
+  font-weight: 600;
+  font-size: 0.8rem;
+}
+
+/* ---- Credit balance ---- */
+.credit-balances {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
+}
+.credit-balance-card {
+  background: rgba(40, 44, 60, 0.6);
+  border-radius: 12px;
+  padding: 20px;
+  text-align: center;
+  border: 1px solid #2a2f3e;
+}
+.credit-balance-card .balance-amount {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #ffa502;
+  margin-bottom: 4px;
+}
+.credit-balance-card .balance-label {
+  color: #8892a4;
+  font-size: 0.85rem;
+  margin-bottom: 12px;
+}
+.credit-balance-card .buy-more-btn {
+  display: inline-block;
+  padding: 6px 16px;
+  border: 1px solid #ffa502;
+  border-radius: 6px;
+  background: transparent;
+  color: #ffa502;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: 'Montserrat', sans-serif;
+}
+.credit-balance-card .buy-more-btn:hover {
+  background: rgba(255, 165, 2, 0.1);
+}
+.no-credits {
+  color: #8892a4;
+  font-size: 0.9rem;
+  text-align: center;
+  padding: 20px;
+}
+
+/* ---- Credit packs purchase ---- */
+.credit-packs-inline {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
+}
+.credit-pack-inline-card {
+  background: rgba(40, 44, 60, 0.6);
+  border: 1px solid #2a2f3e;
+  border-radius: 12px;
+  padding: 20px;
+  text-align: center;
+  transition: border-color 0.2s;
+}
+.credit-pack-inline-card:hover {
+  border-color: #ffa502;
+}
+.credit-pack-inline-card .pack-credits-count {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: #ffa502;
+  margin-bottom: 4px;
+}
+.credit-pack-inline-card .pack-label {
+  color: #c0c7d3;
+  font-size: 0.82rem;
+  margin-bottom: 12px;
+}
+.credit-pack-inline-card .pack-price-tag {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 12px;
+}
+.credit-pack-inline-card .pack-purchase-btn {
+  display: inline-block;
+  padding: 8px 20px;
+  border: 1px solid #ffa502;
+  border-radius: 8px;
+  background: transparent;
+  color: #ffa502;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.85rem;
+}
+.credit-pack-inline-card .pack-purchase-btn:hover {
+  background: rgba(255, 165, 2, 0.1);
+}
+.credit-pack-inline-card .pack-purchase-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ---- Usage summary ---- */
+.usage-bar-container {
+  margin-bottom: 16px;
+}
+.usage-bar-label {
+  display: flex;
+  justify-content: space-between;
+  color: #b0b7c3;
+  font-size: 0.85rem;
+  margin-bottom: 6px;
+}
+.usage-bar-track {
+  height: 8px;
+  background: rgba(40, 44, 60, 0.8);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.usage-bar-fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.5s;
+}
+.usage-bar-fill.green { background: #2ed573; }
+.usage-bar-fill.yellow { background: #ffa502; }
+.usage-bar-fill.red { background: #ff4757; }
+
+/* ---- Cancel confirmation modal ---- */
+.cancel-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  backdrop-filter: blur(3px);
+}
+.cancel-modal {
+  background: #141724;
+  border: 1px solid #2a2f3e;
+  border-radius: 16px;
+  padding: 32px;
+  max-width: 440px;
+  width: 90%;
+  text-align: center;
+}
+.cancel-modal h3 {
+  color: #ff4757;
+  font-family: 'Cinzel', serif;
+  font-size: 1.3rem;
+  margin-bottom: 16px;
+}
+.cancel-modal p {
+  color: #b0b7c3;
+  font-size: 0.9rem;
+  margin-bottom: 24px;
+  line-height: 1.6;
+}
+.cancel-modal .modal-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+/* ---- Upgrade CTA (for free users) ---- */
+.upgrade-cta {
+  text-align: center;
+  padding: 40px 20px;
+}
+.upgrade-cta h3 {
+  font-family: 'Cinzel', serif;
+  color: #9d7bff;
+  font-size: 1.4rem;
+  margin-bottom: 12px;
+}
+.upgrade-cta p {
+  color: #8892a4;
+  font-size: 0.95rem;
+  margin-bottom: 24px;
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.upgrade-cta .upgrade-btn {
+  display: inline-block;
+  padding: 14px 36px;
+  background: linear-gradient(90deg, #7b5bff, #9d7bff);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 1.05rem;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-family: 'Montserrat', sans-serif;
+  text-decoration: none;
+}
+.upgrade-cta .upgrade-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 24px rgba(123, 91, 255, 0.4);
+}
+
+/* ---- Loading ---- */
+.sub-loading {
+  text-align: center;
+  padding: 40px;
+  color: #b0b7c3;
+}
+.sub-loading i {
+  display: block;
+  font-size: 1.5rem;
+  color: #7b5bff;
+  margin-bottom: 12px;
+  animation: sub-spin 1s linear infinite;
+}
+@keyframes sub-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+.sub-error {
+  color: #ff4757;
+  text-align: center;
+  padding: 20px;
+  font-size: 0.9rem;
+}
+.sub-success {
+  color: #2ed573;
+  text-align: center;
+  padding: 12px;
+  font-size: 0.9rem;
+  background: rgba(46, 213, 115, 0.08);
+  border-radius: 8px;
+  margin-bottom: 16px;
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 768px) {
+  .current-plan-card {
+    flex-direction: column;
+  }
+  .current-plan-actions {
+    width: 100%;
+  }
+  .current-plan-actions .sub-btn {
+    flex: 1;
+    text-align: center;
+  }
+  .plan-features-list {
+    grid-template-columns: 1fr;
+  }
+  .credit-balances {
+    grid-template-columns: 1fr;
+  }
+  .credit-packs-inline {
+    grid-template-columns: 1fr;
+  }
+}

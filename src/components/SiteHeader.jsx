@@ -31,6 +31,7 @@ const MY_DATA_MENU_ITEMS = [
   { label: 'Sade Sati',        icon: 'fa-moon',          href: '/my-data/sade-sati' },
   { label: 'Transit',          icon: 'fa-globe',         href: '/my-data/transit' },
   { label: 'Temporal Forecast', icon: 'fa-hourglass-half', href: '/my-data/temporal-forecast', premium: true },
+  { label: 'Subscription', icon: 'fa-crown', href: '/my-data/subscription' },
 ];
 
 const isItemActive = (itemHref, pathname) => {
@@ -144,6 +145,11 @@ export default function SiteHeader({ active = 'home' }) {
                   <li>
                     <a href="/chart-wizard" className={active === 'wizard' ? 'active' : ''}>
                       <i className="fas fa-magic"></i> Chart Wizard
+                    </a>
+                  </li>
+                  <li>
+                    <a href="/pricing" className={active === 'pricing' ? 'active' : ''}>
+                      <i className="fas fa-crown"></i> Pricing
                     </a>
                   </li>
                   <li>

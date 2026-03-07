@@ -38,6 +38,7 @@ import AdminRuleBuilderPage from './pages/admin/AdminRuleBuilderPage';
 import AdminWizardContentPage from './pages/admin/AdminWizardContentPage';
 import MuhurtaFinderPage from './pages/MuhurtaFinderPage';
 import ChartWizardPage from './pages/ChartWizardPage';
+import PricingPage from './pages/PricingPage';
 
 // My Data pages
 import MyDataLayout from './pages/mydata/MyDataLayout';
@@ -50,6 +51,7 @@ import YogasPage from './pages/mydata/YogasPage';
 import SadeSatiPage from './pages/mydata/SadeSatiPage';
 import TransitPage from './pages/mydata/TransitPage';
 import TemporalForecastPage from './pages/mydata/TemporalForecastPage';
+import SubscriptionPage from './pages/mydata/SubscriptionPage';
 
 export default function App() {
   return (
@@ -58,6 +60,7 @@ export default function App() {
         {/* Public routes */}
         <Route path="/" element={<HomePage />} />
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/pricing" element={<PricingPage />} />
 
         {/* Protected routes — require authentication */}
         <Route path="/reports" element={<ProtectedRoute><ReportsPage /></ProtectedRoute>} />
@@ -90,6 +93,7 @@ export default function App() {
           <Route path="sade-sati" element={<SadeSatiPage />} />
           <Route path="transit" element={<TransitPage />} />
           <Route path="temporal-forecast" element={<TemporalForecastPage />} />
+          <Route path="subscription" element={<SubscriptionPage />} />
         </Route>
 
         {/* Admin routes — require admin role */}
