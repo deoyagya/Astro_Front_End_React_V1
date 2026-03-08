@@ -139,11 +139,13 @@ async function request<T = any>(
         }
 
         const message =
-          typeof errorData.detail === 'string'
-            ? errorData.detail
-            : Array.isArray(errorData.detail)
-              ? errorData.detail.map((e: any) => e.msg).join(', ')
-              : `Request failed (${res.status})`;
+          typeof errorData.error === 'string'
+            ? errorData.error
+            : typeof errorData.detail === 'string'
+              ? errorData.detail
+              : Array.isArray(errorData.detail)
+                ? errorData.detail.map((e: any) => e.msg || e.message).join(', ')
+                : `Request failed (${res.status})`;
 
         throw { message, status: res.status, details: errorData } as ApiError;
       }
@@ -208,7 +210,7 @@ export const api = {
   get: <T = any>(path: string, opts?: { noAuth?: boolean }) =>
     request<T>('GET', path, undefined, opts),
 
-  post: <T = any>(path: string, body?: any, opts?: { noAuth?: boolean }) =>
+  post: <T = any>(path: string, body?: any, opts?: { noAuth?: boolean; retries?: number }) =>
     request<T>('POST', path, body, opts),
 
   put: <T = any>(path: string, body?: any) =>

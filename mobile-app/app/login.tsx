@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import {
   View,
   Text,
@@ -37,6 +37,7 @@ export default function LoginScreen() {
   const [error, setError] = useState('');
   const [timer, setTimer] = useState(0);
   const [dialCode, setDialCode] = useState('+91');
+  const verifyingRef = useRef(false);
 
   // Detect geo for dial code
   useEffect(() => {
@@ -92,6 +93,10 @@ export default function LoginScreen() {
       setError('Please enter your full name');
       return;
     }
+    // Prevent double-submit: OTP verify is destructive (deletes the OTP on success).
+    // Without this guard, auto-verify (onComplete) + button tap can race.
+    if (verifyingRef.current) return;
+    verifyingRef.current = true;
     setError('');
     setLoading(true);
     try {
@@ -104,10 +109,11 @@ export default function LoginScreen() {
         full_name: fullName.trim(),
         marketing_consent: marketingConsent,
       };
-      const data = await api.post(AUTH.OTP_VERIFY, body, { noAuth: true });
+      const data = await api.post(AUTH.OTP_VERIFY, body, { noAuth: true, retries: 0 });
       await login(data.access_token);
     } catch (err: any) {
       setError(err.message || 'Verification failed');
+      verifyingRef.current = false;
     } finally {
       setLoading(false);
     }
@@ -116,6 +122,7 @@ export default function LoginScreen() {
   const handleResend = async () => {
     setOtp('');
     setError('');
+    verifyingRef.current = false;
     setLoading(true);
     try {
       const idValue = isEmail

@@ -97,7 +97,7 @@ export default function ChatAreasScreen() {
             api.get(CHAT.QUOTA).catch(() => null),
             api.get(`${CHAT.SESSIONS}?limit=5`).catch(() => ({ sessions: [] })),
           ]);
-          setAreas(areaRes?.areas || areaRes || []);
+          setAreas(areaRes?.life_areas || areaRes?.areas || areaRes || []);
           setQuota(quotaRes);
           setSessions(sessRes?.sessions || []);
         } catch (err: any) {
