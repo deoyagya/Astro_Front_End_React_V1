@@ -56,7 +56,7 @@
   display: inline-block;
   padding: 3px 12px;
   border-radius: 12px;
-  font-size: 0.75rem;
+  font-size: 0.9rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -150,7 +150,7 @@
   padding: 8px 12px;
   background: rgba(40, 44, 60, 0.5);
   border-radius: 8px;
-  font-size: 0.85rem;
+  font-size: 0.95rem;
   color: #c0c7d3;
 }
 .plan-features-list li i.fa-check-circle {
@@ -189,7 +189,7 @@
 }
 .credit-balance-card .balance-label {
   color: #8892a4;
-  font-size: 0.85rem;
+  font-size: 0.95rem;
   margin-bottom: 12px;
 }
 .credit-balance-card .buy-more-btn {
@@ -240,7 +240,7 @@
 }
 .credit-pack-inline-card .pack-label {
   color: #c0c7d3;
-  font-size: 0.82rem;
+  font-size: 0.92rem;
   margin-bottom: 12px;
 }
 .credit-pack-inline-card .pack-price-tag {
@@ -260,7 +260,7 @@
   cursor: pointer;
   transition: all 0.2s;
   font-family: 'Montserrat', sans-serif;
-  font-size: 0.85rem;
+  font-size: 0.95rem;
 }
 .credit-pack-inline-card .pack-purchase-btn:hover {
   background: rgba(255, 165, 2, 0.1);
@@ -278,7 +278,7 @@
   display: flex;
   justify-content: space-between;
   color: #b0b7c3;
-  font-size: 0.85rem;
+  font-size: 0.95rem;
   margin-bottom: 6px;
 }
 .usage-bar-track {

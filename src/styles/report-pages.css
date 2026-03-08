@@ -364,7 +364,7 @@
     to { transform: rotate(360deg); }
 }
 .report-page .validation-note {
-    font-size: 0.85rem;
+    font-size: 0.95rem;
     color: #2ed573;
     margin-top: 8px;
     text-align: right;

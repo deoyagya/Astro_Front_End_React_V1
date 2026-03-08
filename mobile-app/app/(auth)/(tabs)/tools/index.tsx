@@ -34,6 +34,12 @@ const TOOLS = [
     icon: 'telescope',
     route: '/tools/horoscope',
   },
+  {
+    title: 'Muhurta Finder',
+    description: 'Find auspicious times for important life events',
+    icon: 'calendar',
+    route: '/tools/muhurta',
+  },
 ];
 
 export default function ToolsListScreen() {

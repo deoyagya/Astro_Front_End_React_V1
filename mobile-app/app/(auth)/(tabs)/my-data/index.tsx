@@ -96,6 +96,12 @@ const SECTIONS: NavSection[] = [
     title: 'ACCOUNT',
     cards: [
       {
+        label: 'Subscription',
+        icon: 'diamond-outline',
+        color: colors.warning,
+        route: '/(auth)/(tabs)/my-data/subscription',
+      },
+      {
         label: 'Purchase History',
         icon: 'receipt-outline',
         color: colors.combust,

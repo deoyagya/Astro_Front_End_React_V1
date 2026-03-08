@@ -1,0 +1,1775 @@
+/* ============================================================
+   Chat Widget — Floating Vedic Astrology AI Chat
+   Clean white theme  |  cw- prefix  |  Production-ready
+   ============================================================ */
+
+/* ----------------------------------------------------------
+   0. CSS Custom Properties (scoped to widget)
+   ---------------------------------------------------------- */
+.cw-trigger,
+.cw-panel {
+  --cw-bg: #ffffff;
+  --cw-bg-panel: #ffffff;
+  --cw-bg-card: #f5f5f7;
+  --cw-bg-hover: #eeeef2;
+  --cw-border: #e0e0e5;
+  --cw-text: #000000;
+  --cw-text-secondary: #222222;
+  --cw-accent: #7c5cfc;
+  --cw-accent-deep: #5b21b6;
+  --cw-accent-light: #7c5cfc;
+  --cw-accent-hover: #6a48e8;
+  --cw-orange: #ff6b35;
+  --cw-orange-deep: #e85520;
+  --cw-success: #16a34a;
+  --cw-error: #dc2626;
+  --cw-radius-lg: 16px;
+  --cw-radius-md: 10px;
+  --cw-radius-sm: 8px;
+  --cw-radius-pill: 20px;
+  --cw-shadow-accent: rgba(124, 92, 252, 0.35);
+}
+
+/* ----------------------------------------------------------
+   1. Floating Trigger Button
+   ---------------------------------------------------------- */
+.cw-trigger {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 9000;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #7c5cfc 0%, #5b21b6 100%);
+  color: #fff;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  cursor: pointer;
+  box-shadow: 0 4px 20px rgba(124, 92, 252, 0.4);
+  font-size: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+  /* NO infinite box-shadow animation — that causes screen flickering.
+     The pulse ring is done via ::after pseudo-element using only
+     transform + opacity (GPU-composited, zero repaints). */
+}
+
+/* Pulse ring — GPU-composited, animates transform + opacity only */
+.cw-trigger::after {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  border: 3px solid rgba(124, 92, 252, 0.5);
+  animation: cwTriggerPulse 2.5s ease-out infinite;
+  pointer-events: none;
+  will-change: transform, opacity;
+}
+
+.cw-trigger:hover {
+  transform: scale(1.12);
+  box-shadow: 0 6px 30px rgba(124, 92, 252, 0.65);
+}
+
+.cw-trigger:hover::after {
+  animation: none;
+  opacity: 0;
+}
+
+.cw-trigger:active {
+  transform: scale(0.97);
+}
+
+@keyframes cwTriggerPulse {
+  0% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+  70% {
+    transform: scale(1.35);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1.35);
+    opacity: 0;
+  }
+}
+
+/* Notification dot on trigger */
+.cw-trigger-badge {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--cw-orange);
+  border: 2px solid #fff;
+  font-size: 0;
+}
+
+/* ----------------------------------------------------------
+   1b. Nudge Pop-out — Large icon + curved text (WhatsApp-style)
+   ---------------------------------------------------------- */
+.cw-nudge {
+  position: fixed;
+  bottom: 24px;
+  right: 100px;
+  z-index: 9001;
+  display: flex;
+  align-items: flex-end;
+  gap: 0;
+  cursor: pointer;
+  animation: cwNudgeIn 600ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.cw-nudge:hover .cw-nudge-orb {
+  transform: scale(1.06);
+}
+
+/* ── Dismiss X ── */
+.cw-nudge-dismiss {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: #222;
+  color: #fff;
+  border: 2px solid #fff;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  padding: 0;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  transition: background 0.15s ease;
+  z-index: 5;
+}
+
+.cw-nudge-dismiss:hover {
+  background: #000;
+}
+
+/* ── Waving hand emoji (left side) ── */
+.cw-nudge-hand {
+  font-size: 36px;
+  margin-right: -4px;
+  margin-bottom: 6px;
+  animation: cwNudgeWave 2s ease-in-out infinite;
+  transform-origin: 70% 70%;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.15));
+  z-index: 2;
+  will-change: transform;
+}
+
+/* ── Curved text above the orb ── */
+.cw-nudge-curved-text {
+  position: absolute;
+  top: -14px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 3;
+}
+
+.cw-nudge-curved-text svg {
+  width: 160px;
+  height: 50px;
+  overflow: visible;
+}
+
+.cw-nudge-curved-text text {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 14px;
+  font-weight: 800;
+  fill: #7c5cfc;
+  letter-spacing: 1px;
+  paint-order: stroke;
+  stroke: #fff;
+  stroke-width: 3px;
+  stroke-linejoin: round;
+}
+
+/* ── Big circular orb (main icon) ── */
+.cw-nudge-orb {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: linear-gradient(145deg, #7c5cfc 0%, #5b21b6 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow:
+    0 6px 24px rgba(91, 33, 182, 0.4),
+    0 0 0 4px rgba(124, 92, 252, 0.15);
+  transition: transform 0.2s ease;
+  flex-shrink: 0;
+}
+
+.cw-nudge-orb-icon {
+  font-size: 34px;
+  color: #fff;
+}
+
+/* ── Red notification badge ── */
+.cw-nudge-badge {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #e53e3e;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2.5px solid #fff;
+  box-shadow: 0 2px 8px rgba(229, 62, 62, 0.5);
+  animation: cwBadgeBounce 2s ease-in-out infinite;
+  will-change: transform;
+}
+
+/* ── Text block (right of orb) ── */
+.cw-nudge-text {
+  background: #fff;
+  border: 1.5px solid #e0e0e5;
+  border-radius: 14px 14px 14px 4px;
+  padding: 10px 14px;
+  margin-left: -8px;
+  margin-bottom: 16px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  max-width: 180px;
+  z-index: 1;
+}
+
+.cw-nudge-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #000;
+  line-height: 1.3;
+  margin-bottom: 2px;
+}
+
+.cw-nudge-desc {
+  font-size: 12px;
+  font-weight: 500;
+  color: #333;
+  line-height: 1.35;
+}
+
+/* ── Animations ── */
+@keyframes cwNudgeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(30px) scale(0.7);
+  }
+  60% {
+    opacity: 1;
+    transform: translateY(-8px) scale(1.05);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes cwNudgeWave {
+  0%   { transform: rotate(0deg); }
+  10%  { transform: rotate(14deg); }
+  20%  { transform: rotate(-8deg); }
+  30%  { transform: rotate(14deg); }
+  40%  { transform: rotate(-4deg); }
+  50%  { transform: rotate(10deg); }
+  60%  { transform: rotate(0deg); }
+  100% { transform: rotate(0deg); }
+}
+
+@keyframes cwBadgeBounce {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.15); }
+}
+
+/* Mobile nudge */
+@media (max-width: 768px) {
+  .cw-nudge {
+    right: 80px;
+    bottom: 16px;
+  }
+
+  .cw-nudge-orb {
+    width: 65px;
+    height: 65px;
+  }
+
+  .cw-nudge-orb-icon {
+    font-size: 28px;
+  }
+
+  .cw-nudge-hand {
+    font-size: 28px;
+  }
+
+  .cw-nudge-text {
+    max-width: 150px;
+    padding: 8px 12px;
+  }
+
+  .cw-nudge-title {
+    font-size: 13px;
+  }
+
+  .cw-nudge-desc {
+    font-size: 11px;
+  }
+
+  .cw-nudge-curved-text svg {
+    width: 130px;
+    height: 40px;
+  }
+}
+
+/* ----------------------------------------------------------
+   2. Panel Container
+   ---------------------------------------------------------- */
+.cw-panel {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 9000;
+  width: 400px;
+  height: 560px;
+  max-height: 82vh;
+  border-radius: var(--cw-radius-lg);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  background: var(--cw-bg-panel);
+  box-shadow:
+    0 12px 48px rgba(0, 0, 0, 0.15),
+    0 0 0 1px rgba(0, 0, 0, 0.06);
+  font-family: inherit;
+  /* Force dark black text — overrides body { color: #e0e0e0 } from global dark theme */
+  color: #000000;
+}
+
+/*
+ * CRITICAL: The global dark theme sets body { color: #e0e0e0 }.
+ * Buttons, spans, p tags inside .cw-panel inherit that gray.
+ * Force ALL text-bearing elements inside the panel to be black.
+ */
+.cw-panel p,
+.cw-panel span,
+.cw-panel div,
+.cw-panel button,
+.cw-panel input,
+.cw-panel label,
+.cw-panel h1, .cw-panel h2, .cw-panel h3,
+.cw-panel li,
+.cw-panel a {
+  color: #000000;
+}
+
+/* White text overrides — header, user bubble, send button, CTA */
+.cw-panel .cw-header,
+.cw-panel .cw-header span,
+.cw-panel .cw-header button,
+.cw-panel .cw-header i {
+  color: #fff;
+}
+.cw-panel .cw-voice-toggle {
+  color: rgba(255, 255, 255, 0.85);
+}
+.cw-panel .cw-voice-toggle.cw-voice-active {
+  color: #fff;
+}
+.cw-panel .cw-minimize-btn {
+  color: rgba(255, 255, 255, 0.85);
+}
+.cw-panel .cw-msg-user,
+.cw-panel .cw-msg-user * {
+  color: #fff;
+}
+.cw-panel .cw-send-btn,
+.cw-panel .cw-send-btn i {
+  color: #fff;
+}
+.cw-panel .cw-cta-btn {
+  color: #fff;
+}
+.cw-panel .cw-btn-primary {
+  color: #fff;
+}
+.cw-panel .cw-btn-secondary {
+  color: var(--cw-accent);
+}
+.cw-panel .cw-welcome-icon,
+.cw-panel .cw-welcome-icon i {
+  color: var(--cw-accent);
+}
+
+/* Accent / semantic color overrides */
+.cw-panel .cw-msg-headline { color: var(--cw-accent); }
+.cw-panel .cw-msg-advice { color: #3b2d6e; }
+.cw-panel .cw-msg-advice i { color: #d4a017; }
+.cw-panel .cw-msg-remedies strong { color: var(--cw-success); }
+.cw-panel .cw-msg-remedies li { color: #1a5c2e; }
+.cw-panel .cw-area-icon,
+.cw-panel .cw-area-icon i,
+.cw-panel .cw-area-chip i { color: var(--cw-accent); }
+.cw-panel .cw-followup-chip,
+.cw-panel .cw-follow-chip { color: var(--cw-accent); }
+.cw-panel .cw-credit-badge { color: var(--cw-orange); }
+.cw-panel .cw-error-toast,
+.cw-panel .cw-error-toast span,
+.cw-panel .cw-error-toast button,
+.cw-panel .cw-error-dismiss { color: #b91c1c; }
+.cw-panel .cw-tone-positive { color: #15803d; }
+.cw-panel .cw-tone-cautious { color: #a16207; }
+.cw-panel .cw-tone-negative { color: #b91c1c; }
+.cw-panel .cw-tone-neutral { color: #333333; }
+.cw-panel .cw-tone-encouraging { color: #6d28d9; }
+.cw-panel .cw-session-ended i { color: var(--cw-success); }
+.cw-panel input::placeholder { color: #888; }
+.cw-panel .cw-btn-new-topic { color: #333; }
+.cw-panel .cw-btn-new-topic:hover { color: var(--cw-accent); }
+
+/* ----------------------------------------------------------
+   3. Header
+   ---------------------------------------------------------- */
+.cw-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 18px;
+  background: linear-gradient(135deg, var(--cw-accent) 0%, var(--cw-accent-deep) 100%);
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.cw-header-title {
+  font-size: 17px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.cw-header-title i {
+  font-size: 20px;
+}
+
+.cw-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.cw-quota-badge {
+  font-size: 13px;
+  font-weight: 600;
+  background: rgba(255, 255, 255, 0.22);
+  padding: 3px 10px;
+  border-radius: 10px;
+  white-space: nowrap;
+}
+
+.cw-minimize-btn {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.85);
+  cursor: pointer;
+  font-size: 18px;
+  padding: 4px;
+  border-radius: 4px;
+  transition: background 0.15s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cw-minimize-btn:hover {
+  background: rgba(255, 255, 255, 0.18);
+}
+
+/* ----------------------------------------------------------
+   4. Body (scrollable message area)
+   ---------------------------------------------------------- */
+.cw-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  scroll-behavior: smooth;
+  background: var(--cw-bg);
+}
+
+/* Custom scrollbar — Webkit */
+.cw-body::-webkit-scrollbar {
+  width: 5px;
+}
+
+.cw-body::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.cw-body::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 4px;
+}
+
+.cw-body::-webkit-scrollbar-thumb:hover {
+  background: #aaa;
+}
+
+/* Firefox scrollbar */
+.cw-body {
+  scrollbar-width: thin;
+  scrollbar-color: #ccc transparent;
+}
+
+/* ----------------------------------------------------------
+   5. Messages — Shared
+   ---------------------------------------------------------- */
+.cw-msg {
+  animation: cwMsgIn 250ms ease-out;
+  max-width: 90%;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+/* 5a. User message */
+.cw-msg-user {
+  align-self: flex-end;
+  background: linear-gradient(135deg, var(--cw-accent), var(--cw-accent-deep));
+  color: #fff;
+  padding: 12px 16px;
+  border-radius: 18px 18px 4px 18px;
+  font-size: 15px;
+  line-height: 1.55;
+  max-width: 85%;
+}
+
+/* 5b. Assistant message */
+.cw-msg-assistant {
+  align-self: flex-start;
+  background: var(--cw-bg-card);
+  border: 1px solid var(--cw-border);
+  color: var(--cw-text);
+  padding: 14px 16px;
+  border-radius: 18px 18px 18px 4px;
+  font-size: 15px;
+  line-height: 1.65;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* 5c. Headline within assistant msg */
+.cw-msg-headline {
+  font-weight: 700;
+  font-size: 16px;
+  color: var(--cw-accent);
+  border-bottom: 1px solid var(--cw-border);
+  padding-bottom: 8px;
+}
+
+/* 5d. Body text within assistant msg */
+.cw-msg-text {
+  color: var(--cw-text);
+  font-size: 15px;
+  line-height: 1.65;
+}
+
+/* 5e. Advice callout */
+.cw-msg-advice {
+  background: #f0ecff;
+  border-left: 3px solid var(--cw-accent);
+  padding: 10px 12px;
+  border-radius: 0 var(--cw-radius-sm) var(--cw-radius-sm) 0;
+  font-size: 14px;
+  color: #3b2d6e;
+  line-height: 1.55;
+}
+
+.cw-msg-advice i {
+  color: #d4a017;
+  margin-right: 6px;
+}
+
+/* 5f. Remedies callout */
+.cw-msg-remedies {
+  background: #edfcf2;
+  border-left: 3px solid var(--cw-success);
+  padding: 10px 12px;
+  border-radius: 0 var(--cw-radius-sm) var(--cw-radius-sm) 0;
+  font-size: 14px;
+}
+
+.cw-msg-remedies strong {
+  color: var(--cw-success);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.cw-msg-remedies ul {
+  margin: 6px 0 0 18px;
+  padding: 0;
+}
+
+.cw-msg-remedies li {
+  color: #1a5c2e;
+  margin-bottom: 3px;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* 5g. Tone badges */
+.cw-tone-badge {
+  display: inline-block;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 3px 10px;
+  border-radius: 8px;
+  align-self: flex-start;
+  margin-top: 4px;
+  font-weight: 700;
+}
+
+.cw-tone-positive {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.cw-tone-cautious {
+  background: #fef9c3;
+  color: #a16207;
+}
+
+.cw-tone-negative {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.cw-tone-neutral {
+  background: #f1f5f9;
+  color: #475569;
+}
+
+.cw-tone-encouraging {
+  background: #ede9fe;
+  color: #6d28d9;
+}
+
+/* ----------------------------------------------------------
+   6. Life Area Chips (2-column grid)
+   ---------------------------------------------------------- */
+.cw-area-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  padding: 4px 0;
+}
+
+.cw-area-chip {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px;
+  background: var(--cw-bg-card);
+  border: 1px solid var(--cw-border);
+  border-radius: var(--cw-radius-md);
+  cursor: pointer;
+  font-size: 14px;
+  color: #000000;
+  transition: all 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+  font-weight: 600;
+}
+
+.cw-area-chip:hover {
+  background: var(--cw-bg-hover);
+  border-color: var(--cw-accent);
+  color: var(--cw-accent);
+}
+
+.cw-area-chip:active {
+  transform: scale(0.97);
+}
+
+.cw-area-chip i {
+  font-size: 18px;
+  color: var(--cw-accent);
+  width: 22px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+/* ----------------------------------------------------------
+   7. Template Question Chips
+   ---------------------------------------------------------- */
+.cw-templates-label {
+  font-size: 13px;
+  color: var(--cw-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 6px;
+  font-weight: 700;
+}
+
+.cw-template-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.cw-template-chip {
+  padding: 12px 14px;
+  background: var(--cw-bg-card);
+  border: 1px solid var(--cw-border);
+  border-radius: var(--cw-radius-md);
+  cursor: pointer;
+  font-size: 15px;
+  color: #000000;
+  text-align: left;
+  transition: all 0.2s ease;
+  line-height: 1.5;
+  font-family: inherit;
+  font-weight: 500;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.cw-template-chip:hover {
+  background: var(--cw-bg-hover);
+  border-color: var(--cw-accent);
+  color: var(--cw-accent);
+}
+
+.cw-template-chip:active {
+  transform: scale(0.98);
+}
+
+.cw-template-chip:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.cw-template-chip:disabled:hover {
+  background: var(--cw-bg-card);
+  border-color: var(--cw-border);
+  color: var(--cw-text);
+  transform: none;
+}
+
+/* ----------------------------------------------------------
+   8. Follow-up Chips
+   ---------------------------------------------------------- */
+.cw-follow-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.cw-follow-chip {
+  padding: 8px 14px;
+  background: #f0ecff;
+  border: 1px solid #d8d0f7;
+  border-radius: 18px;
+  cursor: pointer;
+  font-size: 13px;
+  color: var(--cw-accent);
+  transition: all 0.2s ease;
+  font-family: inherit;
+  font-weight: 500;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.cw-follow-chip:hover {
+  background: #e4ddff;
+  border-color: var(--cw-accent);
+  color: var(--cw-accent-deep);
+}
+
+.cw-follow-chip:active {
+  transform: scale(0.96);
+}
+
+/* ----------------------------------------------------------
+   9. Typing Indicator
+   ---------------------------------------------------------- */
+.cw-typing {
+  display: flex;
+  gap: 5px;
+  padding: 14px 18px;
+  align-self: flex-start;
+  background: var(--cw-bg-card);
+  border-radius: 18px 18px 18px 4px;
+  border: 1px solid var(--cw-border);
+}
+
+.cw-typing-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--cw-accent);
+  animation: cwTypingBounce 1.4s infinite ease-in-out;
+}
+
+.cw-typing-dot:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.cw-typing-dot:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+/* ----------------------------------------------------------
+   10. Footer / Input Row
+   ---------------------------------------------------------- */
+.cw-footer {
+  border-top: 1px solid var(--cw-border);
+  padding: 12px 14px;
+  flex-shrink: 0;
+  background: var(--cw-bg-panel);
+}
+
+.cw-input-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.cw-input-row input {
+  flex: 1;
+  padding: 11px 16px;
+  background: var(--cw-bg-card);
+  border: 1px solid var(--cw-border);
+  border-radius: var(--cw-radius-pill);
+  font-size: 15px;
+  color: var(--cw-text);
+  outline: none;
+  font-family: inherit;
+  transition: border-color 0.2s ease;
+}
+
+.cw-input-row input::placeholder {
+  color: #999;
+}
+
+.cw-input-row input:focus {
+  border-color: var(--cw-accent);
+  box-shadow: 0 0 0 2px rgba(124, 92, 252, 0.15);
+}
+
+.cw-input-row input:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.cw-send-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--cw-accent), var(--cw-accent-deep));
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.2s ease, transform 0.15s ease;
+  flex-shrink: 0;
+}
+
+.cw-send-btn:hover:not(:disabled) {
+  transform: scale(1.05);
+}
+
+.cw-send-btn:active:not(:disabled) {
+  transform: scale(0.95);
+}
+
+.cw-send-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* ----------------------------------------------------------
+   11. CTA Button (free-user upgrade)
+   ---------------------------------------------------------- */
+.cw-cta-btn {
+  display: block;
+  width: 100%;
+  padding: 14px 18px;
+  background: linear-gradient(135deg, var(--cw-orange), var(--cw-orange-deep));
+  color: #fff;
+  border: none;
+  border-radius: var(--cw-radius-md);
+  font-weight: 700;
+  font-size: 16px;
+  cursor: pointer;
+  text-align: center;
+  font-family: inherit;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  box-shadow: 0 4px 16px rgba(255, 107, 53, 0.25);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.cw-cta-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(255, 107, 53, 0.4);
+}
+
+.cw-cta-btn:active {
+  transform: translateY(0);
+}
+
+.cw-cta-note {
+  font-size: 13px;
+  color: var(--cw-text-secondary);
+  text-align: center;
+  margin-top: 8px;
+}
+
+/* ----------------------------------------------------------
+   12. Error Toast
+   ---------------------------------------------------------- */
+.cw-error {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #b91c1c;
+  padding: 10px 14px;
+  border-radius: var(--cw-radius-sm);
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  animation: cwMsgIn 250ms ease-out;
+  line-height: 1.45;
+}
+
+.cw-error i {
+  flex-shrink: 0;
+  font-size: 15px;
+}
+
+/* ----------------------------------------------------------
+   13. New Topic / Session End
+   ---------------------------------------------------------- */
+.cw-new-topic-btn {
+  padding: 11px 22px;
+  background: #f0ecff;
+  border: 1px solid #d8d0f7;
+  color: var(--cw-accent);
+  border-radius: var(--cw-radius-md);
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: inherit;
+  transition: all 0.2s ease;
+  align-self: center;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.cw-new-topic-btn:hover {
+  background: #e4ddff;
+}
+
+.cw-new-topic-btn:active {
+  transform: scale(0.97);
+}
+
+.cw-session-ended {
+  text-align: center;
+  color: var(--cw-text-secondary);
+  font-size: 15px;
+  padding: 18px;
+  animation: cwMsgIn 250ms ease-out;
+}
+
+.cw-session-ended i {
+  font-size: 30px;
+  color: var(--cw-success);
+  display: block;
+  margin-bottom: 10px;
+}
+
+/* ----------------------------------------------------------
+   13b. Welcome Section
+   ---------------------------------------------------------- */
+.cw-welcome {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 14px;
+  padding: 14px 0;
+}
+
+.cw-welcome-icon {
+  font-size: 40px;
+  color: var(--cw-accent);
+}
+
+.cw-welcome-icon i {
+  font-size: 40px;
+}
+
+.cw-welcome-title {
+  font-size: 19px;
+  font-weight: 700;
+  color: var(--cw-text);
+  margin: 0;
+}
+
+.cw-welcome-text {
+  font-size: 15px;
+  color: var(--cw-text-secondary);
+  line-height: 1.65;
+  margin: 0;
+}
+
+.cw-welcome-greeting {
+  font-size: 16px;
+  color: #000000;
+  line-height: 1.55;
+  text-align: center;
+  width: 100%;
+  margin-bottom: 6px;
+  font-weight: 600;
+}
+
+/* Feature checklist — free user welcome */
+.cw-feature-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  text-align: left;
+  width: 100%;
+}
+
+.cw-feature-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 8px 0;
+  font-size: 14px;
+  font-weight: 500;
+  color: #000000;
+  line-height: 1.5;
+  border-bottom: 1px solid var(--cw-border);
+}
+
+.cw-feature-list li:last-child {
+  border-bottom: none;
+}
+
+.cw-feature-list li i {
+  color: var(--cw-success);
+  font-size: 16px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+/* ----------------------------------------------------------
+   13c. Generic Button Variants
+   ---------------------------------------------------------- */
+.cw-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 22px;
+  border: none;
+  border-radius: var(--cw-radius-md);
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 600;
+  font-family: inherit;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.cw-btn:active {
+  transform: scale(0.97);
+}
+
+.cw-btn-primary {
+  background: linear-gradient(135deg, var(--cw-orange), var(--cw-orange-deep));
+  color: #fff;
+  box-shadow: 0 4px 16px rgba(255, 107, 53, 0.25);
+}
+
+.cw-btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(255, 107, 53, 0.4);
+}
+
+.cw-btn-secondary {
+  background: #f0ecff;
+  border: 1px solid #d8d0f7;
+  color: var(--cw-accent);
+}
+
+.cw-btn-secondary:hover {
+  background: #e4ddff;
+}
+
+.cw-btn-new-topic {
+  background: none;
+  color: var(--cw-text-secondary);
+  font-size: 13px;
+  font-weight: 600;
+  padding: 8px 14px;
+  width: 100%;
+}
+
+.cw-btn-new-topic:hover {
+  color: var(--cw-accent);
+}
+
+.cw-btn-new-topic i {
+  font-size: 11px;
+}
+
+/* ----------------------------------------------------------
+   13d. Templates Section
+   ---------------------------------------------------------- */
+.cw-templates-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.cw-templates-intro {
+  font-size: 15px;
+  color: #000000;
+  margin: 0;
+  line-height: 1.55;
+  font-weight: 500;
+}
+
+/* ----------------------------------------------------------
+   13d-ii. Custom Question Input (within templates phase)
+   ---------------------------------------------------------- */
+.cw-custom-question {
+  margin-top: 8px;
+  padding-top: 12px;
+  border-top: 1px solid var(--cw-border);
+}
+
+.cw-custom-question-label {
+  font-size: 14px;
+  color: #000000;
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+.cw-custom-question-form {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.cw-custom-question-form input {
+  flex: 1;
+  padding: 11px 16px;
+  background: #ffffff;
+  border: 1.5px solid var(--cw-border);
+  border-radius: var(--cw-radius-pill);
+  font-size: 15px;
+  color: #000000;
+  outline: none;
+  font-family: inherit;
+  transition: border-color 0.2s ease;
+}
+
+.cw-custom-question-form input::placeholder {
+  color: #888;
+}
+
+.cw-custom-question-form input:focus {
+  border-color: var(--cw-accent);
+  box-shadow: 0 0 0 2px rgba(124, 92, 252, 0.15);
+}
+
+.cw-custom-question-form .cw-send-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--cw-accent), var(--cw-accent-deep));
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* ----------------------------------------------------------
+   13d-iii. Voice Mode Toggle
+   ---------------------------------------------------------- */
+.cw-voice-toggle {
+  background: none;
+  border: 1.5px solid rgba(255, 255, 255, 0.35);
+  color: rgba(255, 255, 255, 0.85);
+  cursor: pointer;
+  font-size: 16px;
+  padding: 4px 8px;
+  border-radius: 6px;
+  transition: all 0.15s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+.cw-voice-toggle:hover {
+  background: rgba(255, 255, 255, 0.18);
+  border-color: rgba(255, 255, 255, 0.55);
+}
+
+.cw-voice-toggle.cw-voice-active {
+  background: rgba(255, 107, 53, 0.3);
+  border-color: var(--cw-orange);
+  color: #fff;
+}
+
+.cw-voice-label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+/* ----------------------------------------------------------
+   13e. Thread + Loading + Footer Status
+   ---------------------------------------------------------- */
+.cw-thread {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.cw-loading-hint {
+  font-size: 14px;
+  color: var(--cw-text-secondary);
+  text-align: center;
+  padding: 10px 0;
+}
+
+.cw-footer-status {
+  font-size: 13px;
+  color: var(--cw-text-secondary);
+  text-align: center;
+  padding: 4px 0;
+}
+
+/* ----------------------------------------------------------
+   13f. Quota Exhausted + Credit Badge
+   ---------------------------------------------------------- */
+.cw-quota-exhausted {
+  text-align: center;
+  padding: 14px;
+  animation: cwMsgIn 250ms ease-out;
+}
+
+.cw-quota-exhausted p {
+  font-size: 14px;
+  color: var(--cw-text-secondary);
+  margin: 0 0 12px;
+}
+
+.cw-credit-badge {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 700;
+  background: #fff3ec;
+  color: var(--cw-orange);
+  padding: 2px 6px;
+  border-radius: 6px;
+  margin-left: 6px;
+  vertical-align: middle;
+}
+
+/* ----------------------------------------------------------
+   13g. Error Toast (JSX variant)
+   ---------------------------------------------------------- */
+.cw-error-toast {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  background: #fef2f2;
+  border-bottom: 1px solid #fecaca;
+  color: #b91c1c;
+  padding: 10px 14px;
+  font-size: 14px;
+  line-height: 1.45;
+  flex-shrink: 0;
+  animation: cwMsgIn 250ms ease-out;
+}
+
+.cw-error-dismiss {
+  background: none;
+  border: none;
+  color: #b91c1c;
+  cursor: pointer;
+  font-size: 13px;
+  padding: 2px 4px;
+  flex-shrink: 0;
+  opacity: 0.7;
+  transition: opacity 0.15s ease;
+}
+
+.cw-error-dismiss:hover {
+  opacity: 1;
+}
+
+/* ----------------------------------------------------------
+   13h. Follow-up Chips (JSX variant)
+   ---------------------------------------------------------- */
+.cw-followup-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.cw-followup-chip {
+  padding: 8px 14px;
+  background: #f0ecff;
+  border: 1px solid #d8d0f7;
+  border-radius: 18px;
+  cursor: pointer;
+  font-size: 13px;
+  color: var(--cw-accent);
+  transition: all 0.2s ease;
+  font-family: inherit;
+  font-weight: 500;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.cw-followup-chip:hover {
+  background: #e4ddff;
+  border-color: var(--cw-accent);
+  color: var(--cw-accent-deep);
+}
+
+.cw-followup-chip:active {
+  transform: scale(0.96);
+}
+
+.cw-followup-chip:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ----------------------------------------------------------
+   13i. Area Icon / Name (within chip)
+   ---------------------------------------------------------- */
+.cw-area-icon {
+  font-size: 18px;
+  width: 22px;
+  text-align: center;
+  flex-shrink: 0;
+  color: var(--cw-accent);
+}
+
+.cw-area-icon i {
+  font-size: 18px;
+  color: var(--cw-accent);
+}
+
+.cw-area-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ----------------------------------------------------------
+   13j. Header layout helpers
+   ---------------------------------------------------------- */
+.cw-header-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  overflow: hidden;
+}
+
+.cw-header-icon {
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.cw-header-title {
+  font-size: 17px;
+  font-weight: 700;
+}
+
+.cw-header-area {
+  font-size: 12px;
+  background: rgba(255, 255, 255, 0.18);
+  padding: 2px 10px;
+  border-radius: 8px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 120px;
+  font-weight: 600;
+}
+
+.cw-header-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+/* ----------------------------------------------------------
+   14. Utility Classes
+   ---------------------------------------------------------- */
+.cw-link-btn {
+  background: none;
+  border: none;
+  color: var(--cw-accent);
+  cursor: pointer;
+  font-size: 14px;
+  text-decoration: underline;
+  padding: 0;
+  font-family: inherit;
+  transition: color 0.15s ease;
+}
+
+.cw-link-btn:hover {
+  color: var(--cw-accent-hover);
+}
+
+.cw-loading {
+  text-align: center;
+  padding: 28px;
+  color: var(--cw-text-secondary);
+  font-size: 15px;
+}
+
+.cw-loading i {
+  font-size: 22px;
+  animation: spin 1s linear infinite;
+  display: block;
+  margin-bottom: 10px;
+  color: var(--cw-accent);
+}
+
+.cw-divider {
+  border: none;
+  border-top: 1px solid var(--cw-border);
+  margin: 4px 0;
+}
+
+.cw-hidden {
+  display: none !important;
+}
+
+.cw-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ----------------------------------------------------------
+   15. Animations
+   ---------------------------------------------------------- */
+@keyframes cwPanelOpen {
+  from {
+    transform: scale(0.85) translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes cwPanelClose {
+  from {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+  }
+  to {
+    transform: scale(0.85) translateY(20px);
+    opacity: 0;
+  }
+}
+
+@keyframes cwMsgIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes cwTypingBounce {
+  0%,
+  80%,
+  100% {
+    transform: scale(0);
+    opacity: 0.5;
+  }
+  40% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.cw-panel-open {
+  animation: cwPanelOpen 300ms ease-out;
+}
+
+.cw-panel-close {
+  animation: cwPanelClose 250ms ease-in forwards;
+}
+
+/* ----------------------------------------------------------
+   16. Mobile Responsive
+   ---------------------------------------------------------- */
+@media (max-width: 768px) {
+  .cw-panel {
+    width: 100vw;
+    height: 100vh;
+    max-height: 100vh;
+    bottom: 0;
+    right: 0;
+    border-radius: 0;
+  }
+
+  .cw-trigger {
+    width: 52px;
+    height: 52px;
+    bottom: 16px;
+    right: 16px;
+    font-size: 22px;
+  }
+
+  .cw-area-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .cw-header {
+    padding: 16px 18px;
+    /* Safe area for notch devices */
+    padding-top: max(16px, env(safe-area-inset-top));
+  }
+
+  .cw-footer {
+    /* Safe area for home indicator */
+    padding-bottom: max(12px, env(safe-area-inset-bottom));
+  }
+
+  .cw-msg {
+    max-width: 92%;
+  }
+
+  .cw-msg-user {
+    max-width: 88%;
+  }
+
+  .cw-header-area {
+    max-width: 80px;
+  }
+}
+
+/* Small height screens (landscape phones) */
+@media (max-height: 500px) {
+  .cw-panel {
+    height: 100vh;
+    max-height: 100vh;
+    bottom: 0;
+    right: 0;
+    border-radius: 0;
+  }
+}
+
+/* ----------------------------------------------------------
+   17. Reduced Motion Preference
+   ---------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  .cw-trigger,
+  .cw-send-btn,
+  .cw-btn,
+  .cw-cta-btn,
+  .cw-area-chip,
+  .cw-template-chip,
+  .cw-follow-chip,
+  .cw-followup-chip,
+  .cw-new-topic-btn {
+    transition: none;
+  }
+
+  .cw-msg,
+  .cw-error,
+  .cw-error-toast,
+  .cw-session-ended,
+  .cw-quota-exhausted {
+    animation: none;
+  }
+
+  .cw-panel-open {
+    animation: none;
+  }
+
+  .cw-panel-close {
+    animation: none;
+  }
+
+  .cw-typing-dot {
+    animation: none;
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .cw-loading i {
+    animation: none;
+  }
+
+  .cw-body {
+    scroll-behavior: auto;
+  }
+}
+
+/* ----------------------------------------------------------
+   Partner Birth Data Form (Compatibility 1501)
+   ---------------------------------------------------------- */
+
+.cw-partner-form {
+  padding: 16px;
+}
+
+.cw-partner-header {
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+.cw-partner-header i {
+  font-size: 28px;
+  color: #e91e63;
+  margin-bottom: 8px;
+  display: block;
+}
+
+.cw-partner-header h4 {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--cw-text);
+  margin: 0 0 6px;
+}
+
+.cw-partner-subtitle {
+  font-size: 12px;
+  color: var(--cw-text-secondary);
+  margin: 0;
+  line-height: 1.4;
+}
+
+.cw-partner-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.cw-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.cw-field span {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--cw-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.cw-field input,
+.cw-field select {
+  padding: 8px 10px;
+  border: 1px solid var(--cw-border);
+  border-radius: 6px;
+  font-size: 13px;
+  color: var(--cw-text);
+  background: var(--cw-bg-card);
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.cw-field input:focus,
+.cw-field select:focus {
+  border-color: var(--cw-accent);
+  box-shadow: 0 0 0 2px rgba(124, 92, 252, 0.15);
+}
+
+.cw-field-row {
+  display: flex;
+  gap: 8px;
+}
+
+.cw-field-half {
+  flex: 1;
+}
+
+.cw-partner-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.cw-partner-actions .cw-btn {
+  flex: 1;
+  font-size: 12px;
+  padding: 8px 12px;
+}
+
+.cw-partner-actions .cw-btn-secondary {
+  background: var(--cw-bg-card);
+  color: var(--cw-text-secondary);
+  border: 1px solid var(--cw-border);
+}
+
+.cw-partner-actions .cw-btn-secondary:hover {
+  background: var(--cw-bg-hover);
+}

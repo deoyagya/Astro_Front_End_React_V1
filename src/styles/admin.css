@@ -143,7 +143,7 @@
     color: white;
     padding: 2px 8px;
     border-radius: 10px;
-    font-size: 0.75rem;
+    font-size: 0.9rem;
     margin-left: 8px;
 }
 
@@ -152,7 +152,7 @@
     color: white;
     padding: 2px 8px;
     border-radius: 10px;
-    font-size: 0.75rem;
+    font-size: 0.9rem;
 }
 
 .admin-table .badge-inactive {
@@ -160,7 +160,7 @@
     color: white;
     padding: 2px 8px;
     border-radius: 10px;
-    font-size: 0.75rem;
+    font-size: 0.9rem;
 }
 
 .admin-table .actions-cell {
@@ -173,7 +173,7 @@
     border: none;
     border-radius: 6px;
     cursor: pointer;
-    font-size: 0.85rem;
+    font-size: 0.95rem;
     display: flex;
     align-items: center;
     gap: 5px;
@@ -239,7 +239,7 @@
     display: block;
     color: #b0b7c3;
     margin-bottom: 4px;
-    font-size: 0.85rem;
+    font-size: 0.95rem;
     font-weight: 600;
 }
 
@@ -425,7 +425,7 @@
     width: 100%;
     min-height: 150px;
     font-family: 'Courier New', monospace;
-    font-size: 0.85rem;
+    font-size: 0.95rem;
     padding: 12px;
     background: rgba(20, 22, 30, 0.95);
     border: 1px solid #2a2f3e;
@@ -446,7 +446,7 @@
     margin-top: 10px;
     padding: 12px;
     border-radius: 8px;
-    font-size: 0.85rem;
+    font-size: 0.95rem;
 }
 
 .validation-result.success {
@@ -613,7 +613,7 @@
     display: block;
     color: #b0b7c3;
     margin-bottom: 6px;
-    font-size: 0.85rem;
+    font-size: 0.95rem;
     font-weight: 600;
 }
 
@@ -653,7 +653,7 @@
     align-items: center;
     justify-content: center;
     font-weight: 700;
-    font-size: 0.85rem;
+    font-size: 0.95rem;
     border: 2px solid #2a2f3e;
     background: rgba(30, 33, 48, 0.9);
     color: #8a8f9d;
@@ -780,7 +780,7 @@
     border: 1px solid #7b5bff;
     border-radius: 6px;
     color: #9d7bff;
-    font-size: 0.78rem;
+    font-size: 0.92rem;
     cursor: pointer;
     white-space: nowrap;
     transition: all 0.2s;
@@ -840,7 +840,7 @@
     border-radius: 50%;
     background: rgba(123, 91, 255, 0.2);
     color: #9d7bff;
-    font-size: 0.75rem;
+    font-size: 0.9rem;
     font-weight: 700;
     display: flex;
     align-items: center;
@@ -874,7 +874,7 @@
 }
 
 .wizard-meta-tag {
-    font-size: 0.72rem;
+    font-size: 0.88rem;
     padding: 1px 6px;
     background: rgba(123, 91, 255, 0.1);
     border-radius: 4px;
@@ -882,7 +882,7 @@
 }
 
 .wizard-meta-cost {
-    font-size: 0.78rem;
+    font-size: 0.92rem;
     color: #ffa502;
     font-weight: 500;
 }
@@ -973,7 +973,7 @@
 /* Prompt textarea monospace */
 .wizard-prompt-textarea {
     font-family: 'Courier New', monospace !important;
-    font-size: 0.85rem !important;
+    font-size: 0.95rem !important;
     min-height: 120px !important;
     line-height: 1.5;
 }
@@ -995,7 +995,7 @@
     border: 1px solid rgba(255, 165, 2, 0.3);
     border-radius: 4px;
     color: #ffa502;
-    font-size: 0.75rem;
+    font-size: 0.9rem;
     cursor: pointer;
     transition: all 0.2s;
 }
@@ -1097,7 +1097,7 @@
     align-items: center;
     gap: 6px;
     color: #8a8f9d;
-    font-size: 0.82rem;
+    font-size: 0.92rem;
     cursor: pointer;
 }
 
@@ -1153,7 +1153,7 @@
 
 .obs-gauge-subtitle {
     color: #8a8f9d;
-    font-size: 0.78rem;
+    font-size: 0.92rem;
     margin-top: 2px;
     text-align: center;
 }
@@ -1259,7 +1259,7 @@
     border: none;
     color: #9d7bff;
     cursor: pointer;
-    font-size: 0.85rem;
+    font-size: 0.95rem;
     display: flex;
     align-items: center;
     gap: 6px;
@@ -1314,7 +1314,7 @@
 
 .obs-alert-mini-time {
     color: #8a8f9d;
-    font-size: 0.78rem;
+    font-size: 0.92rem;
     white-space: nowrap;
 }
 
@@ -1326,7 +1326,7 @@
     gap: 5px;
     padding: 3px 10px;
     border-radius: 10px;
-    font-size: 0.72rem;
+    font-size: 0.88rem;
     font-weight: 700;
     letter-spacing: 0.5px;
     white-space: nowrap;
@@ -1375,7 +1375,7 @@
 .obs-alert-time {
     white-space: nowrap;
     color: #8a8f9d !important;
-    font-size: 0.85rem;
+    font-size: 0.95rem;
 }
 
 
@@ -1412,7 +1412,7 @@
 }
 
 .obs-settings-group-title i {
-    font-size: 0.85rem;
+    font-size: 0.95rem;
 }
 
 .obs-settings-fields {
@@ -1429,7 +1429,7 @@
 
 .obs-settings-field label {
     color: #b0b7c3;
-    font-size: 0.82rem;
+    font-size: 0.92rem;
     font-weight: 600;
 }
 
@@ -1521,7 +1521,7 @@
 }
 
 .obs-toggle-label {
-    font-size: 0.82rem;
+    font-size: 0.92rem;
     font-weight: 600;
     color: #8a8f9d;
 }
@@ -1565,7 +1565,7 @@
     color: #ff4757;
     padding: 6px 14px;
     cursor: pointer;
-    font-size: 0.85rem;
+    font-size: 0.95rem;
 }
 
 
@@ -1654,7 +1654,7 @@
 }
 
 .obs-token-card-label {
-    font-size: 0.72rem;
+    font-size: 0.88rem;
     color: #8a8f9d;
     margin-top: 1px;
     white-space: nowrap;
@@ -1671,7 +1671,7 @@
     justify-content: space-between;
     align-items: center;
     margin-bottom: 6px;
-    font-size: 0.82rem;
+    font-size: 0.92rem;
     color: #b0b7c3;
 }
 
@@ -1706,7 +1706,7 @@
 
 .obs-provider-breakdown h4 {
     color: #9d7bff;
-    font-size: 0.85rem;
+    font-size: 0.95rem;
     margin-bottom: 10px;
     display: flex;
     align-items: center;
@@ -1751,7 +1751,7 @@
 
 .obs-provider-calls {
     color: #b0b7c3;
-    font-size: 0.82rem;
+    font-size: 0.92rem;
     min-width: 80px;
     text-align: right;
 }
@@ -1759,7 +1759,7 @@
 .obs-provider-cost {
     color: #ffa502;
     font-weight: 600;
-    font-size: 0.85rem;
+    font-size: 0.95rem;
     min-width: 80px;
     text-align: right;
 }
@@ -1806,7 +1806,7 @@
         min-width: auto;
     }
     .admin-table.obs-alerts-table {
-        font-size: 0.85rem;
+        font-size: 0.95rem;
     }
 }
 
@@ -1845,7 +1845,7 @@
 }
 
 .pipeline-phase-group-label {
-    font-size: 0.72rem;
+    font-size: 0.88rem;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.5px;
@@ -1911,7 +1911,7 @@
     color: #e0e0e0;
     padding: 4px 8px;
     border-radius: 6px;
-    font-size: 0.72rem;
+    font-size: 0.88rem;
     white-space: nowrap;
     pointer-events: none;
     opacity: 0;
@@ -1949,13 +1949,13 @@
 }
 
 .pipeline-stage-header .record-count {
-    font-size: 0.82rem;
+    font-size: 0.92rem;
     color: #8a8f9d;
     margin-left: auto;
 }
 
 .pipeline-stage-header .stage-duration {
-    font-size: 0.78rem;
+    font-size: 0.92rem;
     color: #8a8f9d;
     background: rgba(42, 47, 62, 0.5);
     padding: 2px 10px;
@@ -1969,7 +1969,7 @@
     gap: 4px;
     padding: 3px 10px;
     border-radius: 10px;
-    font-size: 0.72rem;
+    font-size: 0.88rem;
     font-weight: 700;
     letter-spacing: 0.3px;
     text-transform: uppercase;
@@ -2004,7 +2004,7 @@
 /* JSON Tree Viewer */
 .json-tree {
     font-family: 'Fira Code', 'Courier New', monospace;
-    font-size: 0.82rem;
+    font-size: 0.92rem;
     line-height: 1.6;
     color: #e0e0e0;
     overflow-x: auto;
@@ -2086,7 +2086,7 @@
 .json-tree-summary {
     color: #6a6f7d;
     font-style: italic;
-    font-size: 0.78rem;
+    font-size: 0.92rem;
     cursor: pointer;
 }
 
@@ -2104,7 +2104,7 @@
     width: 100%;
     min-height: 300px;
     font-family: 'Fira Code', 'Courier New', monospace;
-    font-size: 0.82rem;
+    font-size: 0.92rem;
     line-height: 1.5;
     padding: 16px;
     background: rgba(20, 22, 30, 0.95);
@@ -2131,7 +2131,7 @@
     align-items: center;
     gap: 8px;
     margin-top: 6px;
-    font-size: 0.78rem;
+    font-size: 0.92rem;
 }
 
 .json-editor-status.valid {
@@ -2250,7 +2250,7 @@
 }
 
 .verdict-node-id {
-    font-size: 0.75rem;
+    font-size: 0.9rem;
     font-weight: 700;
     color: #9d7bff;
     background: rgba(123, 91, 255, 0.1);
@@ -2266,7 +2266,7 @@
 
 .verdict-node-status {
     margin-left: auto;
-    font-size: 0.78rem;
+    font-size: 0.92rem;
     padding: 2px 8px;
     border-radius: 10px;
     font-weight: 600;
@@ -2289,7 +2289,7 @@
 
 .verdict-node-verdict {
     color: #b0b7c3;
-    font-size: 0.85rem;
+    font-size: 0.95rem;
     margin-bottom: 6px;
 }
 
@@ -2319,7 +2319,7 @@
     width: 100%;
     border-collapse: collapse;
     margin-top: 12px;
-    font-size: 0.85rem;
+    font-size: 0.95rem;
 }
 
 .rule-eval-table thead th {
@@ -2381,7 +2381,7 @@
 }
 
 .llm-panel h3 i {
-    font-size: 0.85rem;
+    font-size: 0.95rem;
 }
 
 .llm-output-headline {
@@ -2477,7 +2477,7 @@
 
 .score-display-label {
     text-align: center;
-    font-size: 0.82rem;
+    font-size: 0.92rem;
     color: #8a8f9d;
     margin-bottom: 16px;
 }
@@ -2489,7 +2489,7 @@
     gap: 5px;
     padding: 4px 12px;
     border-radius: 12px;
-    font-size: 0.78rem;
+    font-size: 0.92rem;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.3px;
@@ -2616,7 +2616,7 @@
     background: rgba(40, 44, 60, 0.5);
     border: none;
     color: #8a8f9d;
-    font-size: 0.85rem;
+    font-size: 0.95rem;
     font-weight: 500;
     cursor: pointer;
     transition: all 0.2s;
@@ -2653,7 +2653,7 @@
     padding: 6px 10px;
     background: rgba(42, 47, 62, 0.3);
     border-radius: 6px;
-    font-size: 0.82rem;
+    font-size: 0.92rem;
     color: #b0b7c3;
 }
 
@@ -2672,7 +2672,7 @@
     gap: 5px;
     padding: 4px 12px;
     border-radius: 12px;
-    font-size: 0.78rem;
+    font-size: 0.92rem;
     font-weight: 700;
     background: rgba(123, 91, 255, 0.12);
     color: #9d7bff;

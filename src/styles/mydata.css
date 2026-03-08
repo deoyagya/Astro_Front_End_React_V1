@@ -57,7 +57,7 @@
 }
 
 .mydata-birth-form .form-group label {
-  font-size: 0.78rem;
+  font-size: 0.92rem;
   color: #8892a4;
   margin-bottom: 4px;
   display: block;
@@ -197,7 +197,7 @@
   text-decoration: none;
   border-bottom: 3px solid transparent;
   transition: all 0.2s;
-  font-size: 0.85rem;
+  font-size: 0.95rem;
   font-weight: 500;
   display: flex;
   align-items: center;
@@ -216,7 +216,7 @@
 }
 
 .mydata-tab i {
-  font-size: 0.82rem;
+  font-size: 0.92rem;
 }
 
 /* --- Data table (key-value rows) --- */
@@ -298,7 +298,7 @@
 }
 
 .mydata-placeholder .hint {
-  font-size: 0.85rem;
+  font-size: 0.95rem;
   color: #4e5572;
 }
 
@@ -366,7 +366,7 @@
   display: inline-block;
   padding: 3px 10px;
   border-radius: 12px;
-  font-size: 0.78rem;
+  font-size: 0.92rem;
   font-weight: 600;
   margin-bottom: 8px;
 }
@@ -405,7 +405,7 @@
   color: #9d7bff;
   padding: 2px 10px;
   border-radius: 12px;
-  font-size: 0.78rem;
+  font-size: 0.92rem;
   font-weight: 600;
 }
 
@@ -426,26 +426,26 @@
 
 .yoga-card-planets {
   color: #9d7bff;
-  font-size: 0.82rem;
+  font-size: 0.92rem;
   margin-bottom: 6px;
 }
 
 .yoga-card-desc {
   color: #8892a4;
-  font-size: 0.85rem;
+  font-size: 0.95rem;
   line-height: 1.5;
 }
 
 .yoga-card-ref {
   color: #7b6ba0;
-  font-size: 0.78rem;
+  font-size: 0.92rem;
   margin-top: 6px;
   font-style: italic;
 }
 
 .yoga-card-ref i {
   margin-right: 4px;
-  font-size: 0.72rem;
+  font-size: 0.88rem;
 }
 
 .yoga-summary-badge {
@@ -468,7 +468,7 @@
 .yoga-strength-badge {
   margin-left: 8px;
   font-weight: 600;
-  font-size: 0.78rem;
+  font-size: 0.92rem;
   text-transform: capitalize;
 }
 
@@ -502,7 +502,7 @@
 }
 
 .sade-sati-status i {
-  font-size: 0.85rem;
+  font-size: 0.95rem;
 }
 
 /* --- Transit grid --- */
@@ -537,7 +537,7 @@
 
 .saved-chart-info p {
   color: #8892a4;
-  font-size: 0.82rem;
+  font-size: 0.92rem;
   margin: 0;
 }
 
@@ -549,7 +549,7 @@
 .saved-chart-actions button {
   padding: 6px 14px;
   border-radius: 6px;
-  font-size: 0.82rem;
+  font-size: 0.92rem;
   cursor: pointer;
   border: none;
   font-weight: 500;
@@ -568,7 +568,7 @@
 /* --- Form error text --- */
 .mydata-form-error {
   color: #ff5252;
-  font-size: 0.85rem;
+  font-size: 0.95rem;
   text-align: center;
   margin-top: 8px;
 }
@@ -678,7 +678,7 @@
 
 .chart-modal-selector label {
   color: #8892a4;
-  font-size: 0.85rem;
+  font-size: 0.95rem;
   font-weight: 500;
   white-space: nowrap;
 }
@@ -689,7 +689,7 @@
   color: #e8dff5;
   padding: 7px 12px;
   border-radius: 8px;
-  font-size: 0.85rem;
+  font-size: 0.95rem;
   cursor: pointer;
   min-width: 180px;
 }
@@ -712,7 +712,7 @@
   border: none;
   color: #8892a4;
   padding: 7px 14px;
-  font-size: 0.82rem;
+  font-size: 0.92rem;
   cursor: pointer;
   transition: all 0.2s;
   white-space: nowrap;
@@ -774,7 +774,7 @@
   padding: 8px 16px;
   border-radius: 8px;
   margin-top: 8px;
-  font-size: 0.85rem;
+  font-size: 0.95rem;
   color: #2ed573;
   font-weight: 500;
   flex-shrink: 0;
@@ -791,7 +791,7 @@
   border: none;
   border-radius: 8px;
   padding: 10px 16px;
-  font-size: 0.85rem;
+  font-size: 0.95rem;
   font-weight: 600;
   cursor: pointer;
   white-space: nowrap;

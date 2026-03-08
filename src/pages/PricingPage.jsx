@@ -60,7 +60,7 @@ export default function PricingPage() {
   const [error, setError] = useState('');
 
   // Billing cycle toggle
-  const [yearly, setYearly] = useState(false);
+  const [yearly, setYearly] = useState(true);
 
   // Coupon
   const [couponCode, setCouponCode] = useState('');
@@ -196,10 +196,16 @@ export default function PricingPage() {
   };
 
   const getFeatureDisplay = (plan, featureKey) => {
-    const feature = plan.features?.find((f) => f.feature_key === featureKey);
+    // plan.features is a dict keyed by feature_key (from backend)
+    const feature = Array.isArray(plan.features)
+      ? plan.features.find((f) => f.feature_key === featureKey)
+      : plan.features?.[featureKey];
     if (!feature || !feature.enabled) return { type: 'cross' };
-    if (feature.limit_value) {
-      const label = feature.limit_value >= 999999 ? 'Unlimited' : `${feature.limit_value}/${feature.limit_period || 'mo'}`;
+    // Backend uses "limit" (dict) or "limit_value" (array) depending on shape
+    const limitVal = feature.limit_value ?? feature.limit;
+    const limitPeriod = feature.limit_period ?? feature.period;
+    if (limitVal) {
+      const label = limitVal >= 999999 ? 'Unlimited' : `${limitVal}/${limitPeriod || 'mo'}`;
       return { type: 'limit', label };
     }
     return { type: 'check' };

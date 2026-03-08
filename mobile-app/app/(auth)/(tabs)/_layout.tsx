@@ -14,6 +14,7 @@ export default function TabLayout() {
     >
       <Tabs.Screen name="index" />
       <Tabs.Screen name="tools" />
+      <Tabs.Screen name="consult" />
       <Tabs.Screen name="reports" />
       <Tabs.Screen name="profile" />
       <Tabs.Screen name="my-data" />

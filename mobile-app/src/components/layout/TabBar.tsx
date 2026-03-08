@@ -16,6 +16,7 @@ type TabBarProps = {
 const TAB_ICONS: Record<string, { active: string; inactive: string }> = {
   index: { active: 'home', inactive: 'home-outline' },
   tools: { active: 'compass', inactive: 'compass-outline' },
+  consult: { active: 'chatbubble-ellipses', inactive: 'chatbubble-ellipses-outline' },
   reports: { active: 'document-text', inactive: 'document-text-outline' },
   profile: { active: 'person', inactive: 'person-outline' },
   'my-data': { active: 'folder', inactive: 'folder-outline' },
@@ -24,6 +25,7 @@ const TAB_ICONS: Record<string, { active: string; inactive: string }> = {
 const TAB_LABELS: Record<string, string> = {
   index: 'Home',
   tools: 'Tools',
+  consult: 'Consult',
   reports: 'Reports',
   profile: 'Profile',
   'my-data': 'My Data',
@@ -34,7 +36,7 @@ const HIDDEN_ROUTES = new Set(['birth-details']);
 
 // Tabs that have a nested Stack navigator (_layout.tsx)
 // Used to safely reset stack on re-tap — Home has no nested Stack.
-const TABS_WITH_STACK = new Set(['tools', 'reports', 'profile', 'my-data']);
+const TABS_WITH_STACK = new Set(['tools', 'consult', 'reports', 'profile', 'my-data']);
 
 export function TabBar({ state, descriptors, navigation }: TabBarProps) {
   const insets = useSafeAreaInsets();

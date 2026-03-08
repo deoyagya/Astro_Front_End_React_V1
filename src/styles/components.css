@@ -25,7 +25,7 @@
 
 .logo p {
     color: #b0b7c3;
-    font-size: 0.85rem;
+    font-size: 0.95rem;
     letter-spacing: 1px;
 }
 
@@ -152,7 +152,7 @@
 
 .dropdown-email {
     color: #8a8f9d;
-    font-size: 0.8rem;
+    font-size: 0.88rem;
     margin-top: 2px;
     max-width: 180px;
     overflow: hidden;
@@ -262,7 +262,7 @@
     padding: 9px 16px 9px 22px;
     color: #8a90a0;
     text-decoration: none;
-    font-size: 0.84rem;
+    font-size: 0.92rem;
     transition: all 0.2s;
     cursor: pointer;
 }
@@ -281,7 +281,7 @@
     width: 16px;
     text-align: center;
     color: #6b5bb8;
-    font-size: 0.8rem;
+    font-size: 0.88rem;
 }
 
 .dropdown-submenu-item:hover i {
@@ -478,8 +478,8 @@
 
 .footer-about p {
     color: #b0b7c3;
-    font-size: 0.95rem;
-    line-height: 1.6;
+    font-size: 1rem;
+    line-height: 1.7;
     margin-bottom: 20px;
     max-width: 300px;
 }
@@ -519,12 +519,12 @@
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    font-size: 0.95rem;
+    font-size: 1rem;
 }
 
 .footer-links a i {
     color: #9d7bff;
-    font-size: 0.8rem;
+    font-size: 0.88rem;
     transition: transform 0.3s;
 }
 
@@ -563,7 +563,7 @@
     display: flex;
     align-items: center;
     gap: 12px;
-    font-size: 0.95rem;
+    font-size: 1rem;
 }
 
 .footer-contact i {
@@ -715,17 +715,17 @@
 
     .nav a {
         padding: 6px 8px;
-        font-size: 0.82rem;
+        font-size: 0.92rem;
     }
 
     .nav-manage-trigger {
         padding: 6px 8px;
-        font-size: 0.82rem;
+        font-size: 0.92rem;
     }
 
     .nav-user-trigger {
         padding: 5px 10px;
-        font-size: 0.82rem;
+        font-size: 0.92rem;
     }
 
     .logo h1 {
@@ -733,7 +733,7 @@
     }
 
     .logo p {
-        font-size: 0.75rem;
+        font-size: 0.9rem;
     }
 }
 
@@ -792,7 +792,7 @@
     
     .footer-bottom {
         padding-top: 20px;
-        font-size: 0.85rem;
+        font-size: 0.95rem;
     }
 }
 
@@ -835,7 +835,7 @@
     color: #ff6b6b;
     cursor: pointer;
     padding: 0 2px;
-    font-size: 0.85rem;
+    font-size: 0.95rem;
     opacity: 0.6;
 }
 .api-error-dismiss:hover {

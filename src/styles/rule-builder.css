@@ -30,7 +30,7 @@
 }
 
 .rb-taxonomy-group label {
-  font-size: 0.78rem;
+  font-size: 0.92rem;
   color: #8a8f9d;
   text-transform: uppercase;
   letter-spacing: 0.6px;
@@ -67,7 +67,7 @@
   border: 1px solid rgba(123, 91, 255, 0.25);
   border-radius: 6px;
   color: #b09dff;
-  font-size: 0.82rem;
+  font-size: 0.92rem;
   font-family: 'Fira Code', 'Courier New', monospace;
   margin-top: 4px;
 }
@@ -93,7 +93,7 @@
   border: 1px solid #2a2f3e;
   background: rgba(30, 33, 48, 0.7);
   color: #c0c5d0;
-  font-size: 0.85rem;
+  font-size: 0.95rem;
   cursor: pointer;
   transition: all 0.2s;
   white-space: nowrap;
@@ -130,7 +130,7 @@
 }
 
 .rb-toolbar-badge i {
-  font-size: 0.75rem;
+  font-size: 0.9rem;
 }
 
 /* ── Canvas ── */
@@ -192,7 +192,7 @@
 }
 
 .rb-group-label {
-  font-size: 0.82rem;
+  font-size: 0.92rem;
   color: #8a8f9d;
   font-weight: 600;
   text-transform: uppercase;
@@ -216,7 +216,7 @@
   border: 1px solid #2a2f3e;
   background: transparent;
   color: #6b7280;
-  font-size: 0.78rem;
+  font-size: 0.92rem;
   cursor: pointer;
   transition: all 0.2s;
 }
@@ -244,7 +244,7 @@
 
 .rb-logic-btn {
   padding: 4px 14px;
-  font-size: 0.78rem;
+  font-size: 0.92rem;
   font-weight: 700;
   letter-spacing: 0.5px;
   border: none;
@@ -271,7 +271,7 @@
   gap: 8px;
   padding: 2px 0 2px 20px;
   color: #4b5563;
-  font-size: 0.75rem;
+  font-size: 0.9rem;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.4px;
@@ -279,7 +279,7 @@
 
 .rb-connector::before {
   content: '\21B3';
-  font-size: 0.85rem;
+  font-size: 0.95rem;
   opacity: 0.5;
 }
 
@@ -307,7 +307,7 @@
 .rb-condition-grip {
   color: #4b5563;
   cursor: grab;
-  font-size: 0.85rem;
+  font-size: 0.95rem;
   flex-shrink: 0;
   padding: 0 4px;
 }
@@ -318,7 +318,7 @@
   align-items: center;
   padding: 3px 10px;
   border-radius: 12px;
-  font-size: 0.72rem;
+  font-size: 0.88rem;
   font-weight: 700;
   letter-spacing: 0.5px;
   cursor: pointer;
@@ -347,7 +347,7 @@
   border: 1px solid rgba(123, 91, 255, 0.2);
   border-radius: 8px;
   color: #c4b5fd;
-  font-size: 0.84rem;
+  font-size: 0.95rem;
   min-width: 180px;
   max-width: 240px;
   transition: border-color 0.2s;
@@ -387,7 +387,7 @@
 }
 
 .rb-param-label {
-  font-size: 0.72rem;
+  font-size: 0.88rem;
   color: #6b7280;
   text-transform: uppercase;
   letter-spacing: 0.3px;
@@ -400,7 +400,7 @@
   border: 1px solid rgba(16, 185, 129, 0.2);
   border-radius: 8px;
   color: #6ee7b7;
-  font-size: 0.84rem;
+  font-size: 0.95rem;
   min-width: 100px;
   max-width: 180px;
 }
@@ -416,7 +416,7 @@
   border: 1px solid rgba(245, 158, 11, 0.2);
   border-radius: 8px;
   color: #fbbf24;
-  font-size: 0.84rem;
+  font-size: 0.95rem;
   width: 70px;
   text-align: center;
 }
@@ -432,7 +432,7 @@
   border: 1px solid rgba(148, 163, 184, 0.2);
   border-radius: 8px;
   color: #cbd5e1;
-  font-size: 0.84rem;
+  font-size: 0.95rem;
   min-width: 120px;
 }
 
@@ -474,7 +474,7 @@
   align-items: center;
   padding: 3px 10px;
   border-radius: 14px;
-  font-size: 0.76rem;
+  font-size: 0.9rem;
   font-weight: 500;
   border: 1px solid #2a2f3e;
   background: rgba(30, 33, 48, 0.5);
@@ -538,7 +538,7 @@
   border: 1px solid transparent;
   background: transparent;
   color: #4b5563;
-  font-size: 0.75rem;
+  font-size: 0.9rem;
   cursor: pointer;
   transition: all 0.2s;
 }
@@ -567,7 +567,7 @@
   gap: 8px;
   margin-bottom: 10px;
   color: #8a8f9d;
-  font-size: 0.82rem;
+  font-size: 0.92rem;
   font-weight: 600;
 }
 
@@ -580,7 +580,7 @@
   color: #fbbf24;
   padding: 2px 8px;
   border-radius: 10px;
-  font-size: 0.75rem;
+  font-size: 0.9rem;
   font-weight: 600;
 }
 
@@ -597,7 +597,7 @@
   padding: 5px 12px;
   border-radius: 8px;
   font-family: 'Fira Code', 'Courier New', monospace;
-  font-size: 0.78rem;
+  font-size: 0.92rem;
   font-weight: 500;
   border: 1px solid;
   transition: transform 0.15s;
@@ -615,7 +615,7 @@
 
 .rb-data-tags--empty {
   color: #4b5563;
-  font-size: 0.85rem;
+  font-size: 0.95rem;
   font-style: italic;
   padding: 8px 0;
 }
@@ -765,7 +765,7 @@
   padding: 16px;
   overflow-x: auto;
   font-family: 'Fira Code', 'Courier New', monospace;
-  font-size: 0.82rem;
+  font-size: 0.92rem;
   color: #94a3b8;
   white-space: pre-wrap;
   word-break: break-word;
@@ -809,7 +809,7 @@
 
 .rb-validation-box li {
   margin: 4px 0;
-  font-size: 0.84rem;
+  font-size: 0.95rem;
 }
 
 /* ── Responsive ── */

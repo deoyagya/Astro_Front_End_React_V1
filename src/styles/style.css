@@ -16,7 +16,8 @@ body {
   font-family: 'Montserrat', sans-serif;
   background: #0a0d14;
   color: #e0e0e0;
-  line-height: 1.6;
+  line-height: 1.7;
+  font-size: 16px;
 }
 
 a {
@@ -47,7 +48,7 @@ img {
 
 .section-header p {
   color: #b0b7c3;
-  font-size: 1.05rem;
+  font-size: 1.15rem;
 }
 
 .highlight {

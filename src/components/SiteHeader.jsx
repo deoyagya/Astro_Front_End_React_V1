@@ -19,6 +19,7 @@ const ADMIN_MENU_ITEMS = [
   { label: 'Rule Admin',    icon: 'fa-gavel',           href: `${API_BASE}/admin`, external: true },
   { label: 'DB Admin',      icon: 'fa-database',        href: `${API_BASE}/db-admin`, external: true },
   { label: 'Wizard Content', icon: 'fa-photo-video',    href: '/admin/wizard-content' },
+  { label: 'Subscriptions', icon: 'fa-credit-card',     href: '/admin/subscriptions' },
 ];
 
 const MY_DATA_MENU_ITEMS = [

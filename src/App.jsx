@@ -36,9 +36,11 @@ import AdminPipelineWizardPage from './pages/admin/AdminPipelineWizardPage';
 import AdminRuleCVWizardPage from './pages/admin/AdminRuleCVWizardPage';
 import AdminRuleBuilderPage from './pages/admin/AdminRuleBuilderPage';
 import AdminWizardContentPage from './pages/admin/AdminWizardContentPage';
+import AdminSubscriptionPage from './pages/admin/AdminSubscriptionPage';
 import MuhurtaFinderPage from './pages/MuhurtaFinderPage';
 import ChartWizardPage from './pages/ChartWizardPage';
 import PricingPage from './pages/PricingPage';
+import ChatWidget from './components/ChatWidget';
 
 // My Data pages
 import MyDataLayout from './pages/mydata/MyDataLayout';
@@ -117,10 +119,12 @@ export default function App() {
         <Route path="/admin/rule-cv-wizard" element={<AdminProtectedRoute><AdminRuleCVWizardPage /></AdminProtectedRoute>} />
         <Route path="/admin/rule-builder" element={<AdminProtectedRoute><AdminRuleBuilderPage /></AdminProtectedRoute>} />
         <Route path="/admin/wizard-content" element={<AdminProtectedRoute><AdminWizardContentPage /></AdminProtectedRoute>} />
+        <Route path="/admin/subscriptions" element={<AdminProtectedRoute><AdminSubscriptionPage /></AdminProtectedRoute>} />
 
         {/* Catch-all */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
+      <ChatWidget />
     </AuthProvider>
   );
 }
