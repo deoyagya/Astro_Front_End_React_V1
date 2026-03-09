@@ -31,9 +31,9 @@ function TypingIndicator() {
   );
 }
 
-function AssistantMessage({ msg }) {
+const AssistantMessage = React.forwardRef(({ msg }, ref) => {
   return (
-    <div className="cw-msg cw-msg-assistant">
+    <div className="cw-msg cw-msg-assistant" ref={ref}>
       {msg.headline && <div className="cw-msg-headline">{msg.headline}</div>}
       <div className="cw-msg-text">{msg.interpretation || msg.content}</div>
       {msg.advice && (
@@ -56,7 +56,7 @@ function AssistantMessage({ msg }) {
       )}
     </div>
   );
-}
+});
 
 function UserMessage({ msg }) {
   return (
@@ -103,6 +103,9 @@ export default function ChatWidget() {
   const [showNudge, setShowNudge] = useState(false);
   const [nudgeDismissed, setNudgeDismissed] = useState(false);
 
+  // ── Maximize state
+  const [isMaximized, setIsMaximized] = useState(false);
+
   // ── Partner birth data (compatibility 1501)
   const [showPartnerForm, setShowPartnerForm] = useState(false);
   const [pendingArea, setPendingArea] = useState(null);
@@ -117,6 +120,7 @@ export default function ChatWidget() {
   const errorTimerRef = useRef(null);
   const restoredRef = useRef(false);
   const nudgeTimerRef = useRef(null);
+  const lastAnswerRef = useRef(null);
 
   const isFreeUser = user?.role === 'free';
   const quotaExhausted =
@@ -124,10 +128,13 @@ export default function ChatWidget() {
 
   // ────────────────────────── Helpers
 
-  /** Scroll chat body to the bottom. */
-  const scrollToBottom = useCallback(() => {
+  /** Scroll to the start of the latest AI answer so user reads from the top. */
+  const scrollToLatestAnswer = useCallback(() => {
     requestAnimationFrame(() => {
-      if (bodyRef.current) {
+      if (lastAnswerRef.current && bodyRef.current) {
+        // Scroll the answer's top edge into view within the chat body
+        lastAnswerRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      } else if (bodyRef.current) {
         bodyRef.current.scrollTop = bodyRef.current.scrollHeight;
       }
     });
@@ -252,10 +259,10 @@ export default function ChatWidget() {
     };
   }, [isOpen]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  /** Scroll to bottom when messages change or typing indicator shows. */
+  /** Scroll to latest answer when messages change or typing indicator shows. */
   useEffect(() => {
-    scrollToBottom();
-  }, [messages, sending, scrollToBottom]);
+    scrollToLatestAnswer();
+  }, [messages, sending, scrollToLatestAnswer]);
 
   /** Clean up error timer on unmount. */
   useEffect(() => {
@@ -906,7 +913,7 @@ export default function ChatWidget() {
 
       {/* ── Chat panel ── */}
       {isOpen && (
-        <div className={`cw-panel ${panelReady ? 'cw-panel-open' : ''}`}>
+        <div className={`cw-panel ${panelReady ? 'cw-panel-open' : ''} ${isMaximized ? 'cw-panel-maximized' : ''}`}>
           {/* Header */}
           <div className="cw-header">
             <div className="cw-header-left">
@@ -934,6 +941,14 @@ export default function ChatWidget() {
                   {quota.questionCount}/{quota.maxQuestions}
                 </span>
               )}
+              <button
+                className="cw-maximize-btn"
+                onClick={() => setIsMaximized((v) => !v)}
+                aria-label={isMaximized ? 'Restore chat size' : 'Maximize chat'}
+                title={isMaximized ? 'Restore' : 'Maximize'}
+              >
+                <i className={isMaximized ? 'fas fa-compress-alt' : 'fas fa-expand-alt'} />
+              </button>
               <button
                 className="cw-minimize-btn"
                 onClick={handleMinimize}
@@ -973,13 +988,20 @@ export default function ChatWidget() {
             {/* Phase: active — message thread */}
             {phase === 'active' && (
               <div className="cw-thread">
-                {messages.map((msg) =>
-                  msg.role === 'user' ? (
+                {messages.map((msg, idx) => {
+                  const isLastAssistant =
+                    msg.role === 'assistant' &&
+                    !messages.slice(idx + 1).some((m) => m.role === 'assistant');
+                  return msg.role === 'user' ? (
                     <UserMessage key={msg.id} msg={msg} />
                   ) : (
-                    <AssistantMessage key={msg.id} msg={msg} />
-                  ),
-                )}
+                    <AssistantMessage
+                      key={msg.id}
+                      msg={msg}
+                      ref={isLastAssistant ? lastAnswerRef : null}
+                    />
+                  );
+                })}
 
                 {sending && <TypingIndicator />}
 

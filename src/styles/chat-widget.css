@@ -362,6 +362,7 @@
   font-family: inherit;
   /* Force dark black text — overrides body { color: #e0e0e0 } from global dark theme */
   color: #000000;
+  transition: width 0.25s ease, height 0.25s ease, max-height 0.25s ease;
 }
 
 /*
@@ -394,7 +395,8 @@
 .cw-panel .cw-voice-toggle.cw-voice-active {
   color: #fff;
 }
-.cw-panel .cw-minimize-btn {
+.cw-panel .cw-minimize-btn,
+.cw-panel .cw-maximize-btn {
   color: rgba(255, 255, 255, 0.85);
 }
 .cw-panel .cw-msg-user,
@@ -501,6 +503,45 @@
 
 .cw-minimize-btn:hover {
   background: rgba(255, 255, 255, 0.18);
+}
+
+.cw-maximize-btn {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.85);
+  cursor: pointer;
+  font-size: 16px;
+  padding: 4px;
+  border-radius: 4px;
+  transition: background 0.15s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.cw-maximize-btn:hover {
+  background: rgba(255, 255, 255, 0.18);
+}
+
+/* Maximized panel — near full-screen overlay */
+.cw-panel.cw-panel-maximized {
+  width: calc(100vw - 48px);
+  height: calc(100vh - 48px);
+  max-height: calc(100vh - 48px);
+  bottom: 24px;
+  right: 24px;
+  border-radius: 16px;
+  transition: width 0.25s ease, height 0.25s ease;
+}
+
+@media (max-width: 768px) {
+  .cw-panel.cw-panel-maximized {
+    width: 100vw;
+    height: 100vh;
+    max-height: 100vh;
+    bottom: 0;
+    right: 0;
+    border-radius: 0;
+  }
 }
 
 /* ----------------------------------------------------------
