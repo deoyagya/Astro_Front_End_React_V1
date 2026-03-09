@@ -329,6 +329,24 @@ export default function PricingPage() {
     return 'plan-cta outline';
   };
 
+  /* ---- Change plan (for users with active subscription) ---- */
+  const handleChangePlan = useCallback(async (planSlug, direction) => {
+    setCheckoutLoading(planSlug);
+    setError('');
+    try {
+      const result = await api.post('/v1/subscription/change-plan', {
+        new_plan_slug: planSlug,
+        billing_cycle: yearly ? 'yearly' : 'monthly',
+      });
+      if (refreshUser) await refreshUser();
+      navigate('/my-data/subscription');
+    } catch (err) {
+      setError(err.message || `Failed to ${direction}. Please try again.`);
+    } finally {
+      setCheckoutLoading(null);
+    }
+  }, [yearly, refreshUser, navigate]);
+
   const handleCtaClick = (plan) => {
     if (plan.slug === currentPlanSlug) return;
     const rank = PLAN_RANK[plan.slug] ?? 0;
@@ -336,14 +354,26 @@ export default function PricingPage() {
       navigate('/login');
       return;
     }
+
+    // User already has a paid subscription → use change-plan endpoint
+    const hasActiveSub = currentRank > 0; // anything above 'free'
+
     if (rank > currentRank) {
-      handleCheckout(plan.slug);
+      if (hasActiveSub) {
+        handleChangePlan(plan.slug, 'upgrade');
+      } else {
+        handleCheckout(plan.slug);
+      }
     } else if (rank < currentRank) {
       if (window.confirm(
         `Downgrade to ${plan.name}?\n\nThis will take effect from your next billing cycle. ` +
         `You'll continue to enjoy your current plan benefits until then.`
       )) {
-        handleCheckout(plan.slug);
+        if (hasActiveSub) {
+          handleChangePlan(plan.slug, 'downgrade');
+        } else {
+          handleCheckout(plan.slug);
+        }
       }
     }
   };
