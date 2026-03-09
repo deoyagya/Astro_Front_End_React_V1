@@ -211,26 +211,47 @@ export default function PricingPage() {
     return { type: 'check' };
   };
 
+  const PLAN_RANK = { free: 0, basic: 1, premium: 2, elite: 3, admin: 4 };
+  const currentRank = PLAN_RANK[currentPlanSlug] ?? 0;
+
   const getCtaLabel = (plan) => {
+    const rank = PLAN_RANK[plan.slug] ?? 0;
     if (plan.slug === currentPlanSlug) return 'Current Plan';
-    if (plan.slug === 'free') return 'Get Started';
-    if (isPlanHigherOrEqual(plan.slug)) return 'Current Plan';
-    return checkoutLoading === plan.slug ? 'Processing...' : 'Subscribe';
+    if (!isAuthenticated) return plan.slug === 'free' ? 'Get Started' : 'Subscribe';
+    if (rank > currentRank) return checkoutLoading === plan.slug ? 'Processing...' : 'Upgrade';
+    if (rank < currentRank) return 'Downgrade';
+    return 'Subscribe';
   };
 
   const getCtaClass = (plan) => {
-    if (plan.slug === currentPlanSlug || isPlanHigherOrEqual(plan.slug)) return 'plan-cta current-plan';
-    if (plan.slug === 'elite' || plan.slug === 'premium') return 'plan-cta primary';
+    const rank = PLAN_RANK[plan.slug] ?? 0;
+    if (plan.slug === currentPlanSlug) return 'plan-cta current-plan';
+    if (!isAuthenticated) return plan.slug === 'free' ? 'plan-cta outline' : 'plan-cta primary';
+    if (rank > currentRank) return 'plan-cta primary';
+    if (rank < currentRank) return 'plan-cta downgrade';
     return 'plan-cta outline';
   };
 
   const handleCtaClick = (plan) => {
-    if (plan.slug === currentPlanSlug || isPlanHigherOrEqual(plan.slug)) return;
-    if (plan.slug === 'free') {
-      navigate(isAuthenticated ? '/my-data/details' : '/login');
+    if (plan.slug === currentPlanSlug) return;
+    const rank = PLAN_RANK[plan.slug] ?? 0;
+    if (!isAuthenticated) {
+      if (plan.slug === 'free') { navigate('/login'); return; }
+      navigate('/login');
       return;
     }
-    handleCheckout(plan.slug);
+    if (rank > currentRank) {
+      // Upgrade — effective immediately
+      handleCheckout(plan.slug);
+    } else if (rank < currentRank) {
+      // Downgrade — effective next billing cycle
+      if (window.confirm(
+        `Downgrade to ${plan.name}?\n\nThis will take effect from your next billing cycle. ` +
+        `You'll continue to enjoy your current plan benefits until then.`
+      )) {
+        handleCheckout(plan.slug);
+      }
+    }
   };
 
   /* ---- Render ---- */
@@ -357,7 +378,6 @@ export default function PricingPage() {
                     onClick={() => handleCtaClick(plan)}
                     disabled={
                       isCurrent ||
-                      isPlanHigherOrEqual(plan.slug) ||
                       checkoutLoading === plan.slug
                     }
                   >
