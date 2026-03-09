@@ -25,18 +25,6 @@ const PLAN_ICONS = {
   elite: '👑',
 };
 
-/* ---- Razorpay SDK loader ---- */
-function loadRazorpayScript() {
-  return new Promise((resolve) => {
-    if (window.Razorpay) { resolve(true); return; }
-    const script = document.createElement('script');
-    script.src = 'https://checkout.razorpay.com/v1/checkout.js';
-    script.onload = () => resolve(true);
-    script.onerror = () => resolve(false);
-    document.body.appendChild(script);
-  });
-}
-
 export default function SubscriptionPage() {
   const navigate = useNavigate();
   const { user, refreshUser } = useAuth();
@@ -126,63 +114,25 @@ export default function SubscriptionPage() {
     }
   }, [cancelImmediate, fetchData, refreshUser]);
 
-  /* ---- Purchase credit pack ---- */
+  /* ---- Purchase credit pack (Stripe redirect) ---- */
   const handlePurchasePack = useCallback(async (pack) => {
     setPurchasingPack(pack.id);
     setError('');
 
     try {
-      const sdkLoaded = await loadRazorpayScript();
-      if (!sdkLoaded) {
-        setError('Failed to load payment gateway.');
-        setPurchasingPack(null);
+      const res = await api.post('/v1/subscription/purchase-credits', {
+        pack_id: pack.id,
+        success_url: `${window.location.origin}/my-data/subscription?credit_success=true`,
+        cancel_url: `${window.location.origin}/my-data/subscription?credit_cancelled=true`,
+      });
+
+      if (res.checkout_url) {
+        window.location.href = res.checkout_url;
         return;
       }
 
-      const res = await api.post('/v1/subscription/purchase-credits', {
-        pack_id: pack.id,
-      });
-
-      const options = {
-        key: res.razorpay_key_id,
-        amount: res.amount_paisa,
-        currency: 'INR',
-        order_id: res.order_id,
-        name: 'Astro Yagya',
-        description: pack.name,
-        prefill: {
-          email: user?.email || '',
-          contact: user?.phone || '',
-        },
-        theme: { color: '#ffa502' },
-
-        handler: async (response) => {
-          try {
-            await api.post('/v1/payment/razorpay/verify', {
-              razorpay_order_id: response.razorpay_order_id,
-              razorpay_payment_id: response.razorpay_payment_id,
-              razorpay_signature: response.razorpay_signature,
-            });
-            setSuccessMsg(`${pack.credit_amount} credits added successfully!`);
-            await fetchData();
-          } catch (err) {
-            setError(err.message || 'Credit purchase verification failed.');
-          } finally {
-            setPurchasingPack(null);
-          }
-        },
-
-        modal: {
-          ondismiss: () => setPurchasingPack(null),
-        },
-      };
-
-      const rzp = new window.Razorpay(options);
-      rzp.on('payment.failed', (resp) => {
-        setError(resp.error?.description || 'Payment failed.');
-        setPurchasingPack(null);
-      });
-      rzp.open();
+      setError('Checkout URL not received. Please try again.');
+      setPurchasingPack(null);
     } catch (err) {
       setError(err.message || 'Failed to initiate credit purchase.');
       setPurchasingPack(null);
@@ -356,7 +306,7 @@ export default function SubscriptionPage() {
               <div key={pack.id} className="credit-pack-inline-card">
                 <div className="pack-credits-count">{pack.credit_amount}</div>
                 <div className="pack-label">{pack.name}</div>
-                <div className="pack-price-tag">₹{(pack.price_paisa / 100).toLocaleString('en-IN')}</div>
+                <div className="pack-price-tag">${(pack.price_cents / 100).toFixed(2)}</div>
                 <button
                   className="pack-purchase-btn"
                   onClick={() => handlePurchasePack(pack)}
