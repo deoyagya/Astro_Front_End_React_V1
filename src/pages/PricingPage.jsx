@@ -1,39 +1,22 @@
 /**
  * PricingPage — Public pricing page with 4-tier subscription cards.
  *
- * Phase 44: Original implementation with Razorpay-only checkout.
- * Phase 47: Dual-gateway support (Razorpay for India, Stripe for international).
- *
  * Features:
  *   - Monthly / Yearly billing toggle with savings badge
  *   - 4 plan cards (Free / Basic / Premium / Elite)
  *   - Feature comparison table
  *   - Coupon code validation
- *   - Auto-detected payment gateway (Razorpay or Stripe) based on geography
- *   - Razorpay: inline modal checkout
- *   - Stripe: redirect to Stripe-hosted checkout page
+ *   - Stripe Checkout redirect (sole payment provider)
  *   - Credit pack add-ons section
  *   - Responsive: 4-col → 2-col → 1-col
  */
 
-import { useCallback, useEffect, useState, useRef } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import PageShell from '../components/PageShell';
 import { api } from '../api/client';
 import { useAuth } from '../context/AuthContext';
 import '../styles/pricing.css';
-
-/* ---- Razorpay SDK loader ---- */
-function loadRazorpayScript() {
-  return new Promise((resolve) => {
-    if (window.Razorpay) { resolve(true); return; }
-    const script = document.createElement('script');
-    script.src = 'https://checkout.razorpay.com/v1/checkout.js';
-    script.onload = () => resolve(true);
-    script.onerror = () => resolve(false);
-    document.body.appendChild(script);
-  });
-}
 
 /* ---- Icon map for plan tiers ---- */
 const PLAN_ICONS = {
@@ -76,27 +59,12 @@ export default function PricingPage() {
   // Checkout state
   const [checkoutLoading, setCheckoutLoading] = useState(null);
 
-  // Payment gateway detection (Phase 47)
-  const [gateway, setGateway] = useState(null); // { provider, currency, country_code }
-  const gatewayDetected = useRef(false);
-
-  /* ---- Fetch plans + detect gateway + handle Stripe return ---- */
+  /* ---- Fetch plans + credit packs ---- */
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Detect gateway first, then fetch plans with currency conversion
-        let gw = gateway;
-        if (!gatewayDetected.current) {
-          gw = await api.get('/v1/subscription/detect-gateway');
-          setGateway(gw);
-          gatewayDetected.current = true;
-        }
-
-        const targetCurrency = gw?.currency || 'USD';
-        const currencyParam = targetCurrency !== 'USD' ? `?currency=${targetCurrency}` : '';
-
         const [plansRes, packsRes] = await Promise.all([
-          api.get(`/v1/subscription/plans${currencyParam}`),
+          api.get('/v1/subscription/plans'),
           api.get('/v1/subscription/credit-packs'),
         ]);
 
@@ -109,9 +77,6 @@ export default function PricingPage() {
       }
     };
     fetchData();
-
-    // Preload Razorpay SDK (only needed for India users, but preload anyway)
-    loadRazorpayScript();
   }, []);
 
   /* ---- Handle Stripe return (redirect back after checkout) ---- */
@@ -163,7 +128,7 @@ export default function PricingPage() {
     }
   }, [couponCode]);
 
-  /* ---- Checkout (gateway-aware) ---- */
+  /* ---- Checkout (Stripe redirect) ---- */
   const handleCheckout = useCallback(async (planSlug) => {
     if (!isAuthenticated) {
       navigate('/login');
@@ -173,143 +138,50 @@ export default function PricingPage() {
     setCheckoutLoading(planSlug);
     setError('');
 
-    const provider = gateway?.provider || 'razorpay';
-
     try {
-      // Initiate checkout via API (gateway is auto-detected by backend too)
       const checkoutData = await api.post('/v1/subscription/checkout', {
         plan_slug: planSlug,
         billing_cycle: yearly ? 'yearly' : 'monthly',
         coupon_code: couponResult?.valid ? couponCode.trim().toUpperCase() : undefined,
-        payment_provider: provider,
-        country_code: gateway?.country_code || undefined,
         success_url: `${window.location.origin}/pricing?session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `${window.location.origin}/pricing?cancelled=true`,
       });
 
-      if (checkoutData.gateway === 'stripe' && checkoutData.checkout_url) {
-        // --- STRIPE: Redirect to Stripe-hosted checkout ---
+      if (checkoutData.checkout_url) {
         window.location.href = checkoutData.checkout_url;
-        // Note: setCheckoutLoading stays on until redirect completes
         return;
       }
 
-      // --- RAZORPAY: Open inline modal ---
-      const sdkLoaded = await loadRazorpayScript();
-      if (!sdkLoaded) {
-        setError('Failed to load payment gateway. Please check your internet and try again.');
-        setCheckoutLoading(null);
-        return;
-      }
-
-      const options = {
-        key: checkoutData.razorpay_key_id,
-        subscription_id: checkoutData.subscription_id,
-        name: 'Astro Yagya',
-        description: `${planSlug.charAt(0).toUpperCase() + planSlug.slice(1)} Plan — ${yearly ? 'Yearly' : 'Monthly'}`,
-        prefill: {
-          email: user?.email || '',
-          contact: user?.phone || '',
-        },
-        theme: { color: '#7c3aed' },
-
-        handler: async (response) => {
-          try {
-            await api.post('/v1/subscription/verify', {
-              payment_id: response.razorpay_payment_id,
-              subscription_id: response.razorpay_subscription_id,
-              signature: response.razorpay_signature,
-              payment_provider: 'razorpay',
-            });
-
-            if (refreshUser) await refreshUser();
-            navigate('/my-data/subscription');
-          } catch (err) {
-            setError(err.message || 'Payment verification failed. Please contact support.');
-          } finally {
-            setCheckoutLoading(null);
-          }
-        },
-
-        modal: {
-          ondismiss: () => setCheckoutLoading(null),
-        },
-      };
-
-      const rzp = new window.Razorpay(options);
-      rzp.on('payment.failed', (resp) => {
-        setError(resp.error?.description || 'Payment failed. Please try again.');
-        setCheckoutLoading(null);
-      });
-      rzp.open();
+      setError('Checkout URL not received. Please try again.');
+      setCheckoutLoading(null);
     } catch (err) {
       setError(err.message || 'Checkout failed. Please try again.');
       setCheckoutLoading(null);
     }
-  }, [isAuthenticated, navigate, yearly, couponResult, couponCode, user, refreshUser, gateway]);
+  }, [isAuthenticated, navigate, yearly, couponResult, couponCode]);
 
-  /* ---- Price formatting (gateway-aware) ---- */
-  const isStripe = gateway?.provider === 'stripe';
-
+  /* ---- Price formatting (USD / Stripe) ---- */
   const formatPrice = (plan) => {
-    // If we have local_prices (converted from USD), use them (rounded, no decimals)
-    if (plan.local_prices) {
-      const lp = plan.local_prices;
-      const amount = yearly ? lp.yearly : lp.monthly;
-      if (!amount || amount === 0) return 'Free';
-      return `₹${amount.toLocaleString('en-IN')}`;
-    }
-    // Stripe / USD — show in dollars
-    if (isStripe) {
-      const cents = yearly ? plan.price_yearly_cents : plan.price_monthly_cents;
-      if (!cents || cents === 0) return 'Free';
-      return `$${(cents / 100).toFixed(2)}`;
-    }
-    // Razorpay / INR — show legacy paisa-based pricing
-    const paisa = yearly ? plan.price_yearly_paisa : plan.price_monthly_paisa;
-    if (!paisa || paisa === 0) return 'Free';
-    return `₹${(paisa / 100).toLocaleString('en-IN')}`;
+    const cents = yearly ? plan.price_yearly_cents : plan.price_monthly_cents;
+    if (!cents || cents === 0) return 'Free';
+    return `$${(cents / 100).toFixed(2)}`;
   };
 
   const formatMonthlyEquivalent = (plan) => {
-    if (plan.local_prices) {
-      const eq = plan.local_prices.monthly_equivalent;
-      if (!eq) return null;
-      return `₹${eq.toLocaleString('en-IN')}`;
-    }
-    if (isStripe) {
-      const cents = plan.price_yearly_cents;
-      if (!cents) return null;
-      return `$${(cents / 1200).toFixed(2)}`;
-    }
-    const paisa = plan.price_yearly_paisa;
-    if (!paisa) return null;
-    return `₹${Math.round(paisa / 1200).toLocaleString('en-IN')}`;
+    const cents = plan.price_yearly_cents;
+    if (!cents) return null;
+    return `$${(cents / 1200).toFixed(2)}`;
   };
 
   const formatOriginalMonthly = (plan) => {
-    if (plan.local_prices) {
-      const m = plan.local_prices.monthly;
-      if (!m) return '';
-      return `₹${m.toLocaleString('en-IN')}/mo`;
-    }
-    if (isStripe) {
-      const cents = plan.price_monthly_cents;
-      if (!cents) return '';
-      return `$${(cents / 100).toFixed(2)}/mo`;
-    }
-    const paisa = plan.price_monthly_paisa;
-    if (!paisa) return '';
-    return `₹${(paisa / 100).toLocaleString('en-IN')}/mo`;
+    const cents = plan.price_monthly_cents;
+    if (!cents) return '';
+    return `$${(cents / 100).toFixed(2)}/mo`;
   };
 
-  const formatCreditPrice = (paisa) => {
-    if (isStripe) {
-      // Approximate: ₹83 ≈ $1
-      const usd = paisa / 8300;
-      return `$${Math.max(usd, 0.99).toFixed(2)}`;
-    }
-    return `₹${(paisa / 100).toLocaleString('en-IN')}`;
+  const formatCreditPrice = (cents) => {
+    if (!cents || cents === 0) return 'Free';
+    return `$${(cents / 100).toFixed(2)}`;
   };
 
   const getFeatureDisplay = (plan, featureKey) => {
@@ -429,9 +301,7 @@ export default function PricingPage() {
   }
 
   const sortedPlans = [...plans].sort((a, b) => (a.display_order || 0) - (b.display_order || 0));
-  // If we have local_prices on any plan, we're showing INR
-  const hasLocalPrices = plans.some((p) => p.local_prices);
-  const currencySymbol = hasLocalPrices ? '₹' : isStripe ? '$' : '₹';
+  const currencySymbol = '$';
 
   return (
     <PageShell activeNav="pricing">
@@ -444,13 +314,11 @@ export default function PricingPage() {
               Unlock the full power of Vedic astrology with AI-powered insights,
               detailed reports, and personalized guidance.
             </p>
-            {gateway && (
-              <p className="gateway-info">
-                <i className={`fas ${isStripe ? 'fa-cc-stripe' : 'fa-rupee-sign'}`}></i>{' '}
-                Prices shown in {isStripe ? 'USD' : 'INR'}{' '}
-                <span className="gateway-badge">{isStripe ? 'Stripe' : 'Razorpay'}</span>
-              </p>
-            )}
+            <p className="gateway-info">
+              <i className="fas fa-cc-stripe"></i>{' '}
+              Prices shown in USD{' '}
+              <span className="gateway-badge">Stripe</span>
+            </p>
           </div>
 
           {/* Billing toggle */}
@@ -650,12 +518,9 @@ export default function PricingPage() {
                   <div key={pack.id} className="credit-pack-card">
                     <div className="pack-credits">{pack.credit_amount}</div>
                     <div className="pack-name">{pack.name}</div>
-                    <div className="pack-price">{formatCreditPrice(pack.price_paisa)}</div>
+                    <div className="pack-price">{formatCreditPrice(pack.price_cents)}</div>
                     <div className="pack-unit">
-                      {isStripe
-                        ? `$${Math.max(pack.price_paisa / 8300 / pack.credit_amount, 0.01).toFixed(2)} per question`
-                        : `₹${((pack.price_paisa / 100) / pack.credit_amount).toFixed(1)} per question`
-                      }
+                      ${((pack.price_cents / 100) / pack.credit_amount).toFixed(2)} per question
                     </div>
                     <button
                       className="pack-buy-btn"
@@ -675,8 +540,7 @@ export default function PricingPage() {
           {/* Trust badges */}
           <div className="pricing-faq">
             <p>
-              All payments are securely processed by{' '}
-              {isStripe ? 'Stripe' : 'Razorpay'}. Cancel anytime.
+              All payments are securely processed by Stripe. Cancel anytime.
             </p>
             <div className="trust-icons">
               <div className="trust-item">
@@ -692,8 +556,8 @@ export default function PricingPage() {
                 <span>Cancel Anytime</span>
               </div>
               <div className="trust-item">
-                <i className={`fas ${isStripe ? 'fa-cc-stripe' : 'fa-money-bill-wave'}`}></i>
-                <span>{isStripe ? 'Powered by Stripe' : 'Powered by Razorpay'}</span>
+                <i className="fas fa-cc-stripe"></i>
+                <span>Powered by Stripe</span>
               </div>
             </div>
           </div>
