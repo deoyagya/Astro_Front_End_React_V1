@@ -14,7 +14,7 @@ import { router, useLocalSearchParams, useFocusEffect } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ChatBubble } from '@components/chat/ChatBubble';
-import { QuotaBadge } from '@components/chat/QuotaBadge';
+import { QuotaBadge, parseQuotaResponse } from '@components/chat/QuotaBadge';
 import { LoadingSpinner } from '@components/ui/LoadingSpinner';
 import { ErrorBanner } from '@components/ui/ErrorBanner';
 import { api } from '@api/client';
@@ -36,9 +36,10 @@ interface Quota {
 }
 
 export default function ChatThreadScreen() {
-  const { session_id, template_id } = useLocalSearchParams<{
+  const { session_id, template_id, custom_question } = useLocalSearchParams<{
     session_id: string;
     template_id?: string;
+    custom_question?: string;
   }>();
   const insets = useSafeAreaInsets();
   const flatListRef = useRef<FlatList>(null);
@@ -67,7 +68,7 @@ export default function ChatThreadScreen() {
           setSessionData(sessRes);
           setMessages(sessRes?.messages || []);
           setSessionEnded(sessRes?.status === 'ended');
-          setQuota(quotaRes);
+          setQuota(parseQuotaResponse(quotaRes));
         } catch (err: any) {
           setError(err.message || 'Failed to load session');
         } finally {
@@ -84,6 +85,14 @@ export default function ChatThreadScreen() {
       handleAsk(template_id);
     }
   }, [loading, template_id, messages.length, initialAskDone]);
+
+  // Auto-fire custom question on first load (from chat-areas custom input)
+  useEffect(() => {
+    if (!loading && custom_question && messages.length === 0 && !initialAskDone && !template_id) {
+      setInitialAskDone(true);
+      handleFollowUp(custom_question);
+    }
+  }, [loading, custom_question, messages.length, initialAskDone, template_id]);
 
   const handleAsk = async (templateId: string) => {
     if (!session_id) return;
@@ -105,7 +114,7 @@ export default function ChatThreadScreen() {
       }
 
       // Refresh quota
-      api.get(CHAT.QUOTA).then((q) => setQuota(q)).catch(() => {});
+      api.get(CHAT.QUOTA).then((q) => setQuota(parseQuotaResponse(q))).catch(() => {});
     } catch (err: any) {
       if (err.status === 429) {
         setError('Question limit reached. Upgrade your plan for more.');
@@ -148,7 +157,7 @@ export default function ChatThreadScreen() {
         return [...filtered, ...newMsgs];
       });
 
-      api.get(CHAT.QUOTA).then((q) => setQuota(q)).catch(() => {});
+      api.get(CHAT.QUOTA).then((q) => setQuota(parseQuotaResponse(q))).catch(() => {});
     } catch (err: any) {
       // Remove optimistic message on error
       setMessages((prev) => prev.filter((m) => m.id !== tempMsg.id));

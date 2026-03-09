@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import { View, Text, ScrollView, Pressable, StyleSheet } from 'react-native';
-import { router } from 'expo-router';
+import { router, useFocusEffect } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { Screen } from '@components/layout/Screen';
 import { AppHeader } from '@components/layout/AppHeader';
@@ -39,7 +39,7 @@ export default function HoroscopeScreen() {
         place_of_birth: effectiveData.place_of_birth,
       };
       const data = await api.post(
-        `${PREDICT.EVALUATE}?subdomain_id=100&dasha_depth=2&interpretation_mode=static`,
+        `${PREDICT.EVALUATE}?subdomain_id=1701&dasha_depth=2&interpretation_mode=static`,
         body
       );
       setPredictions(data);
@@ -50,11 +50,13 @@ export default function HoroscopeScreen() {
     }
   }, [effectiveData?.dob, effectiveData?.tob, effectiveData?.place_of_birth, effectiveData?.name, effectiveData?.gender]);
 
-  // Trigger fetch when birth data loads
-  useEffect(() => {
-    if (!birthDataLoaded || !effectiveData?.dob) return;
-    fetchPredictions();
-  }, [birthDataLoaded, fetchPredictions]);
+  // Trigger fetch when screen is focused (handles birth data changes)
+  useFocusEffect(
+    useCallback(() => {
+      if (!birthDataLoaded || !effectiveData?.dob) return;
+      fetchPredictions();
+    }, [birthDataLoaded, fetchPredictions])
+  );
 
   // predict/evaluate returns { meta, prediction: {...}, system, manifest }
   const prediction = predictions?.prediction;

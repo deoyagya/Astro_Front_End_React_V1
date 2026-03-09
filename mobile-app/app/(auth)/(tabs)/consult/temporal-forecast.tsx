@@ -49,8 +49,8 @@ export default function TemporalForecastScreen() {
     setLoading(true);
     setError('');
     try {
-      // First get chart bundle for dasha + asc data
-      const bundle = await api.post(CHART.CREATE, {
+      // First get chart bundle for dasha + asc data (include_dasha required for extraction)
+      const bundle = await api.post(`${CHART.CREATE}?include_dasha=true`, {
         name: effectiveData.name || 'Chart',
         dob: effectiveData.dob,
         tob: effectiveData.tob,
@@ -58,32 +58,68 @@ export default function TemporalForecastScreen() {
       });
 
       const b = bundle?.bundle || bundle;
+      if (!b) throw new Error('Chart computation returned empty result');
+
       const natal = b?.natal || {};
-      const dasha = b?.dasha || {};
+      const dashaTree = b?.dasha_tree || b?.dasha?.tree || [];
       const meta = b?.meta || b?.request || {};
-      const planets = natal.planets || {};
+      const planets = natal?.planets || {};
 
-      // Extract current dasha period
-      const currentDasha = dasha.current || {};
-      const md = currentDasha.md || currentDasha.maha_dasha || {};
-      const ad = currentDasha.ad || currentDasha.antar_dasha || {};
+      // Extract ascendant sign
+      const ascSign = natal?.ascendant?.sign_number || natal?.ascendant?.sign;
+      if (!ascSign) throw new Error('Could not determine ascendant sign from chart');
 
-      // Extract natal planet signs for NPM
+      // Extract current dasha period from tree or .dasha.current
+      const dasha = b?.dasha || {};
+      const currentDasha = dasha?.current || {};
+      let mdPlanet = currentDasha?.md?.planet || currentDasha?.md?.lord || currentDasha?.maha_dasha?.planet;
+      let adPlanet = currentDasha?.ad?.planet || currentDasha?.ad?.lord || currentDasha?.antar_dasha?.planet;
+      let adStart = currentDasha?.ad?.start || currentDasha?.ad?.start_date || '';
+      let adEnd = currentDasha?.ad?.end || currentDasha?.ad?.end_date || '';
+
+      // Fallback: scan dasha_tree for current period if .dasha.current is absent
+      if (!mdPlanet && Array.isArray(dashaTree) && dashaTree.length > 0) {
+        const now = new Date();
+        for (const period of dashaTree) {
+          const start = new Date(period.start_date || period.start || '');
+          const end = new Date(period.end_date || period.end || '');
+          if (start <= now && now <= end) {
+            mdPlanet = period.planet || period.lord;
+            // Check sub-periods for antardasha
+            const subPeriods = period.sub_periods || period.children || [];
+            for (const sub of subPeriods) {
+              const subStart = new Date(sub.start_date || sub.start || '');
+              const subEnd = new Date(sub.end_date || sub.end || '');
+              if (subStart <= now && now <= subEnd) {
+                adPlanet = sub.planet || sub.lord;
+                adStart = sub.start_date || sub.start || '';
+                adEnd = sub.end_date || sub.end || '';
+                break;
+              }
+            }
+            break;
+          }
+        }
+      }
+
+      if (!mdPlanet) throw new Error('Could not determine current Mahadasha period');
+
+      // Extract natal planet signs for Natal Potential Multiplier
       const natalPlanetSigns: Record<string, number> = {};
       for (const [name, info] of Object.entries(planets) as any[]) {
         if (info?.sign_number) natalPlanetSigns[name] = info.sign_number;
       }
 
       const params = {
-        lat: meta.lat || effectiveData.lat || 28.6139,
-        lon: meta.lon || effectiveData.lon || 77.2090,
+        lat: meta.lat ?? effectiveData?.lat ?? 28.6139,
+        lon: meta.lon ?? effectiveData?.lon ?? 77.2090,
         tz_id: meta.tz_id || 'Asia/Kolkata',
-        asc_sign: natal.ascendant?.sign_number || natal.ascendant?.sign || 1,
-        moon_sign: planets.Moon?.sign_number || planets.Moon?.sign || 1,
-        md_planet: md.planet || md.lord || 'Saturn',
-        ad_planet: ad.planet || ad.lord || 'Mercury',
-        ad_start: ad.start || ad.start_date || '',
-        ad_end: ad.end || ad.end_date || '',
+        asc_sign: ascSign,
+        moon_sign: planets?.Moon?.sign_number || planets?.Moon?.sign || undefined,
+        md_planet: mdPlanet,
+        ad_planet: adPlanet || undefined,
+        ad_start: adStart || undefined,
+        ad_end: adEnd || undefined,
         natal_planet_signs: Object.keys(natalPlanetSigns).length > 0 ? natalPlanetSigns : undefined,
       };
 
@@ -92,7 +128,7 @@ export default function TemporalForecastScreen() {
       // Compute forecast (use /interpret for premium, /compute for basic)
       const endpoint = isPremium ? TEMPORAL.INTERPRET : TEMPORAL.COMPUTE;
       const res = await api.post(endpoint, params);
-      setResults(res?.results || res?.areas || []);
+      setResults(res?.forecasts || res?.results || res?.areas || []);
     } catch (err: any) {
       setError(err.message || 'Failed to compute forecast');
     } finally {

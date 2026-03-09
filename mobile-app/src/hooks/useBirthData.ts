@@ -107,7 +107,7 @@ export function useBirthData(options: UseBirthDataOptions = {}): UseBirthDataRes
           AsyncStorage.setItem(
             STORAGE_KEY,
             JSON.stringify({ ...data, saved_at: new Date().toISOString() })
-          ).catch(() => {});
+          ).catch((e) => { if (__DEV__) console.warn('[BirthData] AsyncStorage sync failed:', e.message); });
           setLoaded(true);
           return;
         }
@@ -144,13 +144,13 @@ export function useBirthData(options: UseBirthDataOptions = {}): UseBirthDataRes
       AsyncStorage.setItem(
         STORAGE_KEY,
         JSON.stringify({ ...data, saved_at: new Date().toISOString() })
-      ).catch(() => {});
+      ).catch((e) => { if (__DEV__) console.warn('[BirthData] AsyncStorage save failed:', e.message); });
 
       // 2. Backend — fire-and-forget for authenticated users
       if (isAuthenticated) {
         api
           .post(CHART.SAVE, { report_type: rt, input_data: data })
-          .catch(() => {});
+          .catch((e) => { if (__DEV__) console.warn('[BirthData] Backend save failed:', e.message); });
       }
     },
     [isAuthenticated, reportType]

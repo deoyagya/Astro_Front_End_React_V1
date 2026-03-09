@@ -101,19 +101,32 @@ export default function BirthChartScreen() {
   );
 
   // Re-read birth data when screen regains focus (e.g., after editing in birth-details)
-  // Also clear stale chart if birth data was just saved (prevents showing old chart)
+  // Clear stale chart if birth data changed (hash comparison instead of manual flag)
   useFocusEffect(
     useCallback(() => {
-      AsyncStorage.getItem('chart_needs_refresh').then((val) => {
-        if (val === 'true') {
+      (async () => {
+        // Check if birth data changed since last chart fetch
+        const cachedHash = await AsyncStorage.getItem('chart_birth_data_hash').catch(() => null);
+        const currentHash = effectiveData
+          ? `${effectiveData.dob}|${effectiveData.tob}|${effectiveData.place_of_birth}`
+          : '';
+        if (cachedHash && cachedHash !== currentHash) {
           setChartData(null);
           setNatalPlanets({});
           setSelectedHouse(null);
-          AsyncStorage.removeItem('chart_needs_refresh').catch(() => {});
+          await AsyncStorage.removeItem(CHART_CACHE_KEY).catch(() => {});
         }
-      });
+        // Also handle legacy flag from birth-details screen
+        const flag = await AsyncStorage.getItem('chart_needs_refresh').catch(() => null);
+        if (flag === 'true') {
+          setChartData(null);
+          setNatalPlanets({});
+          setSelectedHouse(null);
+          await AsyncStorage.removeItem('chart_needs_refresh').catch(() => {});
+        }
+      })();
       reload();
-    }, [reload])
+    }, [reload, effectiveData?.dob, effectiveData?.tob, effectiveData?.place_of_birth])
   );
 
   // Load cached chart on mount for instant display
@@ -152,6 +165,9 @@ export default function BirthChartScreen() {
       setSelectedHouse(null);
       // Cache unwrapped bundle for instant load next time
       AsyncStorage.setItem(CHART_CACHE_KEY, JSON.stringify(bundle)).catch(() => {});
+      // Store birth data hash for stale-cache detection
+      const hash = `${effectiveData.dob}|${effectiveData.tob}|${effectiveData.place_of_birth}`;
+      AsyncStorage.setItem('chart_birth_data_hash', hash).catch(() => {});
     } catch (err: any) {
       setError(err.message || 'Failed to load chart');
     } finally {

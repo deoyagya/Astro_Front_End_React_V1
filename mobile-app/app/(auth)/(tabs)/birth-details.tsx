@@ -80,6 +80,13 @@ export default function BirthDetailsScreen() {
     if (!name.trim()) { setError('Please enter your name'); return; }
     if (!gender) { setError('Please select your gender'); return; }
     if (!place) { setError('Please select your birth place'); return; }
+    if (place.lat == null || place.lon == null) { setError('Birth place must have valid coordinates. Please select from the suggestions.'); return; }
+
+    // DOB validation
+    const now = new Date();
+    if (dob > now) { setError('Date of birth cannot be in the future'); return; }
+    if (dob.getFullYear() < 1900) { setError('Please enter a valid date of birth (after 1900)'); return; }
+
     setError('');
     setSaving(true);
 

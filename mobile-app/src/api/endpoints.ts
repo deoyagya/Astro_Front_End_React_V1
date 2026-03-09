@@ -4,9 +4,9 @@ export const AUTH = {
   OTP_RESEND: '/v1/auth/otp/resend',
   OTP_VERIFY: '/v1/auth/otp/verify',
   ME: '/v1/auth/me',
-  REFRESH: '/v1/auth/refresh',
+  REFRESH: '/v1/auth/refresh', // unused — token refresh not yet implemented
   GEO_DETECT: '/v1/auth/geo/detect',
-  DIAL_CODES: '/v1/auth/geo/dial-codes',
+  DIAL_CODES: '/v1/auth/geo/dial-codes', // unused — dial code picker UI not built
 } as const;
 
 // Chart
@@ -22,7 +22,7 @@ export const CHART = {
 // Predict
 export const PREDICT = {
   EVALUATE: '/v1/predict/evaluate',
-  REPORT: '/v1/predict/report',
+  REPORT: '/v1/predict/report', // unused — report generation uses order flow
 } as const;
 
 // Location
@@ -56,9 +56,15 @@ export const PERSONALITY = {
 export const PAYMENT = {
   CREATE_ORDER: '/v1/payment/razorpay/create-order',
   VERIFY: '/v1/payment/razorpay/verify',
-  REPORT_PRICES: '/v1/report-prices',
-  VALIDATE_CART: '/v1/validate-cart',
+  REPORT_PRICES: '/v1/payment/report-prices',
+  VALIDATE_CART: '/v1/payment/validate-cart',
   ORDERS: '/v1/payment/razorpay/orders',
+} as const;
+
+// Compatibility
+export const COMPATIBILITY = {
+  CHECK: '/v1/compatibility/check',
+  ANALYZE: '/v1/compatibility/analyze',
 } as const;
 
 // Chat (9 endpoints)
@@ -77,8 +83,8 @@ export const CHAT = {
 // Muhurta (6 endpoints)
 export const MUHURTA = {
   EVENTS: '/v1/muhurta/events',
-  PANCHANG: '/v1/muhurta/panchang',
-  DAILY: '/v1/muhurta/daily',
+  PANCHANG: '/v1/muhurta/panchang', // unused — standalone panchang screen not built
+  DAILY: '/v1/muhurta/daily', // unused — daily muhurta screen not built
   FIND: '/v1/muhurta/find',
   VALIDATE: '/v1/muhurta/validate',
   REPORT: '/v1/muhurta/report',
@@ -86,7 +92,7 @@ export const MUHURTA = {
 
 // Temporal Forecast (4 endpoints)
 export const TEMPORAL = {
-  LIFE_AREAS: '/v1/temporal-forecast/life-areas',
+  LIFE_AREAS: '/v1/temporal-forecast/life-areas', // unused — chat uses CHAT.LIFE_AREAS instead
   COMPUTE: '/v1/temporal-forecast/compute',
   INTERPRET: '/v1/temporal-forecast/interpret',
   TIMELINE: '/v1/temporal-forecast/timeline',
@@ -96,10 +102,10 @@ export const TEMPORAL = {
 export const SUBSCRIPTION = {
   PLANS: '/v1/subscription/plans',
   CHECKOUT: '/v1/subscription/checkout',
-  VERIFY: '/v1/subscription/verify',
+  VERIFY: '/v1/subscription/verify', // unused — Razorpay native SDK not integrated
   CURRENT: '/v1/subscription/current',
   CANCEL: '/v1/subscription/cancel',
-  CHANGE_PLAN: '/v1/subscription/change-plan',
+  CHANGE_PLAN: '/v1/subscription/change-plan', // unused — plan change goes through checkout
   VALIDATE_COUPON: '/v1/subscription/validate-coupon',
   CREDIT_PACKS: '/v1/subscription/credit-packs',
   PURCHASE_CREDITS: '/v1/subscription/purchase-credits',
@@ -108,5 +114,5 @@ export const SUBSCRIPTION = {
 
 // Muhurta Payment
 export const MUHURTA_PAYMENT = {
-  CREATE_ORDER: '/v1/payment/razorpay/muhurta-order',
+  CREATE_ORDER: '/v1/payment/razorpay/muhurta-order', // unused — muhurta payment not gated yet
 } as const;

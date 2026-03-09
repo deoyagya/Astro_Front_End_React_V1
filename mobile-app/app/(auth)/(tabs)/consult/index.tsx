@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { View, Text, ScrollView, StyleSheet } from 'react-native';
-import { router } from 'expo-router';
+import { router, useFocusEffect } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { Screen } from '@components/layout/Screen';
 import { AppHeader } from '@components/layout/AppHeader';
@@ -39,7 +39,14 @@ const FEATURES: FeatureCard[] = [
 ];
 
 export default function ConsultLandingScreen() {
-  const { isPremium } = usePremiumGate();
+  const { isPremium, refresh } = usePremiumGate();
+
+  // Refresh user role on tab focus (e.g., after subscribing)
+  useFocusEffect(
+    useCallback(() => {
+      refresh();
+    }, [refresh])
+  );
 
   return (
     <Screen>
