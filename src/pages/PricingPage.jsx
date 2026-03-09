@@ -84,25 +84,24 @@ export default function PricingPage() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Fetch plans, credit packs, and detect gateway in parallel
-        const promises = [
-          api.get('/v1/subscription/plans'),
-          api.get('/v1/subscription/credit-packs'),
-        ];
-
-        // Detect gateway (only if not already detected)
+        // Detect gateway first, then fetch plans with currency conversion
+        let gw = gateway;
         if (!gatewayDetected.current) {
-          promises.push(api.get('/v1/subscription/detect-gateway'));
-        }
-
-        const results = await Promise.all(promises);
-        setPlans(results[0].plans || []);
-        setCreditPacks(results[1].packs || []);
-
-        if (results[2]) {
-          setGateway(results[2]);
+          gw = await api.get('/v1/subscription/detect-gateway');
+          setGateway(gw);
           gatewayDetected.current = true;
         }
+
+        const targetCurrency = gw?.currency || 'USD';
+        const currencyParam = targetCurrency !== 'USD' ? `?currency=${targetCurrency}` : '';
+
+        const [plansRes, packsRes] = await Promise.all([
+          api.get(`/v1/subscription/plans${currencyParam}`),
+          api.get('/v1/subscription/credit-packs'),
+        ]);
+
+        setPlans(plansRes.plans || []);
+        setCreditPacks(packsRes.packs || []);
       } catch (err) {
         setError(err.message || 'Failed to load pricing data');
       } finally {
@@ -253,17 +252,31 @@ export default function PricingPage() {
   const isStripe = gateway?.provider === 'stripe';
 
   const formatPrice = (plan) => {
+    // If we have local_prices (converted from USD), use them (rounded, no decimals)
+    if (plan.local_prices) {
+      const lp = plan.local_prices;
+      const amount = yearly ? lp.yearly : lp.monthly;
+      if (!amount || amount === 0) return 'Free';
+      return `₹${amount.toLocaleString('en-IN')}`;
+    }
+    // Stripe / USD — show in dollars
     if (isStripe) {
       const cents = yearly ? plan.price_yearly_cents : plan.price_monthly_cents;
       if (!cents || cents === 0) return 'Free';
       return `$${(cents / 100).toFixed(2)}`;
     }
+    // Razorpay / INR — show legacy paisa-based pricing
     const paisa = yearly ? plan.price_yearly_paisa : plan.price_monthly_paisa;
     if (!paisa || paisa === 0) return 'Free';
     return `₹${(paisa / 100).toLocaleString('en-IN')}`;
   };
 
   const formatMonthlyEquivalent = (plan) => {
+    if (plan.local_prices) {
+      const eq = plan.local_prices.monthly_equivalent;
+      if (!eq) return null;
+      return `₹${eq.toLocaleString('en-IN')}`;
+    }
     if (isStripe) {
       const cents = plan.price_yearly_cents;
       if (!cents) return null;
@@ -275,6 +288,11 @@ export default function PricingPage() {
   };
 
   const formatOriginalMonthly = (plan) => {
+    if (plan.local_prices) {
+      const m = plan.local_prices.monthly;
+      if (!m) return '';
+      return `₹${m.toLocaleString('en-IN')}/mo`;
+    }
     if (isStripe) {
       const cents = plan.price_monthly_cents;
       if (!cents) return '';
@@ -411,7 +429,9 @@ export default function PricingPage() {
   }
 
   const sortedPlans = [...plans].sort((a, b) => (a.display_order || 0) - (b.display_order || 0));
-  const currencySymbol = isStripe ? '$' : '₹';
+  // If we have local_prices on any plan, we're showing INR
+  const hasLocalPrices = plans.some((p) => p.local_prices);
+  const currencySymbol = hasLocalPrices ? '₹' : isStripe ? '$' : '₹';
 
   return (
     <PageShell activeNav="pricing">
