@@ -87,6 +87,7 @@ export default function ChatWidget() {
   const [messages, setMessages] = useState([]);
   const [templates, setTemplates] = useState([]);
   const [followUps, setFollowUps] = useState([]);
+  const [askedTemplateIds, setAskedTemplateIds] = useState(new Set());
   const [followUpText, setFollowUpText] = useState('');
   const [sending, setSending] = useState(false);
   const [savedChart, setSavedChart] = useState(null);
@@ -407,6 +408,9 @@ export default function ChatWidget() {
     async (template) => {
       if (!sessionId || sending) return;
 
+      // Track this template as asked so it never reappears
+      setAskedTemplateIds((prev) => new Set([...prev, template.id]));
+
       // Add user bubble
       const userMsg = {
         id: `u-${Date.now()}`,
@@ -594,6 +598,7 @@ export default function ChatWidget() {
     setMessages([]);
     setTemplates([]);
     setFollowUps([]);
+    setAskedTemplateIds(new Set());
     setFollowUpText('');
     setQuota((prev) => ({ ...prev, questionCount: 0 }));
     setShowPartnerForm(false);
@@ -690,15 +695,16 @@ export default function ChatWidget() {
     );
   }
 
-  /** Template chips for selected life area. */
+  /** Template chips for selected life area (excludes already-asked). */
   function renderTemplates() {
+    const available = templates.filter((t) => !askedTemplateIds.has(t.id));
     return (
       <div className="cw-templates-section">
         <p className="cw-templates-intro">
           These are the most popular questions asked by our users:
         </p>
         <div className="cw-template-list">
-          {templates.map((t) => (
+          {available.map((t) => (
             <button
               key={t.id}
               className="cw-template-chip"
@@ -739,16 +745,20 @@ export default function ChatWidget() {
     );
   }
 
-  /** Follow-up suggestion chips below the last assistant message. */
+  /** Follow-up suggestion chips below the last assistant message (excludes already-asked). */
   function renderFollowUpChips() {
-    if (followUps.length === 0 || quotaExhausted) return null;
+    const available = followUps.filter((f) => !askedTemplateIds.has(f.id));
+    if (available.length === 0 || quotaExhausted) return null;
     return (
       <div className="cw-followup-chips">
-        {followUps.map((f) => (
+        {available.map((f) => (
           <button
             key={f.id}
             className="cw-followup-chip"
-            onClick={() => handleFollowUp(f.question_text)}
+            onClick={() => {
+              setAskedTemplateIds((prev) => new Set([...prev, f.id]));
+              handleFollowUp(f.question_text);
+            }}
             disabled={sending}
           >
             {f.question_text}
