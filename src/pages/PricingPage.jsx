@@ -70,7 +70,7 @@ export default function PricingPage() {
   // Checkout state
   const [checkoutLoading, setCheckoutLoading] = useState(null); // plan slug being checked out
 
-  /* ---- Fetch plans + credit packs ---- */
+  /* ---- Fetch plans + credit packs + preload Razorpay SDK ---- */
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -87,6 +87,8 @@ export default function PricingPage() {
       }
     };
     fetchData();
+    // Preload Razorpay SDK in background so checkout opens instantly
+    loadRazorpayScript();
   }, []);
 
   /* ---- Current user plan detection ---- */
