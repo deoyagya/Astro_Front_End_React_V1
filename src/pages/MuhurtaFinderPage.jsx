@@ -164,7 +164,7 @@ export default function MuhurtaFinderPage() {
             color: ev.color,
             is_free: ev.is_free,
             price_display: ev.price_display,
-            effective_price_paisa: ev.effective_price_paisa,
+            effective_price_cents: ev.effective_price_cents,
           })));
         }
       })
@@ -313,83 +313,28 @@ export default function MuhurtaFinderPage() {
 
   const eventLabel = eventTypes.find(e => e.value === selectedEvent)?.label || '';
 
-  // --- Razorpay SDK loader ---
-  const loadRazorpay = useCallback(() => {
-    return new Promise((resolve) => {
-      if (window.Razorpay) { resolve(true); return; }
-      const script = document.createElement('script');
-      script.src = 'https://checkout.razorpay.com/v1/checkout.js';
-      script.onload = () => resolve(true);
-      script.onerror = () => resolve(false);
-      document.body.appendChild(script);
-    });
-  }, []);
-
-  // --- Unlock (Razorpay) handler ---
+  // --- Unlock (Stripe Checkout) handler ---
   const handleUnlockPayment = useCallback(async () => {
     if (!pricing || paymentProcessing) return;
     setPaymentProcessing(true);
     try {
-      // 1. Create muhurta order on backend
-      const orderData = await api.post('/v1/payment/razorpay/muhurta-order', {
+      const orderData = await api.post('/v1/payment/create-muhurta-order', {
         event_key: selectedEvent,
+        success_url: `${window.location.origin}/muhurta?payment_success=true&event=${selectedEvent}`,
+        cancel_url: `${window.location.origin}/muhurta?payment_cancelled=true`,
       });
 
-      // 2. Load Razorpay SDK
-      const loaded = await loadRazorpay();
-      if (!loaded) { setError('Failed to load payment gateway.'); setPaymentProcessing(false); return; }
-
-      // 3. Open Razorpay checkout
-      const options = {
-        key: orderData.key_id,
-        amount: orderData.amount,
-        currency: orderData.currency || 'INR',
-        order_id: orderData.razorpay_order_id,
-        name: 'Vedic Astrology',
-        description: `Muhurta — ${eventLabel}`,
-        prefill: {
-          email: user?.email || reportEmail || '',
-          name: user?.name || '',
-        },
-        theme: { color: '#7b5bff' },
-        handler: async function (response) {
-          // 4. Verify payment
-          try {
-            await api.post('/v1/payment/razorpay/verify', {
-              razorpay_order_id: response.razorpay_order_id,
-              razorpay_payment_id: response.razorpay_payment_id,
-              razorpay_signature: response.razorpay_signature,
-            });
-            // 5. Re-fetch results (now unlocked)
-            setPaymentRequired(false);
-            setPricing(null);
-            const unlocked = await api.post('/v1/muhurta/find', {
-              event_type: selectedEvent,
-              start_date: startDate,
-              end_date: endDate,
-              lat: place.lat,
-              lon: place.lon,
-              tz_id: place?.timezone || undefined,
-              birth_data: getBirthData() || undefined,
-            });
-            setResult(unlocked);
-          } catch (err) {
-            setError('Payment verified but failed to refresh results. Please reload.');
-          }
-          setPaymentProcessing(false);
-        },
-        modal: {
-          ondismiss: () => setPaymentProcessing(false),
-        },
-      };
-      const rzp = new window.Razorpay(options);
-      rzp.open();
+      if (orderData.checkout_url) {
+        window.location.href = orderData.checkout_url;
+        return;
+      }
+      setError('Checkout URL not received. Please try again.');
+      setPaymentProcessing(false);
     } catch (err) {
       setError(err.message || 'Failed to initiate payment.');
       setPaymentProcessing(false);
     }
-  }, [pricing, paymentProcessing, selectedEvent, eventLabel, user, reportEmail,
-      loadRazorpay, startDate, endDate, place, getBirthData]);
+  }, [pricing, paymentProcessing, selectedEvent]);
 
   // Pagination helpers
   const windows = result?.windows || [];
@@ -672,8 +617,8 @@ export default function MuhurtaFinderPage() {
                           <span className="price-original">{pricing.price_display}</span>
                         )}
                         <span className="price-effective">
-                          {pricing.effective_price_paisa
-                            ? `₹${(pricing.effective_price_paisa / 100).toFixed(0)}`
+                          {pricing.effective_price_cents
+                            ? `$${(pricing.effective_price_cents / 100).toFixed(2)}`
                             : pricing.price_display}
                         </span>
                         {pricing.discount_pct > 0 && (

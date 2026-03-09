@@ -27,7 +27,7 @@ const LIMIT_PERIODS = [
 
 const DISCOUNT_TYPES = [
   { value: 'percentage', label: 'Percentage (%)' },
-  { value: 'fixed_amount', label: 'Fixed Amount (Rs)' },
+  { value: 'fixed_amount', label: 'Fixed Amount ($)' },
 ];
 
 const TABS = [
@@ -39,18 +39,10 @@ const TABS = [
 
 // ---------- Helpers ----------
 
-const formatRupees = (paisa) => {
-  if (paisa == null || paisa === 0) return 'Free';
-  return '\u20B9' + (paisa / 100).toLocaleString('en-IN');
-};
-
 const formatUSD = (cents) => {
   if (cents == null || cents === 0) return 'Free';
   return '$' + (cents / 100).toFixed(2);
 };
-
-const paisaToRupees = (paisa) => (paisa != null ? paisa / 100 : '');
-const rupeesToPaisa = (rupees) => Math.round((parseFloat(rupees) || 0) * 100);
 
 const centsToDollars = (cents) => (cents != null ? (cents / 100).toFixed(2) : '');
 const dollarsToCents = (dollars) => Math.round((parseFloat(dollars) || 0) * 100);
@@ -150,12 +142,8 @@ export default function AdminSubscriptionPage() {
         color: '#9d7bff',
         price_monthly_cents: 0,
         price_yearly_cents: 0,
-        price_monthly_paisa: 0,
-        price_yearly_paisa: 0,
         stripe_price_id_monthly: '',
         stripe_price_id_yearly: '',
-        razorpay_plan_id_monthly: '',
-        razorpay_plan_id_yearly: '',
         trial_days: 0,
         features_json: [],
         display_order: 100,
@@ -175,12 +163,8 @@ export default function AdminSubscriptionPage() {
         color: plan.color || '#9d7bff',
         price_monthly_cents: plan.price_monthly_cents || 0,
         price_yearly_cents: plan.price_yearly_cents || 0,
-        price_monthly_paisa: plan.price_monthly_paisa,
-        price_yearly_paisa: plan.price_yearly_paisa,
         stripe_price_id_monthly: plan.stripe_price_id_monthly || '',
         stripe_price_id_yearly: plan.stripe_price_id_yearly || '',
-        razorpay_plan_id_monthly: plan.razorpay_plan_id_monthly || '',
-        razorpay_plan_id_yearly: plan.razorpay_plan_id_yearly || '',
         trial_days: plan.trial_days || 0,
         features_json: plan.features_json || [],
         display_order: plan.display_order || 0,
@@ -201,12 +185,8 @@ export default function AdminSubscriptionPage() {
         color: d.color || null,
         price_monthly_cents: d.price_monthly_cents || 0,
         price_yearly_cents: d.price_yearly_cents || 0,
-        price_monthly_paisa: d.price_monthly_paisa,
-        price_yearly_paisa: d.price_yearly_paisa,
         stripe_price_id_monthly: d.stripe_price_id_monthly || null,
         stripe_price_id_yearly: d.stripe_price_id_yearly || null,
-        razorpay_plan_id_monthly: d.razorpay_plan_id_monthly || null,
-        razorpay_plan_id_yearly: d.razorpay_plan_id_yearly || null,
         trial_days: d.trial_days,
         features_json: d.features_json,
         display_order: d.display_order,
@@ -479,7 +459,7 @@ export default function AdminSubscriptionPage() {
       data: {
         name: '',
         credit_amount: 10,
-        price_paisa: 0,
+        price_cents: 0,
         feature_key: KNOWN_FEATURE_KEYS[0],
         validity_days: 30,
         is_active: true,
@@ -495,7 +475,7 @@ export default function AdminSubscriptionPage() {
         id: pack.id,
         name: pack.name,
         credit_amount: pack.credit_amount,
-        price_paisa: pack.price_paisa,
+        price_cents: pack.price_cents,
         feature_key: pack.feature_key,
         validity_days: pack.validity_days,
         is_active: pack.is_active,
@@ -512,7 +492,7 @@ export default function AdminSubscriptionPage() {
       const payload = {
         name: d.name,
         credit_amount: d.credit_amount,
-        price_paisa: d.price_paisa,
+        price_cents: d.price_cents,
         feature_key: d.feature_key,
         validity_days: d.validity_days,
         is_active: d.is_active,
@@ -823,13 +803,13 @@ export default function AdminSubscriptionPage() {
                         fontWeight: 600,
                       }}
                     >
-                      {c.discount_type === 'percentage' ? '%' : '\u20B9'}
+                      {c.discount_type === 'percentage' ? '%' : '$'}
                     </span>
                   </td>
                   <td style={{ textAlign: 'right', fontWeight: 600 }}>
                     {c.discount_type === 'percentage'
                       ? `${c.discount_value}%`
-                      : formatRupees(c.discount_value)}
+                      : formatUSD(c.discount_value)}
                   </td>
                   <td>
                     {c.applicable_plan_slugs && c.applicable_plan_slugs.length > 0 ? (
@@ -937,7 +917,7 @@ export default function AdminSubscriptionPage() {
                     </span>
                   </td>
                   <td style={{ textAlign: 'right', fontWeight: 600, color: '#ffa502' }}>
-                    {formatRupees(pack.price_paisa)}
+                    {formatUSD(pack.price_cents)}
                   </td>
                   <td>
                     <code style={{ fontSize: 12, color: '#a29bfe' }}>{pack.feature_key}</code>
@@ -1063,19 +1043,11 @@ export default function AdminSubscriptionPage() {
                           <span style={{ color: '#636eff' }}><i className="fab fa-stripe-s"></i> Synced</span>
                         </div>
                       )}
-                      {sp.price_monthly_paisa != null && sp.price_monthly_paisa > 0 && (
-                        <div>
-                          <span style={{ color: '#8b949e' }}>INR: </span>
-                          <span style={{ color: '#ffa502', fontWeight: 600 }}>
-                            {formatRupees(sp.price_monthly_paisa)}
-                          </span>
-                        </div>
-                      )}
-                      {sp.price_yearly_paisa != null && (
+                      {sp.price_yearly_cents != null && sp.price_yearly_cents > 0 && (
                         <div>
                           <span style={{ color: '#8b949e' }}>Yearly: </span>
                           <span style={{ color: '#ffa502', fontWeight: 600 }}>
-                            {formatRupees(sp.price_yearly_paisa)}
+                            {formatUSD(sp.price_yearly_cents)}
                           </span>
                         </div>
                       )}
@@ -1277,34 +1249,6 @@ export default function AdminSubscriptionPage() {
               </div>
             </div>
 
-            {/* Row: INR Pricing (Legacy / Override) */}
-            <div style={{ display: 'flex', gap: 12 }}>
-              <div className="form-group" style={{ flex: 1 }}>
-                <label>INR Monthly (₹) <span style={{ color: '#8b949e', fontSize: 11 }}>Legacy</span></label>
-                <input
-                  type="number"
-                  className="form-input"
-                  min={0}
-                  step={1}
-                  placeholder="0"
-                  value={paisaToRupees(planModal.data.price_monthly_paisa)}
-                  onChange={(e) => updatePlanField('price_monthly_paisa', rupeesToPaisa(e.target.value))}
-                />
-              </div>
-              <div className="form-group" style={{ flex: 1 }}>
-                <label>INR Yearly (₹) <span style={{ color: '#8b949e', fontSize: 11 }}>Legacy</span></label>
-                <input
-                  type="number"
-                  className="form-input"
-                  min={0}
-                  step={1}
-                  placeholder="0"
-                  value={paisaToRupees(planModal.data.price_yearly_paisa)}
-                  onChange={(e) => updatePlanField('price_yearly_paisa', rupeesToPaisa(e.target.value))}
-                />
-              </div>
-            </div>
-
             {/* Row: Stripe Price IDs (auto-generated on sync) */}
             {(planModal.data.stripe_price_id_monthly || planModal.data.stripe_price_id_yearly) && (
               <div style={{ background: 'rgba(99,110,255,0.06)', border: '1px solid rgba(99,110,255,0.2)', borderRadius: 8, padding: 10, fontSize: 12 }}>
@@ -1323,30 +1267,6 @@ export default function AdminSubscriptionPage() {
                 )}
               </div>
             )}
-
-            {/* Row: Razorpay IDs (Legacy) */}
-            <div style={{ display: 'flex', gap: 12 }}>
-              <div className="form-group" style={{ flex: 1 }}>
-                <label>Razorpay Plan ID (Monthly) <span style={{ color: '#8b949e', fontSize: 11 }}>Legacy</span></label>
-                <input
-                  type="text"
-                  className="form-input"
-                  placeholder="plan_..."
-                  value={planModal.data.razorpay_plan_id_monthly}
-                  onChange={(e) => updatePlanField('razorpay_plan_id_monthly', e.target.value)}
-                />
-              </div>
-              <div className="form-group" style={{ flex: 1 }}>
-                <label>Razorpay Plan ID (Yearly) <span style={{ color: '#8b949e', fontSize: 11 }}>Legacy</span></label>
-                <input
-                  type="text"
-                  className="form-input"
-                  placeholder="plan_..."
-                  value={planModal.data.razorpay_plan_id_yearly}
-                  onChange={(e) => updatePlanField('razorpay_plan_id_yearly', e.target.value)}
-                />
-              </div>
-            </div>
 
             {/* Row: Trial Days + Display Order */}
             <div style={{ display: 'flex', gap: 12 }}>
@@ -1424,7 +1344,7 @@ export default function AdminSubscriptionPage() {
             </div>
 
             {/* Price Preview */}
-            {(planModal.data.price_monthly_cents > 0 || planModal.data.price_yearly_cents > 0 || planModal.data.price_monthly_paisa > 0 || planModal.data.price_yearly_paisa > 0) && (
+            {(planModal.data.price_monthly_cents > 0 || planModal.data.price_yearly_cents > 0) && (
               <div
                 style={{
                   background: '#161b22',
@@ -1457,11 +1377,6 @@ export default function AdminSubscriptionPage() {
                     {planModal.data.price_yearly_cents > 0 && (
                       <span style={{ marginRight: 12 }}>
                         USD Yearly: <span style={{ color: '#2ed573', fontWeight: 600 }}>{formatUSD(planModal.data.price_yearly_cents)}</span>
-                      </span>
-                    )}
-                    {planModal.data.price_monthly_paisa > 0 && (
-                      <span style={{ marginRight: 12 }}>
-                        INR Monthly: <span style={{ color: '#ffa502', fontWeight: 600 }}>{formatRupees(planModal.data.price_monthly_paisa)}</span>
                       </span>
                     )}
                   </div>
@@ -1670,7 +1585,7 @@ export default function AdminSubscriptionPage() {
               <div className="form-group" style={{ flex: 1 }}>
                 <label>
                   Discount Value{' '}
-                  {couponModal.data.discount_type === 'percentage' ? '(%)' : '(\u20B9)'}
+                  {couponModal.data.discount_type === 'percentage' ? '(%)' : '($)'}
                 </label>
                 <input
                   type="number"
@@ -1682,7 +1597,7 @@ export default function AdminSubscriptionPage() {
                 />
                 {couponModal.data.discount_type === 'fixed_amount' && (
                   <small style={{ color: '#8b949e' }}>
-                    Enter raw value (e.g. 5000 for \u20B950 off)
+                    Enter in cents (e.g. 5000 for $50.00 off)
                   </small>
                 )}
               </div>
@@ -1807,7 +1722,7 @@ export default function AdminSubscriptionPage() {
                   <div style={{ color: '#8b949e', fontSize: 12, marginTop: 2 }}>
                     {couponModal.data.discount_type === 'percentage'
                       ? `${couponModal.data.discount_value}% off`
-                      : `${formatRupees(couponModal.data.discount_value)} off`}
+                      : `${formatUSD(couponModal.data.discount_value)} off`}
                     {couponModal.data.applicable_plan_slugs
                       ? ` on ${couponModal.data.applicable_plan_slugs.join(', ')}`
                       : ' on all plans'}
@@ -1873,18 +1788,18 @@ export default function AdminSubscriptionPage() {
                 />
               </div>
               <div className="form-group" style={{ flex: 1 }}>
-                <label>Price (\u20B9)</label>
+                <label>Price ($)</label>
                 <input
                   type="number"
                   className="form-input"
                   min={0}
-                  step={1}
-                  placeholder="0"
-                  value={paisaToRupees(packModal.data.price_paisa)}
-                  onChange={(e) => updatePackField('price_paisa', rupeesToPaisa(e.target.value))}
+                  step={0.01}
+                  placeholder="0.00"
+                  value={centsToDollars(packModal.data.price_cents)}
+                  onChange={(e) => updatePackField('price_cents', dollarsToCents(e.target.value))}
                 />
                 <small style={{ color: '#8b949e' }}>
-                  Enter in rupees. Stored as {packModal.data.price_paisa} paisa
+                  Enter in dollars. Stored as {packModal.data.price_cents} cents
                 </small>
               </div>
             </div>
@@ -1964,7 +1879,7 @@ export default function AdminSubscriptionPage() {
                   <span style={{ color: '#a29bfe' }}>({packModal.data.feature_key})</span>
                   {' for '}
                   <span style={{ color: '#ffa502', fontWeight: 600 }}>
-                    {formatRupees(packModal.data.price_paisa)}
+                    {formatUSD(packModal.data.price_cents)}
                   </span>
                   {' \u00B7 '}
                   {packModal.data.validity_days}d validity

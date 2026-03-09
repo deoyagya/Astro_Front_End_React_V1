@@ -47,9 +47,9 @@ export default function AdminReportsPage() {
     }
   };
 
-  const formatCost = (paisa) => {
-    if (paisa == null) return '—';
-    return `₹${(paisa / 100).toFixed(2)}`;
+  const formatCost = (cents) => {
+    if (cents == null) return '—';
+    return `$${(cents / 100).toFixed(2)}`;
   };
 
   return (
@@ -112,11 +112,11 @@ export default function AdminReportsPage() {
                       </span>
                       {config.discount_mode && (
                         <div style={{ color: '#ff4757', fontSize: '0.875rem' }}>
-                          {config.discount_mode === 'percentage' ? `${config.discount_value}% off` : `₹${(config.discount_value / 100).toFixed(0)} off`}
+                          {config.discount_mode === 'percentage' ? `${config.discount_value}% off` : `$${(config.discount_value / 100).toFixed(2)} off`}
                         </div>
                       )}
                     </td>
-                    <td style={{ fontWeight: 600, whiteSpace: 'nowrap' }}>{formatCost(config.total_cost_paisa)}</td>
+                    <td style={{ fontWeight: 600, whiteSpace: 'nowrap' }}>{formatCost(config.total_cost_cents)}</td>
                     <td style={{ fontSize: '0.9375rem', color: '#c7cfdd' }}>
                       <div>{config.creator_model}</div>
                       <div style={{ color: '#a0a8b8', fontSize: '0.875rem' }}>+ {config.reviewer_model}</div>

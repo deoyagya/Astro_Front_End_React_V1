@@ -133,7 +133,7 @@ export default function AdminReportWizardPage() {
           question_id_display: q.question_id_display || q.question_id || '',
           question_text: q.question_text || '',
           cost_amount: q.cost_amount ?? q.cost_snapshot ?? 0,
-          cost_currency: q.cost_currency || 'INR',
+          cost_currency: q.cost_currency || 'USD',
           theme_name: q.theme_name || '',
           life_area_name: q.life_area_name || '',
           display_order: q.display_order ?? idx,
@@ -219,7 +219,7 @@ export default function AdminReportWizardPage() {
         question_id_display: q.question_id_display || '',
         question_text: q.question_text || '',
         cost_amount: q.cost_amount ?? 0,
-        cost_currency: q.cost_currency || 'INR',
+        cost_currency: q.cost_currency || 'USD',
         theme_name: themeName,
         life_area_name: areaName,
       },
@@ -244,44 +244,44 @@ export default function AdminReportWizardPage() {
   };
 
   // ── Cost calculation ──
-  const questionCostPaisa = useMemo(() => {
+  const questionCostCents = useMemo(() => {
     return selectedQuestions.reduce((sum, q) => sum + (q.cost_amount || 0), 0);
   }, [selectedQuestions]);
 
-  const baseCostPaisa = useMemo(() => {
+  const baseCostCents = useMemo(() => {
     if (pricingMode === 'fixed') {
       const val = parseFloat(fixedPrice);
       return isNaN(val) ? 0 : Math.round(val * 100);
     }
-    return questionCostPaisa;
-  }, [pricingMode, fixedPrice, questionCostPaisa]);
+    return questionCostCents;
+  }, [pricingMode, fixedPrice, questionCostCents]);
 
-  const iterationCostPaisa = useMemo(() => {
+  const iterationCostCents = useMemo(() => {
     const val = parseFloat(iterCostValue);
     if (isNaN(val) || val <= 0 || numIterations <= 0) return 0;
     if (iterCostMode === 'fixed') {
       return numIterations * Math.round(val * 100);
     }
     // percentage
-    return numIterations * Math.round(baseCostPaisa * val / 100);
-  }, [numIterations, iterCostMode, iterCostValue, baseCostPaisa]);
+    return numIterations * Math.round(baseCostCents * val / 100);
+  }, [numIterations, iterCostMode, iterCostValue, baseCostCents]);
 
-  const discountPaisa = useMemo(() => {
+  const discountCents = useMemo(() => {
     const val = parseFloat(discountValue);
     if (isNaN(val) || val <= 0 || discountMode === 'none') return 0;
     if (discountMode === 'fixed') {
       return Math.round(val * 100);
     }
     // percentage
-    return Math.round((baseCostPaisa + iterationCostPaisa) * val / 100);
-  }, [discountMode, discountValue, baseCostPaisa, iterationCostPaisa]);
+    return Math.round((baseCostCents + iterationCostCents) * val / 100);
+  }, [discountMode, discountValue, baseCostCents, iterationCostCents]);
 
-  const totalCostPaisa = useMemo(() => {
-    return Math.max(0, baseCostPaisa + iterationCostPaisa - discountPaisa);
-  }, [baseCostPaisa, iterationCostPaisa, discountPaisa]);
+  const totalCostCents = useMemo(() => {
+    return Math.max(0, baseCostCents + iterationCostCents - discountCents);
+  }, [baseCostCents, iterationCostCents, discountCents]);
 
-  const formatRupees = (paisa) => {
-    return (paisa / 100).toFixed(2);
+  const formatDollars = (cents) => {
+    return (cents / 100).toFixed(2);
   };
 
   // ── Validation ──
@@ -474,7 +474,7 @@ export default function AdminReportWizardPage() {
                       <span className="wizard-qtext">{q.question_text}</span>
                       {q.cost_amount > 0 && (
                         <span className="wizard-qcost">
-                          {q.cost_currency === 'INR' ? '\u20B9' : q.cost_currency}{' '}
+                          {q.cost_currency === 'USD' ? '$' : q.cost_currency}{' '}
                           {(q.cost_amount / 100).toFixed(2)}
                         </span>
                       )}
@@ -606,7 +606,7 @@ export default function AdminReportWizardPage() {
                     {q.life_area_name && <span className="wizard-meta-tag">{q.life_area_name}</span>}
                     {q.cost_amount > 0 && (
                       <span className="wizard-meta-cost">
-                        {q.cost_currency === 'INR' ? '\u20B9' : q.cost_currency}{' '}
+                        {q.cost_currency === 'USD' ? '$' : q.cost_currency}{' '}
                         {(q.cost_amount / 100).toFixed(2)}
                       </span>
                     )}
@@ -624,7 +624,7 @@ export default function AdminReportWizardPage() {
           <div className="wizard-subtotal">
             <span>Subtotal ({selectedQuestions.length} questions)</span>
             <span className="wizard-subtotal-amount">
-              {'\u20B9'} {formatRupees(questionSubtotal)}
+              {'$'} {formatDollars(questionSubtotal)}
             </span>
           </div>
         )}
@@ -668,7 +668,7 @@ export default function AdminReportWizardPage() {
           </>
         ) : (
           <div className="readonly-field" style={{ marginTop: 8 }}>
-            Auto: {'\u20B9'} {formatRupees(questionCostPaisa)} (sum of question costs)
+            Auto: {'$'} {formatDollars(questionCostCents)} (sum of question costs)
           </div>
         )}
       </div>
@@ -752,24 +752,24 @@ export default function AdminReportWizardPage() {
         </h4>
         <div className="wizard-cost-row">
           <span>Question Costs</span>
-          <span>{'\u20B9'} {formatRupees(pricingMode === 'fixed' ? Math.round(parseFloat(fixedPrice || 0) * 100) : questionCostPaisa)}</span>
+          <span>{'$'} {formatDollars(pricingMode === 'fixed' ? Math.round(parseFloat(fixedPrice || 0) * 100) : questionCostCents)}</span>
         </div>
-        {iterationCostPaisa > 0 && (
+        {iterationCostCents > 0 && (
           <div className="wizard-cost-row">
-            <span>+ Iterations ({numIterations} x {iterCostMode === 'fixed' ? `\u20B9${iterCostValue}` : `${iterCostValue}%`})</span>
-            <span>{'\u20B9'} {formatRupees(iterationCostPaisa)}</span>
+            <span>+ Iterations ({numIterations} x {iterCostMode === 'fixed' ? `$${iterCostValue}` : `${iterCostValue}%`})</span>
+            <span>{'$'} {formatDollars(iterationCostCents)}</span>
           </div>
         )}
-        {discountPaisa > 0 && (
+        {discountCents > 0 && (
           <div className="wizard-cost-row discount">
-            <span>- Discount ({discountMode === 'fixed' ? `\u20B9${discountValue}` : `${discountValue}%`})</span>
-            <span>-{'\u20B9'} {formatRupees(discountPaisa)}</span>
+            <span>- Discount ({discountMode === 'fixed' ? `$${discountValue}` : `${discountValue}%`})</span>
+            <span>-{'$'} {formatDollars(discountCents)}</span>
           </div>
         )}
         <div className="wizard-cost-divider" />
         <div className="wizard-cost-row total">
           <span>TOTAL</span>
-          <span>{'\u20B9'} {formatRupees(totalCostPaisa)}</span>
+          <span>{'$'} {formatDollars(totalCostCents)}</span>
         </div>
       </div>
     </div>
@@ -897,24 +897,24 @@ export default function AdminReportWizardPage() {
         </h4>
         <div className="wizard-cost-row">
           <span>Question Costs</span>
-          <span>{'\u20B9'} {formatRupees(pricingMode === 'fixed' ? Math.round(parseFloat(fixedPrice || 0) * 100) : questionCostPaisa)}</span>
+          <span>{'$'} {formatDollars(pricingMode === 'fixed' ? Math.round(parseFloat(fixedPrice || 0) * 100) : questionCostCents)}</span>
         </div>
-        {iterationCostPaisa > 0 && (
+        {iterationCostCents > 0 && (
           <div className="wizard-cost-row">
-            <span>+ Iterations ({numIterations} x {iterCostMode === 'fixed' ? `\u20B9${iterCostValue}` : `${iterCostValue}%`})</span>
-            <span>{'\u20B9'} {formatRupees(iterationCostPaisa)}</span>
+            <span>+ Iterations ({numIterations} x {iterCostMode === 'fixed' ? `$${iterCostValue}` : `${iterCostValue}%`})</span>
+            <span>{'$'} {formatDollars(iterationCostCents)}</span>
           </div>
         )}
-        {discountPaisa > 0 && (
+        {discountCents > 0 && (
           <div className="wizard-cost-row discount">
-            <span>- Discount ({discountMode === 'fixed' ? `\u20B9${discountValue}` : `${discountValue}%`})</span>
-            <span>-{'\u20B9'} {formatRupees(discountPaisa)}</span>
+            <span>- Discount ({discountMode === 'fixed' ? `$${discountValue}` : `${discountValue}%`})</span>
+            <span>-{'$'} {formatDollars(discountCents)}</span>
           </div>
         )}
         <div className="wizard-cost-divider" />
         <div className="wizard-cost-row total">
           <span>TOTAL</span>
-          <span>{'\u20B9'} {formatRupees(totalCostPaisa)}</span>
+          <span>{'$'} {formatDollars(totalCostCents)}</span>
         </div>
       </div>
     </div>

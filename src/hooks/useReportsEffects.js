@@ -247,7 +247,7 @@ export function useReportsEffects() {
           <span><i class="fas fa-calendar-alt"></i> ${report.pages} pages</span>
           <span><i class="fas fa-clock"></i> 24hrs delivery</span>
         </div>
-        <div class="report-price">₹${report.price} INR</div>
+        <div class="report-price">$${report.price} USD</div>
         <div class="report-actions">
           <button class="btn-sample" data-sample="${report.id}">
             <i class="fas fa-eye"></i> View Sample

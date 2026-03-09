@@ -61,7 +61,7 @@ export default function AdminMuhurtaPage() {
         icon: 'fa-star',
         description: '',
         color: '#9d7bff',
-        price_paisa: 0,
+        price_cents: 0,
         discount_pct: 0,
         discount_expires_at: '',
         is_active: true,
@@ -80,7 +80,7 @@ export default function AdminMuhurtaPage() {
         icon: event.icon,
         description: event.description || '',
         color: event.color,
-        price_paisa: event.price_paisa,
+        price_cents: event.price_cents,
         discount_pct: event.discount_pct,
         discount_expires_at: event.discount_expires_at ? event.discount_expires_at.substring(0, 16) : '',
         is_active: event.is_active,
@@ -142,7 +142,7 @@ export default function AdminMuhurtaPage() {
     }
   };
 
-  const formatPrice = (paisa) => paisa > 0 ? `\u20B9${(paisa / 100).toFixed(0)}` : 'Free';
+  const formatPrice = (cents) => cents > 0 ? `$${(cents / 100).toFixed(2)}` : 'Free';
 
   return (
     <PageShell activeNav="admin">
@@ -206,7 +206,7 @@ export default function AdminMuhurtaPage() {
                         <span style={{ color: '#2ed573', fontWeight: 600 }}>Free</span>
                       ) : (
                         <span>
-                          {ev.discount_pct > 0 && <span style={{ textDecoration: 'line-through', color: '#666', marginRight: 6, fontSize: 12 }}>{formatPrice(ev.price_paisa)}</span>}
+                          {ev.discount_pct > 0 && <span style={{ textDecoration: 'line-through', color: '#666', marginRight: 6, fontSize: 12 }}>{formatPrice(ev.price_cents)}</span>}
                           <span style={{ color: '#ffa502', fontWeight: 600 }}>{ev.price_display}</span>
                         </span>
                       )}
@@ -303,10 +303,10 @@ export default function AdminMuhurtaPage() {
 
             <div style={{ display: 'flex', gap: 12 }}>
               <div className="form-group" style={{ flex: 1 }}>
-                <label>Price (paisa)</label>
+                <label>Price (cents)</label>
                 <input type="number" className="form-input" min={0} step={100}
-                  value={editModal.data.price_paisa} onChange={e => updateField('price_paisa', parseInt(e.target.value) || 0)} />
-                <small style={{ color: '#8b949e' }}>0 = Free. 50100 = &#8377;501</small>
+                  value={editModal.data.price_cents} onChange={e => updateField('price_cents', parseInt(e.target.value) || 0)} />
+                <small style={{ color: '#8b949e' }}>0 = Free. 999 = $9.99</small>
               </div>
 
               <div className="form-group" style={{ flex: 1 }}>
@@ -339,7 +339,7 @@ export default function AdminMuhurtaPage() {
             </div>
 
             {/* Price Preview */}
-            {editModal.data.price_paisa > 0 && (
+            {editModal.data.price_cents > 0 && (
               <div style={{
                 background: '#161b22', border: '1px solid #30363d', borderRadius: 8, padding: 12, marginTop: 12,
                 display: 'flex', alignItems: 'center', gap: 12, fontSize: 14,
@@ -349,10 +349,10 @@ export default function AdminMuhurtaPage() {
                   <strong style={{ color: '#e0e0e0' }}>{editModal.data.label || 'Preview'}</strong>
                   <div style={{ color: '#8b949e', fontSize: 12 }}>
                     {editModal.data.discount_pct > 0 && (
-                      <span style={{ textDecoration: 'line-through', marginRight: 8 }}>{formatPrice(editModal.data.price_paisa)}</span>
+                      <span style={{ textDecoration: 'line-through', marginRight: 8 }}>{formatPrice(editModal.data.price_cents)}</span>
                     )}
                     <span style={{ color: '#ffa502', fontWeight: 600 }}>
-                      {formatPrice(Math.round(editModal.data.price_paisa * (100 - editModal.data.discount_pct) / 100))}
+                      {formatPrice(Math.round(editModal.data.price_cents * (100 - editModal.data.discount_pct) / 100))}
                     </span>
                     {editModal.data.discount_pct > 0 && (
                       <span style={{ background: '#2ed573', color: '#000', padding: '1px 6px', borderRadius: 4, marginLeft: 8, fontSize: 11 }}>

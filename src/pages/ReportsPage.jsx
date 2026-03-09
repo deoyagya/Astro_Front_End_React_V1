@@ -115,7 +115,7 @@ export default function ReportsPage() {
                       <span><i className="fas fa-calendar-alt"></i> {report.pages} pages</span>
                       <span><i className="fas fa-clock"></i> {report.delivery_hours || 24}hrs delivery</span>
                     </div>
-                    <div className="report-price">₹{report.price.toLocaleString('en-IN')} INR</div>
+                    <div className="report-price">${(report.price / 100).toFixed(2)} USD</div>
                     <div className="report-actions">
                       <button className="btn-sample" onClick={() => setSampleReport(report)}>
                         <i className="fas fa-eye"></i> View Sample
@@ -134,8 +134,8 @@ export default function ReportsPage() {
                   <h3><i className="fas fa-gift"></i> Complete Life Bundle</h3>
                   <p>Get all {reports.length} life area reports at 40% off + free personalized birth chart analysis</p>
                   <div className="bundle-price">
-                    <span className="original">₹{totalPrice.toLocaleString('en-IN')}</span>
-                    <span className="discounted">₹{bundlePrice.toLocaleString('en-IN')}</span>
+                    <span className="original">${(totalPrice / 100).toFixed(2)}</span>
+                    <span className="discounted">${(bundlePrice / 100).toFixed(2)}</span>
                   </div>
                   <button className="btn-bundle" onClick={orderBundle}>Order Complete Bundle</button>
                 </div>
@@ -226,7 +226,7 @@ export default function ReportsPage() {
                 {sampleReport.footerNote || 'This is a sample preview. The full report includes personalized analysis based on your exact birth chart with complete remedies and timing windows.'}
               </p>
               <button className="btn-order" onClick={() => orderReport(sampleReport)}>
-                <i className="fas fa-file-invoice"></i> Order Full Report — ₹{sampleReport.price.toLocaleString('en-IN')}
+                <i className="fas fa-file-invoice"></i> Order Full Report — ${(sampleReport.price / 100).toFixed(2)}
               </button>
             </div>
           </div>

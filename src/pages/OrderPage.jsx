@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import PageShell from '../components/PageShell';
 import ApiError from '../components/ApiError';
 import { api } from '../api/client';
@@ -8,7 +7,6 @@ import '../styles/report-pages.css';
 
 export default function OrderPage() {
   useSharedEffects();
-  const navigate = useNavigate();
 
   /* ── State ─────────────────────────────────────────────── */
   const [reports, setReports] = useState([]);        // from GET /report-prices
@@ -55,13 +53,13 @@ export default function OrderPage() {
     try {
       const data = await api.post('/v1/payment/validate-cart', { item_ids: ids });
       setValidatedCart(data);
-      // Persist for PaymentPage compatibility
+      // Persist selected items
       localStorage.setItem('cart_ids', JSON.stringify(ids));
       localStorage.setItem('cart', JSON.stringify(
         data.items.map((it) => ({
           id: it.id,
           name: it.name,
-          price: it.price_paisa / 100, // PaymentPage expects rupees
+          price: it.price_cents,
           icon: it.icon,
         }))
       ));
@@ -92,10 +90,10 @@ export default function OrderPage() {
 
   const displayTotal = useMemo(() => {
     if (validatedCart) return validatedCart.total_display;
-    return '₹0';
+    return '$0.00';
   }, [validatedCart]);
 
-  /* ── Create Razorpay order on backend then navigate ────── */
+  /* ── Create Stripe Checkout Session then redirect ────── */
   const proceedToPayment = async () => {
     if (!selectedIds.length) {
       setError('Please select at least one report.');
@@ -109,22 +107,28 @@ export default function OrderPage() {
     setLoading(true);
 
     try {
-      const orderData = await api.post('/v1/payment/razorpay/create-order', {
-        amount: validatedCart.total_paisa,
-        currency: 'INR',
+      const orderData = await api.post('/v1/payment/create-order', {
+        amount: validatedCart.total_cents,
+        currency: 'USD',
         items: validatedCart.items.map((it) => ({
           id: it.id,
           name: it.name,
-          price: it.price_paisa,
+          price: it.price_cents,
         })),
         receipt: `astroyagya_order_${Date.now()}`,
+        success_url: `${window.location.origin}/my-reports?payment_success=true`,
+        cancel_url: `${window.location.origin}/order?payment_cancelled=true`,
       });
 
-      localStorage.setItem('razorpay_order', JSON.stringify(orderData));
-      navigate('/payment');
+      if (orderData.checkout_url) {
+        // Redirect to Stripe hosted checkout
+        window.location.href = orderData.checkout_url;
+        return;
+      }
+      setError('Checkout URL not received. Please try again.');
     } catch (err) {
       const msg = err.message || '';
-      if (msg.includes('not configured') || msg.includes('503')) {
+      if (msg.includes('not configured') || msg.includes('503') || msg.includes('502')) {
         setError('Payment gateway is being set up. Please try again later or contact support.');
       } else if (msg.includes('401') || msg.includes('Not authenticated')) {
         setError('Please log in to place an order.');
