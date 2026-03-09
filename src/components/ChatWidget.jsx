@@ -610,6 +610,25 @@ export default function ChatWidget() {
 
     // Clear persisted state so re-open starts fresh
     localStorage.removeItem(LS_STATE);
+
+    // Re-fetch life areas + saved chart in case they were lost
+    try {
+      const [areasRes, chartsRes] = await Promise.all([
+        api.get('/v1/chat/life-areas'),
+        api.get('/v1/charts/saved?limit=1'),
+      ]);
+      setLifeAreas(areasRes.life_areas || []);
+      const charts = chartsRes.charts || [];
+      if (charts.length === 0) {
+        setNoChart(true);
+        setSavedChart(null);
+      } else {
+        setNoChart(false);
+        setSavedChart(charts[0]);
+      }
+    } catch {
+      // If fetch fails, life areas from initial load should still be in state
+    }
   }, [sessionId]);
 
   // ── Gate: chat is a premium feature — render nothing for unauthenticated visitors.
