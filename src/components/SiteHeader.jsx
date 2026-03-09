@@ -56,13 +56,18 @@ export default function SiteHeader({ active = 'home' }) {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [manageMenuOpen, setManageMenuOpen] = useState(false);
   const [myAstroExpanded, setMyAstroExpanded] = useState(false);
+  const [submenuPos, setSubmenuPos] = useState({ top: 0, right: 0 });
   const dropdownRef = useRef(null);
   const manageMenuRef = useRef(null);
+  const astroTriggerRef = useRef(null);
 
   // Close menus on outside click
   useEffect(() => {
     const handler = (e) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+        // Also check if click is inside the fly-out submenu portal
+        const flyout = document.getElementById('astro-flyout-submenu');
+        if (flyout && flyout.contains(e.target)) return;
         setDropdownOpen(false);
         setMyAstroExpanded(false);
       }
@@ -83,10 +88,18 @@ export default function SiteHeader({ active = 'home' }) {
 
   const handleMyAstroToggle = (e) => {
     e.preventDefault();
+    if (!myAstroExpanded && astroTriggerRef.current) {
+      const rect = astroTriggerRef.current.getBoundingClientRect();
+      setSubmenuPos({
+        top: rect.top - 8,
+        right: window.innerWidth - rect.left + 6,
+      });
+    }
     setMyAstroExpanded(!myAstroExpanded);
   };
 
   return (
+    <>
     <header className="header">
       <div className="container">
         <div className="header-content">
@@ -188,33 +201,15 @@ export default function SiteHeader({ active = 'home' }) {
                             <i className="fas fa-download"></i> My Reports
                           </a>
 
-                          {/* My Astro — fly-out submenu to the left */}
-                          <div className="dropdown-submenu-wrapper">
-                            <button
-                              className={`dropdown-item dropdown-submenu-trigger ${myAstroExpanded ? 'expanded' : ''}`}
-                              onClick={handleMyAstroToggle}
-                            >
-                              <i className="fas fa-star"></i> My Astro
-                              <i className={`fas fa-chevron-${myAstroExpanded ? 'up' : 'down'} submenu-chevron`}></i>
-                            </button>
-                            {myAstroExpanded && (
-                              <div className="dropdown-submenu">
-                                {MY_DATA_MENU_ITEMS
-                                  .filter((item) => !item.premium || isPremium)
-                                  .map((item) => (
-                                    <a
-                                      key={item.href}
-                                      href={item.href}
-                                      className={`dropdown-submenu-item ${pathname.startsWith(item.href) ? 'active' : ''}`}
-                                      onClick={() => { setDropdownOpen(false); setMyAstroExpanded(false); }}
-                                    >
-                                      <i className={`fas ${item.icon}`}></i>
-                                      {item.label}
-                                    </a>
-                                  ))}
-                              </div>
-                            )}
-                          </div>
+                          {/* My Astro — trigger button */}
+                          <button
+                            ref={astroTriggerRef}
+                            className={`dropdown-item dropdown-submenu-trigger ${myAstroExpanded ? 'expanded' : ''}`}
+                            onClick={handleMyAstroToggle}
+                          >
+                            <i className="fas fa-star"></i> My Astro
+                            <i className={`fas fa-chevron-${myAstroExpanded ? 'up' : 'down'} submenu-chevron`}></i>
+                          </button>
 
                           <a href="/order" className="dropdown-item" onClick={() => setDropdownOpen(false)}>
                             <i className="fas fa-shopping-cart"></i> My Orders
@@ -240,5 +235,35 @@ export default function SiteHeader({ active = 'home' }) {
         </div>
       </div>
     </header>
+
+    {/* My Astro fly-out submenu — rendered outside header to avoid overflow clipping */}
+    {myAstroExpanded && dropdownOpen && !isAdmin && (
+      <div
+        id="astro-flyout-submenu"
+        className="dropdown-submenu"
+        style={{
+          position: 'fixed',
+          top: submenuPos.top,
+          right: submenuPos.right,
+          left: 'auto',
+          zIndex: 2100,
+        }}
+      >
+        {MY_DATA_MENU_ITEMS
+          .filter((item) => !item.premium || isPremium)
+          .map((item) => (
+            <a
+              key={item.href}
+              href={item.href}
+              className={`dropdown-submenu-item ${pathname.startsWith(item.href) ? 'active' : ''}`}
+              onClick={() => { setDropdownOpen(false); setMyAstroExpanded(false); }}
+            >
+              <i className={`fas ${item.icon}`}></i>
+              {item.label}
+            </a>
+          ))}
+      </div>
+    )}
+    </>
   );
 }

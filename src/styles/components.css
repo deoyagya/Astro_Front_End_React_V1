@@ -202,11 +202,6 @@
     color: #ff4757 !important;
 }
 
-/* Wrapper for My Astro trigger + fly-out submenu (positioning anchor) */
-.dropdown-submenu-wrapper {
-    position: relative;
-}
-
 /* My Astro submenu trigger — styled like a dropdown-item but as button */
 .dropdown-submenu-trigger {
     display: flex;
@@ -250,21 +245,16 @@
     transition: transform 0.2s;
 }
 
-/* Fly-out submenu — pops out to the left of the dropdown */
+/* Fly-out submenu — position: fixed via inline style, rendered outside header */
 .dropdown-submenu {
-    position: absolute;
-    right: 100%;
-    top: 0;
     min-width: 220px;
     background: linear-gradient(135deg, #1e2130, #151825);
     border: 1px solid #3a3f50;
     border-radius: 12px;
     box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
     padding: 8px 0;
-    margin-right: 6px;
     max-height: 80vh;
     overflow-y: auto;
-    z-index: 2100;
     animation: submenuSlideIn 0.15s ease-out;
 }
 
@@ -313,19 +303,12 @@
     color: #9d7bff;
 }
 
-/* On small screens, fall back to inline expand (no room to fly out) */
+/* On small screens the JS-calculated position still works,
+   but constrain width so it doesn't overflow viewport */
 @media (max-width: 768px) {
     .dropdown-submenu {
-        position: static;
-        min-width: unset;
-        margin-right: 0;
-        margin: 0 8px 4px 8px;
-        border: none;
-        border-left: 2px solid #7b5bff;
-        border-radius: 0 0 8px 8px;
-        box-shadow: none;
-        background: rgba(15, 18, 30, 0.6);
-        animation: none;
+        min-width: 180px;
+        max-width: calc(100vw - 20px);
     }
 }
 
