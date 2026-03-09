@@ -37,7 +37,7 @@
   margin: 0 auto;
 }
 .pricing-header .gateway-info {
-  color: #9b95aa;
+  color: var(--text-muted, #a0a8b8);
   font-size: 0.875rem;
   margin-top: 10px;
 }
@@ -206,7 +206,7 @@
 }
 .plan-card .plan-price .original-price {
   font-size: 0.9rem;
-  color: #666;
+  color: var(--text-muted, #a0a8b8);
   text-decoration: line-through;
   margin-left: 8px;
 }
@@ -230,12 +230,12 @@
   flex-shrink: 0;
 }
 .plan-card .plan-features li i.fa-times {
-  color: #555;
+  color: var(--text-muted, #a0a8b8);
   margin-top: 3px;
   flex-shrink: 0;
 }
 .plan-card .plan-features li.disabled {
-  color: #555;
+  color: var(--text-muted, #a0a8b8);
 }
 .plan-card .plan-cta {
   display: block;
@@ -392,7 +392,7 @@
 .feature-table td:first-child {
   text-align: left;
   font-weight: 500;
-  color: #c0c7d3;
+  color: var(--text-secondary, #c7cfdd);
 }
 .feature-table thead th {
   background: rgba(123, 91, 255, 0.12);

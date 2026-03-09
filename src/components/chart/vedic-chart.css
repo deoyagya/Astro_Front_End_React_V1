@@ -32,7 +32,7 @@
 }
 
 .vc-selector label {
-  color: #b0b7c3;
+  color: var(--text-secondary, #c7cfdd);
   font-size: 14px;
   font-weight: 600;
   white-space: nowrap;
@@ -64,10 +64,10 @@
 
 .vc-style-toggle button {
   background: #1e2130;
-  color: #b0b7c3;
+  color: var(--text-secondary, #c7cfdd);
   border: none;
   padding: 8px 16px;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.15s ease;
@@ -102,7 +102,7 @@
   justify-content: center;
   gap: 12px;
   padding: 60px 20px;
-  color: #555;
+  color: var(--text-muted, #a0a8b8);
 }
 
 .vc-empty i {

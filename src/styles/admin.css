@@ -39,7 +39,7 @@
 }
 
 .admin-breadcrumb .sep {
-    color: #555;
+    color: var(--text-muted, #a0a8b8);
 }
 
 /* Admin toolbar */
@@ -2039,7 +2039,7 @@
     text-align: center;
     flex-shrink: 0;
     user-select: none;
-    font-size: 0.7rem;
+    font-size: 0.875rem;
     line-height: 1.6;
     transition: color 0.2s;
 }
@@ -2239,7 +2239,7 @@
 }
 
 .verdict-node.neutral {
-    border-left-color: #8a8f9d;
+    border-left-color: var(--text-muted, #a0a8b8);
 }
 
 .verdict-node-header {

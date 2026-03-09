@@ -232,10 +232,10 @@
 }
 
 .rashi-10::before { content: "♑"; } /* Capricorn - Sea-goat */
-.rashi-10 { 
-    color: #8395a7;  /* Silver-Grey */
-    border-color: #8395a7;
-    text-shadow: 0 0 15px #8395a7;
+.rashi-10 {
+    color: #a0b0c0;  /* Silver-Grey — WCAG AA safe */
+    border-color: #a0b0c0;
+    text-shadow: 0 0 15px #a0b0c0;
 }
 
 .rashi-11::before { content: "♒"; } /* Aquarius - Water bearer */

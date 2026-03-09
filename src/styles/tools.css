@@ -594,7 +594,7 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
     padding: 8px 20px;
     background: rgba(40, 44, 60, 0.6);
     border: 1px solid #3a3f50;
-    color: #b0b7c3;
+    color: var(--text-secondary, #c7cfdd);
     font-size: 0.95rem;
     font-weight: 500;
     cursor: pointer;
@@ -1073,7 +1073,7 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
 }
 .house-explore-page .birth-datetime {
     font-size: 1.45rem;
-    color: #b0b7c3;
+    color: var(--text-secondary, #c7cfdd);
     margin-top: 6px;
 }
 .house-explore-page .chart-section-title {

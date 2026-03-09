@@ -67,7 +67,7 @@
 
 .muhurta-meta {
   font-size: 0.875rem;
-  color: #888;
+  color: var(--text-muted, #a0a8b8);
 }
 
 .muhurta-no-results {
@@ -279,7 +279,7 @@
 
 .birth-section-desc {
   font-size: 0.875rem;
-  color: #888;
+  color: var(--text-muted, #a0a8b8);
   margin: 0 0 12px;
 }
 
@@ -317,7 +317,7 @@
 
 .charts-loading {
   font-size: 0.875rem;
-  color: #888;
+  color: var(--text-muted, #a0a8b8);
   padding: 8px 0;
 }
 
@@ -371,7 +371,7 @@
 }
 
 .selected-chart-info span {
-  color: #888;
+  color: var(--text-muted, #a0a8b8);
   font-size: 0.92rem;
 }
 
@@ -407,7 +407,7 @@
 
 .person-detail {
   font-size: 0.92rem;
-  color: #888;
+  color: var(--text-muted, #a0a8b8);
   margin-left: 4px;
 }
 
@@ -463,7 +463,7 @@
 
 .report-desc {
   font-size: 0.875rem;
-  color: #888;
+  color: var(--text-muted, #a0a8b8);
   margin: 0 0 10px;
 }
 
@@ -542,7 +542,7 @@
 .btn-close-audit {
   background: transparent;
   border: none;
-  color: #888;
+  color: var(--text-muted, #a0a8b8);
   cursor: pointer;
   font-size: 1.1rem;
   padding: 4px;
@@ -610,7 +610,7 @@
 .element-name {
   width: 90px;
   font-size: 0.875rem;
-  color: #888;
+  color: var(--text-muted, #a0a8b8);
   text-transform: capitalize;
 }
 
@@ -767,7 +767,7 @@
 }
 
 .audit-step-sources li {
-  color: #888;
+  color: var(--text-muted, #a0a8b8);
   font-style: italic;
   margin-bottom: 2px;
 }
@@ -849,7 +849,7 @@
   display: flex;
   justify-content: space-between;
   font-size: 0.875rem;
-  color: #666;
+  color: var(--text-muted, #a0a8b8);
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -1046,7 +1046,7 @@
 .interpretation-body p {
   font-size: 0.9375rem;
   line-height: 1.65;
-  color: #c4c9d6;
+  color: var(--text-secondary, #c7cfdd);
   margin: 0 0 12px;
 }
 
@@ -1092,7 +1092,7 @@
 .paywall-text p {
   margin: 0;
   font-size: 0.92rem;
-  color: #888;
+  color: var(--text-muted, #a0a8b8);
   max-width: 380px;
 }
 
@@ -1105,7 +1105,7 @@
 
 .price-original {
   text-decoration: line-through;
-  color: #666;
+  color: var(--text-muted, #a0a8b8);
   font-size: 0.95rem;
 }
 

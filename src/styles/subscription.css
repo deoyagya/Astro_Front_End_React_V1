@@ -158,7 +158,7 @@
   flex-shrink: 0;
 }
 .plan-features-list li i.fa-times-circle {
-  color: #555;
+  color: var(--text-muted, #a0a8b8);
   flex-shrink: 0;
 }
 .plan-features-list li .feature-limit {

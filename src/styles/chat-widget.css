@@ -443,7 +443,7 @@
 .cw-panel .cw-tone-neutral { color: #333333; }
 .cw-panel .cw-tone-encouraging { color: #6d28d9; }
 .cw-panel .cw-session-ended i { color: var(--cw-success); }
-.cw-panel input::placeholder { color: #888; }
+.cw-panel input::placeholder { color: var(--text-muted, #a0a8b8); }
 .cw-panel .cw-btn-new-topic { color: #333; }
 .cw-panel .cw-btn-new-topic:hover { color: var(--cw-accent); }
 
@@ -1243,7 +1243,7 @@
 }
 
 .cw-custom-question-form input::placeholder {
-  color: #888;
+  color: var(--text-muted, #a0a8b8);
 }
 
 .cw-custom-question-form input:focus {
