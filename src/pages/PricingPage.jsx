@@ -214,12 +214,12 @@ export default function PricingPage() {
   const getCtaLabel = (plan) => {
     if (plan.slug === currentPlanSlug) return 'Current Plan';
     if (plan.slug === 'free') return 'Get Started';
-    if (isPlanHigherOrEqual(plan.slug)) return 'Current Tier';
+    if (isPlanHigherOrEqual(plan.slug)) return 'Current Plan';
     return checkoutLoading === plan.slug ? 'Processing...' : 'Subscribe';
   };
 
   const getCtaClass = (plan) => {
-    if (plan.slug === currentPlanSlug) return 'plan-cta current-plan';
+    if (plan.slug === currentPlanSlug || isPlanHigherOrEqual(plan.slug)) return 'plan-cta current-plan';
     if (plan.slug === 'elite' || plan.slug === 'premium') return 'plan-cta primary';
     return 'plan-cta outline';
   };
