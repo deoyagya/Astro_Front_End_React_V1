@@ -36,6 +36,21 @@
   max-width: 600px;
   margin: 0 auto;
 }
+.pricing-header .gateway-info {
+  color: #9b95aa;
+  font-size: 0.85rem;
+  margin-top: 10px;
+}
+.pricing-header .gateway-badge {
+  display: inline-block;
+  background: rgba(124, 92, 252, 0.2);
+  color: #9d7bff;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  margin-left: 4px;
+}
 
 /* ---- Billing toggle ---- */
 .billing-toggle {

@@ -1,24 +1,29 @@
 /**
  * PricingPage — Public pricing page with 4-tier subscription cards.
  *
+ * Phase 44: Original implementation with Razorpay-only checkout.
+ * Phase 47: Dual-gateway support (Razorpay for India, Stripe for international).
+ *
  * Features:
  *   - Monthly / Yearly billing toggle with savings badge
  *   - 4 plan cards (Free / Basic / Premium / Elite)
  *   - Feature comparison table
  *   - Coupon code validation
- *   - Razorpay subscription checkout flow
+ *   - Auto-detected payment gateway (Razorpay or Stripe) based on geography
+ *   - Razorpay: inline modal checkout
+ *   - Stripe: redirect to Stripe-hosted checkout page
  *   - Credit pack add-ons section
  *   - Responsive: 4-col → 2-col → 1-col
  */
 
-import { useCallback, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useCallback, useEffect, useState, useRef } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import PageShell from '../components/PageShell';
 import { api } from '../api/client';
 import { useAuth } from '../context/AuthContext';
 import '../styles/pricing.css';
 
-/* ---- Razorpay SDK loader (shared with PaymentPage) ---- */
+/* ---- Razorpay SDK loader ---- */
 function loadRazorpayScript() {
   return new Promise((resolve) => {
     if (window.Razorpay) { resolve(true); return; }
@@ -52,6 +57,7 @@ const COMPARISON_FEATURES = [
 
 export default function PricingPage() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { user, isAuthenticated, refreshUser } = useAuth();
 
   const [plans, setPlans] = useState([]);
@@ -65,21 +71,38 @@ export default function PricingPage() {
   // Coupon
   const [couponCode, setCouponCode] = useState('');
   const [couponValidating, setCouponValidating] = useState(false);
-  const [couponResult, setCouponResult] = useState(null); // { valid, reason, discount_value, discount_type }
+  const [couponResult, setCouponResult] = useState(null);
 
   // Checkout state
-  const [checkoutLoading, setCheckoutLoading] = useState(null); // plan slug being checked out
+  const [checkoutLoading, setCheckoutLoading] = useState(null);
 
-  /* ---- Fetch plans + credit packs + preload Razorpay SDK ---- */
+  // Payment gateway detection (Phase 47)
+  const [gateway, setGateway] = useState(null); // { provider, currency, country_code }
+  const gatewayDetected = useRef(false);
+
+  /* ---- Fetch plans + detect gateway + handle Stripe return ---- */
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [plansRes, packsRes] = await Promise.all([
+        // Fetch plans, credit packs, and detect gateway in parallel
+        const promises = [
           api.get('/v1/subscription/plans'),
           api.get('/v1/subscription/credit-packs'),
-        ]);
-        setPlans(plansRes.plans || []);
-        setCreditPacks(packsRes.packs || []);
+        ];
+
+        // Detect gateway (only if not already detected)
+        if (!gatewayDetected.current) {
+          promises.push(api.get('/v1/subscription/detect-gateway'));
+        }
+
+        const results = await Promise.all(promises);
+        setPlans(results[0].plans || []);
+        setCreditPacks(results[1].packs || []);
+
+        if (results[2]) {
+          setGateway(results[2]);
+          gatewayDetected.current = true;
+        }
       } catch (err) {
         setError(err.message || 'Failed to load pricing data');
       } finally {
@@ -87,16 +110,41 @@ export default function PricingPage() {
       }
     };
     fetchData();
-    // Preload Razorpay SDK in background so checkout opens instantly
+
+    // Preload Razorpay SDK (only needed for India users, but preload anyway)
     loadRazorpayScript();
   }, []);
 
+  /* ---- Handle Stripe return (redirect back after checkout) ---- */
+  useEffect(() => {
+    const sessionId = searchParams.get('session_id');
+    const cancelled = searchParams.get('cancelled');
+
+    if (cancelled === 'true') {
+      setError('Checkout was cancelled. You can try again anytime.');
+      return;
+    }
+
+    if (sessionId && isAuthenticated) {
+      // Verify Stripe checkout session
+      const verifyStripe = async () => {
+        setCheckoutLoading('verifying');
+        try {
+          await api.post('/v1/subscription/verify-stripe', { session_id: sessionId });
+          if (refreshUser) await refreshUser();
+          navigate('/my-data/subscription', { replace: true });
+        } catch (err) {
+          setError(err.message || 'Payment verification failed. Please contact support.');
+        } finally {
+          setCheckoutLoading(null);
+        }
+      };
+      verifyStripe();
+    }
+  }, [searchParams, isAuthenticated, refreshUser, navigate]);
+
   /* ---- Current user plan detection ---- */
   const currentPlanSlug = user?.role || 'free';
-  const isPlanHigherOrEqual = (planSlug) => {
-    const order = ['free', 'basic', 'premium', 'elite', 'admin'];
-    return order.indexOf(planSlug) <= order.indexOf(currentPlanSlug);
-  };
 
   /* ---- Coupon validation ---- */
   const handleValidateCoupon = useCallback(async () => {
@@ -106,7 +154,7 @@ export default function PricingPage() {
     try {
       const res = await api.post('/v1/subscription/validate-coupon', {
         code: couponCode.trim().toUpperCase(),
-        plan_slug: 'basic', // Validate against the cheapest paid plan
+        plan_slug: 'basic',
       });
       setCouponResult(res);
     } catch (err) {
@@ -116,7 +164,7 @@ export default function PricingPage() {
     }
   }, [couponCode]);
 
-  /* ---- Checkout ---- */
+  /* ---- Checkout (gateway-aware) ---- */
   const handleCheckout = useCallback(async (planSlug) => {
     if (!isAuthenticated) {
       navigate('/login');
@@ -126,8 +174,28 @@ export default function PricingPage() {
     setCheckoutLoading(planSlug);
     setError('');
 
+    const provider = gateway?.provider || 'razorpay';
+
     try {
-      // Load Razorpay SDK
+      // Initiate checkout via API (gateway is auto-detected by backend too)
+      const checkoutData = await api.post('/v1/subscription/checkout', {
+        plan_slug: planSlug,
+        billing_cycle: yearly ? 'yearly' : 'monthly',
+        coupon_code: couponResult?.valid ? couponCode.trim().toUpperCase() : undefined,
+        payment_provider: provider,
+        country_code: gateway?.country_code || undefined,
+        success_url: `${window.location.origin}/pricing?session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: `${window.location.origin}/pricing?cancelled=true`,
+      });
+
+      if (checkoutData.gateway === 'stripe' && checkoutData.checkout_url) {
+        // --- STRIPE: Redirect to Stripe-hosted checkout ---
+        window.location.href = checkoutData.checkout_url;
+        // Note: setCheckoutLoading stays on until redirect completes
+        return;
+      }
+
+      // --- RAZORPAY: Open inline modal ---
       const sdkLoaded = await loadRazorpayScript();
       if (!sdkLoaded) {
         setError('Failed to load payment gateway. Please check your internet and try again.');
@@ -135,14 +203,6 @@ export default function PricingPage() {
         return;
       }
 
-      // Initiate checkout via API
-      const checkoutData = await api.post('/v1/subscription/checkout', {
-        plan_slug: planSlug,
-        billing_cycle: yearly ? 'yearly' : 'monthly',
-        coupon_code: couponResult?.valid ? couponCode.trim().toUpperCase() : undefined,
-      });
-
-      // Open Razorpay subscription checkout
       const options = {
         key: checkoutData.razorpay_key_id,
         subscription_id: checkoutData.subscription_id,
@@ -157,15 +217,13 @@ export default function PricingPage() {
         handler: async (response) => {
           try {
             await api.post('/v1/subscription/verify', {
-              razorpay_payment_id: response.razorpay_payment_id,
-              razorpay_subscription_id: response.razorpay_subscription_id,
-              razorpay_signature: response.razorpay_signature,
+              payment_id: response.razorpay_payment_id,
+              subscription_id: response.razorpay_subscription_id,
+              signature: response.razorpay_signature,
+              payment_provider: 'razorpay',
             });
 
-            // Refresh user data to get updated role
             if (refreshUser) await refreshUser();
-
-            // Navigate to subscription management
             navigate('/my-data/subscription');
           } catch (err) {
             setError(err.message || 'Payment verification failed. Please contact support.');
@@ -189,21 +247,58 @@ export default function PricingPage() {
       setError(err.message || 'Checkout failed. Please try again.');
       setCheckoutLoading(null);
     }
-  }, [isAuthenticated, navigate, yearly, couponResult, couponCode, user, refreshUser]);
+  }, [isAuthenticated, navigate, yearly, couponResult, couponCode, user, refreshUser, gateway]);
 
-  /* ---- Helpers ---- */
-  const formatPrice = (paisa) => {
+  /* ---- Price formatting (gateway-aware) ---- */
+  const isStripe = gateway?.provider === 'stripe';
+
+  const formatPrice = (plan) => {
+    if (isStripe) {
+      const cents = yearly ? plan.price_yearly_cents : plan.price_monthly_cents;
+      if (!cents || cents === 0) return 'Free';
+      return `$${(cents / 100).toFixed(2)}`;
+    }
+    const paisa = yearly ? plan.price_yearly_paisa : plan.price_monthly_paisa;
     if (!paisa || paisa === 0) return 'Free';
     return `₹${(paisa / 100).toLocaleString('en-IN')}`;
   };
 
+  const formatMonthlyEquivalent = (plan) => {
+    if (isStripe) {
+      const cents = plan.price_yearly_cents;
+      if (!cents) return null;
+      return `$${(cents / 1200).toFixed(2)}`;
+    }
+    const paisa = plan.price_yearly_paisa;
+    if (!paisa) return null;
+    return `₹${Math.round(paisa / 1200).toLocaleString('en-IN')}`;
+  };
+
+  const formatOriginalMonthly = (plan) => {
+    if (isStripe) {
+      const cents = plan.price_monthly_cents;
+      if (!cents) return '';
+      return `$${(cents / 100).toFixed(2)}/mo`;
+    }
+    const paisa = plan.price_monthly_paisa;
+    if (!paisa) return '';
+    return `₹${(paisa / 100).toLocaleString('en-IN')}/mo`;
+  };
+
+  const formatCreditPrice = (paisa) => {
+    if (isStripe) {
+      // Approximate: ₹83 ≈ $1
+      const usd = paisa / 8300;
+      return `$${Math.max(usd, 0.99).toFixed(2)}`;
+    }
+    return `₹${(paisa / 100).toLocaleString('en-IN')}`;
+  };
+
   const getFeatureDisplay = (plan, featureKey) => {
-    // plan.features is a dict keyed by feature_key (from backend)
     const feature = Array.isArray(plan.features)
       ? plan.features.find((f) => f.feature_key === featureKey)
       : plan.features?.[featureKey];
     if (!feature || !feature.enabled) return { type: 'cross' };
-    // Backend uses "limit" (dict) or "limit_value" (array) depending on shape
     const limitVal = feature.limit_value ?? feature.limit;
     const limitPeriod = feature.limit_period ?? feature.period;
     if (limitVal) {
@@ -238,15 +333,12 @@ export default function PricingPage() {
     if (plan.slug === currentPlanSlug) return;
     const rank = PLAN_RANK[plan.slug] ?? 0;
     if (!isAuthenticated) {
-      if (plan.slug === 'free') { navigate('/login'); return; }
       navigate('/login');
       return;
     }
     if (rank > currentRank) {
-      // Upgrade — effective immediately
       handleCheckout(plan.slug);
     } else if (rank < currentRank) {
-      // Downgrade — effective next billing cycle
       if (window.confirm(
         `Downgrade to ${plan.name}?\n\nThis will take effect from your next billing cycle. ` +
         `You'll continue to enjoy your current plan benefits until then.`
@@ -272,8 +364,24 @@ export default function PricingPage() {
     );
   }
 
-  // Sort plans by display_order
+  // Handle Stripe verification loading state
+  if (checkoutLoading === 'verifying') {
+    return (
+      <PageShell activeNav="pricing">
+        <div className="pricing-page">
+          <div className="container">
+            <div className="pricing-loading">
+              <i className="fas fa-spinner fa-spin"></i>
+              Verifying your payment...
+            </div>
+          </div>
+        </div>
+      </PageShell>
+    );
+  }
+
   const sortedPlans = [...plans].sort((a, b) => (a.display_order || 0) - (b.display_order || 0));
+  const currencySymbol = isStripe ? '$' : '₹';
 
   return (
     <PageShell activeNav="pricing">
@@ -286,6 +394,13 @@ export default function PricingPage() {
               Unlock the full power of Vedic astrology with AI-powered insights,
               detailed reports, and personalized guidance.
             </p>
+            {gateway && (
+              <p className="gateway-info">
+                <i className={`fas ${isStripe ? 'fa-cc-stripe' : 'fa-rupee-sign'}`}></i>{' '}
+                Prices shown in {isStripe ? 'USD' : 'INR'}{' '}
+                <span className="gateway-badge">{isStripe ? 'Stripe' : 'Razorpay'}</span>
+              </p>
+            )}
           </div>
 
           {/* Billing toggle */}
@@ -328,12 +443,12 @@ export default function PricingPage() {
           {/* Plan cards */}
           <div className="plan-cards">
             {sortedPlans.map((plan) => {
-              const price = yearly ? plan.price_yearly_paisa : plan.price_monthly_paisa;
-              const monthlyEquivalent = yearly && plan.price_yearly_paisa
-                ? Math.round(plan.price_yearly_paisa / 12)
-                : null;
+              const priceStr = formatPrice(plan);
+              const monthlyEq = yearly ? formatMonthlyEquivalent(plan) : null;
+              const originalMonthly = yearly ? formatOriginalMonthly(plan) : '';
               const isPopular = plan.slug === 'premium';
               const isCurrent = plan.slug === currentPlanSlug;
+              const isFree = priceStr === 'Free';
 
               return (
                 <div
@@ -348,19 +463,19 @@ export default function PricingPage() {
                   <p className="plan-desc">{plan.description}</p>
 
                   <div className="plan-price">
-                    {price === 0 ? (
+                    {isFree ? (
                       <span className="amount">Free</span>
-                    ) : yearly ? (
+                    ) : yearly && monthlyEq ? (
                       <>
-                        <span className="amount">{formatPrice(monthlyEquivalent)}</span>
+                        <span className="amount">{monthlyEq}</span>
                         <span className="period">/mo</span>
-                        <span className="original-price">
-                          {formatPrice(plan.price_monthly_paisa)}/mo
-                        </span>
+                        {originalMonthly && (
+                          <span className="original-price">{originalMonthly}</span>
+                        )}
                       </>
                     ) : (
                       <>
-                        <span className="amount">{formatPrice(price)}</span>
+                        <span className="amount">{priceStr}</span>
                         <span className="period">/mo</span>
                       </>
                     )}
@@ -378,10 +493,7 @@ export default function PricingPage() {
                   <button
                     className={getCtaClass(plan)}
                     onClick={() => handleCtaClick(plan)}
-                    disabled={
-                      isCurrent ||
-                      checkoutLoading === plan.slug
-                    }
+                    disabled={isCurrent || checkoutLoading === plan.slug}
                   >
                     {checkoutLoading === plan.slug && (
                       <i className="fas fa-spinner fa-spin" style={{ marginRight: 8 }}></i>
@@ -422,7 +534,7 @@ export default function PricingPage() {
                     <i className="fas fa-check-circle"></i>{' '}
                     {couponResult.discount_type === 'percentage'
                       ? `${couponResult.discount_value}% off`
-                      : `₹${(couponResult.discount_value / 100).toLocaleString('en-IN')} off`}{' '}
+                      : `${currencySymbol}${(couponResult.discount_value / 100).toLocaleString()} off`}{' '}
                     — Applied!
                   </>
                 ) : (
@@ -488,9 +600,12 @@ export default function PricingPage() {
                   <div key={pack.id} className="credit-pack-card">
                     <div className="pack-credits">{pack.credit_amount}</div>
                     <div className="pack-name">{pack.name}</div>
-                    <div className="pack-price">₹{(pack.price_paisa / 100).toLocaleString('en-IN')}</div>
+                    <div className="pack-price">{formatCreditPrice(pack.price_paisa)}</div>
                     <div className="pack-unit">
-                      ₹{((pack.price_paisa / 100) / pack.credit_amount).toFixed(1)} per question
+                      {isStripe
+                        ? `$${Math.max(pack.price_paisa / 8300 / pack.credit_amount, 0.01).toFixed(2)} per question`
+                        : `₹${((pack.price_paisa / 100) / pack.credit_amount).toFixed(1)} per question`
+                      }
                     </div>
                     <button
                       className="pack-buy-btn"
@@ -509,7 +624,10 @@ export default function PricingPage() {
 
           {/* Trust badges */}
           <div className="pricing-faq">
-            <p>All payments are securely processed by Razorpay. Cancel anytime.</p>
+            <p>
+              All payments are securely processed by{' '}
+              {isStripe ? 'Stripe' : 'Razorpay'}. Cancel anytime.
+            </p>
             <div className="trust-icons">
               <div className="trust-item">
                 <i className="fas fa-lock"></i>
@@ -522,6 +640,10 @@ export default function PricingPage() {
               <div className="trust-item">
                 <i className="fas fa-undo"></i>
                 <span>Cancel Anytime</span>
+              </div>
+              <div className="trust-item">
+                <i className={`fas ${isStripe ? 'fa-cc-stripe' : 'fa-money-bill-wave'}`}></i>
+                <span>{isStripe ? 'Powered by Stripe' : 'Powered by Razorpay'}</span>
               </div>
             </div>
           </div>
