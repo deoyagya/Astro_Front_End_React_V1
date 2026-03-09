@@ -16,6 +16,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import PageShell from '../components/PageShell';
 import { api } from '../api/client';
 import { useAuth } from '../context/AuthContext';
+import { useToast } from '../context/ToastContext';
 import '../styles/pricing.css';
 
 /* ---- Icon map for plan tiers ---- */
@@ -42,11 +43,11 @@ export default function PricingPage() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { user, isAuthenticated, refreshUser } = useAuth();
+  const { toast } = useToast();
 
   const [plans, setPlans] = useState([]);
   const [creditPacks, setCreditPacks] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
 
   // Billing cycle toggle
   const [yearly, setYearly] = useState(true);
@@ -71,7 +72,7 @@ export default function PricingPage() {
         setPlans(plansRes.plans || []);
         setCreditPacks(packsRes.packs || []);
       } catch (err) {
-        setError(err.message || 'Failed to load pricing data');
+        toast(err.message || 'Failed to load pricing data', 'error');
       } finally {
         setLoading(false);
       }
@@ -85,7 +86,7 @@ export default function PricingPage() {
     const cancelled = searchParams.get('cancelled');
 
     if (cancelled === 'true') {
-      setError('Checkout was cancelled. You can try again anytime.');
+      toast('Checkout was cancelled. You can try again anytime.', 'info');
       return;
     }
 
@@ -98,7 +99,7 @@ export default function PricingPage() {
           if (refreshUser) await refreshUser();
           navigate('/my-data/subscription', { replace: true });
         } catch (err) {
-          setError(err.message || 'Payment verification failed. Please contact support.');
+          toast(err.message || 'Payment verification failed. Please contact support.', 'error');
         } finally {
           setCheckoutLoading(null);
         }
@@ -136,7 +137,6 @@ export default function PricingPage() {
     }
 
     setCheckoutLoading(planSlug);
-    setError('');
 
     try {
       const checkoutData = await api.post('/v1/subscription/checkout', {
@@ -152,10 +152,10 @@ export default function PricingPage() {
         return;
       }
 
-      setError('Checkout URL not received. Please try again.');
+      toast('Checkout URL not received. Please try again.', 'error');
       setCheckoutLoading(null);
     } catch (err) {
-      setError(err.message || 'Checkout failed. Please try again.');
+      toast(err.message || 'Checkout failed. Please try again.', 'error');
       setCheckoutLoading(null);
     }
   }, [isAuthenticated, navigate, yearly, couponResult, couponCode]);
@@ -222,7 +222,6 @@ export default function PricingPage() {
   /* ---- Change plan (for users with active subscription) ---- */
   const handleChangePlan = useCallback(async (planSlug, direction) => {
     setCheckoutLoading(planSlug);
-    setError('');
     try {
       const result = await api.post('/v1/subscription/change-plan', {
         new_plan_slug: planSlug,
@@ -231,7 +230,7 @@ export default function PricingPage() {
       if (refreshUser) await refreshUser();
       navigate('/my-data/subscription');
     } catch (err) {
-      setError(err.message || `Failed to ${direction}. Please try again.`);
+      toast(err.message || `Failed to ${direction}. Please try again.`, 'error');
     } finally {
       setCheckoutLoading(null);
     }
@@ -343,20 +342,6 @@ export default function PricingPage() {
             </span>
             {yearly && <span className="save-badge">Save ~16%</span>}
           </div>
-
-          {/* Error */}
-          {error && (
-            <div className="pricing-error">
-              <i className="fas fa-exclamation-triangle" style={{ marginRight: 8 }}></i>
-              {error}
-              <button
-                onClick={() => setError('')}
-                style={{ marginLeft: 12, background: 'none', border: 'none', color: '#b794ff', cursor: 'pointer', textDecoration: 'underline' }}
-              >
-                Dismiss
-              </button>
-            </div>
-          )}
 
           {/* Plan cards */}
           <div className="plan-cards">
