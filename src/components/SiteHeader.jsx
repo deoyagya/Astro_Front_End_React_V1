@@ -188,31 +188,33 @@ export default function SiteHeader({ active = 'home' }) {
                             <i className="fas fa-download"></i> My Reports
                           </a>
 
-                          {/* My Astro — expandable submenu with all My Data items */}
-                          <button
-                            className={`dropdown-item dropdown-submenu-trigger ${myAstroExpanded ? 'expanded' : ''}`}
-                            onClick={handleMyAstroToggle}
-                          >
-                            <i className="fas fa-star"></i> My Astro
-                            <i className={`fas fa-chevron-${myAstroExpanded ? 'up' : 'down'} submenu-chevron`}></i>
-                          </button>
-                          {myAstroExpanded && (
-                            <div className="dropdown-submenu">
-                              {MY_DATA_MENU_ITEMS
-                                .filter((item) => !item.premium || isPremium)
-                                .map((item) => (
-                                  <a
-                                    key={item.href}
-                                    href={item.href}
-                                    className={`dropdown-submenu-item ${pathname.startsWith(item.href) ? 'active' : ''}`}
-                                    onClick={() => { setDropdownOpen(false); setMyAstroExpanded(false); }}
-                                  >
-                                    <i className={`fas ${item.icon}`}></i>
-                                    {item.label}
-                                  </a>
-                                ))}
-                            </div>
-                          )}
+                          {/* My Astro — fly-out submenu to the left */}
+                          <div className="dropdown-submenu-wrapper">
+                            <button
+                              className={`dropdown-item dropdown-submenu-trigger ${myAstroExpanded ? 'expanded' : ''}`}
+                              onClick={handleMyAstroToggle}
+                            >
+                              <i className="fas fa-star"></i> My Astro
+                              <i className={`fas fa-chevron-${myAstroExpanded ? 'up' : 'down'} submenu-chevron`}></i>
+                            </button>
+                            {myAstroExpanded && (
+                              <div className="dropdown-submenu">
+                                {MY_DATA_MENU_ITEMS
+                                  .filter((item) => !item.premium || isPremium)
+                                  .map((item) => (
+                                    <a
+                                      key={item.href}
+                                      href={item.href}
+                                      className={`dropdown-submenu-item ${pathname.startsWith(item.href) ? 'active' : ''}`}
+                                      onClick={() => { setDropdownOpen(false); setMyAstroExpanded(false); }}
+                                    >
+                                      <i className={`fas ${item.icon}`}></i>
+                                      {item.label}
+                                    </a>
+                                  ))}
+                              </div>
+                            )}
+                          </div>
 
                           <a href="/order" className="dropdown-item" onClick={() => setDropdownOpen(false)}>
                             <i className="fas fa-shopping-cart"></i> My Orders

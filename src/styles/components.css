@@ -202,6 +202,11 @@
     color: #ff4757 !important;
 }
 
+/* Wrapper for My Astro trigger + fly-out submenu (positioning anchor) */
+.dropdown-submenu-wrapper {
+    position: relative;
+}
+
 /* My Astro submenu trigger — styled like a dropdown-item but as button */
 .dropdown-submenu-trigger {
     display: flex;
@@ -218,6 +223,7 @@
     border: none;
     text-align: left;
     font-family: inherit;
+    position: relative;
 }
 
 .dropdown-submenu-trigger:hover {
@@ -244,32 +250,51 @@
     transition: transform 0.2s;
 }
 
-/* Expandable submenu inside user dropdown */
+/* Fly-out submenu — pops out to the left of the dropdown */
 .dropdown-submenu {
-    background: rgba(15, 18, 30, 0.6);
-    border-left: 2px solid #7b5bff;
-    margin: 0 8px 4px 8px;
-    border-radius: 0 0 8px 8px;
-    overflow: hidden;
-    max-height: 400px;
+    position: absolute;
+    right: 100%;
+    top: 0;
+    min-width: 220px;
+    background: linear-gradient(135deg, #1e2130, #151825);
+    border: 1px solid #3a3f50;
+    border-radius: 12px;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
+    padding: 8px 0;
+    margin-right: 6px;
+    max-height: 80vh;
     overflow-y: auto;
+    z-index: 2100;
+    animation: submenuSlideIn 0.15s ease-out;
+}
+
+@keyframes submenuSlideIn {
+    from {
+        opacity: 0;
+        transform: translateX(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
 }
 
 .dropdown-submenu-item {
     display: flex;
     align-items: center;
     gap: 10px;
-    padding: 9px 16px 9px 22px;
-    color: #8a90a0;
+    padding: 10px 16px;
+    color: #b0b7c3;
     text-decoration: none;
-    font-size: 0.92rem;
+    font-size: 0.9rem;
     transition: all 0.2s;
     cursor: pointer;
+    white-space: nowrap;
 }
 
 .dropdown-submenu-item:hover {
     background: rgba(123, 91, 255, 0.12);
-    color: #d0d4e0;
+    color: #fff;
 }
 
 .dropdown-submenu-item.active {
@@ -280,12 +305,28 @@
 .dropdown-submenu-item i {
     width: 16px;
     text-align: center;
-    color: #6b5bb8;
+    color: #7b5bff;
     font-size: 0.88rem;
 }
 
 .dropdown-submenu-item:hover i {
     color: #9d7bff;
+}
+
+/* On small screens, fall back to inline expand (no room to fly out) */
+@media (max-width: 768px) {
+    .dropdown-submenu {
+        position: static;
+        min-width: unset;
+        margin-right: 0;
+        margin: 0 8px 4px 8px;
+        border: none;
+        border-left: 2px solid #7b5bff;
+        border-radius: 0 0 8px 8px;
+        box-shadow: none;
+        background: rgba(15, 18, 30, 0.6);
+        animation: none;
+    }
 }
 
 /* Admin role badge in dropdown */
