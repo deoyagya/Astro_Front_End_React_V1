@@ -711,7 +711,7 @@ export default function AdminPipelineWizardPage() {
         {/* Triggered rules table */}
         {triggeredRules.length > 0 && (
           <>
-            <h3 style={{ color: '#9d7bff', fontFamily: "'Cinzel', serif", fontSize: '0.95rem', marginBottom: 10 }}>
+            <h3 style={{ color: '#b794ff', fontFamily: "'Cinzel', serif", fontSize: '0.95rem', marginBottom: 10 }}>
               <i className="fas fa-fire"></i> Triggered Rules
             </h3>
             <table className="rule-eval-table">
@@ -796,7 +796,7 @@ export default function AdminPipelineWizardPage() {
 
         {/* Full data tree */}
         <details style={{ marginTop: 20 }}>
-          <summary style={{ cursor: 'pointer', color: '#8a8f9d', fontSize: '0.85rem' }}>
+          <summary style={{ cursor: 'pointer', color: '#a0a8b8', fontSize: '0.9375rem' }}>
             <i className="fas fa-code"></i> Full evaluation data
           </summary>
           <div style={{ marginTop: 8 }}>
@@ -866,7 +866,7 @@ export default function AdminPipelineWizardPage() {
             flexWrap: 'wrap',
           }}>
             <div style={{ flex: 1 }}>
-              <div style={{ color: '#9d7bff', fontSize: '0.78rem', textTransform: 'uppercase', fontWeight: 700, marginBottom: 4 }}>
+              <div style={{ color: '#b794ff', fontSize: '0.875rem', textTransform: 'uppercase', fontWeight: 700, marginBottom: 4 }}>
                 Overall Verdict
               </div>
               <div style={{ color: '#e0e0e0', fontSize: '1rem', fontWeight: 600 }}>
@@ -923,7 +923,7 @@ export default function AdminPipelineWizardPage() {
 
         {/* Full data tree */}
         <details style={{ marginTop: 16 }}>
-          <summary style={{ cursor: 'pointer', color: '#8a8f9d', fontSize: '0.85rem' }}>
+          <summary style={{ cursor: 'pointer', color: '#a0a8b8', fontSize: '0.9375rem' }}>
             <i className="fas fa-code"></i> Full verdict data
           </summary>
           <div style={{ marginTop: 8 }}>
@@ -977,7 +977,7 @@ export default function AdminPipelineWizardPage() {
             <div className="score-display-label">Composite Score</div>
           </div>
           <div style={{ flex: 1, minWidth: 200 }}>
-            <div style={{ color: '#b0b7c3', fontSize: '0.88rem', marginBottom: 8 }}>
+            <div style={{ color: '#c7cfdd', fontSize: '0.88rem', marginBottom: 8 }}>
               <strong style={{ color: '#e0e0e0' }}>{rulesCount}</strong> rules evaluated
               {confidence && (
                 <> | <span className={`confidence-badge ${confidenceLevel(confidence)}`}>
@@ -1069,7 +1069,7 @@ export default function AdminPipelineWizardPage() {
             <h3><i className="fas fa-sign-in-alt"></i> Input Summary</h3>
             {strategyData && (
               <div style={{ marginBottom: 12 }}>
-                <div style={{ color: '#8a8f9d', fontSize: '0.82rem', marginBottom: 4 }}>Strategy</div>
+                <div style={{ color: '#a0a8b8', fontSize: '0.875rem', marginBottom: 4 }}>Strategy</div>
                 <div style={{ color: '#e0e0e0', fontWeight: 600 }}>
                   {strategyData.strategy || strategyData.mode || interpMode}
                 </div>
@@ -1077,14 +1077,14 @@ export default function AdminPipelineWizardPage() {
             )}
             {strategyData?.provider && (
               <div style={{ marginBottom: 12 }}>
-                <div style={{ color: '#8a8f9d', fontSize: '0.82rem', marginBottom: 4 }}>Provider</div>
+                <div style={{ color: '#a0a8b8', fontSize: '0.875rem', marginBottom: 4 }}>Provider</div>
                 <div style={{ color: '#e0e0e0', fontWeight: 600 }}>
                   {strategyData.provider}
                 </div>
               </div>
             )}
             <div style={{ marginTop: 12 }}>
-              <div style={{ color: '#8a8f9d', fontSize: '0.82rem', marginBottom: 8 }}>Strategy Routing Data</div>
+              <div style={{ color: '#a0a8b8', fontSize: '0.875rem', marginBottom: 8 }}>Strategy Routing Data</div>
               <JsonTreeViewer data={strategyData || { strategy: interpMode }} defaultExpanded={0} />
             </div>
           </div>
@@ -1102,7 +1102,7 @@ export default function AdminPipelineWizardPage() {
             {advice && <div className="llm-output-advice">{advice}</div>}
             {Array.isArray(remedies) && remedies.length > 0 && (
               <div style={{ marginTop: 12 }}>
-                <div style={{ color: '#9d7bff', fontSize: '0.85rem', fontWeight: 600, marginBottom: 6 }}>
+                <div style={{ color: '#b794ff', fontSize: '0.9375rem', fontWeight: 600, marginBottom: 6 }}>
                   Remedies
                 </div>
                 <ul className="llm-output-remedies">
@@ -1118,7 +1118,7 @@ export default function AdminPipelineWizardPage() {
         {/* AI metadata */}
         {aiMeta && Object.keys(aiMeta).length > 0 && (
           <div style={{ marginTop: 20 }}>
-            <h3 style={{ color: '#9d7bff', fontFamily: "'Cinzel', serif", fontSize: '0.95rem', marginBottom: 10 }}>
+            <h3 style={{ color: '#b794ff', fontFamily: "'Cinzel', serif", fontSize: '0.95rem', marginBottom: 10 }}>
               <i className="fas fa-microchip"></i> AI Metadata
             </h3>
             <div className="llm-meta-grid">
@@ -1192,7 +1192,7 @@ export default function AdminPipelineWizardPage() {
 
         {/* Full raw output */}
         <details style={{ marginTop: 20 }}>
-          <summary style={{ cursor: 'pointer', color: '#8a8f9d', fontSize: '0.85rem' }}>
+          <summary style={{ cursor: 'pointer', color: '#a0a8b8', fontSize: '0.9375rem' }}>
             <i className="fas fa-code"></i> Full LLM response data
           </summary>
           <div style={{ marginTop: 8 }}>

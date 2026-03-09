@@ -27,13 +27,13 @@ function DashaNode({ node, depth = 0 }) {
       >
         <div className="period">
           {hasSub && (
-            <i className={`fas fa-chevron-${expanded ? 'down' : 'right'}`} style={{ marginRight: 8, fontSize: '0.8rem' }}></i>
+            <i className={`fas fa-chevron-${expanded ? 'down' : 'right'}`} style={{ marginRight: 8, fontSize: '0.875rem' }}></i>
           )}
           {node.planet} {levelLabel}
         </div>
         <div className="dates">{startDate} — {endDate}</div>
         {isCurrent && (
-          <span style={{ color: '#2ed573', fontSize: '0.85rem', marginTop: 4, display: 'inline-block' }}>
+          <span style={{ color: '#2ed573', fontSize: '0.9375rem', marginTop: 4, display: 'inline-block' }}>
             <i className="fas fa-clock"></i> Current Period
           </span>
         )}
@@ -195,7 +195,7 @@ export default function DashaPage() {
                   ))}
                 </div>
               ) : (
-                <div className="dasha-timeline" style={{ textAlign: 'center', padding: 40, color: '#b0b7c3' }}>
+                <div className="dasha-timeline" style={{ textAlign: 'center', padding: 40, color: '#c7cfdd' }}>
                   <i className="fas fa-clock" style={{ fontSize: '2rem', marginBottom: 10, display: 'block', color: '#7b5bff' }}></i>
                   Enter your birth details and click Calculate to see your dasha timeline
                 </div>
@@ -206,7 +206,7 @@ export default function DashaPage() {
                 <>
                   <h3 className="section-subtitle">Current Antardasha</h3>
                   <div style={{ background: 'rgba(40,44,60,0.6)', padding: '15px', borderRadius: '8px' }}>
-                    <p style={{ color: '#b0b7c3' }}>
+                    <p style={{ color: '#c7cfdd' }}>
                       Current Antardasha:{' '}
                       <strong style={{ color: '#fff' }}>
                         {currentAD.planet} ({currentAD.start ? new Date(currentAD.start).getFullYear() : ''}–
@@ -214,8 +214,8 @@ export default function DashaPage() {
                       </strong>
                     </p>
                     {currentMD && (
-                      <p style={{ color: '#b0b7c3', marginTop: 10 }}>
-                        Mahadasha Lord: <strong style={{ color: '#9d7bff' }}>{currentMD.planet}</strong>
+                      <p style={{ color: '#c7cfdd', marginTop: 10 }}>
+                        Mahadasha Lord: <strong style={{ color: '#b794ff' }}>{currentMD.planet}</strong>
                       </p>
                     )}
                   </div>

@@ -105,7 +105,7 @@ export default function AdminQuestionListPage() {
               {lifeAreas.map((a) => <option key={a.id} value={a.id}>{a.name}</option>)}
             </select>
             <input className="search-input" type="text" value={searchText} onChange={(e) => setSearchText(e.target.value)} placeholder="Search questions..." />
-            <label style={{ color: '#b0b7c3', display: 'flex', alignItems: 'center', gap: 6, fontSize: '0.9rem' }}>
+            <label style={{ color: '#c7cfdd', display: 'flex', alignItems: 'center', gap: 6, fontSize: '0.9rem' }}>
               <input type="checkbox" checked={includeDeleted} onChange={(e) => setIncludeDeleted(e.target.checked)} />
               Show deleted
             </label>
@@ -132,10 +132,10 @@ export default function AdminQuestionListPage() {
               <tbody>
                 {questions.map((q) => (
                   <tr key={q.id} className={!q.is_active ? 'deleted-row' : ''}>
-                    <td style={{ fontWeight: 600, color: '#9d7bff', whiteSpace: 'nowrap' }}>{q.question_id_display}</td>
+                    <td style={{ fontWeight: 600, color: '#b794ff', whiteSpace: 'nowrap' }}>{q.question_id_display}</td>
                     <td>
                       {q.question_text}
-                      {q.rules_json && <span style={{ color: '#2ed573', marginLeft: 8, fontSize: '0.75rem' }}><i className="fas fa-code"></i> RDL</span>}
+                      {q.rules_json && <span style={{ color: '#2ed573', marginLeft: 8, fontSize: '0.875rem' }}><i className="fas fa-code"></i> RDL</span>}
                     </td>
                     <td style={{ whiteSpace: 'nowrap' }}>
                       {q.cost_amount != null ? `${q.cost_amount} ${q.cost_currency || ''}` : '—'}
@@ -163,7 +163,7 @@ export default function AdminQuestionListPage() {
               </tbody>
             </table>
           )}
-          <p style={{ color: '#8a8f9d', fontSize: '0.85rem', marginTop: 10 }}>{questions.length} question(s) found</p>
+          <p style={{ color: '#a0a8b8', fontSize: '0.9375rem', marginTop: 10 }}>{questions.length} question(s) found</p>
         </div>
       </section>
 

@@ -19,7 +19,7 @@
 }
 .wiz-page-subtitle {
   text-align: center;
-  color: #b0b7c3;
+  color: var(--text-secondary, #c7cfdd);
   font-size: 0.95rem;
   margin-bottom: 2rem;
 }
@@ -41,7 +41,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.7rem;
+  font-size: 0.875rem;
   font-weight: 600;
   color: #6b7280;
   background: #1e2130;
@@ -114,13 +114,13 @@
 }
 .wiz-cat-desc {
   font-size: 0.92rem;
-  color: #b0b7c3;
+  color: var(--text-secondary, #c7cfdd);
   line-height: 1.45;
   margin-bottom: 0.5rem;
 }
 .wiz-cat-steps {
   font-size: 0.9rem;
-  color: #7b5bff;
+  color: var(--accent, #b794ff);
   font-weight: 500;
 }
 
@@ -141,8 +141,8 @@
   margin: 0 0 0.3rem;
 }
 .wiz-step-header p {
-  color: #b0b7c3;
-  font-size: 0.88rem;
+  color: var(--text-secondary, #c7cfdd);
+  font-size: 0.9375rem;
   margin: 0;
 }
 
@@ -153,7 +153,7 @@
 .wiz-label {
   display: block;
   font-size: 0.95rem;
-  color: #e0e0e0;
+  color: var(--text-primary, #e8eaf0);
   margin-bottom: 0.4rem;
   font-weight: 500;
 }
@@ -169,7 +169,7 @@
   background: #161826;
   border: 1px solid #2a2f3e;
   border-radius: 8px;
-  color: #e0e0e0;
+  color: var(--text-primary, #e8eaf0);
   font-size: 0.9rem;
   transition: border-color 0.2s;
   box-sizing: border-box;
@@ -223,7 +223,7 @@
   background: #161826;
   border: 1px solid #2a2f3e;
   border-radius: 8px;
-  color: #b0b7c3;
+  color: var(--text-secondary, #c7cfdd);
   font-size: 0.92rem;
   cursor: pointer;
   text-align: center;
@@ -231,7 +231,7 @@
 }
 .wiz-sign-btn:hover {
   border-color: #7b5bff;
-  color: #e0e0e0;
+  color: var(--text-primary, #e8eaf0);
 }
 .wiz-sign-btn.selected {
   background: rgba(123, 91, 255, 0.15);
@@ -249,7 +249,7 @@
 }
 .wiz-planet-name {
   font-size: 0.9rem;
-  color: #e0e0e0;
+  color: var(--text-primary, #e8eaf0);
   font-weight: 500;
 }
 .wiz-planet-house-select {
@@ -288,7 +288,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.65rem;
+  font-size: 0.875rem;
   color: transparent;
   transition: all 0.15s;
 }
@@ -299,7 +299,7 @@
 }
 .wiz-toggle-label {
   font-size: 0.92rem;
-  color: #b0b7c3;
+  color: var(--text-secondary, #c7cfdd);
 }
 
 /* --- Nakshatra selector --- */
@@ -349,7 +349,7 @@
 }
 .wiz-btn-prev {
   background: #2a2f3e;
-  color: #b0b7c3;
+  color: var(--text-secondary, #c7cfdd);
 }
 .wiz-btn-prev:hover:not(:disabled) {
   background: #3a3f50;
@@ -364,11 +364,11 @@
 .wiz-btn-save {
   background: transparent;
   border: 1px solid #2a2f3e;
-  color: #b0b7c3;
+  color: var(--text-secondary, #c7cfdd);
 }
 .wiz-btn-save:hover:not(:disabled) {
   border-color: #7b5bff;
-  color: #e0e0e0;
+  color: var(--text-primary, #e8eaf0);
 }
 .wiz-btn-submit {
   background: linear-gradient(135deg, #2ed573, #26de81);
@@ -402,14 +402,14 @@
   padding: 0.6rem 1rem;
   background: none;
   border: none;
-  color: #7b5bff;
+  color: var(--accent, #b794ff);
   font-size: 0.92rem;
   cursor: pointer;
   width: 100%;
   text-align: left;
 }
 .wiz-visual-aid-toggle:hover {
-  color: #9d7bff;
+  color: var(--accent, #b794ff);
 }
 .wiz-visual-aid-body {
   padding: 0 1rem 1rem;
@@ -435,7 +435,7 @@
 .wiz-rule-badge {
   padding: 0.25rem 0.6rem;
   border-radius: 12px;
-  font-size: 0.88rem;
+  font-size: 0.9375rem;
   font-weight: 500;
 }
 .wiz-rule-badge.matched {
@@ -455,7 +455,7 @@
 }
 .wiz-review-section h3 {
   font-size: 1rem;
-  color: #e0e0e0;
+  color: var(--text-primary, #e8eaf0);
   margin: 0 0 0.5rem;
 }
 .wiz-review-grid {
@@ -468,7 +468,7 @@
   color: #6b7280;
 }
 .wiz-review-value {
-  color: #e0e0e0;
+  color: var(--text-primary, #e8eaf0);
 }
 
 /* --- Interpretation result --- */
@@ -485,7 +485,7 @@
   font-size: 1.1rem;
 }
 .wiz-interpretation-text {
-  color: #e0e0e0;
+  color: var(--text-primary, #e8eaf0);
   font-size: 0.92rem;
   line-height: 1.65;
   white-space: pre-wrap;
@@ -507,7 +507,7 @@
   to { transform: rotate(360deg); }
 }
 .wiz-processing-text {
-  color: #b0b7c3;
+  color: var(--text-secondary, #c7cfdd);
   font-size: 0.9rem;
 }
 
@@ -536,8 +536,8 @@
   font-size: 1.1rem;
 }
 .wiz-resume-modal p {
-  color: #b0b7c3;
-  font-size: 0.88rem;
+  color: var(--text-secondary, #c7cfdd);
+  font-size: 0.9375rem;
   margin-bottom: 1.5rem;
 }
 .wiz-resume-actions {
@@ -575,7 +575,7 @@
   padding: 0.3rem 0.8rem;
   border-radius: 6px;
   font-size: 0.92rem;
-  color: #9d7bff;
+  color: var(--accent, #b794ff);
   font-weight: 500;
   margin-bottom: 1rem;
 }

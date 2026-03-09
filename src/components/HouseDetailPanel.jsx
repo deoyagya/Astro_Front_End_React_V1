@@ -38,8 +38,8 @@ export default function HouseDetailPanel({
             <i className="fas fa-home" style={{ marginRight: 8 }}></i>
             House {houseNum} — {signName}
           </h4>
-          <div style={{ color: '#b0b7c3', fontSize: '0.85rem', marginTop: 4 }}>
-            Lord: <span style={{ color: '#9d7bff', fontWeight: 600 }}>{signLord}</span>
+          <div style={{ color: '#c7cfdd', fontSize: '0.9375rem', marginTop: 4 }}>
+            Lord: <span style={{ color: '#b794ff', fontWeight: 600 }}>{signLord}</span>
           </div>
         </div>
         <button className="house-detail-close" onClick={onClose} title="Close">
@@ -49,7 +49,7 @@ export default function HouseDetailPanel({
 
       {/* Planets */}
       {planets.length === 0 ? (
-        <div style={{ color: '#8a8f9d', textAlign: 'center', padding: '16px 0', fontSize: '0.9rem' }}>
+        <div style={{ color: '#a0a8b8', textAlign: 'center', padding: '16px 0', fontSize: '0.9rem' }}>
           <i className="fas fa-moon" style={{ marginRight: 6, opacity: 0.5 }}></i>
           No planets in this house
         </div>

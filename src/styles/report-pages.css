@@ -8,7 +8,7 @@
 .report-page {
     font-family: 'Montserrat', sans-serif;
     background: #0a0d14;
-    color: #e0e0e0;
+    color: var(--text-primary, #e8eaf0);
     line-height: 1.6;
 }
 .report-page .container {
@@ -33,7 +33,7 @@
     margin-bottom: 10px;
 }
 .report-page .report-header .subtitle {
-    color: #b0b7c3;
+    color: var(--text-secondary, #c7cfdd);
     font-size: 1.2rem;
 }
 .report-page .report-header .badge {
@@ -55,7 +55,7 @@
 }
 .report-page .executive-summary h2 {
     font-family: 'Cinzel', serif;
-    color: #9d7bff;
+    color: var(--accent-heading, #c4b0ff);
     margin-bottom: 20px;
     font-size: 1.8rem;
 }
@@ -72,7 +72,7 @@
     text-align: center;
 }
 .report-page .summary-item .label {
-    color: #b0b7c3;
+    color: var(--text-secondary, #c7cfdd);
     font-size: 0.9rem;
     text-transform: uppercase;
     letter-spacing: 1px;
@@ -81,7 +81,7 @@
 .report-page .summary-item .value {
     font-size: 1.5rem;
     font-weight: 600;
-    color: #9d7bff;
+    color: var(--accent, #b794ff);
 }
 .report-page .chapter {
     background: rgba(20,23,36,0.9);
@@ -93,7 +93,7 @@
 }
 .report-page .chapter h2 {
     font-family: 'Cinzel', serif;
-    color: #9d7bff;
+    color: var(--accent-heading, #c4b0ff);
     margin-bottom: 25px;
     border-bottom: 2px solid #7b5bff;
     padding-bottom: 10px;
@@ -105,7 +105,7 @@
     font-size: 1.5rem;
 }
 .report-page .chapter h4 {
-    color: #b0b7c3;
+    color: var(--text-secondary, #c7cfdd);
     margin: 25px 0 10px;
     font-size: 1.2rem;
 }
@@ -143,7 +143,7 @@
 .report-page .career-item .score {
     font-size: 1.3rem;
     font-weight: 600;
-    color: #9d7bff;
+    color: var(--accent, #b794ff);
     display: block;
     margin-bottom: 8px;
 }
@@ -163,14 +163,14 @@
 .report-page .timeline-item .period {
     font-size: 1.2rem;
     font-weight: 700;
-    color: #9d7bff;
+    color: var(--accent, #b794ff);
     margin-bottom: 10px;
 }
 .report-page .badge {
     display: inline-block;
     padding: 4px 12px;
     border-radius: 20px;
-    font-size: 0.8rem;
+    font-size: 0.875rem;
     font-weight: 600;
     text-transform: uppercase;
 }
@@ -195,7 +195,7 @@
     font-weight: 600;
 }
 .report-page td {
-    color: #e0e0e0;
+    color: var(--text-primary, #e8eaf0);
 }
 .report-page .financial-grid {
     display: grid;
@@ -210,14 +210,14 @@
     border: 1px solid #2a2f3e;
 }
 .report-page .financial-card h4 {
-    color: #9d7bff;
+    color: var(--accent-heading, #c4b0ff);
     margin-bottom: 10px;
 }
 .report-page .tag {
     display: inline-block;
     padding: 4px 12px;
     border-radius: 20px;
-    font-size: 0.8rem;
+    font-size: 0.875rem;
     font-weight: 600;
     background: #2ed573;
     color: white;
@@ -257,7 +257,7 @@
 .report-page .btn-outline {
     background: transparent;
     border: 1px solid #7b5bff;
-    color: #e0e0e0;
+    color: var(--text-primary, #e8eaf0);
 }
 .report-page .btn-outline:hover {
     background: rgba(123,91,255,0.1);
@@ -289,7 +289,7 @@
 .report-page .cart-header h1 {
     font-family: 'Cinzel', serif;
     font-size: 2.5rem;
-    color: #9d7bff;
+    color: var(--accent-heading, #c4b0ff);
     margin-bottom: 10px;
 }
 .report-page .report-list {
@@ -322,11 +322,11 @@
     flex: 1;
 }
 .report-page .report-info h3 {
-    color: #9d7bff;
+    color: var(--accent-heading, #c4b0ff);
     margin-bottom: 5px;
 }
 .report-page .report-info p {
-    color: #b0b7c3;
+    color: var(--text-secondary, #c7cfdd);
     font-size: 0.9rem;
 }
 .report-page .report-price {
@@ -349,13 +349,13 @@
 .report-page .reports-loading {
     text-align: center;
     padding: 60px 20px;
-    color: #b0b7c3;
+    color: var(--text-secondary, #c7cfdd);
     font-size: 1.1rem;
 }
 .report-page .reports-loading i {
     display: block;
     font-size: 2rem;
-    color: #7b5bff;
+    color: var(--accent, #b794ff);
     margin-bottom: 15px;
     animation: spin 1s linear infinite;
 }
@@ -377,7 +377,7 @@
     text-align: right;
 }
 .report-page .cart-summary h3 {
-    color: #9d7bff;
+    color: var(--accent-heading, #c4b0ff);
     margin-bottom: 15px;
     font-size: 1.5rem;
 }
@@ -388,7 +388,7 @@
     margin: 20px 0;
 }
 .report-page .total-amount span {
-    color: #9d7bff;
+    color: var(--accent, #b794ff);
 }
 .report-page .place-order-btn {
     padding: 15px 40px;
@@ -398,7 +398,7 @@
 .report-page .empty-cart {
     text-align: center;
     padding: 40px;
-    color: #b0b7c3;
+    color: var(--text-secondary, #c7cfdd);
     font-size: 1.2rem;
 }
 .report-page .payment-header {
@@ -408,7 +408,7 @@
 .report-page .payment-header h1 {
     font-family: 'Cinzel', serif;
     font-size: 2.5rem;
-    color: #9d7bff;
+    color: var(--accent-heading, #c4b0ff);
     margin-bottom: 10px;
 }
 .report-page .payment-methods {
@@ -447,7 +447,7 @@
 }
 .report-page .method-content i {
     font-size: 2rem;
-    color: #9d7bff;
+    color: var(--accent, #b794ff);
     width: 40px;
     text-align: center;
 }
@@ -456,7 +456,7 @@
     margin-bottom: 4px;
 }
 .report-page .method-content p {
-    color: #b0b7c3;
+    color: var(--text-secondary, #c7cfdd);
     font-size: 0.9rem;
 }
 .report-page .payment-actions {

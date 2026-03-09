@@ -594,7 +594,7 @@ export default function AdminRuleCVWizardPage() {
       <hr className="cv-separator" />
 
       {/* Birth Data */}
-      <h3 style={{ margin: '0 0 14px', color: '#9d7bff', fontSize: '0.95rem' }}>
+      <h3 style={{ margin: '0 0 14px', color: '#b794ff', fontSize: '0.95rem' }}>
         <i className="fas fa-user" style={{ marginRight: 8 }}></i> Birth Data
       </h3>
 
@@ -629,7 +629,7 @@ export default function AdminRuleCVWizardPage() {
           onLocationSelect={loc => setBirthData(prev => ({ ...prev, birthPlace: loc }))}
         />
         {birthData.birthPlace && (
-          <div style={{ fontSize: '0.78rem', color: '#8a8f9d', marginTop: 4 }}>
+          <div style={{ fontSize: '0.875rem', color: '#a0a8b8', marginTop: 4 }}>
             Lat: {birthData.birthPlace.lat?.toFixed(4)}, Lon: {birthData.birthPlace.lon?.toFixed(4)}
             {birthData.birthPlace.timezone && ` — TZ: ${birthData.birthPlace.timezone}`}
           </div>
@@ -689,7 +689,7 @@ export default function AdminRuleCVWizardPage() {
 
         {/* Right: Sidebar reference */}
         <div className="cv-sidebar">
-          <div style={{ fontWeight: 600, color: '#9d7bff', marginBottom: 10, fontSize: '0.85rem' }}>
+          <div style={{ fontWeight: 600, color: '#b794ff', marginBottom: 10, fontSize: '0.9375rem' }}>
             <i className="fas fa-book"></i> Condition Types Reference
           </div>
           {conditionTypes?.categories && Object.entries(conditionTypes.categories).map(([cat, types]) => (
@@ -714,7 +714,7 @@ export default function AdminRuleCVWizardPage() {
           {enums && (
             <>
               <hr className="cv-separator" />
-              <div style={{ fontWeight: 600, color: '#9d7bff', marginBottom: 10, fontSize: '0.85rem' }}>
+              <div style={{ fontWeight: 600, color: '#b794ff', marginBottom: 10, fontSize: '0.9375rem' }}>
                 <i className="fas fa-list"></i> Enums Reference
               </div>
               {['planets', 'houses', 'dignities', 'charts', 'dasha_levels'].map(key => (
@@ -774,10 +774,10 @@ export default function AdminRuleCVWizardPage() {
           </div>
           {selectedPrompt && (
             <div style={{ marginTop: 12 }}>
-              <div style={{ fontSize: '0.82rem', color: '#8a8f9d', marginBottom: 6 }}>Prompt Preview:</div>
+              <div style={{ fontSize: '0.875rem', color: '#a0a8b8', marginBottom: 6 }}>Prompt Preview:</div>
               <div className="cv-prompt-preview">{selectedPrompt.content}</div>
               {selectedPrompt.template_vars?.length > 0 && (
-                <div style={{ marginTop: 8, fontSize: '0.78rem', color: '#8a8f9d' }}>
+                <div style={{ marginTop: 8, fontSize: '0.875rem', color: '#a0a8b8' }}>
                   <strong>Variables:</strong> {selectedPrompt.template_vars.map(v => `{${v}}`).join(', ')}
                 </div>
               )}
@@ -815,7 +815,7 @@ export default function AdminRuleCVWizardPage() {
           <p><span className="label">Life Area:</span> {selectedArea?.name || '—'}</p>
           <p><span className="label">Question:</span> {useCustomQuestion ? customQuestion : (selectedQuestion?.question_text || '—')}</p>
           <p><span className="label">Query Type:</span>
-            <span style={{ padding: '2px 8px', borderRadius: 6, background: 'rgba(123,91,255,0.15)', color: '#9d7bff', fontSize: '0.82rem', fontWeight: 600, marginLeft: 4 }}>
+            <span style={{ padding: '2px 8px', borderRadius: 6, background: 'rgba(123,91,255,0.15)', color: '#b794ff', fontSize: '0.875rem', fontWeight: 600, marginLeft: 4 }}>
               {queryType}
             </span>
           </p>
@@ -849,7 +849,7 @@ export default function AdminRuleCVWizardPage() {
 
         {dryRunResult && (
           <span style={{
-            padding: '4px 12px', borderRadius: 6, fontSize: '0.82rem', fontWeight: 600,
+            padding: '4px 12px', borderRadius: 6, fontSize: '0.875rem', fontWeight: 600,
             background: dryRunResult.valid ? 'rgba(46,213,115,0.15)' : 'rgba(255,71,87,0.15)',
             color: dryRunResult.valid ? '#2ed573' : '#ff4757',
           }}>
@@ -864,7 +864,7 @@ export default function AdminRuleCVWizardPage() {
         <div className="cv-running-indicator">
           <i className="fas fa-spinner fa-spin"></i>
           <p>Running Cross-Validation Pipeline...</p>
-          <p style={{ fontSize: '0.78rem' }}>Producer (Claude) and Reviewer (Gemini) are analyzing your rules. This may take 30-120 seconds.</p>
+          <p style={{ fontSize: '0.875rem' }}>Producer (Claude) and Reviewer (Gemini) are analyzing your rules. This may take 30-120 seconds.</p>
         </div>
       )}
     </div>
@@ -944,12 +944,12 @@ export default function AdminRuleCVWizardPage() {
                     </span>
                   )}
                   {rf.alignment_score != null && (
-                    <span style={{ fontSize: '0.78rem', color: '#8a8f9d', fontWeight: 400 }}>
+                    <span style={{ fontSize: '0.875rem', color: '#a0a8b8', fontWeight: 400 }}>
                       — Alignment: {rf.alignment_score?.toFixed(0)}%
                     </span>
                   )}
                 </h3>
-                <i className={`fas fa-chevron-${isExpanded ? 'up' : 'down'}`} style={{ color: '#8a8f9d' }}></i>
+                <i className={`fas fa-chevron-${isExpanded ? 'up' : 'down'}`} style={{ color: '#a0a8b8' }}></i>
               </div>
 
               {isExpanded && (
@@ -963,20 +963,20 @@ export default function AdminRuleCVWizardPage() {
 
                     {po.proposed_analysis && (
                       <div style={{ marginBottom: 12 }}>
-                        <div style={{ fontSize: '0.82rem', color: '#8a8f9d', marginBottom: 6 }}>Proposed Analysis:</div>
+                        <div style={{ fontSize: '0.875rem', color: '#a0a8b8', marginBottom: 6 }}>Proposed Analysis:</div>
                         <JsonTreeViewer data={po.proposed_analysis} defaultExpanded={1} />
                       </div>
                     )}
 
                     {po.calculation_logic && (
                       <div style={{ marginBottom: 12 }}>
-                        <div style={{ fontSize: '0.82rem', color: '#8a8f9d', marginBottom: 6 }}>Calculation Logic:</div>
+                        <div style={{ fontSize: '0.875rem', color: '#a0a8b8', marginBottom: 6 }}>Calculation Logic:</div>
                         <div className="cv-prompt-preview" style={{ maxHeight: 150 }}>{po.calculation_logic}</div>
                       </div>
                     )}
 
                     {po.confidence_pct != null && (
-                      <div style={{ fontSize: '0.85rem', color: '#e0e0e0' }}>
+                      <div style={{ fontSize: '0.9375rem', color: '#e0e0e0' }}>
                         <strong>Confidence:</strong> {po.confidence_pct?.toFixed(0)}%
                       </div>
                     )}
@@ -999,15 +999,15 @@ export default function AdminRuleCVWizardPage() {
 
                     <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', marginBottom: 12 }}>
                       <div>
-                        <span style={{ fontSize: '0.82rem', color: '#8a8f9d' }}>Alignment: </span>
+                        <span style={{ fontSize: '0.875rem', color: '#a0a8b8' }}>Alignment: </span>
                         <strong style={{ color: '#e0e0e0' }}>{rf.alignment_score?.toFixed(0) || '?'}%</strong>
                       </div>
                       <div>
-                        <span style={{ fontSize: '0.82rem', color: '#8a8f9d' }}>Verdict: </span>
+                        <span style={{ fontSize: '0.875rem', color: '#a0a8b8' }}>Verdict: </span>
                         {rf.verdict && <span className={`cv-verdict-badge ${rf.verdict.toLowerCase()}`}>{rf.verdict}</span>}
                       </div>
                       <div>
-                        <span style={{ fontSize: '0.82rem', color: '#8a8f9d' }}>Rules Missed: </span>
+                        <span style={{ fontSize: '0.875rem', color: '#a0a8b8' }}>Rules Missed: </span>
                         <strong style={{ color: rf.rules_missed ? '#ff4757' : '#2ed573' }}>
                           {rf.rules_missed ? 'Yes' : 'No'}
                         </strong>
@@ -1017,7 +1017,7 @@ export default function AdminRuleCVWizardPage() {
                     {/* Missed rules */}
                     {rf.rules_missed_list?.length > 0 && (
                       <div style={{ marginBottom: 12 }}>
-                        <div style={{ fontSize: '0.82rem', color: '#8a8f9d', marginBottom: 6 }}>Missed Rules:</div>
+                        <div style={{ fontSize: '0.875rem', color: '#a0a8b8', marginBottom: 6 }}>Missed Rules:</div>
                         <div className="cv-missed-rules">
                           {rf.rules_missed_list.map((r, i) => (
                             <span key={i} className="cv-missed-rule-chip">{r}</span>
@@ -1029,7 +1029,7 @@ export default function AdminRuleCVWizardPage() {
                     {/* Recommendations */}
                     {rf.recommendations?.length > 0 && (
                       <div style={{ marginBottom: 12 }}>
-                        <div style={{ fontSize: '0.82rem', color: '#8a8f9d', marginBottom: 8 }}>
+                        <div style={{ fontSize: '0.875rem', color: '#a0a8b8', marginBottom: 8 }}>
                           Recommendations ({rf.recommendations.length}):
                         </div>
                         <div className="cv-rec-list">
@@ -1043,7 +1043,7 @@ export default function AdminRuleCVWizardPage() {
                                     <i className={`fas ${recType.icon}`}></i> {recType.label}
                                   </span>
                                   <span className={`cv-severity ${sevCss}`}>{rec.severity}</span>
-                                  {rec.rec_id && <span style={{ fontSize: '0.72rem', color: '#8a8f9d' }}>{rec.rec_id}</span>}
+                                  {rec.rec_id && <span style={{ fontSize: '0.875rem', color: '#a0a8b8' }}>{rec.rec_id}</span>}
                                 </div>
                                 <div className="cv-rec-field"><span className="field-label">Finding:</span> {rec.finding}</div>
                                 <div className="cv-rec-field"><span className="field-label">Expected Fix:</span> {rec.expected_fix}</div>
@@ -1060,7 +1060,7 @@ export default function AdminRuleCVWizardPage() {
                     {/* Questions to producer */}
                     {rf.questions_to_producer?.length > 0 && (
                       <div>
-                        <div style={{ fontSize: '0.82rem', color: '#8a8f9d', marginBottom: 6 }}>Questions to Producer:</div>
+                        <div style={{ fontSize: '0.875rem', color: '#a0a8b8', marginBottom: 6 }}>Questions to Producer:</div>
                         <ul className="cv-questions-list">
                           {rf.questions_to_producer.map((q, i) => <li key={i}>{q}</li>)}
                         </ul>
@@ -1116,7 +1116,7 @@ export default function AdminRuleCVWizardPage() {
         {/* Summary */}
         {cvResult.summary && (
           <div style={{ marginTop: 20 }}>
-            <div style={{ fontSize: '0.82rem', color: '#8a8f9d', marginBottom: 8 }}>Pipeline Summary:</div>
+            <div style={{ fontSize: '0.875rem', color: '#a0a8b8', marginBottom: 8 }}>Pipeline Summary:</div>
             <div className="cv-summary-text">{cvResult.summary}</div>
           </div>
         )}

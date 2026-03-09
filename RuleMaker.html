@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vedic Astrology · Rule builder (prototype)</title>
+    <!-- Font & Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            background: #f1f4f9;
+            font-family: 'Inter', sans-serif;
+            padding: 2rem;
+            color: #1e293b;
+        }
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 35px -8px rgba(0,10,30,0.15);
+            overflow: hidden;
+        }
+        /* header */
+        .toolbar {
+            background: #0f172a;
+            padding: 1rem 1.5rem;
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            align-items: center;
+            border-bottom: 2px solid #334155;
+        }
+        .toolbar button {
+            background: #1e293b;
+            border: none;
+            color: #e2e8f0;
+            font-weight: 500;
+            font-size: 0.9rem;
+            padding: 0.5rem 1rem;
+            border-radius: 40px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: 0.15s;
+            border: 1px solid #334155;
+        }
+        .toolbar button:hover {
+            background: #2d3b4f;
+            color: white;
+            border-color: #5f6c84;
+        }
+        .toolbar button i {
+            font-size: 0.9rem;
+            color: #94a3b8;
+        }
+        .spacer {
+            flex: 1;
+        }
+        .badge {
+            background: #2d3b4f;
+            color: #b9c7dd;
+            padding: 0.3rem 1rem;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            letter-spacing: 0.3px;
+        }
+        /* main rule area */
+        .rule-canvas {
+            padding: 1.8rem 2rem;
+            background: #ffffff;
+            min-height: 380px;
+        }
+        /* groups & rows */
+        .rule-group {
+            background: #f8fafc;
+            border-left: 4px solid #5f6c84;
+            border-radius: 12px;
+            padding: 1.2rem 1.2rem 0.8rem 1.2rem;
+            margin-bottom: 1.2rem;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+        }
+        .rule-group .group-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+        .group-logic {
+            background: #e6edf5;
+            border-radius: 30px;
+            padding: 0.2rem 0.4rem;
+            display: inline-flex;
+            border: 1px solid #cbd5e1;
+        }
+        .group-logic button {
+            background: transparent;
+            border: none;
+            padding: 0.3rem 1rem;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 0.8rem;
+            cursor: pointer;
+            color: #475569;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+        .group-logic button.active {
+            background: #1e293b;
+            color: white;
+        }
+        .group-logic button:first-child.active {
+            background: #2563eb;
+        }
+        .group-logic button:last-child.active {
+            background: #b45309;
+        }
+        .group-actions {
+            margin-left: auto;
+            display: flex;
+            gap: 6px;
+        }
+        .group-actions button {
+            background: transparent;
+            border: none;
+            color: #64748b;
+            font-size: 1rem;
+            padding: 4px 8px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        .group-actions button:hover {
+            background: #e2e8f0;
+            color: #0f172a;
+        }
+        /* condition row */
+        .condition-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: white;
+            padding: 10px 16px;
+            border-radius: 60px;
+            margin-bottom: 10px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+            transition: 0.1s;
+        }
+        .condition-row:hover {
+            border-color: #b9c7dd;
+            background: #fcfdff;
+        }
+        .not-toggle {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            color: #dc2626;
+            font-weight: 500;
+            font-size: 0.75rem;
+            background: #fee2e2;
+            padding: 4px 8px;
+            border-radius: 30px;
+            cursor: pointer;
+        }
+        .not-toggle i {
+            font-size: 0.7rem;
+        }
+        .not-toggle.active {
+            background: #dc2626;
+            color: white;
+        }
+        .subject-select, .relation-select, .object-select {
+            background: #f1f4f9;
+            border: 1px solid #cbd5e1;
+            border-radius: 30px;
+            padding: 0.4rem 1rem;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: #1e293b;
+            outline: none;
+            cursor: pointer;
+            min-width: 110px;
+        }
+        .subject-select { background: #ecfdf5; border-color: #a7f3d0; }
+        .relation-select { background: #fff7ed; border-color: #fed7aa; }
+        .object-select { background: #eff6ff; border-color: #bfdbfe; }
+        .drag-handle {
+            color: #94a3b8;
+            font-size: 1rem;
+            cursor: grab;
+            margin-right: 4px;
+        }
+        .row-actions {
+            margin-left: auto;
+            display: flex;
+            gap: 4px;
+        }
+        .row-actions button {
+            background: transparent;
+            border: none;
+            color: #94a3b8;
+            padding: 4px 6px;
+            border-radius: 20px;
+            cursor: pointer;
+        }
+        .row-actions button:hover {
+            background: #e2e8f0;
+            color: #475569;
+        }
+        .connector {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin: 6px 0 10px 50px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #475569;
+        }
+        .connector select {
+            background: white;
+            border: 1px solid #cbd5e1;
+            border-radius: 30px;
+            padding: 0.2rem 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+        }
+        .footer-bar {
+            background: #f0f3f8;
+            padding: 1rem 2rem;
+            display: flex;
+            gap: 1.5rem;
+            border-top: 1px solid #dce3ec;
+            align-items: center;
+        }
+        .footer-bar button {
+            background: white;
+            border: 1px solid #bac8dc;
+            padding: 0.6rem 1.4rem;
+            border-radius: 40px;
+            font-weight: 500;
+            color: #1e293b;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: 0.1s;
+        }
+        .footer-bar button.primary {
+            background: #0f172a;
+            border-color: #0f172a;
+            color: white;
+        }
+        .footer-bar button.primary i {
+            color: #94a3b8;
+        }
+        .footer-bar button:hover {
+            background: #e2e8f0;
+        }
+        .footer-bar button.primary:hover {
+            background: #1e293b;
+        }
+        .chip {
+            background: #e9eef3;
+            padding: 0.25rem 0.8rem;
+            border-radius: 30px;
+            font-size: 0.75rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .sample-rule {
+            margin-top: 16px;
+            background: #ecfdf5;
+            border-radius: 12px;
+            padding: 8px 16px;
+            font-size: 0.85rem;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        i.fa, i.fas, i.far { pointer-events: none; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <!-- top toolbar -->
+    <div class="toolbar">
+        <button id="addConditionBtn"><i class="fas fa-plus-circle"></i> Condition</button>
+        <button id="addGroupBtn"><i class="fas fa-layer-group"></i> Group</button>
+        <button><i class="fas fa-copy"></i> Duplicate</button>
+        <span class="spacer"></span>
+        <span class="badge"><i class="far fa-moon"></i> Janma Jyotish</span>
+    </div>
+
+    <!-- main rule canvas -->
+    <div class="rule-canvas" id="ruleCanvas">
+        <!-- first group (default) -->
+        <div class="rule-group" id="group1">
+            <div class="group-header">
+                <div class="group-logic" id="groupLogic1">
+                    <button class="active" data-group="1" data-logic="AND">AND</button>
+                    <button data-group="1" data-logic="OR">OR</button>
+                </div>
+                <span style="font-size:0.8rem; color:#475569;"><i class="far fa-square" style="margin-right:4px;"></i>Group 1</span>
+                <div class="group-actions">
+                    <button title="duplicate group"><i class="far fa-copy"></i></button>
+                    <button title="delete group"><i class="far fa-trash-alt"></i></button>
+                </div>
+            </div>
+
+            <!-- condition row 1 -->
+            <div class="condition-row" id="row1_1">
+                <span class="drag-handle"><i class="fas fa-grip-vertical"></i></span>
+                <span class="not-toggle" id="not1_1"><i class="fas fa-ban"></i> NOT</span>
+                <select class="subject-select">
+                    <option value="planet" selected>Planet</option>
+                    <option value="houseLord">House lord</option>
+                    <option value="rashiLord">Rashi lord</option>
+                    <option value="rashi">Rashi</option>
+                </select>
+                <select class="relation-select">
+                    <option value="in" selected>is in</option>
+                    <option value="aspects">aspects</option>
+                    <option value="transits">transits</option>
+                    <option value="lordOf">is lord of</option>
+                </select>
+                <select class="object-select">
+                    <optgroup label="Houses">
+                        <option value="h1" selected>House 1</option>
+                        <option value="h2">House 2</option>
+                        <option value="h3">House 3</option>
+                        <option value="h4">House 4</option>
+                        <option value="h5">House 5</option>
+                        <option value="h6">House 6</option>
+                        <option value="h7">House 7</option>
+                        <option value="h8">House 8</option>
+                        <option value="h9">House 9</option>
+                        <option value="h10">House 10</option>
+                        <option value="h11">House 11</option>
+                        <option value="h12">House 12</option>
+                    </optgroup>
+                    <optgroup label="Planets">
+                        <option value="sun">Sun</option>
+                        <option value="moon">Moon</option>
+                        <option value="mars">Mars</option>
+                        <option value="mercury">Mercury</option>
+                        <option value="jupiter">Jupiter</option>
+                        <option value="venus">Venus</option>
+                        <option value="saturn">Saturn</option>
+                    </optgroup>
+                    <optgroup label="Nakshatra">
+                        <option value="ashwini">Ashwini</option>
+                        <option value="rohini">Rohini</option>
+                        <option value="mrigashira">Mrigashira</option>
+                        <option value="pushya">Pushya</option>
+                    </optgroup>
+                    <optgroup label="Rashi">
+                        <option value="aries">Aries</option>
+                        <option value="taurus">Taurus</option>
+                        <option value="gemini">Gemini</option>
+                        <option value="cancer">Cancer</option>
+                        <option value="leo">Leo</option>
+                    </optgroup>
+                </select>
+                <div class="row-actions">
+                    <button title="add condition below"><i class="fas fa-plus"></i></button>
+                    <button title="delete"><i class="far fa-trash-alt"></i></button>
+                </div>
+            </div>
+
+            <!-- connector AND/OR between rows (inside group) -->
+            <div class="connector">
+                <span>⤷</span>
+                <select id="connector1_2">
+                    <option value="AND" selected>AND</option>
+                    <option value="OR">OR</option>
+                </select>
+                <span>next condition</span>
+            </div>
+
+            <!-- condition row 2 (more complex) -->
+            <div class="condition-row" id="row1_2">
+                <span class="drag-handle"><i class="fas fa-grip-vertical"></i></span>
+                <span class="not-toggle" id="not1_2"><i class="fas fa-ban"></i> NOT</span>
+                <select class="subject-select">
+                    <option value="planet">Planet</option>
+                    <option value="houseLord">House lord</option>
+                    <option value="rashiLord" selected>Rashi lord</option>
+                </select>
+                <select class="relation-select">
+                    <option value="in">is in</option>
+                    <option value="aspects" selected>aspects</option>
+                    <option value="transits">transits</option>
+                </select>
+                <select class="object-select">
+                    <optgroup label="Planets">
+                        <option value="jupiter">Jupiter</option>
+                        <option value="venus">Venus</option>
+                        <option value="saturn" selected>Saturn</option>
+                    </optgroup>
+                    <optgroup label="Houses">
+                        <option value="h1">House 1</option>
+                        <option value="h7">House 7</option>
+                    </optgroup>
+                </select>
+                <div class="row-actions">
+                    <button><i class="fas fa-plus"></i></button>
+                    <button><i class="far fa-trash-alt"></i></button>
+                </div>
+            </div>
+
+            <!-- hint: you can add more rows -->
+        </div>
+
+        <!-- connector outside group (main AND/OR) -->
+        <div class="connector" style="margin-left: 30px;">
+            <span>⎯</span>
+            <select id="mainConnector">
+                <option value="AND" selected>AND</option>
+                <option value="OR">OR</option>
+            </select>
+            <span>next group / condition</span>
+        </div>
+
+        <!-- second group (empty, just to show nesting potential) -->
+        <div class="rule-group" style="background:#f1f5f9;" id="group2">
+            <div class="group-header">
+                <div class="group-logic" id="groupLogic2">
+                    <button class="active" data-group="2" data-logic="AND">AND</button>
+                    <button data-group="2" data-logic="OR">OR</button>
+                </div>
+                <span style="font-size:0.8rem; color:#475569;"><i class="far fa-square"></i> Group 2 (nested)</span>
+                <div class="group-actions">
+                    <button><i class="far fa-copy"></i></button>
+                    <button><i class="far fa-trash-alt"></i></button>
+                </div>
+            </div>
+            <!-- one row inside group 2 -->
+            <div class="condition-row">
+                <span class="drag-handle"><i class="fas fa-grip-vertical"></i></span>
+                <span class="not-toggle"><i class="fas fa-ban"></i> NOT</span>
+                <select class="subject-select">
+                    <option value="planet">Planet</option>
+                    <option value="transit" selected>Transit</option>
+                </select>
+                <select class="relation-select">
+                    <option value="in">is in</option>
+                    <option value="aspects">aspects</option>
+                    <option value="transits" selected>transits</option>
+                </select>
+                <select class="object-select">
+                    <optgroup label="Rashi">
+                        <option value="capricorn">Capricorn</option>
+                        <option value="sagittarius">Sagittarius</option>
+                    </optgroup>
+                </select>
+                <div class="row-actions">
+                    <button><i class="fas fa-plus"></i></button>
+                    <button><i class="far fa-trash-alt"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- sample rule description (static) -->
+        <div class="sample-rule">
+            <i class="fas fa-scroll" style="color: #065f46;"></i>
+            <span><strong>Current rule:</strong> (Sun in House 1) AND (Rashi lord aspects Saturn) <span style="font-family: monospace;">[AND]</span> (Transit NOT in Capricorn) </span>
+        </div>
+    </div>
+
+    <!-- bottom footer with actions -->
+    <div class="footer-bar">
+        <button class="primary" id="testRuleBtn"><i class="fas fa-flask"></i> Test rule</button>
+        <button><i class="fas fa-save"></i> Save</button>
+        <button><i class="fas fa-code"></i> Export JSON</button>
+        <span style="flex:1"></span>
+        <span class="chip"><i class="fas-regular fa-circle-check"></i> 3 conditions · 2 groups</span>
+    </div>
+</div>
+
+<!-- minimal JavaScript for interactivity (prototype) -->
+<script>
+    (function() {
+        // toggle NOT style
+        document.querySelectorAll('.not-toggle').forEach(el => {
+            el.addEventListener('click', function(e) {
+                e.preventDefault();
+                this.classList.toggle('active');
+                // visual only
+            });
+        });
+
+        // group logic toggle (AND/OR) - simple active class switch
+        document.querySelectorAll('.group-logic button').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const parentDiv = this.closest('.group-logic');
+                parentDiv.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
+        // add condition (dumb mock: just alert)
+        document.getElementById('addConditionBtn').addEventListener('click', function() {
+            alert('[mock] add condition row – in real build, a new row would appear.');
+        });
+
+        // add group
+        document.getElementById('addGroupBtn').addEventListener('click', function() {
+            alert('[mock] add group – a nested group container would be inserted.');
+        });
+
+        // test rule
+        document.getElementById('testRuleBtn').addEventListener('click', function() {
+            alert('✅ Rule evaluated (static mock):\nSun in House 1 = true\nRashi lord aspects Saturn = false\nTransit NOT in Capricorn = true\nOverall = false (AND condition)');
+        });
+
+        // connector selects (no logic, just UI)
+        // row delete buttons
+        document.querySelectorAll('.row-actions button .fa-trash-alt').forEach(icon => {
+            icon.parentElement.addEventListener('click', function(e) {
+                const row = this.closest('.condition-row');
+                if (row) {
+                    if (confirm('Remove condition row?')) {
+                        row.style.opacity = '0.3'; // just mock
+                        setTimeout(() => { row.remove(); }, 200);
+                    }
+                }
+            });
+        });
+
+        // duplicate / delete group (minimal)
+        document.querySelectorAll('.group-actions button .fa-trash-alt').forEach(icon => {
+            icon.parentElement.addEventListener('click', function(e) {
+                const group = this.closest('.rule-group');
+                if (group && confirm('Remove whole group?')) {
+                    group.remove();
+                }
+            });
+        });
+
+        document.querySelectorAll('.group-actions button .fa-copy').forEach(icon => {
+            icon.parentElement.addEventListener('click', function() {
+                alert('[mock] duplicate group');
+            });
+        });
+
+        // add row inside group via plus button (mock)
+        document.querySelectorAll('.row-actions button .fa-plus').forEach(icon => {
+            icon.parentElement.addEventListener('click', function() {
+                alert('[mock] add new condition below');
+            });
+        });
+
+        // subject/relation/object changes: show mock info
+        const selects = document.querySelectorAll('.subject-select, .relation-select, .object-select');
+        selects.forEach(s => {
+            s.addEventListener('change', function() {
+                // just a subtle hint
+                this.style.backgroundColor = '#fef9c3';
+                setTimeout(() => this.style.backgroundColor = '', 150);
+            });
+        });
+
+        // drag handle (just aesthetic)
+        console.log('prototype ready — drag & drop not implemented, but visual elements are in place');
+    })();
+</script>
+
+<!-- extra style for active NOT -->
+<style>
+    .not-toggle.active {
+        background: #dc2626;
+        color: white;
+        border-color: #b91c1c;
+    }
+    .not-toggle.active i {
+        color: white;
+    }
+    .rule-group:has(.rule-group) {
+        margin-left: 24px;
+        border-left-color: #2563eb;
+    }
+    .condition-row select {
+        cursor: pointer;
+    }
+    /* subtle placeholder */
+    .rule-canvas {
+        transition: all 0.2s;
+    }
+</style>
+</body>
+</html>

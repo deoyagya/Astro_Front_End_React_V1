@@ -93,20 +93,20 @@ export default function AdminLifeAreasListPage() {
               <tbody>
                 {filteredAreas.map((area) => (
                   <tr key={area.id} className={!area.is_active ? 'deleted-row' : ''}>
-                    <td style={{ color: '#9d7bff', fontWeight: 600 }}>{area.themeName}</td>
+                    <td style={{ color: '#b794ff', fontWeight: 600 }}>{area.themeName}</td>
                     <td>
                       <strong>{area.name}</strong>
                       {area.description && (
-                        <div style={{ color: '#8a8f9d', fontSize: '0.85rem' }}>{area.description}</div>
+                        <div style={{ color: '#a0a8b8', fontSize: '0.9375rem' }}>{area.description}</div>
                       )}
                     </td>
-                    <td style={{ color: '#8a8f9d', fontSize: '0.85rem' }}>
+                    <td style={{ color: '#a0a8b8', fontSize: '0.9375rem' }}>
                       {area.rule_file || '\u2014'}
                     </td>
-                    <td style={{ color: '#9d7bff' }}>
+                    <td style={{ color: '#b794ff' }}>
                       {area.primary_houses?.join(', ') || '\u2014'}
                     </td>
-                    <td style={{ fontSize: '0.85rem' }}>
+                    <td style={{ fontSize: '0.9375rem' }}>
                       {area.divisional_charts?.length
                         ? area.divisional_charts.join(', ')
                         : '\u2014'}

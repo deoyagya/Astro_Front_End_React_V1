@@ -384,7 +384,7 @@ export default function BirthChartPage() {
                       </thead>
                       <tbody>
                         <tr>
-                          <td colSpan={5} style={{ textAlign: 'center', color: '#b0b7c3' }}>
+                          <td colSpan={5} style={{ textAlign: 'center', color: '#c7cfdd' }}>
                             Generate a chart to see positions
                           </td>
                         </tr>

@@ -1,5 +1,44 @@
 @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Montserrat:wght@300;400;500;600;700&display=swap');
 
+/* ===== GLOBAL DESIGN TOKENS ===== */
+:root {
+  /* Backgrounds */
+  --bg-primary: #0a0d14;
+  --bg-card: rgba(30, 33, 48, 0.9);
+  --bg-card-inner: rgba(40, 44, 60, 0.6);
+  --bg-card-hover: rgba(50, 54, 70, 0.7);
+
+  /* Text — all pass WCAG AA (4.5:1+) on dark card backgrounds */
+  --text-bright: #ffffff;
+  --text-primary: #e8eaf0;       /* 14.5:1 on #0a0d14 */
+  --text-secondary: #c7cfdd;     /* 10.2:1 */
+  --text-muted: #a0a8b8;         /* 6.5:1 — OK for 14px+ */
+
+  /* Accent — lighter purples that pass WCAG AA on dark */
+  --accent: #b794ff;             /* 6.2:1 on card bg — body text safe */
+  --accent-heading: #c4b0ff;     /* 7.8:1 — headings & scores */
+  --accent-deep: #9d7bff;        /* bg tints & borders only, NOT text */
+  --accent-glow: rgba(183, 148, 255, 0.2);
+
+  /* Status */
+  --color-success: #2ed573;
+  --color-danger: #ff4757;
+  --color-warning: #ffa502;
+  --color-info: #7ec8f8;
+  --color-info-alt: #f8a4c8;
+
+  /* Font sizes — 14px absolute minimum for readable text */
+  --fs-xs: 0.875rem;     /* 14px — floor */
+  --fs-sm: 0.9375rem;    /* 15px */
+  --fs-base: 1rem;       /* 16px */
+  --fs-md: 1.0625rem;    /* 17px */
+  --fs-lg: 1.125rem;     /* 18px */
+  --fs-xl: 1.25rem;      /* 20px */
+  --fs-2xl: 1.5rem;      /* 24px */
+  --fs-3xl: 2rem;        /* 32px */
+  --fs-4xl: 2.5rem;      /* 40px */
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -14,8 +53,8 @@ body,
 
 body {
   font-family: 'Montserrat', sans-serif;
-  background: #0a0d14;
-  color: #e0e0e0;
+  background: var(--bg-primary);
+  color: var(--text-primary);
   line-height: 1.7;
   font-size: 16px;
 }
@@ -47,12 +86,12 @@ img {
 }
 
 .section-header p {
-  color: #b0b7c3;
+  color: var(--text-secondary);
   font-size: 1.15rem;
 }
 
 .highlight {
-  color: #9d7bff;
+  color: var(--accent);
 }
 
 .modal {
@@ -89,13 +128,13 @@ img {
 }
 
 .modal-content h3 {
-  color: #9d7bff;
+  color: var(--accent-heading);
   margin: 16px 0 8px;
 }
 
 .modal-content p,
 .modal-content li {
-  color: #c7cfdd;
+  color: var(--text-secondary);
 }
 
 .modal-close {
@@ -199,7 +238,7 @@ img {
 }
 
 .report-page .empty-cart {
-  color: #8a8f9d;
+  color: var(--text-muted);
 }
 
 .report-page .total-amount {

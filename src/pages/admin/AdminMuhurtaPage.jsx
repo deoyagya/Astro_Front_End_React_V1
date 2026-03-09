@@ -200,7 +200,7 @@ export default function AdminMuhurtaPage() {
                       <strong style={{ color: ev.color }}>{ev.label}</strong>
                       {ev.description && <div style={{ fontSize: 12, color: '#8b949e', marginTop: 2 }}>{ev.description.substring(0, 60)}{ev.description.length > 60 ? '...' : ''}</div>}
                     </td>
-                    <td><code style={{ fontSize: 12, color: '#b0b7c3' }}>{ev.event_key}</code></td>
+                    <td><code style={{ fontSize: 12, color: '#c7cfdd' }}>{ev.event_key}</code></td>
                     <td style={{ textAlign: 'right' }}>
                       {ev.is_free ? (
                         <span style={{ color: '#2ed573', fontWeight: 600 }}>Free</span>
@@ -218,7 +218,7 @@ export default function AdminMuhurtaPage() {
                         </span>
                       ) : '—'}
                     </td>
-                    <td style={{ textAlign: 'center', color: '#b0b7c3' }}>{ev.display_order}</td>
+                    <td style={{ textAlign: 'center', color: '#c7cfdd' }}>{ev.display_order}</td>
                     <td style={{ textAlign: 'center' }}>
                       {ev.is_active
                         ? <span className="badge-active">Active</span>

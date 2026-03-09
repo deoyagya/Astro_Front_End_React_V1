@@ -169,7 +169,7 @@ export default function AdminLifeAreaFormPage() {
                 <label>
                   Divisional Charts
                   {formData.divisional_charts.length > 0 && (
-                    <span style={{ color: '#9d7bff', fontWeight: 400 }}> ({formData.divisional_charts.length} selected)</span>
+                    <span style={{ color: '#b794ff', fontWeight: 400 }}> ({formData.divisional_charts.length} selected)</span>
                   )}
                 </label>
                 <div className="chart-picker-grid">

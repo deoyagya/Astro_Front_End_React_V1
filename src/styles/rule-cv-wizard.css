@@ -55,7 +55,7 @@
   font-size: 0.95rem;
   font-weight: 700;
   background: #2a2f3e;
-  color: #b0b7c3;
+  color: var(--text-secondary, #c7cfdd);
   border: 2px solid #3a3f4e;
   transition: all 0.25s;
 }
@@ -74,15 +74,15 @@
 }
 
 .cv-wizard-step-label {
-  font-size: 0.88rem;
+  font-size: 0.9375rem;
   font-weight: 600;
-  color: #8a8f9d;
+  color: var(--text-muted, #a0a8b8);
   text-align: center;
   white-space: nowrap;
 }
 
 .cv-wizard-step.active .cv-wizard-step-label {
-  color: #e0e0e0;
+  color: var(--text-primary, #e8eaf0);
 }
 
 .cv-wizard-step.completed .cv-wizard-step-label {
@@ -150,7 +150,7 @@
   padding: 6px 0;
   font-size: 0.92rem;
   font-weight: 600;
-  color: #9d7bff;
+  color: var(--accent, #b794ff);
   border: none;
   background: none;
   width: 100%;
@@ -172,10 +172,10 @@
 .cv-sidebar-chip {
   padding: 2px 8px;
   border-radius: 6px;
-  font-size: 0.88rem;
+  font-size: 0.9375rem;
   font-family: 'Courier New', monospace;
   background: rgba(123, 91, 255, 0.1);
-  color: #b0b7c3;
+  color: var(--text-secondary, #c7cfdd);
   border: 1px solid #2a2f3e;
   cursor: pointer;
   transition: all 0.15s;
@@ -183,7 +183,7 @@
 
 .cv-sidebar-chip:hover {
   background: rgba(123, 91, 255, 0.25);
-  color: #e0e0e0;
+  color: var(--text-primary, #e8eaf0);
   border-color: #7b5bff;
 }
 
@@ -238,7 +238,7 @@
   border-radius: 8px;
   border: 1px solid #2a2f3e;
   background: transparent;
-  color: #b0b7c3;
+  color: var(--text-secondary, #c7cfdd);
   cursor: pointer;
   font-size: 0.95rem;
   transition: all 0.2s;
@@ -247,7 +247,7 @@
 .cv-prompt-toggle button.active {
   background: rgba(123, 91, 255, 0.2);
   border-color: #7b5bff;
-  color: #e0e0e0;
+  color: var(--text-primary, #e8eaf0);
 }
 
 .cv-prompt-preview {
@@ -256,8 +256,8 @@
   border-radius: 8px;
   padding: 14px;
   font-family: 'Courier New', monospace;
-  font-size: 0.8rem;
-  color: #b0b7c3;
+  font-size: 0.875rem;
+  color: var(--text-secondary, #c7cfdd);
   max-height: 300px;
   overflow-y: auto;
   white-space: pre-wrap;
@@ -283,18 +283,18 @@
 .cv-summary-card h3 {
   margin: 0 0 10px;
   font-size: 0.9rem;
-  color: #9d7bff;
+  color: var(--accent-heading, #c4b0ff);
   font-weight: 600;
 }
 
 .cv-summary-card p {
   margin: 4px 0;
   font-size: 0.95rem;
-  color: #b0b7c3;
+  color: var(--text-secondary, #c7cfdd);
 }
 
 .cv-summary-card .label {
-  color: #8a8f9d;
+  color: var(--text-muted, #a0a8b8);
   margin-right: 8px;
 }
 
@@ -396,8 +396,8 @@
 }
 
 .cv-result-stat .stat-label {
-  font-size: 0.88rem;
-  color: #8a8f9d;
+  font-size: 0.9375rem;
+  color: var(--text-muted, #a0a8b8);
   text-transform: uppercase;
   letter-spacing: 0.05em;
   margin-bottom: 4px;
@@ -406,7 +406,7 @@
 .cv-result-stat .stat-value {
   font-size: 1.1rem;
   font-weight: 700;
-  color: #e0e0e0;
+  color: var(--text-primary, #e8eaf0);
 }
 
 /* ------ Round Cards ------ */
@@ -441,7 +441,7 @@
 .cv-round-header h3 {
   margin: 0;
   font-size: 0.95rem;
-  color: #e0e0e0;
+  color: var(--text-primary, #e8eaf0);
   display: flex;
   align-items: center;
   gap: 10px;
@@ -464,18 +464,18 @@
   align-items: center;
   gap: 8px;
   margin-bottom: 12px;
-  font-size: 0.88rem;
+  font-size: 0.9375rem;
   font-weight: 600;
-  color: #9d7bff;
+  color: var(--accent-heading, #c4b0ff);
 }
 
 .cv-round-section-title .model-badge {
   padding: 2px 8px;
   border-radius: 6px;
-  font-size: 0.88rem;
+  font-size: 0.9375rem;
   font-weight: 500;
   background: rgba(123, 91, 255, 0.12);
-  color: #b0b7c3;
+  color: var(--text-secondary, #c7cfdd);
   font-family: 'Courier New', monospace;
 }
 
@@ -517,7 +517,7 @@
 .cv-rec-type-badge {
   padding: 2px 8px;
   border-radius: 6px;
-  font-size: 0.88rem;
+  font-size: 0.9375rem;
   font-weight: 600;
 }
 
@@ -541,7 +541,7 @@
 .cv-severity {
   padding: 2px 8px;
   border-radius: 10px;
-  font-size: 0.7rem;
+  font-size: 0.875rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.04em;
@@ -569,18 +569,18 @@
 
 .cv-severity.info {
   background: rgba(138, 143, 157, 0.15);
-  color: #8a8f9d;
+  color: var(--text-muted, #a0a8b8);
 }
 
 .cv-rec-field {
   margin: 4px 0;
   font-size: 0.92rem;
-  color: #b0b7c3;
+  color: var(--text-secondary, #c7cfdd);
 }
 
 .cv-rec-field .field-label {
   font-weight: 600;
-  color: #8a8f9d;
+  color: var(--text-muted, #a0a8b8);
   margin-right: 6px;
 }
 
@@ -628,15 +628,15 @@
 }
 
 .cv-cost-item .cost-label {
-  font-size: 0.7rem;
-  color: #8a8f9d;
+  font-size: 0.875rem;
+  color: var(--text-muted, #a0a8b8);
   text-transform: uppercase;
 }
 
 .cv-cost-item .cost-value {
   font-size: 0.9rem;
   font-weight: 700;
-  color: #e0e0e0;
+  color: var(--text-primary, #e8eaf0);
   font-family: 'Courier New', monospace;
 }
 
@@ -654,11 +654,11 @@
 
 .cv-delta-item {
   font-size: 0.92rem;
-  color: #b0b7c3;
+  color: var(--text-secondary, #c7cfdd);
 }
 
 .cv-delta-item .delta-label {
-  color: #8a8f9d;
+  color: var(--text-muted, #a0a8b8);
   margin-right: 4px;
 }
 
@@ -744,7 +744,7 @@
 .cv-questions-list li {
   padding: 4px 0;
   font-size: 0.92rem;
-  color: #b0b7c3;
+  color: var(--text-secondary, #c7cfdd);
 }
 
 .cv-questions-list li::before {
@@ -756,8 +756,8 @@
   background: rgba(26, 31, 46, 0.7);
   border-left: 3px solid #7b5bff;
   border-radius: 0 8px 8px 0;
-  font-size: 0.88rem;
-  color: #b0b7c3;
+  font-size: 0.9375rem;
+  color: var(--text-secondary, #c7cfdd);
   line-height: 1.6;
   white-space: pre-wrap;
 }
@@ -781,7 +781,7 @@
   border-radius: 8px;
   border: 1px solid #2a2f3e;
   background: transparent;
-  color: #b0b7c3;
+  color: var(--text-secondary, #c7cfdd);
   cursor: pointer;
   font-size: 0.92rem;
   font-weight: 600;
@@ -790,13 +790,13 @@
 
 .cv-query-type-btn:hover {
   border-color: #7b5bff;
-  color: #e0e0e0;
+  color: var(--text-primary, #e8eaf0);
 }
 
 .cv-query-type-btn.active {
   background: rgba(123, 91, 255, 0.2);
   border-color: #7b5bff;
-  color: #e0e0e0;
+  color: var(--text-primary, #e8eaf0);
 }
 
 /* ------ Loading spinner for CV run ------ */
@@ -807,17 +807,17 @@
   align-items: center;
   gap: 14px;
   padding: 40px 20px;
-  color: #b0b7c3;
+  color: var(--text-secondary, #c7cfdd);
 }
 
 .cv-running-indicator i {
   font-size: 2rem;
-  color: #7b5bff;
+  color: var(--accent, #b794ff);
 }
 
 .cv-running-indicator p {
   font-size: 0.9rem;
-  color: #8a8f9d;
+  color: var(--text-muted, #a0a8b8);
 }
 
 /* ------ Responsive ------ */
@@ -845,6 +845,6 @@
   }
 
   .cv-wizard-step-label {
-    font-size: 0.65rem;
+    font-size: 0.875rem;
   }
 }

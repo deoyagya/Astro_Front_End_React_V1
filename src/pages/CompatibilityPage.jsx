@@ -181,7 +181,7 @@ export default function CompatibilityPage() {
                     onClick={() => isCompleted && handleStepClick(stepNum)}
                   >
                     <div className="cv-wizard-step-circle">
-                      {isCompleted ? <i className="fas fa-check" style={{ fontSize: '0.8rem' }}></i> : stepNum}
+                      {isCompleted ? <i className="fas fa-check" style={{ fontSize: '0.875rem' }}></i> : stepNum}
                     </div>
                     <div className="cv-wizard-step-label">{s.label}</div>
                   </div>
@@ -200,7 +200,7 @@ export default function CompatibilityPage() {
             {step === 1 && (
               <div className="form-card" style={{ animation: 'fadeIn 0.3s ease' }}>
                 <h2><i className="fas fa-user" style={{ marginRight: 10, color: '#7b5bff' }}></i>Person A Details</h2>
-                <p style={{ color: '#8a8f9e', marginBottom: 20, fontSize: '0.85rem' }}>
+                <p style={{ color: '#a0a8b8', marginBottom: 20, fontSize: '1rem' }}>
                   Enter the first person's birth details
                 </p>
                 <form onSubmit={(e) => e.preventDefault()}>
@@ -257,7 +257,7 @@ export default function CompatibilityPage() {
             {step === 2 && (
               <div className="form-card" style={{ animation: 'fadeIn 0.3s ease' }}>
                 <h2><i className="fas fa-user-friends" style={{ marginRight: 10, color: '#7b5bff' }}></i>Person B Details</h2>
-                <p style={{ color: '#8a8f9e', marginBottom: 20, fontSize: '0.85rem' }}>
+                <p style={{ color: '#a0a8b8', marginBottom: 20, fontSize: '1rem' }}>
                   Enter the second person's birth details
                 </p>
 
@@ -274,14 +274,14 @@ export default function CompatibilityPage() {
                   <i className="fas fa-check-circle" style={{ color: '#2ed573' }}></i>
                   <div style={{ flex: 1 }}>
                     <span style={{ color: '#e0e0e0', fontWeight: 600 }}>{nameA}</span>
-                    <span style={{ color: '#8a8f9e', marginLeft: 8, fontSize: '0.8rem' }}>
+                    <span style={{ color: '#a0a8b8', marginLeft: 8, fontSize: '0.875rem' }}>
                       ({genderA === 'male' ? 'Male' : 'Female'}) &middot; {dobA} &middot; {placeA?.name}
                     </span>
                   </div>
                   <button
                     type="button"
                     onClick={handleBack}
-                    style={{ background: 'none', border: 'none', color: '#7b5bff', cursor: 'pointer', fontSize: '0.8rem' }}
+                    style={{ background: 'none', border: 'none', color: '#b794ff', cursor: 'pointer', fontSize: '0.875rem' }}
                   >
                     Edit
                   </button>
@@ -396,21 +396,21 @@ export default function CompatibilityPage() {
                         {percentage}% Match - {matchLabel}
                       </p>
                       {verdictDesc && (
-                        <p style={{ color: '#b0b7c3', fontSize: '0.85rem', marginTop: '5px' }}>{verdictDesc}</p>
+                        <p style={{ color: '#c7cfdd', fontSize: '1rem', marginTop: '5px' }}>{verdictDesc}</p>
                       )}
                     </div>
 
                     {/* Partner names with roles */}
                     <div style={{ display: 'flex', justifyContent: 'center', gap: 40, marginBottom: 20, padding: '10px 0' }}>
                       <div style={{ textAlign: 'center' }}>
-                        <p style={{ color: '#64b5f6', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: 1 }}>Groom</p>
+                        <p style={{ color: '#7ec8f8', fontSize: '0.9375rem', textTransform: 'uppercase', letterSpacing: 1, fontWeight: 600 }}>Groom</p>
                         <p style={{ color: '#e0e0e0', fontWeight: 600 }}>{groomName || 'Person A'}</p>
                       </div>
                       <div style={{ color: '#7b5bff', display: 'flex', alignItems: 'center' }}>
                         <i className="fas fa-heart"></i>
                       </div>
                       <div style={{ textAlign: 'center' }}>
-                        <p style={{ color: '#f48fb1', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: 1 }}>Bride</p>
+                        <p style={{ color: '#f8a4c8', fontSize: '0.9375rem', textTransform: 'uppercase', letterSpacing: 1, fontWeight: 600 }}>Bride</p>
                         <p style={{ color: '#e0e0e0', fontWeight: 600 }}>{brideName || 'Person B'}</p>
                       </div>
                     </div>
@@ -422,18 +422,19 @@ export default function CompatibilityPage() {
                         <div key={k.koota_name} className="guna-item" title={k.description || ''}>
                           <div className="guna-name">{k.koota_name}</div>
                           <div className="guna-score" style={{
-                            color: k.obtained_points === k.max_points ? '#2ed573' : k.obtained_points === 0 ? '#ff4757' : '#9d7bff',
+                            color: k.obtained_points === k.max_points ? '#2ed573' : k.obtained_points === 0 ? '#ff4757' : '#c4b0ff',
+                            fontSize: '1.25rem',
                           }}>
                             {k.obtained_points}/{k.max_points}
                           </div>
                           {k.groom_value && k.bride_value && (
-                            <div style={{ fontSize: '0.7rem', color: '#8a8f9e', marginTop: 3 }}>
+                            <div style={{ fontSize: '0.875rem', color: '#a0a8b8', marginTop: 4 }}>
                               {k.groom_value} / {k.bride_value}
                             </div>
                           )}
                           {k.has_dosha && k.dosha_name && (
-                            <div style={{ fontSize: '0.7rem', color: '#ff4757', marginTop: 2 }}>
-                              <i className="fas fa-exclamation-circle" style={{ marginRight: 3 }}></i>{k.dosha_name}
+                            <div style={{ fontSize: '0.875rem', color: '#ff6b6b', marginTop: 4, fontWeight: 500 }}>
+                              <i className="fas fa-exclamation-circle" style={{ marginRight: 4 }}></i>{k.dosha_name}
                             </div>
                           )}
                         </div>
@@ -442,13 +443,13 @@ export default function CompatibilityPage() {
 
                     {/* Dosha alerts */}
                     {doshas.length > 0 && (
-                      <div style={{ background: 'rgba(255, 71, 87, 0.1)', padding: '15px', borderRadius: '8px', marginTop: '20px' }}>
-                        <h4 style={{ color: '#ff4757', marginBottom: '10px' }}>
-                          <i className="fas fa-exclamation-triangle"></i> Dosha Detected
+                      <div style={{ background: 'rgba(255, 71, 87, 0.1)', padding: '18px', borderRadius: '10px', marginTop: '20px' }}>
+                        <h4 style={{ color: '#ff6b6b', marginBottom: '12px', fontSize: '1.125rem' }}>
+                          <i className="fas fa-exclamation-triangle" style={{ marginRight: 8 }}></i> Dosha Detected
                         </h4>
                         {doshas.map((d, i) => (
-                          <p key={i} style={{ color: '#e0e0e0', marginBottom: 4 }}>
-                            <i className="fas fa-dot-circle" style={{ color: '#ff4757', marginRight: 8, fontSize: '0.7rem' }}></i>
+                          <p key={i} style={{ color: '#e8eaf0', marginBottom: 6, fontSize: '1rem' }}>
+                            <i className="fas fa-dot-circle" style={{ color: '#ff6b6b', marginRight: 8, fontSize: '0.875rem' }}></i>
                             {d}
                           </p>
                         ))}
@@ -465,10 +466,10 @@ export default function CompatibilityPage() {
                               background: manglikGroom.is_manglik ? 'rgba(255, 71, 87, 0.08)' : 'rgba(46, 213, 115, 0.08)',
                               padding: 12, borderRadius: 8,
                             }}>
-                              <p style={{ color: '#b0b7c3', fontSize: '0.75rem', marginBottom: 4 }}>{groomName || 'Groom'}</p>
+                              <p style={{ color: '#c7cfdd', fontSize: '0.9375rem', marginBottom: 6, fontWeight: 500 }}>{groomName || 'Groom'}</p>
                               <p style={{
                                 color: manglikGroom.is_manglik ? '#ff4757' : '#2ed573',
-                                fontWeight: 600, fontSize: '0.9rem',
+                                fontWeight: 600, fontSize: '1rem',
                               }}>
                                 <i className={`fas ${manglikGroom.is_manglik ? 'fa-exclamation-triangle' : 'fa-check-circle'}`} style={{ marginRight: 6 }}></i>
                                 {manglikGroom.is_manglik ? 'Manglik' : 'Non-Manglik'}
@@ -480,10 +481,10 @@ export default function CompatibilityPage() {
                               background: manglikBride.is_manglik ? 'rgba(255, 71, 87, 0.08)' : 'rgba(46, 213, 115, 0.08)',
                               padding: 12, borderRadius: 8,
                             }}>
-                              <p style={{ color: '#b0b7c3', fontSize: '0.75rem', marginBottom: 4 }}>{brideName || 'Bride'}</p>
+                              <p style={{ color: '#c7cfdd', fontSize: '0.9375rem', marginBottom: 6, fontWeight: 500 }}>{brideName || 'Bride'}</p>
                               <p style={{
                                 color: manglikBride.is_manglik ? '#ff4757' : '#2ed573',
-                                fontWeight: 600, fontSize: '0.9rem',
+                                fontWeight: 600, fontSize: '1rem',
                               }}>
                                 <i className={`fas ${manglikBride.is_manglik ? 'fa-exclamation-triangle' : 'fa-check-circle'}`} style={{ marginRight: 6 }}></i>
                                 {manglikBride.is_manglik ? 'Manglik' : 'Non-Manglik'}

@@ -423,7 +423,7 @@ export default function AdminReportWizardPage() {
             placeholder="e.g., Career Deep-Dive Report"
           />
           {stepErrors.reportName && (
-            <div style={{ color: '#ff4757', fontSize: '0.85rem', marginTop: 4 }}>{stepErrors.reportName}</div>
+            <div style={{ color: '#ff4757', fontSize: '0.9375rem', marginTop: 4 }}>{stepErrors.reportName}</div>
           )}
         </div>
 
@@ -498,7 +498,7 @@ export default function AdminReportWizardPage() {
         )}
 
         {stepErrors.questions && (
-          <div style={{ color: '#ff4757', fontSize: '0.85rem', marginTop: 4, marginBottom: 12 }}>
+          <div style={{ color: '#ff4757', fontSize: '0.9375rem', marginTop: 4, marginBottom: 12 }}>
             {stepErrors.questions}
           </div>
         )}
@@ -591,7 +591,7 @@ export default function AdminReportWizardPage() {
         {selectedQuestions.length === 0 ? (
           <div className="wizard-empty-selection">
             <i className="fas fa-inbox" style={{ fontSize: '2rem', color: '#555', marginBottom: 10, display: 'block' }}></i>
-            <p style={{ color: '#8a8f9d' }}>No questions added yet. Use the left panel to browse and add questions.</p>
+            <p style={{ color: '#a0a8b8' }}>No questions added yet. Use the left panel to browse and add questions.</p>
           </div>
         ) : (
           <div className="wizard-selected-list">
@@ -663,7 +663,7 @@ export default function AdminReportWizardPage() {
               style={{ marginTop: 8 }}
             />
             {stepErrors.fixedPrice && (
-              <div style={{ color: '#ff4757', fontSize: '0.85rem', marginTop: 4 }}>{stepErrors.fixedPrice}</div>
+              <div style={{ color: '#ff4757', fontSize: '0.9375rem', marginTop: 4 }}>{stepErrors.fixedPrice}</div>
             )}
           </>
         ) : (
@@ -684,7 +684,7 @@ export default function AdminReportWizardPage() {
           onChange={(e) => setNumIterations(Math.max(1, Math.min(10, parseInt(e.target.value, 10) || 1)))}
         />
         {stepErrors.numIterations && (
-          <div style={{ color: '#ff4757', fontSize: '0.85rem', marginTop: 4 }}>{stepErrors.numIterations}</div>
+          <div style={{ color: '#ff4757', fontSize: '0.9375rem', marginTop: 4 }}>{stepErrors.numIterations}</div>
         )}
       </div>
 
@@ -726,7 +726,7 @@ export default function AdminReportWizardPage() {
               style={{ marginTop: 8 }}
             />
             {stepErrors.discountValue && (
-              <div style={{ color: '#ff4757', fontSize: '0.85rem', marginTop: 4 }}>{stepErrors.discountValue}</div>
+              <div style={{ color: '#ff4757', fontSize: '0.9375rem', marginTop: 4 }}>{stepErrors.discountValue}</div>
             )}
           </>
         )}
@@ -854,7 +854,7 @@ export default function AdminReportWizardPage() {
           <button
             type="button"
             className="btn-edit"
-            style={{ padding: '4px 10px', fontSize: '0.8rem' }}
+            style={{ padding: '4px 10px', fontSize: '0.875rem' }}
             onClick={() => setCreatorPrompt(promptDefaults.generator_prompt || '')}
           >
             <i className="fas fa-undo"></i> Reset to Default
@@ -864,7 +864,7 @@ export default function AdminReportWizardPage() {
           value={creatorPrompt}
           onChange={(e) => setCreatorPrompt(e.target.value)}
           placeholder="System prompt for the content generator LLM..."
-          style={{ minHeight: 140, fontFamily: "'Courier New', monospace", fontSize: '0.85rem' }}
+          style={{ minHeight: 140, fontFamily: "'Courier New', monospace", fontSize: '0.9375rem' }}
         />
       </div>
 
@@ -875,7 +875,7 @@ export default function AdminReportWizardPage() {
           <button
             type="button"
             className="btn-edit"
-            style={{ padding: '4px 10px', fontSize: '0.8rem' }}
+            style={{ padding: '4px 10px', fontSize: '0.875rem' }}
             onClick={() => setReviewerPrompt(promptDefaults.reviewer_prompt || '')}
           >
             <i className="fas fa-undo"></i> Reset to Default
@@ -885,7 +885,7 @@ export default function AdminReportWizardPage() {
           value={reviewerPrompt}
           onChange={(e) => setReviewerPrompt(e.target.value)}
           placeholder="System prompt for the cross-validation reviewer LLM..."
-          style={{ minHeight: 140, fontFamily: "'Courier New', monospace", fontSize: '0.85rem' }}
+          style={{ minHeight: 140, fontFamily: "'Courier New', monospace", fontSize: '0.9375rem' }}
         />
       </div>
 

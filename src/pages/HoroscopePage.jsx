@@ -112,7 +112,7 @@ export default function HoroscopePage() {
               <h2>Your Birth Details</h2>
 
               <div className="horoscope-selector">
-                <label style={{ color: '#b0b7c3', display: 'block', marginBottom: 8 }}>Moon Sign (Optional)</label>
+                <label style={{ color: '#c7cfdd', display: 'block', marginBottom: 8 }}>Moon Sign (Optional)</label>
                 <select
                   className="sign-select"
                   id="horoscopeSelector"
@@ -207,10 +207,10 @@ export default function HoroscopePage() {
                   {headline && (
                     <div className="horoscope-card">
                       <h3><i className="fas fa-sun"></i> Overview</h3>
-                      <p style={{ fontWeight: 600, color: '#9d7bff', marginBottom: 8 }}>{headline}</p>
+                      <p style={{ fontWeight: 600, color: '#b794ff', marginBottom: 8 }}>{headline}</p>
                       {narrative && <p>{narrative}</p>}
                       {score != null && (
-                        <p style={{ marginTop: 10, color: '#b0b7c3', fontSize: '0.9rem' }}>
+                        <p style={{ marginTop: 10, color: '#c7cfdd', fontSize: '0.9rem' }}>
                           Overall Score: <strong style={{ color: score >= 60 ? '#2ed573' : score >= 40 ? '#ffa502' : '#ff4757' }}>
                             {Math.round(score)}/100
                           </strong>
@@ -252,7 +252,7 @@ export default function HoroscopePage() {
                   )}
                 </div>
               ) : (
-                <div id="horoscopeContent" style={{ textAlign: 'center', padding: 40, color: '#b0b7c3' }}>
+                <div id="horoscopeContent" style={{ textAlign: 'center', padding: 40, color: '#c7cfdd' }}>
                   <i className="fas fa-star" style={{ fontSize: '2rem', color: '#7b5bff', marginBottom: 10, display: 'block' }}></i>
                   Enter your birth details to get personalized predictions
                 </div>

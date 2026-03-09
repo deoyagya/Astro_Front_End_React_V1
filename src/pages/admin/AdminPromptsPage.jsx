@@ -245,7 +245,7 @@ export default function AdminPromptsPage() {
                 ))}
               </select>
 
-              <label style={{ display: 'flex', alignItems: 'center', gap: 6, color: '#b0b7c3', fontSize: '0.9rem', cursor: 'pointer' }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: 6, color: '#c7cfdd', fontSize: '0.9rem', cursor: 'pointer' }}>
                 <input
                   type="checkbox"
                   checked={showInactive}
@@ -295,12 +295,12 @@ export default function AdminPromptsPage() {
                   <tr key={p.id} className={!p.is_active ? 'deleted-row' : ''}>
                     <td>
                       <i className={`fas ${TYPE_ICONS[p.prompt_type] || 'fa-file'}`} style={{ color: '#9d7bff', marginRight: 6 }}></i>
-                      <span style={{ fontFamily: 'monospace', fontSize: '0.85rem' }}>{p.prompt_type}</span>
+                      <span style={{ fontFamily: 'monospace', fontSize: '0.9375rem' }}>{p.prompt_type}</span>
                     </td>
                     <td>
                       <strong>{p.display_name}</strong>
                       {p.description && (
-                        <div style={{ color: '#8a8f9d', fontSize: '0.82rem', marginTop: 2, maxWidth: 280, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                        <div style={{ color: '#a0a8b8', fontSize: '0.875rem', marginTop: 2, maxWidth: 280, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                           {p.description}
                         </div>
                       )}
@@ -309,19 +309,19 @@ export default function AdminPromptsPage() {
                       <span style={{
                         padding: '2px 8px',
                         borderRadius: 10,
-                        fontSize: '0.75rem',
+                        fontSize: '0.875rem',
                         background: p.category === 'system_prompt' ? 'rgba(255,165,2,0.15)' : 'rgba(123,91,255,0.15)',
-                        color: p.category === 'system_prompt' ? '#ffa502' : '#9d7bff',
+                        color: p.category === 'system_prompt' ? '#ffa502' : '#b794ff',
                       }}>
                         {CATEGORY_LABELS[p.category] || p.category}
                       </span>
                     </td>
-                    <td style={{ fontFamily: 'monospace', fontSize: '0.85rem' }}>v{p.version}</td>
+                    <td style={{ fontFamily: 'monospace', fontSize: '0.9375rem' }}>v{p.version}</td>
                     <td>
                       <span style={{
                         fontFamily: 'monospace',
-                        fontSize: '0.82rem',
-                        color: p.scope === 'global' ? '#b0b7c3' : '#2ed573',
+                        fontSize: '0.875rem',
+                        color: p.scope === 'global' ? '#c7cfdd' : '#2ed573',
                       }}>
                         {p.scope}
                       </span>
@@ -366,7 +366,7 @@ export default function AdminPromptsPage() {
 
           {/* Summary */}
           {!loading && prompts.length > 0 && (
-            <div style={{ marginTop: 16, color: '#8a8f9d', fontSize: '0.85rem' }}>
+            <div style={{ marginTop: 16, color: '#a0a8b8', fontSize: '0.9375rem' }}>
               Showing {prompts.length} prompt{prompts.length !== 1 ? 's' : ''}
               {(filterCategory || filterType) && ' (filtered)'}
             </div>
@@ -476,7 +476,7 @@ export default function AdminPromptsPage() {
             <div className="form-group">
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
                 <label style={{ margin: 0 }}>Prompt Content</label>
-                <span style={{ fontSize: '0.8rem', color: '#8a8f9d' }}>
+                <span style={{ fontSize: '0.875rem', color: '#a0a8b8' }}>
                   {editModal.data.content.length.toLocaleString()} chars
                 </span>
               </div>
@@ -492,10 +492,10 @@ export default function AdminPromptsPage() {
             {/* Template variables hint */}
             {editModal.data.template_vars && editModal.data.template_vars.length > 0 && (
               <div style={{ marginBottom: 16, padding: '10px 14px', background: 'rgba(123,91,255,0.08)', borderRadius: 8, border: '1px dashed rgba(123,91,255,0.3)' }}>
-                <div style={{ fontSize: '0.82rem', color: '#9d7bff', fontWeight: 600, marginBottom: 4 }}>Template Variables</div>
+                <div style={{ fontSize: '0.875rem', color: '#b794ff', fontWeight: 600, marginBottom: 4 }}>Template Variables</div>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
                   {editModal.data.template_vars.map((v) => (
-                    <span key={v} style={{ padding: '2px 8px', background: 'rgba(123,91,255,0.15)', borderRadius: 4, fontSize: '0.78rem', fontFamily: 'monospace', color: '#b0b7c3' }}>
+                    <span key={v} style={{ padding: '2px 8px', background: 'rgba(123,91,255,0.15)', borderRadius: 4, fontSize: '0.875rem', fontFamily: 'monospace', color: '#c7cfdd' }}>
                       {`{${v}}`}
                     </span>
                   ))}
@@ -545,7 +545,7 @@ export default function AdminPromptsPage() {
         <div className="admin-modal" onClick={(e) => { if (e.target === e.currentTarget) setCloneModal(null); }}>
           <div className="admin-modal-content" style={{ maxWidth: 550 }}>
             <h2>Clone Prompt</h2>
-            <p style={{ color: '#b0b7c3', fontSize: '0.9rem', marginBottom: 16 }}>
+            <p style={{ color: '#c7cfdd', fontSize: '0.9rem', marginBottom: 16 }}>
               Cloning <strong>{cloneModal.source.display_name}</strong> (v{cloneModal.source.version})
             </p>
 
@@ -581,7 +581,7 @@ export default function AdminPromptsPage() {
               />
             </div>
 
-            <p style={{ color: '#8a8f9d', fontSize: '0.82rem' }}>
+            <p style={{ color: '#a0a8b8', fontSize: '0.875rem' }}>
               <i className="fas fa-info-circle"></i> The clone starts as <strong>inactive</strong>. Use the activate button to make it live.
             </p>
 
@@ -606,7 +606,7 @@ export default function AdminPromptsPage() {
             <h2>
               <i className="fas fa-eye" style={{ color: '#9d7bff', marginRight: 8 }}></i>
               Preview: {previewModal.prompt_type} v{previewModal.version}
-              <span style={{ fontSize: '0.8rem', color: '#8a8f9d', marginLeft: 8 }}>scope: {previewModal.scope}</span>
+              <span style={{ fontSize: '0.875rem', color: '#a0a8b8', marginLeft: 8 }}>scope: {previewModal.scope}</span>
             </h2>
 
             <div className="json-dual-panel" style={{ marginTop: 16 }}>
@@ -632,10 +632,10 @@ export default function AdminPromptsPage() {
 
             {previewModal.template_vars && previewModal.template_vars.length > 0 && (
               <div style={{ marginTop: 12, padding: '10px 14px', background: 'rgba(123,91,255,0.08)', borderRadius: 8 }}>
-                <div style={{ fontSize: '0.82rem', color: '#9d7bff', fontWeight: 600, marginBottom: 4 }}>Template Variables ({previewModal.template_vars.length})</div>
+                <div style={{ fontSize: '0.875rem', color: '#b794ff', fontWeight: 600, marginBottom: 4 }}>Template Variables ({previewModal.template_vars.length})</div>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
                   {previewModal.template_vars.map((v) => (
-                    <span key={v} style={{ padding: '2px 8px', background: 'rgba(123,91,255,0.15)', borderRadius: 4, fontSize: '0.78rem', fontFamily: 'monospace', color: '#b0b7c3' }}>
+                    <span key={v} style={{ padding: '2px 8px', background: 'rgba(123,91,255,0.15)', borderRadius: 4, fontSize: '0.875rem', fontFamily: 'monospace', color: '#c7cfdd' }}>
                       {`{${v}}`}
                     </span>
                   ))}

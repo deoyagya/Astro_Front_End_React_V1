@@ -29,7 +29,7 @@ export default function StepAscendant({ data, onChange, content, personLabel }) 
         ))}
       </div>
       {data.asc_sign && (
-        <div style={{ marginTop: '0.75rem', textAlign: 'center', color: '#7b5bff', fontSize: '0.9rem' }}>
+        <div style={{ marginTop: '0.75rem', textAlign: 'center', color: '#b794ff', fontSize: '0.9rem' }}>
           <i className="fas fa-check-circle"></i> {data.asc_sign} Rising
         </div>
       )}

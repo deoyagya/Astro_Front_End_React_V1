@@ -6,7 +6,7 @@
 .pricing-page {
   font-family: 'Montserrat', sans-serif;
   background: #0a0d14;
-  color: #e0e0e0;
+  color: var(--text-primary, #e8eaf0);
   line-height: 1.6;
   min-height: 80vh;
 }
@@ -31,23 +31,23 @@
   margin-bottom: 12px;
 }
 .pricing-header .subtitle {
-  color: #b0b7c3;
+  color: var(--text-secondary, #c7cfdd);
   font-size: 1.15rem;
   max-width: 600px;
   margin: 0 auto;
 }
 .pricing-header .gateway-info {
   color: #9b95aa;
-  font-size: 0.85rem;
+  font-size: 0.875rem;
   margin-top: 10px;
 }
 .pricing-header .gateway-badge {
   display: inline-block;
   background: rgba(124, 92, 252, 0.2);
-  color: #9d7bff;
+  color: var(--accent, #b794ff);
   padding: 2px 8px;
   border-radius: 4px;
-  font-size: 0.78rem;
+  font-size: 0.875rem;
   font-weight: 600;
   margin-left: 4px;
 }
@@ -62,12 +62,12 @@
 }
 .billing-toggle .toggle-label {
   font-size: 0.95rem;
-  color: #8892a4;
+  color: var(--text-muted, #a0a8b8);
   cursor: pointer;
   transition: color 0.2s;
 }
 .billing-toggle .toggle-label.active {
-  color: #e0e0e0;
+  color: var(--text-primary, #e8eaf0);
   font-weight: 600;
 }
 .billing-toggle .toggle-track {
@@ -182,7 +182,7 @@
   margin-bottom: 8px;
 }
 .plan-card .plan-desc {
-  color: #8892a4;
+  color: var(--text-muted, #a0a8b8);
   font-size: 0.95rem;
   margin-bottom: 20px;
   min-height: 40px;
@@ -201,7 +201,7 @@
 }
 .plan-card .plan-price .period {
   font-size: 0.9rem;
-  color: #8892a4;
+  color: var(--text-muted, #a0a8b8);
   margin-left: 4px;
 }
 .plan-card .plan-price .original-price {
@@ -221,7 +221,7 @@
   align-items: flex-start;
   gap: 10px;
   padding: 6px 0;
-  font-size: 0.88rem;
+  font-size: 0.9375rem;
   color: #c0c7d3;
 }
 .plan-card .plan-features li i.fa-check {
@@ -298,7 +298,7 @@
   text-align: center;
 }
 .coupon-section h3 {
-  color: #b0b7c3;
+  color: var(--text-secondary, #c7cfdd);
   font-size: 0.95rem;
   font-weight: 500;
   margin-bottom: 12px;
@@ -313,7 +313,7 @@
   border: 1px solid #2a2f3e;
   border-radius: 10px;
   background: rgba(20, 23, 36, 0.9);
-  color: #e0e0e0;
+  color: var(--text-primary, #e8eaf0);
   font-size: 0.95rem;
   text-transform: uppercase;
   letter-spacing: 1px;
@@ -334,7 +334,7 @@
   border: 1px solid #7b5bff;
   border-radius: 10px;
   background: transparent;
-  color: #9d7bff;
+  color: var(--accent, #b794ff);
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
@@ -366,7 +366,7 @@
 .feature-comparison h2 {
   font-family: 'Cinzel', serif;
   text-align: center;
-  color: #9d7bff;
+  color: var(--accent-heading, #c4b0ff);
   font-size: 1.6rem;
   margin-bottom: 24px;
 }
@@ -385,7 +385,7 @@
   padding: 14px 18px;
   text-align: center;
   border-bottom: 1px solid #1a1f2e;
-  font-size: 0.88rem;
+  font-size: 0.9375rem;
 }
 .feature-table th:first-child,
 .feature-table td:first-child {
@@ -395,7 +395,7 @@
 }
 .feature-table thead th {
   background: rgba(123, 91, 255, 0.12);
-  color: #9d7bff;
+  color: var(--accent, #b794ff);
   font-weight: 700;
   font-size: 0.9rem;
   position: sticky;
@@ -426,13 +426,13 @@
 .credit-packs-section h2 {
   font-family: 'Cinzel', serif;
   text-align: center;
-  color: #9d7bff;
+  color: var(--accent-heading, #c4b0ff);
   font-size: 1.6rem;
   margin-bottom: 8px;
 }
 .credit-packs-section .section-subtitle {
   text-align: center;
-  color: #8892a4;
+  color: var(--text-muted, #a0a8b8);
   font-size: 0.9rem;
   margin-bottom: 28px;
 }
@@ -473,7 +473,7 @@
   margin-bottom: 4px;
 }
 .credit-pack-card .pack-unit {
-  color: #8892a4;
+  color: var(--text-muted, #a0a8b8);
   font-size: 0.9rem;
   margin-bottom: 16px;
 }
@@ -498,7 +498,7 @@
 .pricing-faq {
   text-align: center;
   padding: 40px 0;
-  color: #8892a4;
+  color: var(--text-muted, #a0a8b8);
   font-size: 0.9rem;
 }
 .pricing-faq .trust-icons {
@@ -513,7 +513,7 @@
   gap: 8px;
 }
 .pricing-faq .trust-icons i {
-  color: #7b5bff;
+  color: var(--accent, #b794ff);
   font-size: 1.2rem;
 }
 
@@ -521,12 +521,12 @@
 .pricing-loading {
   text-align: center;
   padding: 80px 20px;
-  color: #b0b7c3;
+  color: var(--text-secondary, #c7cfdd);
 }
 .pricing-loading i {
   display: block;
   font-size: 2rem;
-  color: #7b5bff;
+  color: var(--accent, #b794ff);
   margin-bottom: 16px;
   animation: pricing-spin 1s linear infinite;
 }

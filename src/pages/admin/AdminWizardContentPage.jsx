@@ -144,7 +144,7 @@ export default function AdminWizardContentPage() {
         {error && <div className="wiz-error" style={{ margin: '1rem 0' }}>{error}</div>}
 
         {loading ? (
-          <div style={{ textAlign: 'center', padding: '2rem', color: '#b0b7c3' }}>Loading...</div>
+          <div style={{ textAlign: 'center', padding: '2rem', color: '#c7cfdd' }}>Loading...</div>
         ) : (
           <div style={{ overflowX: 'auto' }}>
             <table className="admin-table" style={{ width: '100%', borderCollapse: 'collapse' }}>

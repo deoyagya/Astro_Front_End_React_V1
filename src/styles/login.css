@@ -23,7 +23,7 @@
 
 .login-header i {
     font-size: 3rem;
-    color: #9d7bff;
+    color: var(--accent, #b794ff);
     margin-bottom: 15px;
 }
 
@@ -34,7 +34,7 @@
 }
 
 .login-header p {
-    color: #b0b7c3;
+    color: var(--text-secondary, #c7cfdd);
 }
 
 /* Email Group */
@@ -50,7 +50,7 @@
     background: rgba(40, 44, 60, 0.8);
     border: 1px solid #3a3f50;
     border-radius: 8px;
-    color: #e0e0e0;
+    color: var(--text-primary, #e8eaf0);
     font-size: 1rem;
 }
 
@@ -88,7 +88,7 @@
 
 .otp-group label {
     display: block;
-    color: #b0b7c3;
+    color: var(--text-secondary, #c7cfdd);
     margin-bottom: 10px;
 }
 
@@ -104,7 +104,7 @@
     background: rgba(40, 44, 60, 0.8);
     border: 1px solid #3a3f50;
     border-radius: 8px;
-    color: #e0e0e0;
+    color: var(--text-primary, #e8eaf0);
     font-size: 1.5rem;
     font-weight: 600;
     text-align: center;
@@ -144,12 +144,12 @@
 .login-footer {
     text-align: center;
     margin-top: 20px;
-    color: #8a8f9d;
+    color: var(--text-muted, #a0a8b8);
     font-size: 0.9rem;
 }
 
 .login-footer a {
-    color: #9d7bff;
+    color: var(--accent, #b794ff);
     text-decoration: none;
 }
 
@@ -170,7 +170,7 @@
     background: rgba(40, 44, 60, 0.8);
     border: 1px solid #3a3f50;
     border-radius: 8px;
-    color: #e0e0e0;
+    color: var(--text-primary, #e8eaf0);
     font-size: 1rem;
 }
 
@@ -190,7 +190,7 @@
     background: rgba(40, 44, 60, 0.8);
     border: 1px solid #3a3f50;
     border-radius: 8px 0 0 8px;
-    color: #9d7bff;
+    color: var(--accent, #b794ff);
     font-size: 0.95rem;
     font-weight: 600;
     cursor: pointer;
@@ -202,7 +202,7 @@
 }
 
 .input-type-hint {
-    color: #9d7bff;
+    color: var(--accent, #b794ff);
     font-size: 0.95rem;
     margin-bottom: 15px;
     display: flex;
@@ -227,7 +227,7 @@
 /* OTP Label */
 .otp-label {
     display: block;
-    color: #b0b7c3;
+    color: var(--text-secondary, #c7cfdd);
     margin-bottom: 12px;
     text-align: center;
 }
@@ -244,7 +244,7 @@
 .btn-back {
     background: none;
     border: none;
-    color: #9d7bff;
+    color: var(--accent, #b794ff);
     font-size: 0.9rem;
     cursor: pointer;
     padding: 8px 12px;
@@ -299,7 +299,7 @@
     background: rgba(40, 44, 60, 0.8);
     border: 1px solid #3a3f50;
     border-radius: 8px;
-    color: #e0e0e0;
+    color: var(--text-primary, #e8eaf0);
     font-size: 0.95rem;
     margin-bottom: 12px;
 }
@@ -318,7 +318,7 @@
     align-items: center;
     gap: 10px;
     cursor: pointer;
-    color: #b0b7c3;
+    color: var(--text-secondary, #c7cfdd);
     font-size: 0.9rem;
 }
 

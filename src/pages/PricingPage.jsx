@@ -483,7 +483,7 @@ export default function PricingPage() {
               {error}
               <button
                 onClick={() => setError('')}
-                style={{ marginLeft: 12, background: 'none', border: 'none', color: '#9d7bff', cursor: 'pointer', textDecoration: 'underline' }}
+                style={{ marginLeft: 12, background: 'none', border: 'none', color: '#b794ff', cursor: 'pointer', textDecoration: 'underline' }}
               >
                 Dismiss
               </button>

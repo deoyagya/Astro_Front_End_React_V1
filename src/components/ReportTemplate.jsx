@@ -106,13 +106,13 @@ export default function ReportTemplate({
         {/* Birth Details Form */}
         <div className="chapter" style={{ marginBottom: 30 }}>
           <h2>Enter Your Birth Details</h2>
-          <p style={{ color: '#b0b7c3', marginBottom: 20 }}>
+          <p style={{ color: '#c7cfdd', marginBottom: 20 }}>
             Provide accurate birth details for a personalized report based on your Vedic chart.
           </p>
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
             <div className="form-group">
-              <label style={{ color: '#b0b7c3', display: 'block', marginBottom: 8 }}>Full Name</label>
+              <label style={{ color: '#c7cfdd', display: 'block', marginBottom: 8 }}>Full Name</label>
               <input
                 type="text"
                 placeholder="Enter your full name"
@@ -122,7 +122,7 @@ export default function ReportTemplate({
               />
             </div>
             <div className="form-group">
-              <label style={{ color: '#b0b7c3', display: 'block', marginBottom: 8 }}>Date of Birth</label>
+              <label style={{ color: '#c7cfdd', display: 'block', marginBottom: 8 }}>Date of Birth</label>
               <DateInput
                 id={`report-dob-${subdomainId}`}
                 value={birthDate}
@@ -131,7 +131,7 @@ export default function ReportTemplate({
               />
             </div>
             <div className="form-group">
-              <label style={{ color: '#b0b7c3', display: 'block', marginBottom: 8 }}>Time of Birth</label>
+              <label style={{ color: '#c7cfdd', display: 'block', marginBottom: 8 }}>Time of Birth</label>
               <TimeSelectGroup
                 hourId={`report-hour-${subdomainId}`}
                 minuteId={`report-minute-${subdomainId}`}
@@ -145,7 +145,7 @@ export default function ReportTemplate({
               />
             </div>
             <div className="form-group">
-              <label style={{ color: '#b0b7c3', display: 'block', marginBottom: 8 }}>Place of Birth</label>
+              <label style={{ color: '#c7cfdd', display: 'block', marginBottom: 8 }}>Place of Birth</label>
               <PlaceAutocomplete
                 id={`report-place-${subdomainId}`}
                 placeholder="Enter birth city"
@@ -188,9 +188,9 @@ export default function ReportTemplate({
 
         {/* Loading State */}
         {loading && (
-          <div style={{ textAlign: 'center', padding: 60, color: '#9d7bff' }}>
+          <div style={{ textAlign: 'center', padding: 60, color: '#b794ff' }}>
             <i className="fas fa-spinner fa-spin" style={{ fontSize: '2.5rem', marginBottom: 20, display: 'block' }}></i>
-            <p style={{ color: '#b0b7c3', fontSize: '1.1rem' }}>Analyzing your Vedic chart and computing predictions...</p>
+            <p style={{ color: '#c7cfdd', fontSize: '1.1rem' }}>Analyzing your Vedic chart and computing predictions...</p>
             <p style={{ color: '#666', fontSize: '0.9rem', marginTop: 8 }}>This may take a few seconds</p>
           </div>
         )}
@@ -220,7 +220,7 @@ export default function ReportTemplate({
                       {Math.round(score)}
                     </span>
                   </div>
-                  <p style={{ color: '#b0b7c3', marginTop: 8 }}>Overall Score (out of 100)</p>
+                  <p style={{ color: '#c7cfdd', marginTop: 8 }}>Overall Score (out of 100)</p>
                 </div>
               )}
 
@@ -245,14 +245,14 @@ export default function ReportTemplate({
                 {cards.slice(1).map((card, idx) => (
                   <div key={idx} style={{ background: 'rgba(40,44,60,0.6)', padding: 20, borderRadius: 12, marginBottom: 15 }}>
                     {card.headline && (
-                      <h3 style={{ color: '#9d7bff', marginBottom: 10 }}>
+                      <h3 style={{ color: '#b794ff', marginBottom: 10 }}>
                         <i className="fas fa-star-half-alt" style={{ marginRight: 8 }}></i>
                         {card.headline}
                       </h3>
                     )}
                     {card.narrative && <p>{card.narrative}</p>}
                     {card.score != null && (
-                      <p style={{ color: '#b0b7c3', fontSize: '0.9rem', marginTop: 8 }}>
+                      <p style={{ color: '#c7cfdd', fontSize: '0.9rem', marginTop: 8 }}>
                         Sub-score: <strong style={{ color: card.score >= 60 ? '#2ed573' : '#ffa502' }}>{Math.round(card.score)}/100</strong>
                       </p>
                     )}
@@ -294,7 +294,7 @@ export default function ReportTemplate({
                   background: 'transparent',
                   border: '2px solid #7b5bff',
                   borderRadius: 10,
-                  color: '#9d7bff',
+                  color: '#b794ff',
                   fontWeight: 600,
                   fontSize: '1rem',
                   cursor: 'pointer',
@@ -302,7 +302,7 @@ export default function ReportTemplate({
               >
                 <i className="fas fa-shopping-cart"></i> Order Full Detailed Report
               </button>
-              <p style={{ color: '#666', fontSize: '0.85rem', marginTop: 10 }}>
+              <p style={{ color: '#666', fontSize: '0.9375rem', marginTop: 10 }}>
                 Full AI-powered report with in-depth analysis, remedies, and timing predictions
               </p>
             </div>
@@ -311,7 +311,7 @@ export default function ReportTemplate({
 
         {/* No data yet — show placeholder */}
         {!reportData && !loading && (
-          <div style={{ textAlign: 'center', padding: 60, color: '#b0b7c3' }}>
+          <div style={{ textAlign: 'center', padding: 60, color: '#c7cfdd' }}>
             <i className={`fas ${icon}`} style={{ fontSize: '3rem', color: '#7b5bff', marginBottom: 15, display: 'block' }}></i>
             <p>Enter your birth details above and click &ldquo;Generate Preview Report&rdquo; to see your personalized analysis.</p>
             <p style={{ color: '#666', marginTop: 8 }}>

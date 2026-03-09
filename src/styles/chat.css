@@ -55,7 +55,7 @@
   cursor: pointer;
   padding: 2px 4px;
   margin-left: auto;
-  font-size: 0.8rem;
+  font-size: 0.875rem;
 }
 
 .chat-toast-close:hover {
@@ -150,7 +150,7 @@
   border-radius: 10px;
   color: #c4b5fd;
   cursor: pointer;
-  font-size: 0.88rem;
+  font-size: 0.9375rem;
   font-weight: 500;
   transition: all 0.2s;
 }
@@ -328,7 +328,7 @@
 }
 
 .chat-birth-desc {
-  font-size: 0.88rem;
+  font-size: 0.9375rem;
   color: #9b95aa;
   margin: 0 0 28px 0;
   line-height: 1.5;
@@ -351,7 +351,7 @@
 }
 
 .chat-form-group label {
-  font-size: 0.8rem;
+  font-size: 0.875rem;
   font-weight: 600;
   color: #9b95aa;
   text-transform: uppercase;
@@ -508,7 +508,7 @@
   border-radius: 8px;
   color: #fca5a5;
   cursor: pointer;
-  font-size: 0.8rem;
+  font-size: 0.875rem;
   font-weight: 600;
   transition: all 0.2s;
 }
@@ -588,7 +588,7 @@
 }
 
 .chat-welcome p {
-  font-size: 0.88rem;
+  font-size: 0.9375rem;
   color: #9b95aa;
   margin: 0;
   max-width: 400px;
@@ -631,7 +631,7 @@
   display: inline-flex;
   align-items: center;
   margin-left: 8px;
-  font-size: 0.7rem;
+  font-size: 0.875rem;
   opacity: 0.7;
 }
 
@@ -700,7 +700,7 @@
 }
 
 .chat-advice p {
-  font-size: 0.88rem;
+  font-size: 0.9375rem;
   color: #d0c8e4;
   margin: 0;
   line-height: 1.6;
@@ -761,7 +761,7 @@
   align-items: center;
   padding: 3px 12px;
   border-radius: 12px;
-  font-size: 0.88rem;
+  font-size: 0.9375rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -791,7 +791,7 @@
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  font-size: 0.7rem;
+  font-size: 0.875rem;
   color: #9b95aa;
   margin-top: 8px;
   opacity: 0.7;
@@ -891,7 +891,7 @@
 }
 
 .chat-followup-chip i {
-  font-size: 0.7rem;
+  font-size: 0.875rem;
 }
 
 /* ── 12. Template Bar ── */
@@ -934,7 +934,7 @@
   border-radius: 10px;
   color: #e8e2f4;
   cursor: pointer;
-  font-size: 0.8rem;
+  font-size: 0.875rem;
   white-space: nowrap;
   transition: all 0.2s;
   flex-shrink: 0;
@@ -961,7 +961,7 @@
   display: inline-flex;
   align-items: center;
   gap: 3px;
-  font-size: 0.7rem;
+  font-size: 0.875rem;
   color: #ff6b35;
   font-weight: 600;
   padding: 2px 8px;
@@ -1064,7 +1064,7 @@
 }
 
 .chat-voice-label {
-  font-size: 0.65rem;
+  font-size: 0.875rem;
   color: #ff6b35;
   font-weight: 600;
 }
@@ -1103,7 +1103,7 @@
 }
 
 .chat-session-summary p {
-  font-size: 0.88rem;
+  font-size: 0.9375rem;
   color: #9b95aa;
   margin: 0 0 20px 0;
   line-height: 1.5;
@@ -1262,7 +1262,7 @@
 }
 
 .chat-history-area {
-  font-size: 0.88rem;
+  font-size: 0.9375rem;
   font-weight: 600;
   color: #e8e2f4;
   text-transform: capitalize;
@@ -1274,7 +1274,7 @@
 }
 
 .chat-history-status {
-  font-size: 0.7rem;
+  font-size: 0.875rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -1323,7 +1323,7 @@
   }
 
   .chat-subtitle {
-    font-size: 0.88rem;
+    font-size: 0.9375rem;
   }
 
   .chat-select-actions {
@@ -1365,7 +1365,7 @@
   }
 
   .chat-header-count {
-    font-size: 0.7rem;
+    font-size: 0.875rem;
   }
 
   .chat-messages {

@@ -649,9 +649,9 @@ export default function AdminSubscriptionPage() {
             <tbody>
               {plans.map((plan) => (
                 <tr key={plan.id} className={!plan.is_active ? 'deleted-row' : ''}>
-                  <td style={{ textAlign: 'center', color: '#b0b7c3' }}>{plan.display_order}</td>
+                  <td style={{ textAlign: 'center', color: '#c7cfdd' }}>{plan.display_order}</td>
                   <td>
-                    <code style={{ fontSize: 12, color: '#b0b7c3' }}>{plan.slug}</code>
+                    <code style={{ fontSize: 12, color: '#c7cfdd' }}>{plan.slug}</code>
                   </td>
                   <td>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
@@ -703,7 +703,7 @@ export default function AdminSubscriptionPage() {
                       </button>
                     )}
                   </td>
-                  <td style={{ textAlign: 'center', color: '#b0b7c3' }}>
+                  <td style={{ textAlign: 'center', color: '#c7cfdd' }}>
                     {plan.trial_days ? `${plan.trial_days}d` : '\u2014'}
                   </td>
                   <td style={{ textAlign: 'center' }}>
@@ -853,12 +853,12 @@ export default function AdminSubscriptionPage() {
                       <span style={{ color: '#8b949e', fontSize: 12 }}>All Plans</span>
                     )}
                   </td>
-                  <td style={{ textAlign: 'center', color: '#b0b7c3' }}>
+                  <td style={{ textAlign: 'center', color: '#c7cfdd' }}>
                     {c.max_redemptions ?? '\u221E'}
                   </td>
                   <td style={{ textAlign: 'center', fontWeight: 600 }}>{c.redemption_count}</td>
-                  <td style={{ fontSize: 12, color: '#b0b7c3' }}>{formatDate(c.valid_from)}</td>
-                  <td style={{ fontSize: 12, color: '#b0b7c3' }}>{formatDate(c.valid_until)}</td>
+                  <td style={{ fontSize: 12, color: '#c7cfdd' }}>{formatDate(c.valid_from)}</td>
+                  <td style={{ fontSize: 12, color: '#c7cfdd' }}>{formatDate(c.valid_until)}</td>
                   <td style={{ textAlign: 'center' }}>
                     {c.is_active ? (
                       <span className="badge-active">Active</span>
@@ -942,10 +942,10 @@ export default function AdminSubscriptionPage() {
                   <td>
                     <code style={{ fontSize: 12, color: '#a29bfe' }}>{pack.feature_key}</code>
                   </td>
-                  <td style={{ textAlign: 'center', color: '#b0b7c3' }}>
+                  <td style={{ textAlign: 'center', color: '#c7cfdd' }}>
                     {pack.validity_days ? `${pack.validity_days}d` : '\u2014'}
                   </td>
-                  <td style={{ textAlign: 'center', color: '#b0b7c3' }}>{pack.display_order}</td>
+                  <td style={{ textAlign: 'center', color: '#c7cfdd' }}>{pack.display_order}</td>
                   <td style={{ textAlign: 'center' }}>
                     {pack.is_active ? (
                       <span className="badge-active">Active</span>
@@ -1313,12 +1313,12 @@ export default function AdminSubscriptionPage() {
                 </div>
                 {planModal.data.stripe_price_id_monthly && (
                   <div style={{ color: '#8b949e', marginBottom: 2 }}>
-                    Monthly: <code style={{ color: '#b0b7c3' }}>{planModal.data.stripe_price_id_monthly}</code>
+                    Monthly: <code style={{ color: '#c7cfdd' }}>{planModal.data.stripe_price_id_monthly}</code>
                   </div>
                 )}
                 {planModal.data.stripe_price_id_yearly && (
                   <div style={{ color: '#8b949e' }}>
-                    Yearly: <code style={{ color: '#b0b7c3' }}>{planModal.data.stripe_price_id_yearly}</code>
+                    Yearly: <code style={{ color: '#c7cfdd' }}>{planModal.data.stripe_price_id_yearly}</code>
                   </div>
                 )}
               </div>

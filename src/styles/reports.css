@@ -5,7 +5,7 @@
 }
 
 .sample-note {
-    color: #9d7bff;
+    color: var(--accent, #b794ff);
     margin-top: 10px;
     font-size: 0.95rem;
 }
@@ -45,13 +45,13 @@
     color: white;
     padding: 5px 15px;
     border-radius: 20px;
-    font-size: 0.8rem;
+    font-size: 0.875rem;
     font-weight: 600;
 }
 
 .report-icon {
     font-size: 2.5rem;
-    color: #9d7bff;
+    color: var(--accent, #b794ff);
     margin-bottom: 15px;
 }
 
@@ -63,7 +63,7 @@
 }
 
 .report-desc {
-    color: #b0b7c3;
+    color: var(--text-secondary, #c7cfdd);
     font-size: 0.95rem;
     margin-bottom: 20px;
     line-height: 1.6;
@@ -76,7 +76,7 @@
 }
 
 .report-meta span {
-    color: #b0b7c3;
+    color: var(--text-secondary, #c7cfdd);
     font-size: 0.9rem;
     display: flex;
     align-items: center;
@@ -84,7 +84,7 @@
 }
 
 .report-meta i {
-    color: #9d7bff;
+    color: var(--accent, #b794ff);
 }
 
 .report-price {
@@ -120,7 +120,7 @@
 .btn-sample {
     background: transparent;
     border: 1px solid #7b5bff;
-    color: #e0e0e0;
+    color: var(--text-primary, #e8eaf0);
 }
 
 .btn-sample:hover {
@@ -160,7 +160,7 @@
 }
 
 .bundle-content p {
-    color: #b0b7c3;
+    color: var(--text-secondary, #c7cfdd);
     font-size: 1.1rem;
     margin-bottom: 20px;
 }
@@ -170,7 +170,7 @@
 }
 
 .original {
-    color: #8a8f9d;
+    color: var(--text-muted, #a0a8b8);
     text-decoration: line-through;
     font-size: 1.5rem;
     margin-right: 15px;
@@ -208,7 +208,7 @@
 
 .sample-header i {
     font-size: 2.5rem;
-    color: #9d7bff;
+    color: var(--accent, #b794ff);
     margin-bottom: 10px;
 }
 
@@ -239,7 +239,7 @@
 }
 
 .sample-warning li {
-    color: #e0e0e0;
+    color: var(--text-primary, #e8eaf0);
     margin-bottom: 12px;
     display: flex;
     align-items: center;
@@ -255,7 +255,7 @@
 }
 
 .sample-planets h3 {
-    color: #9d7bff;
+    color: var(--accent-heading, #c4b0ff);
     margin-bottom: 15px;
 }
 
@@ -305,7 +305,7 @@
 }
 
 .sample-remedies li {
-    color: #e0e0e0;
+    color: var(--text-primary, #e8eaf0);
     margin-bottom: 12px;
     display: flex;
     align-items: center;
@@ -323,7 +323,7 @@
 }
 
 .sample-footer p {
-    color: #b0b7c3;
+    color: var(--text-secondary, #c7cfdd);
     margin-bottom: 15px;
 }
 

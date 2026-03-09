@@ -103,7 +103,7 @@ export default function HouseExplorePage() {
             <div className="form-card" style={{ textAlign: 'center', padding: 40 }}>
               <i className="fas fa-exclamation-triangle" style={{ fontSize: '2rem', color: '#ffa502', marginBottom: 16 }}></i>
               <h2>No Chart Data</h2>
-              <p style={{ color: '#b0b7c3' }}>Please generate a birth chart first.</p>
+              <p style={{ color: '#c7cfdd' }}>Please generate a birth chart first.</p>
               <button className="btn-generate" style={{ marginTop: 16 }} onClick={() => navigate('/birth-chart')}>
                 <i className="fas fa-arrow-left"></i> Go to Birth Chart
               </button>

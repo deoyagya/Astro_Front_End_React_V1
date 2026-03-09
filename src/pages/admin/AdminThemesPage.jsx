@@ -83,16 +83,16 @@ export default function AdminThemesPage() {
               <tbody>
                 {themes.map((theme) => (
                   <tr key={theme.id} className={!theme.is_active ? 'deleted-row' : ''}>
-                    <td style={{ color: '#8a8f9d' }}>{theme.display_order}</td>
+                    <td style={{ color: '#a0a8b8' }}>{theme.display_order}</td>
                     <td>
                       <strong>{theme.name}</strong>
-                      {theme.description && <div style={{ color: '#8a8f9d', fontSize: '0.85rem' }}>{theme.description}</div>}
+                      {theme.description && <div style={{ color: '#a0a8b8', fontSize: '0.9375rem' }}>{theme.description}</div>}
                     </td>
                     <td><i className={`fas ${theme.icon || 'fa-star'}`} style={{ color: '#9d7bff' }}></i></td>
                     <td>{theme.domain_id || '—'}</td>
                     <td>
                       <button
-                        style={{ background: 'none', border: 'none', color: '#9d7bff', cursor: 'pointer', textDecoration: 'underline' }}
+                        style={{ background: 'none', border: 'none', color: '#b794ff', cursor: 'pointer', textDecoration: 'underline' }}
                         onClick={() => navigate(`/admin/themes/${theme.id}/life-areas`)}
                       >
                         {theme.life_area_count} areas

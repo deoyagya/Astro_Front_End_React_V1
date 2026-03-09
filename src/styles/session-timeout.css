@@ -50,7 +50,7 @@
 }
 
 .session-timeout-message {
-  color: #b0b7c3;
+  color: var(--text-secondary, #c7cfdd);
   font-size: 0.95rem;
   margin-bottom: 20px;
 }
@@ -104,7 +104,7 @@
 }
 
 .session-timeout-sub {
-  color: #8a8f9d;
+  color: var(--text-muted, #a0a8b8);
   font-size: 0.95rem;
   margin-bottom: 24px;
 }
@@ -149,7 +149,7 @@
   background: transparent;
   border: 1px solid #3a3f50;
   border-radius: 8px;
-  color: #b0b7c3;
+  color: var(--text-secondary, #c7cfdd);
   font-weight: 500;
   font-size: 0.9rem;
   cursor: pointer;

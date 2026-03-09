@@ -230,7 +230,7 @@
   border-radius: 50%;
   background: #e53e3e;
   color: #fff;
-  font-size: 13px;
+  font-size: 0.875rem;
   font-weight: 800;
   display: flex;
   align-items: center;
@@ -263,7 +263,7 @@
 }
 
 .cw-nudge-desc {
-  font-size: 12px;
+  font-size: 0.875rem;
   font-weight: 500;
   color: rgba(255, 255, 255, 0.8) !important;
   line-height: 1.35;
@@ -327,11 +327,11 @@
   }
 
   .cw-nudge-title {
-    font-size: 13px;
+    font-size: 0.875rem;
   }
 
   .cw-nudge-desc {
-    font-size: 11px;
+    font-size: 0.875rem;
   }
 
   .cw-nudge-curved-text svg {
@@ -479,7 +479,7 @@
 }
 
 .cw-quota-badge {
-  font-size: 13px;
+  font-size: 0.875rem;
   font-weight: 600;
   background: rgba(255, 255, 255, 0.22);
   padding: 3px 10px;
@@ -662,7 +662,7 @@
 
 .cw-msg-remedies strong {
   color: var(--cw-success);
-  font-size: 12px;
+  font-size: 0.875rem;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
@@ -682,7 +682,7 @@
 /* 5g. Tone badges */
 .cw-tone-badge {
   display: inline-block;
-  font-size: 11px;
+  font-size: 0.875rem;
   text-transform: uppercase;
   letter-spacing: 0.5px;
   padding: 3px 10px;
@@ -765,7 +765,7 @@
    7. Template Question Chips
    ---------------------------------------------------------- */
 .cw-templates-label {
-  font-size: 13px;
+  font-size: 0.875rem;
   color: var(--cw-text-secondary);
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -833,7 +833,7 @@
   border: 1px solid #d8d0f7;
   border-radius: 18px;
   cursor: pointer;
-  font-size: 13px;
+  font-size: 0.875rem;
   color: var(--cw-accent);
   transition: all 0.2s ease;
   font-family: inherit;
@@ -983,7 +983,7 @@
 }
 
 .cw-cta-note {
-  font-size: 13px;
+  font-size: 0.875rem;
   color: var(--cw-text-secondary);
   text-align: center;
   margin-top: 8px;
@@ -1176,7 +1176,7 @@
 .cw-btn-new-topic {
   background: none;
   color: var(--cw-text-secondary);
-  font-size: 13px;
+  font-size: 0.875rem;
   font-weight: 600;
   padding: 8px 14px;
   width: 100%;
@@ -1187,7 +1187,7 @@
 }
 
 .cw-btn-new-topic i {
-  font-size: 11px;
+  font-size: 0.875rem;
 }
 
 /* ----------------------------------------------------------
@@ -1296,7 +1296,7 @@
 }
 
 .cw-voice-label {
-  font-size: 11px;
+  font-size: 0.875rem;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.3px;
@@ -1319,7 +1319,7 @@
 }
 
 .cw-footer-status {
-  font-size: 13px;
+  font-size: 0.875rem;
   color: var(--cw-text-secondary);
   text-align: center;
   padding: 4px 0;
@@ -1342,7 +1342,7 @@
 
 .cw-credit-badge {
   display: inline-block;
-  font-size: 10px;
+  font-size: 0.875rem;
   font-weight: 700;
   background: #fff3ec;
   color: var(--cw-orange);
@@ -1375,7 +1375,7 @@
   border: none;
   color: #b91c1c;
   cursor: pointer;
-  font-size: 13px;
+  font-size: 0.875rem;
   padding: 2px 4px;
   flex-shrink: 0;
   opacity: 0.7;
@@ -1402,7 +1402,7 @@
   border: 1px solid #d8d0f7;
   border-radius: 18px;
   cursor: pointer;
-  font-size: 13px;
+  font-size: 0.875rem;
   color: var(--cw-accent);
   transition: all 0.2s ease;
   font-family: inherit;
@@ -1468,7 +1468,7 @@
 }
 
 .cw-header-area {
-  font-size: 12px;
+  font-size: 0.875rem;
   background: rgba(255, 255, 255, 0.18);
   padding: 2px 10px;
   border-radius: 8px;
@@ -1740,7 +1740,7 @@
 }
 
 .cw-partner-subtitle {
-  font-size: 12px;
+  font-size: 0.875rem;
   color: var(--cw-text-secondary);
   margin: 0;
   line-height: 1.4;
@@ -1759,7 +1759,7 @@
 }
 
 .cw-field span {
-  font-size: 11px;
+  font-size: 0.875rem;
   font-weight: 600;
   color: var(--cw-text-secondary);
   text-transform: uppercase;
@@ -1771,7 +1771,7 @@
   padding: 8px 10px;
   border: 1px solid var(--cw-border);
   border-radius: 6px;
-  font-size: 13px;
+  font-size: 0.875rem;
   color: var(--cw-text);
   background: var(--cw-bg-card);
   outline: none;
@@ -1801,7 +1801,7 @@
 
 .cw-partner-actions .cw-btn {
   flex: 1;
-  font-size: 12px;
+  font-size: 0.875rem;
   padding: 8px 12px;
 }
 

@@ -68,7 +68,7 @@ export default function AdminReportsPage() {
           </div>
 
           <div className="admin-toolbar">
-            <label style={{ color: '#b0b7c3', display: 'flex', alignItems: 'center', gap: 6, fontSize: '0.9rem' }}>
+            <label style={{ color: '#c7cfdd', display: 'flex', alignItems: 'center', gap: 6, fontSize: '0.9rem' }}>
               <input type="checkbox" checked={includeInactive} onChange={(e) => setIncludeInactive(e.target.checked)} />
               Show inactive
             </label>
@@ -100,26 +100,26 @@ export default function AdminReportsPage() {
               <tbody>
                 {configs.map((config) => (
                   <tr key={config.id} className={!config.is_active ? 'deleted-row' : ''}>
-                    <td style={{ fontWeight: 600, color: '#9d7bff', whiteSpace: 'nowrap' }}>{config.report_id_display}</td>
+                    <td style={{ fontWeight: 600, color: '#b794ff', whiteSpace: 'nowrap' }}>{config.report_id_display}</td>
                     <td>
                       <strong>{config.name}</strong>
-                      {config.description && <div style={{ color: '#8a8f9d', fontSize: '0.85rem' }}>{config.description.substring(0, 80)}{config.description.length > 80 ? '...' : ''}</div>}
+                      {config.description && <div style={{ color: '#a0a8b8', fontSize: '0.9375rem' }}>{config.description.substring(0, 80)}{config.description.length > 80 ? '...' : ''}</div>}
                     </td>
                     <td style={{ textAlign: 'center' }}>{config.question_count}</td>
                     <td>
-                      <span style={{ color: config.pricing_mode === 'fixed' ? '#ffa502' : '#2ed573', fontSize: '0.85rem' }}>
+                      <span style={{ color: config.pricing_mode === 'fixed' ? '#ffa502' : '#2ed573', fontSize: '0.9375rem' }}>
                         {config.pricing_mode === 'fixed' ? 'Fixed' : 'Variable'}
                       </span>
                       {config.discount_mode && (
-                        <div style={{ color: '#ff4757', fontSize: '0.75rem' }}>
+                        <div style={{ color: '#ff4757', fontSize: '0.875rem' }}>
                           {config.discount_mode === 'percentage' ? `${config.discount_value}% off` : `₹${(config.discount_value / 100).toFixed(0)} off`}
                         </div>
                       )}
                     </td>
                     <td style={{ fontWeight: 600, whiteSpace: 'nowrap' }}>{formatCost(config.total_cost_paisa)}</td>
-                    <td style={{ fontSize: '0.85rem', color: '#b0b7c3' }}>
+                    <td style={{ fontSize: '0.9375rem', color: '#c7cfdd' }}>
                       <div>{config.creator_model}</div>
-                      <div style={{ color: '#8a8f9d', fontSize: '0.75rem' }}>+ {config.reviewer_model}</div>
+                      <div style={{ color: '#a0a8b8', fontSize: '0.875rem' }}>+ {config.reviewer_model}</div>
                     </td>
                     <td>
                       {config.is_active
@@ -144,7 +144,7 @@ export default function AdminReportsPage() {
               </tbody>
             </table>
           )}
-          <p style={{ color: '#8a8f9d', fontSize: '0.85rem', marginTop: 10 }}>{configs.length} report(s) found</p>
+          <p style={{ color: '#a0a8b8', fontSize: '0.9375rem', marginTop: 10 }}>{configs.length} report(s) found</p>
         </div>
       </section>
 

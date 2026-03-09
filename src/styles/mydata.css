@@ -30,12 +30,12 @@
 }
 
 .mydata-header h1 i {
-  color: #9d7bff;
+  color: var(--accent-heading, #c4b0ff);
   margin-right: 10px;
 }
 
 .mydata-header p {
-  color: #8892a4;
+  color: var(--text-muted, #a0a8b8);
   font-size: 0.95rem;
 }
 
@@ -58,7 +58,7 @@
 
 .mydata-birth-form .form-group label {
   font-size: 0.92rem;
-  color: #8892a4;
+  color: var(--text-muted, #a0a8b8);
   margin-bottom: 4px;
   display: block;
 }
@@ -70,7 +70,7 @@
   color: #e8dff5;
   padding: 8px 12px;
   border-radius: 8px;
-  font-size: 0.88rem;
+  font-size: 0.9375rem;
   width: 100%;
 }
 
@@ -96,7 +96,7 @@
   border: none;
   border-radius: 8px;
   padding: 10px 20px;
-  font-size: 0.88rem;
+  font-size: 0.9375rem;
   font-weight: 600;
   cursor: pointer;
   white-space: nowrap;
@@ -132,9 +132,9 @@
 }
 
 .mydata-nav-label {
-  font-size: 0.88rem;
+  font-size: 0.9375rem;
   font-weight: 600;
-  color: #9d7bff;
+  color: var(--accent, #b794ff);
   white-space: nowrap;
   display: flex;
   align-items: center;
@@ -193,7 +193,7 @@
 .mydata-tab {
   padding: 12px 18px;
   white-space: nowrap;
-  color: #8892a4;
+  color: var(--text-muted, #a0a8b8);
   text-decoration: none;
   border-bottom: 3px solid transparent;
   transition: all 0.2s;
@@ -210,7 +210,7 @@
 }
 
 .mydata-tab.active {
-  color: #9d7bff;
+  color: var(--accent, #b794ff);
   border-bottom-color: #7b5bff;
   font-weight: 600;
 }
@@ -243,7 +243,7 @@
 }
 
 .mydata-table-header i {
-  color: #9d7bff;
+  color: var(--accent, #b794ff);
   font-size: 1rem;
 }
 
@@ -265,8 +265,8 @@
 
 .mydata-row-label {
   font-weight: 600;
-  color: #b0b7c3;
-  font-size: 0.88rem;
+  color: var(--text-secondary, #c7cfdd);
+  font-size: 0.9375rem;
   min-width: 160px;
   flex-shrink: 0;
 }
@@ -314,7 +314,7 @@
 }
 
 .mydata-section-title i {
-  color: #9d7bff;
+  color: var(--accent-heading, #c4b0ff);
 }
 
 /* --- Personality grid (2-col) --- */
@@ -345,7 +345,7 @@
 }
 
 .personality-card-header i {
-  color: #9d7bff;
+  color: var(--accent, #b794ff);
   font-size: 1.1rem;
 }
 
@@ -357,8 +357,8 @@
 }
 
 .personality-card-body {
-  color: #b0b7c3;
-  font-size: 0.88rem;
+  color: var(--text-secondary, #c7cfdd);
+  font-size: 0.9375rem;
   line-height: 1.6;
 }
 
@@ -374,7 +374,7 @@
 .personality-card-score.favorable { background: rgba(80, 200, 120, 0.15); color: #50c878; }
 .personality-card-score.mixed { background: rgba(255, 193, 7, 0.15); color: #ffc107; }
 .personality-card-score.unfavorable { background: rgba(255, 82, 82, 0.15); color: #ff5252; }
-.personality-card-score.neutral { background: rgba(176, 183, 195, 0.15); color: #b0b7c3; }
+.personality-card-score.neutral { background: rgba(176, 183, 195, 0.15); color: var(--text-secondary, #c7cfdd); }
 
 /* --- Yoga cards --- */
 .yoga-category {
@@ -402,7 +402,7 @@
 
 .yoga-count-badge {
   background: rgba(123, 91, 255, 0.2);
-  color: #9d7bff;
+  color: var(--accent, #b794ff);
   padding: 2px 10px;
   border-radius: 12px;
   font-size: 0.92rem;
@@ -425,13 +425,13 @@
 }
 
 .yoga-card-planets {
-  color: #9d7bff;
+  color: var(--accent, #b794ff);
   font-size: 0.92rem;
   margin-bottom: 6px;
 }
 
 .yoga-card-desc {
-  color: #8892a4;
+  color: var(--text-muted, #a0a8b8);
   font-size: 0.95rem;
   line-height: 1.5;
 }
@@ -445,7 +445,7 @@
 
 .yoga-card-ref i {
   margin-right: 4px;
-  font-size: 0.88rem;
+  font-size: 0.9375rem;
 }
 
 .yoga-summary-badge {
@@ -536,7 +536,7 @@
 }
 
 .saved-chart-info p {
-  color: #8892a4;
+  color: var(--text-muted, #a0a8b8);
   font-size: 0.92rem;
   margin: 0;
 }
@@ -558,7 +558,7 @@
 
 .btn-load-chart {
   background: rgba(123, 91, 255, 0.15);
-  color: #9d7bff;
+  color: var(--accent, #b794ff);
 }
 
 .btn-load-chart:hover {
@@ -636,7 +636,7 @@
 }
 
 .chart-modal-title i {
-  color: #9d7bff;
+  color: var(--accent-heading, #c4b0ff);
   font-size: 1.1rem;
 }
 
@@ -677,7 +677,7 @@
 }
 
 .chart-modal-selector label {
-  color: #8892a4;
+  color: var(--text-muted, #a0a8b8);
   font-size: 0.95rem;
   font-weight: 500;
   white-space: nowrap;
@@ -710,7 +710,7 @@
 .chart-modal-style-toggle button {
   background: transparent;
   border: none;
-  color: #8892a4;
+  color: var(--text-muted, #a0a8b8);
   padding: 7px 14px;
   font-size: 0.92rem;
   cursor: pointer;
@@ -720,7 +720,7 @@
 
 .chart-modal-style-toggle button.active {
   background: rgba(123, 91, 255, 0.15);
-  color: #9d7bff;
+  color: var(--accent, #b794ff);
   font-weight: 600;
 }
 

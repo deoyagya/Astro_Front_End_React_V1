@@ -96,11 +96,11 @@ export default function AdminLifeAreasPage() {
                   <tr key={area.id} className={!area.is_active ? 'deleted-row' : ''}>
                     <td>
                       <strong>{area.name}</strong>
-                      {area.description && <div style={{ color: '#8a8f9d', fontSize: '0.85rem' }}>{area.description}</div>}
+                      {area.description && <div style={{ color: '#a0a8b8', fontSize: '0.9375rem' }}>{area.description}</div>}
                     </td>
-                    <td style={{ color: '#8a8f9d', fontSize: '0.85rem' }}>{area.rule_file || '—'}</td>
-                    <td style={{ color: '#9d7bff' }}>{area.primary_houses?.join(', ') || '—'}</td>
-                    <td style={{ color: '#9d7bff', fontSize: '0.85rem' }}>{area.divisional_charts?.join(', ') || '—'}</td>
+                    <td style={{ color: '#a0a8b8', fontSize: '0.9375rem' }}>{area.rule_file || '—'}</td>
+                    <td style={{ color: '#b794ff' }}>{area.primary_houses?.join(', ') || '—'}</td>
+                    <td style={{ color: '#b794ff', fontSize: '0.9375rem' }}>{area.divisional_charts?.join(', ') || '—'}</td>
                     <td>{area.question_count}</td>
                     <td>
                       {area.is_active

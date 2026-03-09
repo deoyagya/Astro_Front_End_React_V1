@@ -19,7 +19,7 @@ export default function ChartVisualAid({ content }) {
       </button>
       {open && (
         <div className="wiz-visual-aid-body">
-          {content.help_text && <p style={{ color: '#b0b7c3', fontSize: '0.88rem', marginBottom: '0.75rem' }}>{content.help_text}</p>}
+          {content.help_text && <p style={{ color: '#c7cfdd', fontSize: '0.88rem', marginBottom: '0.75rem' }}>{content.help_text}</p>}
           {content.image_url && <img src={content.image_url} alt="Visual guide" loading="lazy" />}
           {content.video_url && (
             <iframe

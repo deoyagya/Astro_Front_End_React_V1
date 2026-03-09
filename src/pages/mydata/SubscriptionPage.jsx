@@ -210,7 +210,7 @@ export default function SubscriptionPage() {
           {successMsg}
           <button
             onClick={() => setSuccessMsg('')}
-            style={{ marginLeft: 12, background: 'none', border: 'none', color: '#2ed573', cursor: 'pointer', textDecoration: 'underline', fontSize: '0.85rem' }}
+            style={{ marginLeft: 12, background: 'none', border: 'none', color: '#2ed573', cursor: 'pointer', textDecoration: 'underline', fontSize: '0.9375rem' }}
           >
             Dismiss
           </button>
@@ -407,7 +407,7 @@ export default function SubscriptionPage() {
             </p>
 
             <div style={{ marginBottom: 20 }}>
-              <label style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#b0b7c3', fontSize: '0.85rem', cursor: 'pointer', justifyContent: 'center' }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#c7cfdd', fontSize: '0.9375rem', cursor: 'pointer', justifyContent: 'center' }}>
                 <input
                   type="checkbox"
                   checked={cancelImmediate}
