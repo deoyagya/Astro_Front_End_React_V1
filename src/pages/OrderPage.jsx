@@ -4,8 +4,10 @@ import ApiError from '../components/ApiError';
 import { api } from '../api/client';
 import { useSharedEffects } from '../hooks/useSharedEffects';
 import '../styles/report-pages.css';
+import { useStyles } from '../context/StyleContext';
 
 export default function OrderPage() {
+  const { getOverride } = useStyles('order');
   useSharedEffects();
 
   /* ── State ─────────────────────────────────────────────── */
@@ -107,7 +109,7 @@ export default function OrderPage() {
     setLoading(true);
 
     try {
-      const orderData = await api.post('/v1/payment/create-order', {
+      const orderData = await api.postLong('/v1/payment/create-order', {
         amount: validatedCart.total_cents,
         currency: 'USD',
         items: validatedCart.items.map((it) => ({
@@ -121,22 +123,12 @@ export default function OrderPage() {
       });
 
       if (orderData.checkout_url) {
-        // Redirect to Stripe hosted checkout
         window.location.href = orderData.checkout_url;
         return;
       }
-      setError('Checkout URL not received. Please try again.');
+      setError('Unable to start checkout. Please try again.');
     } catch (err) {
-      const msg = err.message || '';
-      if (msg.includes('not configured') || msg.includes('503') || msg.includes('502')) {
-        setError('Payment gateway is being set up. Please try again later or contact support.');
-      } else if (msg.includes('401') || msg.includes('Not authenticated')) {
-        setError('Please log in to place an order.');
-      } else if (msg.includes('mismatch')) {
-        setError('Price changed. Please refresh the page and try again.');
-      } else {
-        setError(msg || 'Failed to create order. Please try again.');
-      }
+      setError(err.message || 'Unable to process your order. Please try again or contact support.');
     } finally {
       setLoading(false);
     }
@@ -205,7 +197,7 @@ export default function OrderPage() {
                   </div>
                   {validatedCart && (
                     <p className="validation-note">
-                      <i className="fas fa-check-circle"></i> Prices verified by server
+                      <i className="fas fa-check-circle"></i> Prices confirmed
                     </p>
                   )}
 

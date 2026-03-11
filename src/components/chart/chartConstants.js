@@ -26,7 +26,7 @@ export const PLANET_LH      = 34;   // line-height for planet stacking
 export const ASC_FONT       = 16;
 export const LABEL_FONT     = 16;
 export const LEGEND_FONT    = 18;
-export const LEGEND_H       = 80;
+export const LEGEND_H       = 55;
 export const MIN_PLANET_FONT = 13;
 
 /* ===== SVG GEOMETRY — 600×600 ===== */

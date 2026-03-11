@@ -8,6 +8,7 @@
 
 import { useState, useEffect } from 'react';
 import { useMyData } from '../../context/MyDataContext';
+import { useStyles } from '../../context/StyleContext';
 import { api } from '../../api/client';
 import { getSignLord } from '../../utils/jyotish';
 

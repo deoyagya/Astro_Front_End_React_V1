@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import PageShell from '../components/PageShell';
 import { useSharedEffects } from '../hooks/useSharedEffects';
 import '../styles/report-pages.css';
+import { useStyles } from '../context/StyleContext';
 
 /**
  * PaymentPage — Post-checkout landing page.
@@ -13,6 +14,7 @@ import '../styles/report-pages.css';
  * If no query params, redirects to /order (the cart page).
  */
 export default function PaymentPage() {
+  const { getOverride } = useStyles('payment');
   useSharedEffects();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();

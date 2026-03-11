@@ -2,6 +2,7 @@ import '../../styles/admin.css';
 import PageShell from '../../components/PageShell';
 import { useState, useEffect, useCallback } from 'react';
 import { api } from '../../api/client';
+import { useStyles } from '../../context/StyleContext';
 
 const DEFAULT_ICONS = [
   'fa-star', 'fa-ring', 'fa-briefcase', 'fa-plane', 'fa-home', 'fa-om',
@@ -16,6 +17,7 @@ const DEFAULT_COLORS = [
 ];
 
 export default function AdminMuhurtaPage() {
+  const { getStyle, getOverride } = useStyles('admin-muhurta');
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');

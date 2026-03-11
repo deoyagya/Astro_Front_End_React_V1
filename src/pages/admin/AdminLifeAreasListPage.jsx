@@ -3,8 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import PageShell from '../../components/PageShell';
 import { api } from '../../api/client';
 import '../../styles/admin.css';
+import { useStyles } from '../../context/StyleContext';
 
 export default function AdminLifeAreasListPage() {
+  const { getStyle, getOverride } = useStyles('admin-life-areas-list');
   const navigate = useNavigate();
   const [themes, setThemes] = useState([]);
   const [loading, setLoading] = useState(true);

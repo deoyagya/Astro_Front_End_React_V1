@@ -18,6 +18,7 @@ import { api } from '../api/client';
 import { useAuth } from '../context/AuthContext';
 import SiteHeader from '../components/SiteHeader';
 import '../styles/chat.css';
+import { useStyles } from '../context/StyleContext';
 
 // ─── Life Area FA icon mapping ───
 const LIFE_AREA_ICONS = {
@@ -56,6 +57,7 @@ const ICON_BY_KEY = {
 };
 
 function resolveIcon(area) {
+  const { getOverride } = useStyles('chat-widget');
   // Try numeric ID first
   if (area.key && LIFE_AREA_ICONS[area.key]) return LIFE_AREA_ICONS[area.key];
   // Try icon from API

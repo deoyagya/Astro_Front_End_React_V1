@@ -6,6 +6,7 @@ const MONTH_NAMES = ['January','February','March','April','May','June','July','A
 
 /** "1973-08-09" → "09 August 1973" */
 function formatDisplayDate(isoDate) {
+  const { getOverride } = useStyles('house-explore');
   if (!isoDate) return '';
   const [y, m, d] = isoDate.split('-');
   const monthName = MONTH_NAMES[parseInt(m, 10) - 1] || '';
@@ -26,6 +27,7 @@ function formatDisplayTime(time24) {
 import PageShell from '../components/PageShell';
 import VedicChart, { enrichD1, VARGA_LABELS } from '../components/chart';
 import { SIGN_NAMES } from '../utils/jyotish';
+import { useStyles } from '../context/StyleContext';
 
 /* ===== House → Life Area mapping ===== */
 const HOUSE_LIFE_AREAS = {

@@ -7,6 +7,7 @@ import PlaceAutocomplete from '../components/PlaceAutocomplete';
 import { api } from '../api/client';
 import { useBirthData, to24Hour } from '../hooks/useBirthData';
 import '../styles/rule-cv-wizard.css';
+import { useStyles } from '../context/StyleContext';
 
 const STEPS = [
   { label: 'Person A', icon: 'fa-user' },
@@ -15,6 +16,7 @@ const STEPS = [
 ];
 
 export default function CompatibilityPage() {
+  const { getOverride } = useStyles('compatibility');
   const navigate = useNavigate();
 
   // Wizard step (1-indexed)
@@ -168,6 +170,9 @@ export default function CompatibilityPage() {
             <p>Check relationship compatibility with Ashtakoot and Guna matching</p>
           </div>
 
+          {/* ─── Stepper + Step Content (same max-width for alignment) ─── */}
+          <div style={{ maxWidth: 640, margin: '0 auto' }}>
+
           {/* ─── Stepper ─── */}
           <div className="cv-wizard-stepper">
             {STEPS.map((s, idx) => {
@@ -192,9 +197,6 @@ export default function CompatibilityPage() {
               );
             })}
           </div>
-
-          {/* ─── Step Content ─── */}
-          <div style={{ maxWidth: 640, margin: '0 auto' }}>
 
             {/* ═══ STEP 1: Person A ═══ */}
             {step === 1 && (

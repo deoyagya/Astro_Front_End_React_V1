@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import PageShell from '../../components/PageShell';
 import { api } from '../../api/client';
 import '../../styles/admin.css';
+import { useStyles } from '../../context/StyleContext';
 
 // Category labels
 const CATEGORY_LABELS = {
@@ -23,6 +24,7 @@ const TYPE_ICONS = {
 };
 
 export default function AdminPromptsPage() {
+  const { getStyle, getOverride } = useStyles('admin-prompts');
   // --- State ---
   const [prompts, setPrompts] = useState([]);
   const [typeInfo, setTypeInfo] = useState(null);

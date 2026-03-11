@@ -160,7 +160,7 @@ export default function SouthIndianChart({
           fill="rgba(30,33,48,0.95)" />
         <line x1={0} y1={S} x2={S} y2={S} stroke={LINE} strokeWidth={1.5} />
 
-        <text y={S + 28} fontSize={LEGEND_FONT} fontWeight="600" fontFamily={MONO}>
+        <text y={S + 20} fontSize={LEGEND_FONT} fontWeight="600" fontFamily={MONO}>
           <tspan x={12} fill={MALEFIC}>*</tspan>
           <tspan fill={DEG_CLR}> Retro</tspan>
           <tspan x={110} fill="#ffa502">^</tspan>
@@ -172,7 +172,7 @@ export default function SouthIndianChart({
           <tspan x={500} fill={MALEFIC}>{'\u2193'}</tspan>
           <tspan fill={DEG_CLR}> Debil.</tspan>
         </text>
-        <text y={S + 56} fontSize={LEGEND_FONT} fontFamily={MONO}>
+        <text y={S + 42} fontSize={LEGEND_FONT} fontFamily={MONO}>
           <tspan x={12} fill="rgba(176,183,195,0.5)">Degree after planet abbr.</tspan>
           <tspan x={290} fill={MALEFIC}>Red</tspan>
           <tspan fill="rgba(176,183,195,0.5)"> = Malefic</tspan>

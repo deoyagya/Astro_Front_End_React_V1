@@ -1,8 +1,10 @@
 import PageShell from '../components/PageShell';
 import ReportTemplate from '../components/ReportTemplate';
 import '../styles/report-pages.css';
+import { useStyles } from '../context/StyleContext';
 
 export default function CareerReportPage() {
+  const { getOverride } = useStyles('report-detail');
   return (
     <PageShell activeNav="reports">
       <ReportTemplate

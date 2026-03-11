@@ -16,6 +16,7 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useMyData } from '../../context/MyDataContext';
 import { useAuth } from '../../context/AuthContext';
+import { useStyles } from '../../context/StyleContext';
 import { api } from '../../api/client';
 import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip,

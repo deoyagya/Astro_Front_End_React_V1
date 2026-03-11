@@ -3,8 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import PageShell from '../../components/PageShell';
 import { api } from '../../api/client';
 import '../../styles/admin.css';
+import { useStyles } from '../../context/StyleContext';
 
 export default function AdminReportsPage() {
+  const { getStyle, getOverride } = useStyles('admin-reports');
   const navigate = useNavigate();
   const [configs, setConfigs] = useState([]);
   const [loading, setLoading] = useState(true);

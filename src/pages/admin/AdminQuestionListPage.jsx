@@ -3,8 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import PageShell from '../../components/PageShell';
 import { api } from '../../api/client';
 import '../../styles/admin.css';
+import { useStyles } from '../../context/StyleContext';
 
 export default function AdminQuestionListPage() {
+  const { getStyle, getOverride } = useStyles('admin-question-list');
   const navigate = useNavigate();
   const [themes, setThemes] = useState([]);
   const [lifeAreas, setLifeAreas] = useState([]);

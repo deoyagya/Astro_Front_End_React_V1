@@ -15,6 +15,7 @@ import {
   getSuffix,
   getDignity,
 } from '../utils/jyotish';
+import { useStyles } from '../context/StyleContext';
 
 /* Form-level chart options (lowercase value for form state, key for API) */
 const chartOptions = CHART_OPTIONS.map(o => ({
@@ -25,6 +26,7 @@ const chartOptions = CHART_OPTIONS.map(o => ({
 }));
 
 export default function BirthChartPage() {
+  const { getOverride } = useStyles('birth-chart');
   const navigate = useNavigate();
   const { user } = useAuth();
 

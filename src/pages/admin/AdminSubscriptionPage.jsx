@@ -2,6 +2,7 @@ import '../../styles/admin.css';
 import PageShell from '../../components/PageShell';
 import { useState, useEffect, useCallback } from 'react';
 import { api } from '../../api/client';
+import { useStyles } from '../../context/StyleContext';
 
 // ---------- Constants ----------
 
@@ -63,6 +64,7 @@ const formatDate = (iso) => {
 // ---------- Component ----------
 
 export default function AdminSubscriptionPage() {
+  const { getStyle, getOverride } = useStyles('admin-subscriptions');
   const [activeTab, setActiveTab] = useState('plans');
   const [toast, setToast] = useState(null);
 

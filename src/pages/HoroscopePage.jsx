@@ -5,6 +5,7 @@ import TimeSelectGroup from '../components/form/TimeSelectGroup';
 import PlaceAutocomplete from '../components/PlaceAutocomplete';
 import { api } from '../api/client';
 import { useBirthData, to24Hour } from '../hooks/useBirthData';
+import { useStyles } from '../context/StyleContext';
 
 const MOON_SIGNS = [
   { value: 1, label: 'Aries (Mesha)' },
@@ -25,6 +26,7 @@ const MOON_SIGNS = [
 const HOROSCOPE_SUBDOMAIN = 100; // Career > General (use as default general prediction)
 
 export default function HoroscopePage() {
+  const { getOverride } = useStyles('horoscope');
   const {
     fullName, setFullName,
     birthDate, setBirthDate,

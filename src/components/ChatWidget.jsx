@@ -14,6 +14,7 @@ import { useNavigate } from 'react-router-dom';
 import { api } from '../api/client';
 import { useAuth } from '../context/AuthContext';
 import '../styles/chat-widget.css';
+import { useStyles } from '../context/StyleContext';
 
 // ────────────────────────────── localStorage keys
 const LS_OPEN = 'cw_is_open';
@@ -69,6 +70,7 @@ function UserMessage({ msg }) {
 // ────────────────────────────── Main component
 
 export default function ChatWidget() {
+  const { getOverride } = useStyles('chat-widget');
   const { user, isAuthenticated } = useAuth();
   const navigate = useNavigate();
 
@@ -101,8 +103,6 @@ export default function ChatWidget() {
   const [panelReady, setPanelReady] = useState(false);
   const [voiceMode, setVoiceMode] = useState(false);
   const [customQuestion, setCustomQuestion] = useState('');
-  const [showNudge, setShowNudge] = useState(false);
-  const [nudgeDismissed, setNudgeDismissed] = useState(false);
 
   // ── Maximize state
   const [isMaximized, setIsMaximized] = useState(false);
@@ -120,7 +120,6 @@ export default function ChatWidget() {
   const inputRef = useRef(null);
   const errorTimerRef = useRef(null);
   const restoredRef = useRef(false);
-  const nudgeTimerRef = useRef(null);
   const lastAnswerRef = useRef(null);
 
   const isFreeUser = user?.role === 'free';
@@ -270,40 +269,6 @@ export default function ChatWidget() {
     return () => {
       if (errorTimerRef.current) clearTimeout(errorTimerRef.current);
     };
-  }, []);
-
-  /** Nudge bubble — pop out after 20s when widget is closed and not yet dismissed. */
-  useEffect(() => {
-    if (nudgeTimerRef.current) {
-      clearTimeout(nudgeTimerRef.current);
-      nudgeTimerRef.current = null;
-    }
-
-    if (!isOpen && !nudgeDismissed) {
-      nudgeTimerRef.current = setTimeout(() => {
-        setShowNudge(true);
-      }, 20000);
-    } else {
-      setShowNudge(false);
-    }
-
-    return () => {
-      if (nudgeTimerRef.current) clearTimeout(nudgeTimerRef.current);
-    };
-  }, [isOpen, nudgeDismissed, isAuthenticated]);
-
-  /** Dismiss the nudge and prevent it from showing again this session. */
-  const handleDismissNudge = useCallback((e) => {
-    e.stopPropagation();
-    setShowNudge(false);
-    setNudgeDismissed(true);
-  }, []);
-
-  /** Click on nudge opens the chat. */
-  const handleNudgeClick = useCallback(() => {
-    setShowNudge(false);
-    setNudgeDismissed(true);
-    setIsOpen(true);
   }, []);
 
   // ────────────────────────── Handlers
@@ -634,7 +599,7 @@ export default function ChatWidget() {
   // ── Gate: chat is a premium feature — render nothing for unauthenticated visitors.
   // All hooks (useState, useEffect, useCallback, useRef) are above this line
   // so React rules-of-hooks are satisfied.
-  if (!isAuthenticated) return null;
+  if (!isAuthenticated || user?.role === 'admin') return null;
 
   // ────────────────────────── Render helpers
 
@@ -885,59 +850,16 @@ export default function ChatWidget() {
 
   return (
     <>
-      {/* ── Floating trigger button ── */}
+      {/* ── Floating trigger — OM icon + namaste ── */}
       {!isOpen && (
-        <>
-          {/* Nudge pop-out — large orb + curved text + badge */}
-          {showNudge && (
-            <div className="cw-nudge" onClick={handleNudgeClick}>
-              <button
-                className="cw-nudge-dismiss"
-                onClick={handleDismissNudge}
-                aria-label="Dismiss"
-              >
-                &times;
-              </button>
-
-              {/* Waving hand */}
-              <span className="cw-nudge-hand" role="img" aria-label="namaste">🙏</span>
-
-              {/* Large circular icon */}
-              <div className="cw-nudge-orb">
-                {/* Curved text above the orb */}
-                <div className="cw-nudge-curved-text">
-                  <svg viewBox="0 0 160 50" xmlns="http://www.w3.org/2000/svg">
-                    <defs>
-                      <path id="cwCurve" d="M 10,48 Q 80,-5 150,48" fill="none" />
-                    </defs>
-                    <text>
-                      <textPath href="#cwCurve" startOffset="50%" textAnchor="middle">
-                        Consult Your Stars!
-                      </textPath>
-                    </text>
-                  </svg>
-                </div>
-                <i className="fas fa-om cw-nudge-orb-icon" />
-                <span className="cw-nudge-badge">1</span>
-              </div>
-
-              {/* Text bubble */}
-              <div className="cw-nudge-text">
-                <span className="cw-nudge-title">Jyotish AI is here!</span>
-                <span className="cw-nudge-desc">Get Vedic astrology guidance on career, health &amp; destiny</span>
-              </div>
-            </div>
-          )}
-
-          <button
-            className="cw-trigger"
-            onClick={handleOpen}
-            aria-label="Open Jyotish AI chat"
-          >
-            <i className="fas fa-comment-dots" />
-            {showNudge && <span className="cw-trigger-badge" />}
-          </button>
-        </>
+        <button
+          className="cw-trigger"
+          onClick={handleOpen}
+          aria-label="Open Jyotish AI chat"
+        >
+          <i className="fas fa-om" />
+          <span className="cw-trigger-namaste" role="img" aria-label="namaste">🙏</span>
+        </button>
       )}
 
       {/* ── Chat panel ── */}

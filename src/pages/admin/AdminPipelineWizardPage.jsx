@@ -5,6 +5,7 @@ import DateInput from '../../components/form/DateInput';
 import TimeSelectGroup from '../../components/form/TimeSelectGroup';
 import PlaceAutocomplete from '../../components/PlaceAutocomplete';
 import '../../styles/admin.css';
+import { useStyles } from '../../context/StyleContext';
 
 /* ============================================================
    Pipeline Steps Definition
@@ -310,6 +311,7 @@ function PipelineStepper({ steps, currentStep, onStepClick }) {
    ============================================================ */
 
 export default function AdminPipelineWizardPage() {
+  const { getStyle, getOverride } = useStyles('admin-pipeline');
   // ── State ──
   const [step, setStep] = useState(0);
   const [birthData, setBirthData] = useState({

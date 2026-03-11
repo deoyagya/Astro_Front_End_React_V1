@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import PageShell from '../../components/PageShell';
 import { api } from '../../api/client';
+import { useStyles } from '../../context/StyleContext';
 
 /* ============================================================
    Gauge / Speedometer SVG Component
@@ -269,6 +270,7 @@ function SettingsEditor({ settings, onSave, saving }) {
    ============================================================ */
 
 export default function AdminObservabilityPage() {
+  const { getStyle, getOverride } = useStyles('admin-observability');
   const navigate = useNavigate();
   const [data, setData] = useState(null);
   const [settings, setSettings] = useState(null);

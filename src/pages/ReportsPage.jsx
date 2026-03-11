@@ -3,8 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import PageShell from '../components/PageShell';
 import { useSharedEffects } from '../hooks/useSharedEffects';
 import { api } from '../api/client';
+import { useStyles } from '../context/StyleContext';
 
 export default function ReportsPage() {
+  const { getOverride } = useStyles('reports-catalog');
   useSharedEffects();
   const navigate = useNavigate();
   const [sampleReport, setSampleReport] = useState(null);

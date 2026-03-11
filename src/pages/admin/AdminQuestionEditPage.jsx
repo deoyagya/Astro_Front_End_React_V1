@@ -3,8 +3,10 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import PageShell from '../../components/PageShell';
 import { api } from '../../api/client';
 import '../../styles/admin.css';
+import { useStyles } from '../../context/StyleContext';
 
 export default function AdminQuestionEditPage() {
+  const { getOverride } = useStyles('admin-questions');
   const { questionId } = useParams();
   const navigate = useNavigate();
 

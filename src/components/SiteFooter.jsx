@@ -43,7 +43,7 @@ export default function SiteFooter() {
         )}
 
         <div className="footer-bottom">
-          <p>© 2025 Astro Yagya. All rights reserved. | <a href="#" id="terms-link">Terms of Use</a> | <a href="#" id="privacy-link">Privacy Policy</a></p>
+          <p>© 2025 – {new Date().getFullYear()} Astro Yagya. All rights reserved. | <a href="#" id="terms-link">Terms of Use</a> | <a href="#" id="privacy-link">Privacy Policy</a></p>
         </div>
       </div>
     </footer>

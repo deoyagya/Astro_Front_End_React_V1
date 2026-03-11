@@ -27,6 +27,7 @@ import StepAnnualChart from '../components/wizard/StepAnnualChart';
 import StepMunthaLord from '../components/wizard/StepMunthaLord';
 import StepReview from '../components/wizard/StepReview';
 import RuleValidationBadge from '../components/wizard/RuleValidationBadge';
+import { useStyles } from '../context/StyleContext';
 
 /**
  * Maps step_key → React component for step rendering.
@@ -58,6 +59,7 @@ const STEP_COMPONENTS = {
 };
 
 function resolveStepType(stepKey) {
+  const { getOverride } = useStyles('chart-wizard');
   if (STEP_COMPONENTS[stepKey]) return STEP_COMPONENTS[stepKey];
   // Person-indexed: p0_birth, p1_ascendant, etc.
   const match = stepKey.match(/^p\d+_(.+)$/);

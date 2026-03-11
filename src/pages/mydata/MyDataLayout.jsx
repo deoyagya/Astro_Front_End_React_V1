@@ -16,10 +16,11 @@ import PageShell from '../../components/PageShell';
 import PlaceAutocomplete from '../../components/PlaceAutocomplete';
 import DateInput from '../../components/form/DateInput';
 import TimeSelectGroup from '../../components/form/TimeSelectGroup';
-import ChartModal from '../../components/ChartModal';
+import VedicChart from '../../components/chart/VedicChart';
 import { useBirthData } from '../../hooks/useBirthData';
 import { MyDataProvider, useMyData } from '../../context/MyDataContext';
 import { useAuth } from '../../context/AuthContext';
+import { useStyles } from '../../context/StyleContext';
 import { api } from '../../api/client';
 import '../../styles/mydata.css';
 
@@ -44,7 +45,7 @@ function MyDataInner() {
   const isPremium = user?.role === 'premium' || user?.role === 'admin';
   const [formError, setFormError] = useState('');
   const [chartLoading, setChartLoading] = useState(false);
-  const [chartModalOpen, setChartModalOpen] = useState(false);
+  const [chartVisible, setChartVisible] = useState(false);
   const autoLoaded = useRef(false);
   const skipNextCancelRef = useRef(false);
   const navigate = useNavigate();
@@ -99,7 +100,7 @@ function MyDataInner() {
       if (thisRequest !== fetchRequestId.current) return;
       setChartBundle(data);
       if (openModal) {
-        setChartModalOpen(true);
+        setChartVisible(true);
       }
     } catch (err) {
       console.error('Chart fetch failed:', err);
@@ -131,7 +132,6 @@ function MyDataInner() {
       skipNextCancelRef.current = false;
       return;
     }
-    setChartModalOpen(false);
     fetchRequestId.current++;          // invalidate any pending fetchChartData
   }, [location.pathname]);
 
@@ -222,14 +222,28 @@ function MyDataInner() {
             {chartBundle && (
               <button
                 className="btn-chart"
-                onClick={() => setChartModalOpen(true)}
+                onClick={() => setChartVisible((v) => !v)}
               >
-                <i className="fas fa-chart-pie"></i> Chart
+                <i className={`fas ${chartVisible ? 'fa-chevron-up' : 'fa-chart-pie'}`}></i>
+                {chartVisible ? 'Hide Chart' : 'Chart'}
               </button>
             )}
           </div>
 
           {formError && <p className="mydata-form-error">{formError}</p>}
+
+          {/* Inline Chart — below form, above sections */}
+          {chartVisible && chartBundle && (
+            <div className="mydata-inline-chart">
+              <VedicChart
+                chartBundle={chartBundle}
+                showControls={true}
+                showChartSelector={true}
+                showStyleToggle={true}
+                showAscendant={true}
+              />
+            </div>
+          )}
 
           {/* Dropdown navigation (replaces horizontal tabs) */}
           <div className="mydata-nav-dropdown">
@@ -255,12 +269,6 @@ function MyDataInner() {
             <Outlet />
           </div>
 
-          {/* Chart Modal */}
-          <ChartModal
-            isOpen={chartModalOpen}
-            onClose={() => setChartModalOpen(false)}
-            chartBundle={chartBundle}
-          />
         </div>
       </div>
     </PageShell>

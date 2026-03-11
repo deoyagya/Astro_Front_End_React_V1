@@ -7,6 +7,8 @@
  * Pure presentational — all logic comes from AuthContext via props.
  */
 
+import { useStyles } from '../context/StyleContext';
+
 export default function SessionTimeoutModal({
   visible,
   remainingSeconds,
@@ -14,6 +16,7 @@ export default function SessionTimeoutModal({
   onEndSession,
   refreshing,
 }) {
+  const { getOverride } = useStyles('session-timeout');
   if (!visible) return null;
 
   const minutes = Math.floor(remainingSeconds / 60);

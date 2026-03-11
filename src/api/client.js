@@ -24,9 +24,9 @@ const RETRYABLE_METHODS = new Set(['GET', 'POST']);
 // User-friendly messages (never show raw browser errors)
 const USER_MESSAGES = {
   offline: 'You appear to be offline. Please check your internet connection and try again.',
-  serverDown: 'Unable to reach the server. Please make sure the backend is running and try again.',
+  serverDown: 'Our servers are temporarily unavailable. Please try again in a few minutes.',
   timeout: 'The request took too long. Please try again in a moment.',
-  networkError: 'A connection error occurred. Please try again or check if the server is running.',
+  networkError: 'A connection error occurred. Please try again in a few moments.',
   downloadFail: 'The download could not be completed. Please try again.',
 };
 

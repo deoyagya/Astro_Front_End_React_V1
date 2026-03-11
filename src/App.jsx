@@ -37,6 +37,11 @@ import AdminRuleCVWizardPage from './pages/admin/AdminRuleCVWizardPage';
 import AdminRuleBuilderPage from './pages/admin/AdminRuleBuilderPage';
 import AdminWizardContentPage from './pages/admin/AdminWizardContentPage';
 import AdminSubscriptionPage from './pages/admin/AdminSubscriptionPage';
+import AdminOrderManagementPage from './pages/admin/AdminOrderManagementPage';
+import AdminStyleManagerPage from './pages/admin/AdminStyleManagerPage';
+import AdminSurveyListPage from './pages/admin/AdminSurveyListPage';
+import AdminSurveyBuilderPage from './pages/admin/AdminSurveyBuilderPage';
+import PublicSurveyPage from './pages/PublicSurveyPage';
 import MuhurtaFinderPage from './pages/MuhurtaFinderPage';
 import ChartWizardPage from './pages/ChartWizardPage';
 import PricingPage from './pages/PricingPage';
@@ -63,6 +68,7 @@ export default function App() {
         <Route path="/" element={<HomePage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/pricing" element={<PricingPage />} />
+        <Route path="/survey/:slug" element={<PublicSurveyPage />} />
 
         {/* Protected routes — require authentication */}
         <Route path="/reports" element={<ProtectedRoute><ReportsPage /></ProtectedRoute>} />
@@ -120,6 +126,11 @@ export default function App() {
         <Route path="/admin/rule-builder" element={<AdminProtectedRoute><AdminRuleBuilderPage /></AdminProtectedRoute>} />
         <Route path="/admin/wizard-content" element={<AdminProtectedRoute><AdminWizardContentPage /></AdminProtectedRoute>} />
         <Route path="/admin/subscriptions" element={<AdminProtectedRoute><AdminSubscriptionPage /></AdminProtectedRoute>} />
+        <Route path="/admin/orders" element={<AdminProtectedRoute><AdminOrderManagementPage /></AdminProtectedRoute>} />
+        <Route path="/admin/style-manager" element={<AdminProtectedRoute><AdminStyleManagerPage /></AdminProtectedRoute>} />
+        <Route path="/admin/surveys" element={<AdminProtectedRoute><AdminSurveyListPage /></AdminProtectedRoute>} />
+        <Route path="/admin/surveys/create" element={<AdminProtectedRoute><AdminSurveyBuilderPage /></AdminProtectedRoute>} />
+        <Route path="/admin/surveys/:formId/edit" element={<AdminProtectedRoute><AdminSurveyBuilderPage /></AdminProtectedRoute>} />
 
         {/* Catch-all */}
         <Route path="*" element={<Navigate to="/" replace />} />

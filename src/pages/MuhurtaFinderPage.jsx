@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback, useMemo } from 'react';
 import PlaceAutocomplete from '../components/PlaceAutocomplete';
 import { api } from '../api/client';
 import { useAuth } from '../context/AuthContext';
+import { useStyles } from '../context/StyleContext';
 
 // Fallback hardcoded events (used if API is unavailable)
 const FALLBACK_EVENT_TYPES = [
@@ -28,6 +29,7 @@ const QUALITY_COLORS = {
 const PAGE_SIZE = 2;
 
 function formatDate(dateStr) {
+  const { getOverride } = useStyles('muhurta');
   const d = new Date(dateStr + 'T00:00:00');
   return d.toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' });
 }
@@ -436,7 +438,7 @@ export default function MuhurtaFinderPage() {
                   >
                     <i className="fas fa-globe"></i> Generic
                   </button>
-                  {savedCharts.length > 0 && (
+                  {isAuthenticated && (
                     <button
                       className={`birth-mode-btn ${birthMode === 'saved' ? 'active' : ''}`}
                       onClick={() => setBirthMode('saved')}
@@ -457,7 +459,7 @@ export default function MuhurtaFinderPage() {
                 )}
 
                 {/* Saved Chart Selector */}
-                {birthMode === 'saved' && savedCharts.length > 0 && (
+                {birthMode === 'saved' && !chartsLoading && savedCharts.length > 0 && (
                   <div className="saved-chart-selector">
                     <label>Select Person</label>
                     <select
@@ -487,6 +489,19 @@ export default function MuhurtaFinderPage() {
                         </div>
                       );
                     })()}
+                  </div>
+                )}
+
+                {/* No saved charts message */}
+                {birthMode === 'saved' && !chartsLoading && savedCharts.length === 0 && (
+                  <div className="saved-chart-selector" style={{ textAlign: 'center', padding: '20px 16px' }}>
+                    <i className="fas fa-info-circle" style={{ color: '#ffa502', fontSize: '1.2rem', marginBottom: 8, display: 'block' }}></i>
+                    <p style={{ color: '#a0a8b8', margin: '0 0 12px', fontSize: '0.95rem' }}>
+                      No saved birth charts found. Generate a birth chart first, then come back here to select it.
+                    </p>
+                    <a href="/birth-chart" style={{ color: '#7b5bff', textDecoration: 'underline', fontSize: '0.95rem' }}>
+                      <i className="fas fa-arrow-right" style={{ marginRight: 6 }}></i>Go to Birth Chart
+                    </a>
                   </div>
                 )}
 

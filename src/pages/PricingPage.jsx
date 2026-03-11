@@ -18,6 +18,7 @@ import { api } from '../api/client';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import '../styles/pricing.css';
+import { useStyles } from '../context/StyleContext';
 
 /* ---- Icon map for plan tiers ---- */
 const PLAN_ICONS = {
@@ -40,6 +41,7 @@ const COMPARISON_FEATURES = [
 ];
 
 export default function PricingPage() {
+  const { getOverride } = useStyles('pricing');
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { user, isAuthenticated, refreshUser } = useAuth();
@@ -223,18 +225,25 @@ export default function PricingPage() {
   const handleChangePlan = useCallback(async (planSlug, direction) => {
     setCheckoutLoading(planSlug);
     try {
-      const result = await api.post('/v1/subscription/change-plan', {
+      await api.post('/v1/subscription/change-plan', {
         new_plan_slug: planSlug,
         billing_cycle: yearly ? 'yearly' : 'monthly',
       });
       if (refreshUser) await refreshUser();
       navigate('/my-data/subscription');
     } catch (err) {
-      toast(err.message || `Failed to ${direction}. Please try again.`, 'error');
+      const msg = err.message || '';
+      // No subscription record in DB — fall back to new checkout flow
+      if (msg.toLowerCase().includes('no active subscription')) {
+        setCheckoutLoading(null);
+        handleCheckout(planSlug);
+        return;
+      }
+      toast(msg || `Failed to ${direction}. Please try again.`, 'error');
     } finally {
       setCheckoutLoading(null);
     }
-  }, [yearly, refreshUser, navigate]);
+  }, [yearly, refreshUser, navigate, handleCheckout]);
 
   const handleCtaClick = (plan) => {
     if (plan.slug === currentPlanSlug) return;

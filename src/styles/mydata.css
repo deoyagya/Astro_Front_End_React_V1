@@ -594,6 +594,27 @@
   to { opacity: 1; }
 }
 
+/* ===== INLINE CHART SECTION ===== */
+.mydata-inline-chart {
+  background: linear-gradient(135deg, #1a1d2e 0%, #141726 100%);
+  border: 1px solid #2a2f3e;
+  border-radius: 12px;
+  padding: 16px 24px 20px;
+  margin-top: 8px;
+  max-width: 650px;
+  margin-left: auto;
+  margin-right: auto;
+  animation: fadeIn 0.25s ease;
+}
+
+.mydata-inline-chart .vc-root {
+  gap: 6px;
+}
+
+.mydata-inline-chart .vc-controls {
+  padding: 0;
+}
+
 .chart-modal {
   background: linear-gradient(135deg, #1a1d2e 0%, #141726 100%);
   border: 1px solid #2a2f3e;
@@ -735,16 +756,15 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 12px 24px 16px;
-  overflow-y: auto;
-  overflow-x: hidden;
-  -webkit-overflow-scrolling: touch;
+  padding: 4px 24px 8px;
+  overflow: hidden;
 }
 
 /* Constrain chart width by available height so SVG fits without scroll */
 .chart-modal-body .vc-root {
-  max-width: calc((88vh - 160px) * 0.91);
+  max-width: calc((88vh - 120px) * 0.95);
   width: 100%;
+  gap: 4px;
 }
 
 .chart-modal-chart {

@@ -3,6 +3,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import PageShell from '../../components/PageShell';
 import { api } from '../../api/client';
 import '../../styles/admin.css';
+import { useStyles } from '../../context/StyleContext';
 
 const ICON_OPTIONS = [
   { value: 'fa-star',           label: 'General / Default' },
@@ -33,6 +34,7 @@ const ICON_OPTIONS = [
 ];
 
 export default function AdminThemeFormPage() {
+  const { getOverride } = useStyles('admin-themes');
   const { themeId } = useParams();
   const navigate = useNavigate();
   const isEdit = Boolean(themeId);

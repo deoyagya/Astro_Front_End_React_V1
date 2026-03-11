@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useStyles } from '../context/StyleContext';
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
 
@@ -20,6 +21,7 @@ const ADMIN_MENU_ITEMS = [
   { label: 'DB Admin',      icon: 'fa-database',        href: `${API_BASE}/db-admin`, external: true },
   { label: 'Wizard Content', icon: 'fa-photo-video',    href: '/admin/wizard-content' },
   { label: 'Subscriptions', icon: 'fa-credit-card',     href: '/admin/subscriptions' },
+  { label: 'Style Manager', icon: 'fa-palette',         href: '/admin/style-manager' },
 ];
 
 const MY_DATA_MENU_ITEMS = [
@@ -43,6 +45,7 @@ const isItemActive = (itemHref, pathname) => {
 };
 
 export default function SiteHeader({ active = 'home' }) {
+  const { getOverride } = useStyles('site-header');
   const { isAuthenticated, user, logout } = useAuth();
   const location = useLocation();
   const pathname = location.pathname;
@@ -110,7 +113,8 @@ export default function SiteHeader({ active = 'home' }) {
           <nav className="nav">
             <ul>
               {isAdmin ? (
-                /* ---- Admin: single "Manage Data" with submenu ---- */
+                /* ---- Admin: "Manage Data" dropdown + standalone Order Management tab ---- */
+                <>
                 <li className="nav-manage-data" ref={manageMenuRef}>
                   <button
                     className={`nav-manage-trigger ${manageMenuOpen ? 'open' : ''}`}
@@ -138,6 +142,12 @@ export default function SiteHeader({ active = 'home' }) {
                     </div>
                   )}
                 </li>
+                <li>
+                  <a href="/admin/orders" className={pathname.startsWith('/admin/orders') ? 'active' : ''}>
+                    <i className="fas fa-receipt"></i> Orders
+                  </a>
+                </li>
+                </>
               ) : (
                 /* ---- Regular user navigation (NO "My Data" — moved to user dropdown) ---- */
                 <>

@@ -10,6 +10,7 @@ import {
 } from '../../config/ruleBuilderConfig';
 import '../../styles/admin.css';
 import '../../styles/rule-builder.css';
+import { useStyles } from '../../context/StyleContext';
 
 // ---------------------------------------------------------------------------
 // Helpers — unique ID
@@ -223,6 +224,7 @@ const GROUPED_PRIMITIVES = PRIMITIVE_CATEGORIES.map(cat => ({
 // Main Component
 // ===================================================================
 export default function AdminRuleBuilderPage() {
+  const { getOverride } = useStyles('admin-rule-builder');
   const navigate = useNavigate();
 
   // ── Taxonomy state ──

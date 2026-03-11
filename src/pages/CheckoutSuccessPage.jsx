@@ -15,8 +15,10 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import PageShell from '../components/PageShell';
 import { api } from '../api/client';
 import { useAuth } from '../context/AuthContext';
+import { useStyles } from '../context/StyleContext';
 
 export default function CheckoutSuccessPage() {
+  const { getOverride } = useStyles('payment');
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { refreshUser, isAuthenticated } = useAuth();

@@ -26,11 +26,20 @@ export function MyDataProvider({ children }) {
   const hasBirthData = !!birthPayload;
 
   const loadBirthData = useCallback((payload, { triggerExternal = false } = {}) => {
-    setBirthPayload(payload);
+    // Sanitize payload — ensure tob has a valid default (backend requires "HH:MM")
+    const clean = { ...payload };
+    if (!clean.tob || !clean.tob.includes(':')) {
+      clean.tob = '12:00';
+    }
+    // Strip seconds if present (e.g. "06:00:00" → "06:00")
+    if (clean.tob && clean.tob.split(':').length > 2) {
+      clean.tob = clean.tob.split(':').slice(0, 2).join(':');
+    }
+    setBirthPayload(clean);
     setRefreshKey((prev) => prev + 1);
     // Sync birth form fields ONLY when triggered by a child page (e.g. SavedCharts)
     if (triggerExternal && onExternalLoadRef.current) {
-      onExternalLoadRef.current(payload);
+      onExternalLoadRef.current(clean);
     }
   }, []);
 

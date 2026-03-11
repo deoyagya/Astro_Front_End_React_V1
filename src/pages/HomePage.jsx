@@ -1,19 +1,21 @@
 import PageShell from '../components/PageShell';
 import { useSharedEffects } from '../hooks/useSharedEffects';
 import { useAuth } from '../context/AuthContext';
+import { useStyles } from '../context/StyleContext';
 
 export default function HomePage() {
   useSharedEffects();
   const { isAuthenticated, user } = useAuth();
+  const { getOverride } = useStyles('home');
   const isPremium = user?.role === 'premium' || user?.role === 'admin';
 
   return (
     <PageShell activeNav="home">
-      <section className="hero">
+      <section className="hero" style={getOverride('heroSection')}>
                 <div className="container">
                     <div className="hero-grid">
                         <div className="hero-content">
-                            <h1>Your Cosmic Blueprint,<br />Revealed</h1>
+                            <h1 style={getOverride('heroTitle')}>Your Cosmic Blueprint,<br />Revealed</h1>
                             <p>Get personalized Vedic astrology insights based on your exact birth chart. Discover your life's path through ancient wisdom.</p>
                             <div className="hero-buttons">
                                 <a href="#free-tools" className="btn btn-primary"><i className="fas fa-crystal-ball"></i> Try Free Tools</a>

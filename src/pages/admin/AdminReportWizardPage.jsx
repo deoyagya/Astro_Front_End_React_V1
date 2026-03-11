@@ -3,6 +3,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import PageShell from '../../components/PageShell';
 import { api } from '../../api/client';
 import '../../styles/admin.css';
+import { useStyles } from '../../context/StyleContext';
 
 const DIVISIONAL_CHARTS = [
   { value: 'D1',  label: 'D1 — Rashi (Birth Chart)' },
@@ -24,6 +25,7 @@ const DIVISIONAL_CHARTS = [
 ];
 
 export default function AdminReportWizardPage() {
+  const { getStyle, getOverride } = useStyles('admin-report-wizard');
   const { configId } = useParams();
   const navigate = useNavigate();
   const isEditMode = Boolean(configId);

@@ -14,6 +14,7 @@ import TimeSelectGroup from '../../components/form/TimeSelectGroup';
 import PlaceAutocomplete from '../../components/PlaceAutocomplete';
 import '../../styles/admin.css';
 import '../../styles/rule-cv-wizard.css';
+import { useStyles } from '../../context/StyleContext';
 
 /* ============================================================
    Constants
@@ -254,6 +255,7 @@ function JsonEditor({ value, onChange, onApply, onReset, applyLabel = 'Apply', d
    ============================================================ */
 
 export default function AdminRuleCVWizardPage() {
+  const { getStyle, getOverride } = useStyles('admin-rule-cv');
   // -------- Wizard state --------
   const [step, setStep] = useState(0);
   const [furthestStep, setFurthestStep] = useState(0);

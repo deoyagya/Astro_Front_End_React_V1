@@ -6,6 +6,7 @@ import '../../styles/admin.css';
 import PageShell from '../../components/PageShell';
 import { useState, useEffect, useCallback } from 'react';
 import { api } from '../../api/client';
+import { useStyles } from '../../context/StyleContext';
 
 const CATEGORIES = [
   { value: '', label: 'All Categories' },
@@ -31,6 +32,7 @@ const EMPTY_FORM = {
 };
 
 export default function AdminWizardContentPage() {
+  const { getStyle, getOverride } = useStyles('admin-wizard-content');
   const [rows, setRows] = useState([]);
   const [filterCat, setFilterCat] = useState('');
   const [filterStep, setFilterStep] = useState('');

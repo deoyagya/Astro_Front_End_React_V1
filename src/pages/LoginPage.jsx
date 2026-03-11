@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import PageShell from '../components/PageShell';
 import { useSharedEffects } from '../hooks/useSharedEffects';
 import { useAuth } from '../context/AuthContext';
+import { useStyles } from '../context/StyleContext';
 import { api } from '../api/client';
 
 const OTP_LENGTH = 6;
@@ -11,6 +12,7 @@ const TIMER_SECONDS = 120;
 export default function LoginPage() {
   useSharedEffects();
   const { login, isAuthenticated } = useAuth();
+  const { getOverride } = useStyles('login');
   const navigate = useNavigate();
   const location = useLocation();
   const from = location.state?.from?.pathname || '/reports';
@@ -213,10 +215,10 @@ export default function LoginPage() {
 
   return (
     <PageShell activeNav="login">
-      <section className="login-section">
+      <section className="login-section" style={getOverride('loginSection')}>
         <div className="container">
           <div className="login-card">
-            <div className="login-header">
+            <div className="login-header" style={getOverride('loginHeader')}>
               <i className="fas fa-star-and-crescent"></i>
               <h2>Welcome</h2>
               <p>

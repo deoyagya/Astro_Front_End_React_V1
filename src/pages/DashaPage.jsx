@@ -5,9 +5,11 @@ import TimeSelectGroup from '../components/form/TimeSelectGroup';
 import PlaceAutocomplete from '../components/PlaceAutocomplete';
 import { api } from '../api/client';
 import { useBirthData, to24Hour } from '../hooks/useBirthData';
+import { useStyles } from '../context/StyleContext';
 
 /** Recursively render dasha tree nodes */
 function DashaNode({ node, depth = 0 }) {
+  const { getOverride } = useStyles('dasha');
   const [expanded, setExpanded] = useState(depth === 0);
   const hasSub = node.sub_periods && node.sub_periods.length > 0;
   const isCurrent = node.is_current || false;
