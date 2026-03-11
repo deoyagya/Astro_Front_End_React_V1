@@ -22,6 +22,7 @@ const ADMIN_MENU_ITEMS = [
   { label: 'Wizard Content', icon: 'fa-photo-video',    href: '/admin/wizard-content' },
   { label: 'Subscriptions', icon: 'fa-credit-card',     href: '/admin/subscriptions' },
   { label: 'Style Manager', icon: 'fa-palette',         href: '/admin/style-manager' },
+  { label: 'Surveys',       icon: 'fa-poll-h',          href: '/admin/surveys' },
 ];
 
 const MY_DATA_MENU_ITEMS = [
