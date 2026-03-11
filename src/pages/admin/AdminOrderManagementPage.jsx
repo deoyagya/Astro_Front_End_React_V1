@@ -94,7 +94,7 @@ function Toast({ message, type, onDismiss }) {
 /* ── Main Component ─────────────────────────────────────── */
 
 export default function AdminOrderManagementPage() {
-  const getStyle = useStyles('admin-orders');
+  const { getStyle } = useStyles('admin-orders');
   const [activeTab, setActiveTab] = useState('subscriptions');
   const [toast, setToast] = useState({ message: '', type: 'success' });
 
