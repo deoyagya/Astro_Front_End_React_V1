@@ -54,17 +54,19 @@ export default function CompatibilityPage() {
     if (!nameA.trim()) return 'Please enter Person A\'s name.';
     if (!genderA) return 'Please select Person A\'s gender.';
     if (!dobA) return 'Please select Person A\'s date of birth.';
+    if (!hourA || !minuteA || !ampmA) return 'Please select Person A\'s time of birth (hour, minute, and AM/PM).';
     if (!placeA) return 'Please select Person A\'s birth place.';
     return null;
-  }, [nameA, genderA, dobA, placeA]);
+  }, [nameA, genderA, dobA, hourA, minuteA, ampmA, placeA]);
 
   const validateStepB = useCallback(() => {
     if (!nameB.trim()) return 'Please enter Person B\'s name.';
     if (!genderB) return 'Please select Person B\'s gender.';
     if (!dobB) return 'Please select Person B\'s date of birth.';
+    if (!hourB || !minuteB || !ampmB) return 'Please select Person B\'s time of birth (hour, minute, and AM/PM).';
     if (!placeB) return 'Please select Person B\'s birth place.';
     return null;
-  }, [nameB, genderB, dobB, placeB]);
+  }, [nameB, genderB, dobB, hourB, minuteB, ampmB, placeB]);
 
   // ─── Navigation handlers ─────────────────────────────────────
   const handleNext = useCallback(() => {
@@ -103,6 +105,8 @@ export default function CompatibilityPage() {
       dob: dobA,
       tob: to24Hour(hourA, minuteA, ampmA),
       place_of_birth: placeA.name,
+      ...(placeA.lat != null && placeA.lon != null ? { lat: placeA.lat, lon: placeA.lon } : {}),
+      ...(placeA.timezone ? { tz_id: placeA.timezone } : {}),
     };
     const personB = {
       name: nameB.trim(),
@@ -110,6 +114,8 @@ export default function CompatibilityPage() {
       dob: dobB,
       tob: to24Hour(hourB, minuteB, ampmB),
       place_of_birth: placeB.name,
+      ...(placeB.lat != null && placeB.lon != null ? { lat: placeB.lat, lon: placeB.lon } : {}),
+      ...(placeB.timezone ? { tz_id: placeB.timezone } : {}),
     };
 
     // Determine groom vs bride based on gender
@@ -137,10 +143,10 @@ export default function CompatibilityPage() {
 
   // Auto-fetch when step transitions to 3
   useEffect(() => {
-    if (step === 3 && !result && !loading) {
+    if (step === 3 && !result && !loading && !error) {
       fetchCompatibility();
     }
-  }, [step, result, loading, fetchCompatibility]);
+  }, [step, result, loading, error, fetchCompatibility]);
 
   // ─── Derived display values ──────────────────────────────────
   const totalPoints = result?.total_points ?? 0;

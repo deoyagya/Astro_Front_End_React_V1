@@ -171,12 +171,14 @@ export default function AdminReportWizardPage() {
     if (isEditMode) loadExistingConfig();
   }, [loadThemes, loadLLMConfig, loadExistingConfig, isEditMode]);
 
-  // ── Cascading: theme -> life areas ──
+  // ── Cascading: theme -> life areas (only show areas with questions) ──
   const loadLifeAreas = useCallback(async (themeId) => {
     if (!themeId) { setLifeAreas([]); setQuestions([]); return; }
     try {
       const data = await api.get(`/v1/admin/taxonomy/themes/${themeId}/life-areas`);
-      setLifeAreas(data);
+      // Filter to only show life areas that have questions associated
+      const areasWithQuestions = (data || []).filter((a) => (a.question_count || 0) > 0);
+      setLifeAreas(areasWithQuestions);
     } catch (err) {
       setError(err.message);
     }
@@ -318,11 +320,13 @@ export default function AdminReportWizardPage() {
     if (step === 1 && !validateStep1()) return;
     if (step === 2 && !validateStep2()) return;
     setStepErrors({});
+    setError('');
     setStep((s) => Math.min(s + 1, 3));
   };
 
   const goBack = () => {
     setStepErrors({});
+    setError('');
     setStep((s) => Math.max(s - 1, 1));
   };
 
@@ -339,23 +343,23 @@ export default function AdminReportWizardPage() {
         divisional_charts: includeCharts ? selectedCharts : [],
         badge_text: addBadge ? badgeText.trim() || null : null,
         report_length: reportLength ? parseInt(reportLength, 10) : null,
-        sample_report_link: sampleReportLink.trim() || null,
+        sample_report_url: sampleReportLink.trim() || null,
         question_ids: selectedQuestions.map((q) => q.id),
 
         // Screen 2
         pricing_mode: pricingMode,
         fixed_price: pricingMode === 'fixed' ? Math.round(parseFloat(fixedPrice) * 100) : null,
         num_iterations: numIterations,
-        discount_mode: discountMode,
+        discount_mode: discountMode === 'none' ? null : discountMode,
         discount_value: discountMode !== 'none' ? parseFloat(discountValue) : null,
-        discount_validity: discountValidity || null,
+        discount_valid_until: discountValidity || null,
 
         // Screen 3
-        creator_model: creatorModel || null,
-        reviewer_model: reviewerModel || null,
+        creator_model: creatorModel || 'gemini-2.5-flash',
+        reviewer_model: reviewerModel || 'claude-opus',
         review_iterations: reviewIterations,
-        iter_cost_mode: iterCostMode,
-        iter_cost_value: iterCostValue ? parseFloat(iterCostValue) : null,
+        iteration_cost_mode: iterCostMode,
+        iteration_cost_value: iterCostValue ? parseFloat(iterCostValue) : null,
         creator_prompt: creatorPrompt.trim() || null,
         reviewer_prompt: reviewerPrompt.trim() || null,
       };
@@ -941,7 +945,7 @@ export default function AdminReportWizardPage() {
   return (
     <PageShell activeNav="admin">
       <section className="admin-page">
-        <div className="container">
+        <div className="container" style={{ width: '96%', maxWidth: '100%' }}>
           {/* Breadcrumb */}
           <div className="admin-breadcrumb">
             <Link to="/admin/reports">Reports</Link>

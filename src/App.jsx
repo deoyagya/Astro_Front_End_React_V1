@@ -12,12 +12,10 @@ import HoroscopePage from './pages/HoroscopePage';
 import CareerReportPage from './pages/CareerReportPage';
 import LoveMarriageReportPage from './pages/LoveMarriageReportPage';
 import EducationReportPage from './pages/EducationReportPage';
-import HealthReportPage from './pages/HealthReportPage';
-import SpiritualGrowthReportPage from './pages/SpiritualGrowthReportPage';
-import FamilyChildrenReportPage from './pages/FamilyChildrenReportPage';
 import MyReportsPage from './pages/MyReportsPage';
 import OrderPage from './pages/OrderPage';
 import PaymentPage from './pages/PaymentPage';
+import CheckoutReturnPage from './pages/CheckoutReturnPage';
 import HouseExplorePage from './pages/HouseExplorePage';
 import AdminThemesPage from './pages/admin/AdminThemesPage';
 import AdminThemeFormPage from './pages/admin/AdminThemeFormPage';
@@ -41,6 +39,7 @@ import AdminOrderManagementPage from './pages/admin/AdminOrderManagementPage';
 import AdminStyleManagerPage from './pages/admin/AdminStyleManagerPage';
 import AdminSurveyListPage from './pages/admin/AdminSurveyListPage';
 import AdminSurveyBuilderPage from './pages/admin/AdminSurveyBuilderPage';
+import AdminGatewayConfigPage from './pages/admin/AdminGatewayConfigPage';
 import PublicSurveyPage from './pages/PublicSurveyPage';
 import MuhurtaFinderPage from './pages/MuhurtaFinderPage';
 import ChartWizardPage from './pages/ChartWizardPage';
@@ -52,7 +51,6 @@ import MyDataLayout from './pages/mydata/MyDataLayout';
 import MyDetailsPage from './pages/mydata/MyDetailsPage';
 import AvakhadaChakraPage from './pages/mydata/AvakhadaChakraPage';
 import MyPersonalityPage from './pages/mydata/MyPersonalityPage';
-import SavedChartsPage from './pages/mydata/SavedChartsPage';
 import BirthDetailsPage from './pages/mydata/BirthDetailsPage';
 import YogasPage from './pages/mydata/YogasPage';
 import SadeSatiPage from './pages/mydata/SadeSatiPage';
@@ -82,12 +80,10 @@ export default function App() {
         <Route path="/career-report" element={<ProtectedRoute><CareerReportPage /></ProtectedRoute>} />
         <Route path="/love-marriage-report" element={<ProtectedRoute><LoveMarriageReportPage /></ProtectedRoute>} />
         <Route path="/education-report" element={<ProtectedRoute><EducationReportPage /></ProtectedRoute>} />
-        <Route path="/health-report" element={<ProtectedRoute><HealthReportPage /></ProtectedRoute>} />
-        <Route path="/spiritual-growth-report" element={<ProtectedRoute><SpiritualGrowthReportPage /></ProtectedRoute>} />
-        <Route path="/family-children-report" element={<ProtectedRoute><FamilyChildrenReportPage /></ProtectedRoute>} />
         <Route path="/my-reports" element={<ProtectedRoute><MyReportsPage /></ProtectedRoute>} />
         <Route path="/order" element={<ProtectedRoute><OrderPage /></ProtectedRoute>} />
         <Route path="/payment" element={<ProtectedRoute><PaymentPage /></ProtectedRoute>} />
+        <Route path="/checkout/return" element={<CheckoutReturnPage />} />
 
         {/* My Data routes — nested under shared layout with birth data context */}
         <Route path="/my-data" element={<ProtectedRoute><MyDataLayout /></ProtectedRoute>}>
@@ -95,7 +91,6 @@ export default function App() {
           <Route path="details" element={<MyDetailsPage />} />
           <Route path="avakhada" element={<AvakhadaChakraPage />} />
           <Route path="personality" element={<MyPersonalityPage />} />
-          <Route path="saved-charts" element={<SavedChartsPage />} />
           <Route path="birth-details" element={<BirthDetailsPage />} />
           <Route path="yogas" element={<YogasPage />} />
           <Route path="sade-sati" element={<SadeSatiPage />} />
@@ -127,6 +122,7 @@ export default function App() {
         <Route path="/admin/wizard-content" element={<AdminProtectedRoute><AdminWizardContentPage /></AdminProtectedRoute>} />
         <Route path="/admin/subscriptions" element={<AdminProtectedRoute><AdminSubscriptionPage /></AdminProtectedRoute>} />
         <Route path="/admin/orders" element={<AdminProtectedRoute><AdminOrderManagementPage /></AdminProtectedRoute>} />
+        <Route path="/admin/gateway-config" element={<AdminProtectedRoute><AdminGatewayConfigPage /></AdminProtectedRoute>} />
         <Route path="/admin/style-manager" element={<AdminProtectedRoute><AdminStyleManagerPage /></AdminProtectedRoute>} />
         <Route path="/admin/surveys" element={<AdminProtectedRoute><AdminSurveyListPage /></AdminProtectedRoute>} />
         <Route path="/admin/surveys/create" element={<AdminProtectedRoute><AdminSurveyBuilderPage /></AdminProtectedRoute>} />

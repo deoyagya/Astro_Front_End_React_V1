@@ -28,7 +28,6 @@ const TABS = [
   { label: 'My Details',       icon: 'fa-id-card',      to: '/my-data/details' },
   { label: 'Avakhada Chakra',  icon: 'fa-dharmachakra', to: '/my-data/avakhada' },
   { label: 'My Personality',   icon: 'fa-brain',        to: '/my-data/personality' },
-  { label: 'Saved Charts',     icon: 'fa-bookmark',     to: '/my-data/saved-charts' },
   { label: 'Birth Details',    icon: 'fa-baby',         to: '/my-data/birth-details' },
   { label: 'Yogas & Rajyogas', icon: 'fa-sun',          to: '/my-data/yogas' },
   { label: 'Sade Sati',        icon: 'fa-moon',         to: '/my-data/sade-sati' },
@@ -50,6 +49,43 @@ function MyDataInner() {
   const skipNextCancelRef = useRef(false);
   const navigate = useNavigate();
   const location = useLocation();
+
+  // Saved charts list for the Full Name dropdown
+  const [savedCharts, setSavedCharts] = useState([]);
+  const [selectedChartId, setSelectedChartId] = useState('');
+
+  // Fetch saved charts on mount
+  useEffect(() => {
+    let cancelled = false;
+    api.get('/v1/charts/saved?limit=50')
+      .then((res) => {
+        if (!cancelled) setSavedCharts(res.charts || res || []);
+      })
+      .catch(() => { /* silent — dropdown will be empty */ });
+    return () => { cancelled = true; };
+  }, []);
+
+  // Handle selecting a saved chart from the dropdown
+  const handleChartSelect = (chartId) => {
+    setSelectedChartId(chartId);
+    if (!chartId) return;
+    const chart = savedCharts.find((c) => c.id === chartId);
+    if (!chart) return;
+    const bdData = chart.birth_data || {};
+    const payload = {
+      name: bdData.name || '',
+      dob: bdData.dob || '',
+      tob: bdData.tob || '',
+      place_of_birth: bdData.place_of_birth || '',
+      lat: bdData.lat,
+      lon: bdData.lon,
+      tz_id: bdData.tz_id || bdData.timezone || '',
+      gender: bdData.gender || '',
+    };
+    bd.applyBirthData(payload);
+    loadBirthData(payload);
+    fetchChartData(payload, true);
+  };
 
   // Register form-sync handler so SavedCharts Load updates form fields,
   // fetches chart data, opens modal, and navigates to Details.
@@ -160,13 +196,22 @@ function MyDataInner() {
           <div className="mydata-birth-form">
             <div className="form-group">
               <label htmlFor="md-name">Full Name</label>
-              <input
+              <select
                 id="md-name"
-                type="text"
-                placeholder="Enter name"
-                value={bd.fullName}
-                onChange={(e) => bd.setFullName(e.target.value)}
-              />
+                value={selectedChartId}
+                onChange={(e) => handleChartSelect(e.target.value)}
+                style={{ minWidth: 180 }}
+              >
+                <option value="">-- Select a chart --</option>
+                {savedCharts.map((chart) => {
+                  const name = chart.birth_data?.name || 'Unnamed';
+                  return (
+                    <option key={chart.id} value={chart.id}>
+                      {name}
+                    </option>
+                  );
+                })}
+              </select>
             </div>
 
             <div className="form-group">
@@ -177,6 +222,7 @@ function MyDataInner() {
                 onChange={(val) => bd.setBirthDate(val)}
                 max="2025-12-31"
                 min="1900-01-01"
+                disabled={true}
               />
             </div>
 
@@ -186,6 +232,7 @@ function MyDataInner() {
                 hourId="md-hour" minuteId="md-min" ampmId="md-ampm"
                 hourValue={bd.hour} minuteValue={bd.minute} ampmValue={bd.ampm}
                 onHourChange={bd.setHour} onMinuteChange={bd.setMinute} onAmpmChange={bd.setAmpm}
+                disabled={true}
               />
             </div>
 
@@ -195,6 +242,7 @@ function MyDataInner() {
                 id="md-gender"
                 value={bd.gender}
                 onChange={(e) => bd.setGender(e.target.value)}
+                disabled={true}
               >
                 <option value="female">Female</option>
                 <option value="male">Male</option>
@@ -207,6 +255,7 @@ function MyDataInner() {
                 id="md-place"
                 value={bd.birthPlace?.name || ''}
                 onSelect={bd.setBirthPlace}
+                disabled={true}
               />
             </div>
 
@@ -232,20 +281,7 @@ function MyDataInner() {
 
           {formError && <p className="mydata-form-error">{formError}</p>}
 
-          {/* Inline Chart — below form, above sections */}
-          {chartVisible && chartBundle && (
-            <div className="mydata-inline-chart">
-              <VedicChart
-                chartBundle={chartBundle}
-                showControls={true}
-                showChartSelector={true}
-                showStyleToggle={true}
-                showAscendant={true}
-              />
-            </div>
-          )}
-
-          {/* Dropdown navigation (replaces horizontal tabs) */}
+          {/* Dropdown navigation — above chart, left-aligned with Full Name */}
           <div className="mydata-nav-dropdown">
             <label htmlFor="md-section" className="mydata-nav-label">
               <i className="fas fa-compass"></i> Section
@@ -263,6 +299,19 @@ function MyDataInner() {
               ))}
             </select>
           </div>
+
+          {/* Inline Chart — below section dropdown */}
+          {chartVisible && chartBundle && (
+            <div className="mydata-inline-chart">
+              <VedicChart
+                chartBundle={chartBundle}
+                showControls={true}
+                showChartSelector={true}
+                showStyleToggle={true}
+                showAscendant={true}
+              />
+            </div>
+          )}
 
           {/* Child page content — white background area */}
           <div className="mydata-content-area">

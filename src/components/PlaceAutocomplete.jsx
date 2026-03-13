@@ -17,7 +17,7 @@ const MAX_RESULTS = 8;
  *   value       — externally controlled display value (optional)
  *   onSelect    — callback: ({ name, lat, lon, timezone }) => void
  */
-export default function PlaceAutocomplete({ id, placeholder, onSelect, value = '' }) {
+export default function PlaceAutocomplete({ id, placeholder, onSelect, value = '', disabled = false }) {
   const [query, setQuery] = useState(value || '');
   const [results, setResults] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
@@ -119,9 +119,11 @@ export default function PlaceAutocomplete({ id, placeholder, onSelect, value = '
           value={query}
           onChange={handleInputChange}
           onKeyDown={handleKeyDown}
-          onFocus={() => results.length > 0 && setIsOpen(true)}
+          onFocus={() => !disabled && results.length > 0 && setIsOpen(true)}
           placeholder={placeholder || 'Enter birth city'}
           autoComplete="off"
+          disabled={disabled}
+          readOnly={disabled}
         />
         {loading && <i className="fas fa-spinner fa-spin place-loading"></i>}
       </div>

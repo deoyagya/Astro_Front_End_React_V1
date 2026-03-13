@@ -191,11 +191,6 @@ export default function YogasPage() {
                 {yoga.mechanism && (
                   <div className="yoga-card-desc">{yoga.mechanism}</div>
                 )}
-                {yoga.classical_reference && (
-                  <div className="yoga-card-ref">
-                    <i className="fas fa-book"></i> {yoga.classical_reference}
-                  </div>
-                )}
               </div>
             ))}
           </div>

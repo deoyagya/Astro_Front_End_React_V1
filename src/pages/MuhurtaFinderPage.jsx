@@ -5,6 +5,8 @@ import PlaceAutocomplete from '../components/PlaceAutocomplete';
 import { api } from '../api/client';
 import { useAuth } from '../context/AuthContext';
 import { useStyles } from '../context/StyleContext';
+import RazorpayCheckoutModal from '../components/RazorpayCheckoutModal';
+import usePaymentGateway from '../hooks/usePaymentGateway';
 
 // Fallback hardcoded events (used if API is unavailable)
 const FALLBACK_EVENT_TYPES = [
@@ -29,7 +31,6 @@ const QUALITY_COLORS = {
 const PAGE_SIZE = 2;
 
 function formatDate(dateStr) {
-  const { getOverride } = useStyles('muhurta');
   const d = new Date(dateStr + 'T00:00:00');
   return d.toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' });
 }
@@ -111,6 +112,10 @@ function computeFavourableRanges(w) {
 
 export default function MuhurtaFinderPage() {
   const { isAuthenticated, user } = useAuth();
+  const { gateway, currency: gwCurrency, razorpayKeyId, loading: gwLoading } = usePaymentGateway();
+
+  // --- Razorpay checkout state ---
+  const [razorpayOrder, setRazorpayOrder] = useState(null);
 
   // --- Dynamic event types (fetched from API) ---
   const [eventTypes, setEventTypes] = useState(FALLBACK_EVENT_TYPES);
@@ -315,17 +320,31 @@ export default function MuhurtaFinderPage() {
 
   const eventLabel = eventTypes.find(e => e.value === selectedEvent)?.label || '';
 
-  // --- Unlock (Stripe Checkout) handler ---
+  // --- Unlock payment handler (Stripe or Razorpay) ---
   const handleUnlockPayment = useCallback(async () => {
     if (!pricing || paymentProcessing) return;
     setPaymentProcessing(true);
     try {
       const orderData = await api.post('/v1/payment/create-muhurta-order', {
         event_key: selectedEvent,
+        gateway: gateway || 'stripe',
         success_url: `${window.location.origin}/muhurta?payment_success=true&event=${selectedEvent}`,
         cancel_url: `${window.location.origin}/muhurta?payment_cancelled=true`,
       });
 
+      // Razorpay flow — open popup
+      if (orderData.gateway === 'razorpay' && orderData.order_id) {
+        setRazorpayOrder({
+          orderId: orderData.order_id,
+          amount: orderData.amount,
+          currency: orderData.currency || 'INR',
+          razorpayKeyId: orderData.razorpay_key_id || razorpayKeyId,
+        });
+        setPaymentProcessing(false);
+        return;
+      }
+
+      // Stripe flow — redirect to checkout URL
       if (orderData.checkout_url) {
         window.location.href = orderData.checkout_url;
         return;
@@ -336,7 +355,22 @@ export default function MuhurtaFinderPage() {
       setError(err.message || 'Failed to initiate payment.');
       setPaymentProcessing(false);
     }
-  }, [pricing, paymentProcessing, selectedEvent]);
+  }, [pricing, paymentProcessing, selectedEvent, gateway, razorpayKeyId]);
+
+  // --- Razorpay payment success handler ---
+  const handleRazorpaySuccess = useCallback((result) => {
+    setRazorpayOrder(null);
+    if (result.verified) {
+      // Payment verified — redirect to success
+      window.location.href = `/checkout-return?payment=success&gateway=razorpay`;
+    } else {
+      setError(result.error || 'Payment verification failed. Please contact support.');
+    }
+  }, []);
+
+  const handleRazorpayClose = useCallback(() => {
+    setRazorpayOrder(null);
+  }, []);
 
   // Pagination helpers
   const windows = result?.windows || [];
@@ -345,6 +379,19 @@ export default function MuhurtaFinderPage() {
 
   return (
     <PageShell activeNav="muhurta">
+      {/* Razorpay Checkout Popup */}
+      {razorpayOrder && (
+        <RazorpayCheckoutModal
+          orderId={razorpayOrder.orderId}
+          amount={razorpayOrder.amount}
+          currency={razorpayOrder.currency}
+          razorpayKeyId={razorpayOrder.razorpayKeyId}
+          prefill={{ name: user?.full_name || '', email: user?.email || '' }}
+          onSuccess={handleRazorpaySuccess}
+          onClose={handleRazorpayClose}
+          mode="payment"
+        />
+      )}
       <section className="tool-page">
         <div className="container">
           <div className="tool-header">

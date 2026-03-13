@@ -5,6 +5,7 @@ export default function TimeSelectGroup({
   hourId, minuteId, ampmId,
   onHourChange, onMinuteChange, onAmpmChange,
   hourValue, minuteValue, ampmValue,
+  disabled = false,
 }) {
   return (
     <div className="time-group">
@@ -13,6 +14,7 @@ export default function TimeSelectGroup({
         name={hourId || 'hour'}
         value={hourValue}
         onChange={(e) => onHourChange?.(e.target.value)}
+        disabled={disabled}
       >
         <option value="">Hour</option>
         {hours.map((hour) => (
@@ -25,6 +27,7 @@ export default function TimeSelectGroup({
         name={minuteId || 'minute'}
         value={minuteValue}
         onChange={(e) => onMinuteChange?.(e.target.value)}
+        disabled={disabled}
       >
         <option value="">Minute</option>
         {minutes.map((minute) => (
@@ -37,6 +40,7 @@ export default function TimeSelectGroup({
         name={ampmId || 'ampm'}
         value={ampmValue}
         onChange={(e) => onAmpmChange?.(e.target.value)}
+        disabled={disabled}
       >
         <option value="">AM/PM</option>
         <option value="AM">AM</option>
