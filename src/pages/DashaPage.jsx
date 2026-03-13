@@ -60,6 +60,8 @@ export default function DashaPage() {
     ampm, setAmpm,
     birthPlace, setBirthPlace,
     saveBirthData,
+    validate,
+    buildPayload,
   } = useBirthData({ reportType: 'dasha' });
 
   const [loading, setLoading] = useState(false);
@@ -69,18 +71,10 @@ export default function DashaPage() {
   const handleGenerate = useCallback(async () => {
     setError('');
 
-    if (!fullName.trim()) { setError('Please enter your name.'); return; }
-    if (!birthDate) { setError('Please select your date of birth.'); return; }
-    if (!birthPlace) { setError('Please select a birth place from the dropdown.'); return; }
+    const err = validate();
+    if (err) { setError(err); return; }
 
-    const tob = to24Hour(hour, minute, ampm);
-    const payload = {
-      name: fullName.trim(),
-      dob: birthDate,
-      tob,
-      place_of_birth: birthPlace.name,
-    };
-
+    const payload = buildPayload();
     const params = new URLSearchParams({
       include_dasha: 'true',
       dasha_depth: '3',
@@ -98,7 +92,7 @@ export default function DashaPage() {
     } finally {
       setLoading(false);
     }
-  }, [fullName, birthDate, hour, minute, ampm, birthPlace, saveBirthData]);
+  }, [validate, buildPayload, saveBirthData]);
 
   const dashaTree = dashaData?.bundle?.dasha_tree || [];
 

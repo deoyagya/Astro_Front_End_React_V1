@@ -23,6 +23,8 @@ const LS_KEY = 'saved_birth_data';
 export function to24Hour(hour, minute, ampm) {
   let h = parseInt(hour, 10);
   const m = parseInt(minute, 10);
+  if (isNaN(h)) h = 6;   // default to 6 AM if empty
+  if (isNaN(m)) return '06:00';
   if (ampm === 'AM' && h === 12) h = 0;
   else if (ampm === 'PM' && h !== 12) h += 12;
   return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
@@ -156,9 +158,10 @@ export function useBirthData(options = {}) {
   const validate = useCallback(() => {
     if (!fullName.trim()) return 'Please enter your full name.';
     if (!birthDate) return 'Please select your date of birth.';
+    if (!hour || !minute || !ampm) return 'Please select your time of birth (hour, minute, and AM/PM).';
     if (!birthPlace) return 'Please select a birth place from the dropdown.';
     return null;
-  }, [fullName, birthDate, birthPlace]);
+  }, [fullName, birthDate, hour, minute, ampm, birthPlace]);
 
   // Persist birth data after chart generation
   const saveBirthData = useCallback(async () => {

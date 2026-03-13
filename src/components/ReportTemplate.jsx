@@ -41,6 +41,8 @@ export default function ReportTemplate({
     ampm, setAmpm,
     birthPlace, setBirthPlace,
     saveBirthData,
+    validate,
+    buildPayload,
   } = useBirthData({ reportType: 'report' });
 
   const [loading, setLoading] = useState(false);
@@ -50,21 +52,10 @@ export default function ReportTemplate({
   const handleGenerate = useCallback(async () => {
     setError('');
 
-    if (!fullName.trim()) { setError('Please enter your name.'); return; }
-    if (!birthDate) { setError('Please select your date of birth.'); return; }
-    if (!birthPlace) { setError('Please select a birth place from the dropdown.'); return; }
+    const err = validate();
+    if (err) { setError(err); return; }
 
-    const tob = to24Hour(hour, minute, ampm);
-    const payload = {
-      name: fullName.trim(),
-      dob: birthDate,
-      tob,
-      place_of_birth: birthPlace.name,
-      ...(birthPlace.lat != null && birthPlace.lon != null && birthPlace.timezone
-        ? { lat: birthPlace.lat, lon: birthPlace.lon, tz_id: birthPlace.timezone }
-        : {}),
-    };
-
+    const payload = buildPayload();
     const params = new URLSearchParams({
       subdomain_id: String(subdomainId),
       interpretation_mode: 'static',
@@ -85,7 +76,7 @@ export default function ReportTemplate({
     } finally {
       setLoading(false);
     }
-  }, [fullName, birthDate, hour, minute, ampm, birthPlace, subdomainId, saveBirthData]);
+  }, [validate, buildPayload, subdomainId, saveBirthData]);
 
   const prediction = reportData?.prediction || {};
   const cards = prediction.cards || [];

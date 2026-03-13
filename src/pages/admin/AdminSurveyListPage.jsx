@@ -67,7 +67,7 @@ export default function AdminSurveyListPage() {
 
   const handleDelete = async (formId) => {
     try {
-      await api.delete(`/v1/admin/surveys/${formId}`);
+      await api.del(`/v1/admin/surveys/${formId}`);
       setToast({ message: 'Survey deleted.', type: 'success' });
       setConfirmDelete(null);
       loadSurveys();

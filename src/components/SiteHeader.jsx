@@ -21,6 +21,7 @@ const ADMIN_MENU_ITEMS = [
   { label: 'DB Admin',      icon: 'fa-database',        href: `${API_BASE}/db-admin`, external: true },
   { label: 'Wizard Content', icon: 'fa-photo-video',    href: '/admin/wizard-content' },
   { label: 'Subscriptions', icon: 'fa-credit-card',     href: '/admin/subscriptions' },
+  { label: 'Gateway Config', icon: 'fa-globe',          href: '/admin/gateway-config' },
   { label: 'Style Manager', icon: 'fa-palette',         href: '/admin/style-manager' },
   { label: 'Surveys',       icon: 'fa-poll-h',          href: '/admin/surveys' },
 ];

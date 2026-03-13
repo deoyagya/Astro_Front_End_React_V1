@@ -35,6 +35,8 @@ export default function HoroscopePage() {
     ampm, setAmpm,
     birthPlace, setBirthPlace,
     saveBirthData,
+    validate,
+    buildPayload,
   } = useBirthData({ reportType: 'horoscope' });
 
   const [selectedSign, setSelectedSign] = useState('');
@@ -54,17 +56,10 @@ export default function HoroscopePage() {
   const handleGenerate = useCallback(async () => {
     setError('');
 
-    if (!fullName.trim()) { setError('Please enter your name.'); return; }
-    if (!birthDate) { setError('Please select your date of birth.'); return; }
-    if (!birthPlace) { setError('Please select a birth place from the dropdown.'); return; }
+    const err = validate();
+    if (err) { setError(err); return; }
 
-    const tob = to24Hour(hour, minute, ampm);
-    const payload = {
-      name: fullName.trim(),
-      dob: birthDate,
-      tob,
-      place_of_birth: birthPlace.name,
-    };
+    const payload = buildPayload();
 
     setLoading(true);
     try {
@@ -85,7 +80,7 @@ export default function HoroscopePage() {
     } finally {
       setLoading(false);
     }
-  }, [fullName, birthDate, hour, minute, ampm, birthPlace, saveBirthData]);
+  }, [validate, buildPayload, saveBirthData]);
 
   // Extract prediction data
   const cards = prediction?.cards || [];

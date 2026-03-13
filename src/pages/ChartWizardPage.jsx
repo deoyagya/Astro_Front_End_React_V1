@@ -27,7 +27,7 @@ import StepAnnualChart from '../components/wizard/StepAnnualChart';
 import StepMunthaLord from '../components/wizard/StepMunthaLord';
 import StepReview from '../components/wizard/StepReview';
 import RuleValidationBadge from '../components/wizard/RuleValidationBadge';
-import { useStyles } from '../context/StyleContext';
+
 
 /**
  * Maps step_key → React component for step rendering.
@@ -59,7 +59,6 @@ const STEP_COMPONENTS = {
 };
 
 function resolveStepType(stepKey) {
-  const { getOverride } = useStyles('chart-wizard');
   if (STEP_COMPONENTS[stepKey]) return STEP_COMPONENTS[stepKey];
   // Person-indexed: p0_birth, p1_ascendant, etc.
   const match = stepKey.match(/^p\d+_(.+)$/);
@@ -98,17 +97,26 @@ export default function ChartWizardPage() {
   const [resumeSession, setResumeSession] = useState(null);
   const [showResume, setShowResume] = useState(false);
 
-  // Check for in-progress sessions on mount
-  useEffect(() => {
-    api.get('/v1/wizard/sessions?status=in_progress')
-      .then((sessions) => {
-        if (Array.isArray(sessions) && sessions.length > 0) {
-          setResumeSession(sessions[0]);
-          setShowResume(true);
-        }
-      })
-      .catch(() => {});
+  const [allInProgress, setAllInProgress] = useState([]);
+
+  // Fetch in-progress sessions and show resume popup if any exist
+  const checkInProgressSessions = useCallback(async () => {
+    try {
+      const sessions = await api.get('/v1/wizard/sessions?status=in_progress');
+      if (Array.isArray(sessions) && sessions.length > 0) {
+        setAllInProgress(sessions);
+        setResumeSession(sessions[0]);
+        setShowResume(true);
+      } else {
+        setAllInProgress([]);
+        setResumeSession(null);
+        setShowResume(false);
+      }
+    } catch { /* ignore */ }
   }, []);
+
+  // Check for in-progress sessions on mount
+  useEffect(() => { checkInProgressSessions(); }, [checkInProgressSessions]);
 
   // Fetch step content when step changes
   useEffect(() => {
@@ -163,13 +171,20 @@ export default function ChartWizardPage() {
     }
   }, []);
 
-  // --- Discard session ---
-  const handleDiscard = useCallback(async (sid) => {
-    setShowResume(false);
+  // --- Discard ALL in-progress sessions ---
+  const handleDiscard = useCallback(async () => {
+    // Fetch fresh list to avoid stale closure issues, then abandon all
     try {
-      await api.del(`/v1/wizard/${sid}`);
+      const sessions = await api.get('/v1/wizard/sessions?status=in_progress');
+      if (Array.isArray(sessions)) {
+        await Promise.allSettled(
+          sessions.map((s) => api.del(`/v1/wizard/${s.session_id}`).catch(() => {})),
+        );
+      }
     } catch { /* ignore */ }
+    setAllInProgress([]);
     setResumeSession(null);
+    setShowResume(false);
   }, []);
 
   // --- Save step & advance ---

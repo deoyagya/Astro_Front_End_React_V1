@@ -16,6 +16,9 @@ import { useNavigate } from 'react-router-dom';
 import { api } from '../../api/client';
 import { useAuth } from '../../context/AuthContext';
 import { useStyles } from '../../context/StyleContext';
+import EmbeddedCheckoutModal from '../../components/EmbeddedCheckoutModal';
+import RazorpayCheckoutModal from '../../components/RazorpayCheckoutModal';
+import usePaymentGateway from '../../hooks/usePaymentGateway';
 import '../../styles/subscription.css';
 
 /* ---- Icon map ---- */
@@ -29,6 +32,10 @@ const PLAN_ICONS = {
 export default function SubscriptionPage() {
   const navigate = useNavigate();
   const { user, refreshUser } = useAuth();
+  const { gateway, razorpayKeyId, loading: gwLoading } = usePaymentGateway();
+
+  // Razorpay credit pack order
+  const [razorpayOrder, setRazorpayOrder] = useState(null);
 
   const [subData, setSubData] = useState(null);
   const [creditBalance, setCreditBalance] = useState({});
@@ -44,6 +51,7 @@ export default function SubscriptionPage() {
 
   // Credit purchase
   const [purchasingPack, setPurchasingPack] = useState(null);
+  const [clientSecret, setClientSecret] = useState('');
 
   /* ---- Fetch subscription data ---- */
   const fetchData = useCallback(async () => {
@@ -115,7 +123,7 @@ export default function SubscriptionPage() {
     }
   }, [cancelImmediate, fetchData, refreshUser]);
 
-  /* ---- Purchase credit pack (Stripe redirect) ---- */
+  /* ---- Purchase credit pack (Stripe or Razorpay) ---- */
   const handlePurchasePack = useCallback(async (pack) => {
     setPurchasingPack(pack.id);
     setError('');
@@ -123,22 +131,51 @@ export default function SubscriptionPage() {
     try {
       const res = await api.post('/v1/subscription/purchase-credits', {
         pack_id: pack.id,
-        success_url: `${window.location.origin}/my-data/subscription?credit_success=true`,
-        cancel_url: `${window.location.origin}/my-data/subscription?credit_cancelled=true`,
+        gateway: gateway || 'stripe',
       });
 
-      if (res.checkout_url) {
-        window.location.href = res.checkout_url;
+      // Razorpay flow — open popup
+      if (res.gateway === 'razorpay' && res.order_id) {
+        setRazorpayOrder({
+          orderId: res.order_id,
+          amount: res.amount,
+          currency: res.currency || 'INR',
+          razorpayKeyId: res.razorpay_key_id || razorpayKeyId,
+        });
+        setPurchasingPack(null);
         return;
       }
 
-      setError('Checkout URL not received. Please try again.');
+      // Stripe flow — embedded checkout
+      if (res.client_secret) {
+        setClientSecret(res.client_secret);
+        setPurchasingPack(null);
+        return;
+      }
+
+      setError('Unable to start checkout. Please try again.');
       setPurchasingPack(null);
     } catch (err) {
       setError(err.message || 'Failed to initiate credit purchase.');
       setPurchasingPack(null);
     }
-  }, [user, fetchData]);
+  }, [user, fetchData, gateway, razorpayKeyId]);
+
+  /* ---- Razorpay credit pack success ---- */
+  const handleRazorpaySuccess = useCallback(async (result) => {
+    setRazorpayOrder(null);
+    if (result.verified) {
+      setSuccessMsg('Credit pack purchased successfully!');
+      if (refreshUser) await refreshUser();
+      await fetchData();
+    } else {
+      setError(result.error || 'Payment verification failed. Please contact support.');
+    }
+  }, [refreshUser, fetchData]);
+
+  const handleRazorpayClose = useCallback(() => {
+    setRazorpayOrder(null);
+  }, []);
 
   /* ---- Render ---- */
   if (loading) {
@@ -154,6 +191,24 @@ export default function SubscriptionPage() {
 
   return (
     <div className="subscription-page">
+      {clientSecret && (
+        <EmbeddedCheckoutModal
+          clientSecret={clientSecret}
+          onClose={() => setClientSecret('')}
+        />
+      )}
+      {razorpayOrder && (
+        <RazorpayCheckoutModal
+          orderId={razorpayOrder.orderId}
+          amount={razorpayOrder.amount}
+          currency={razorpayOrder.currency}
+          razorpayKeyId={razorpayOrder.razorpayKeyId}
+          prefill={{ name: user?.full_name || '', email: user?.email || '' }}
+          onSuccess={handleRazorpaySuccess}
+          onClose={handleRazorpayClose}
+          mode="payment"
+        />
+      )}
       {/* Success message */}
       {successMsg && (
         <div className="sub-success">

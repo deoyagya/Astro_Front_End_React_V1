@@ -146,7 +146,7 @@ function sanitizeErrorMessage(raw, statusCode) {
 
   // Pydantic / FastAPI validation errors (broader catch)
   if (lower.startsWith('value error') || lower.includes('validation error') || lower.includes('field required'))
-    return 'Please check your birth details and try again. Make sure all fields are filled in correctly.';
+    return 'Please check your input and try again. Make sure all required fields are filled in correctly.';
 
   // Location / geocoding errors
   if (lower.includes('lat') || lower.includes('lon') || lower.includes('tz_id') || lower.includes('timezone'))

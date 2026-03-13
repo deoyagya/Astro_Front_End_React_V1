@@ -8,6 +8,8 @@ import { api } from '../api/client';
 
 const OTP_LENGTH = 6;
 const TIMER_SECONDS = 120;
+const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || '';
+const FACEBOOK_APP_ID = import.meta.env.VITE_FACEBOOK_APP_ID || '';
 
 export default function LoginPage() {
   useSharedEffects();
@@ -38,6 +40,112 @@ export default function LoginPage() {
 
   const otpRefs = useRef([]);
   const timerRef = useRef(null);
+  const googleBtnRef = useRef(null);
+  const fbInitialized = useRef(false);
+
+  // ---- Social login handler (shared) ----
+  const handleSocialLogin = useCallback(async (provider, tokenPayload) => {
+    setLoading(true);
+    setError('');
+    try {
+      const result = await api.post(`/v1/auth/social/${provider}`, tokenPayload);
+      await login({
+        access_token: result.access_token,
+        refresh_token: result.refresh_token,
+      });
+      navigate(from, { replace: true });
+    } catch (err) {
+      setError(err.message || `${provider} sign-in failed. Please try again.`);
+    } finally {
+      setLoading(false);
+    }
+  }, [login, navigate, from]);
+
+  // ---- Initialize Google GSI ----
+  useEffect(() => {
+    if (!GOOGLE_CLIENT_ID) return;
+
+    const initGoogle = () => {
+      if (!window.google?.accounts?.id) return;
+      window.google.accounts.id.initialize({
+        client_id: GOOGLE_CLIENT_ID,
+        callback: (response) => {
+          handleSocialLogin('google', { id_token: response.credential });
+        },
+      });
+      if (googleBtnRef.current) {
+        window.google.accounts.id.renderButton(googleBtnRef.current, {
+          theme: 'filled_black',
+          size: 'large',
+          width: 340,
+          text: 'continue_with',
+          shape: 'pill',
+        });
+      }
+    };
+
+    // SDK may already be loaded or may load later
+    if (window.google?.accounts?.id) {
+      initGoogle();
+    } else {
+      const interval = setInterval(() => {
+        if (window.google?.accounts?.id) {
+          clearInterval(interval);
+          initGoogle();
+        }
+      }, 200);
+      return () => clearInterval(interval);
+    }
+  }, [handleSocialLogin]);
+
+  // ---- Initialize Facebook SDK ----
+  useEffect(() => {
+    if (!FACEBOOK_APP_ID || fbInitialized.current) return;
+
+    const initFB = () => {
+      if (!window.FB) return;
+      window.FB.init({
+        appId: FACEBOOK_APP_ID,
+        cookie: true,
+        xfbml: false,
+        version: 'v19.0',
+      });
+      fbInitialized.current = true;
+    };
+
+    // Load Facebook SDK dynamically (avoids GDPR autoload from index.html)
+    if (window.FB) {
+      initFB();
+    } else if (!document.getElementById('facebook-jssdk')) {
+      const script = document.createElement('script');
+      script.id = 'facebook-jssdk';
+      script.src = 'https://connect.facebook.net/en_US/sdk.js';
+      script.async = true;
+      script.defer = true;
+      script.crossOrigin = 'anonymous';
+      script.onload = initFB;
+      document.body.appendChild(script);
+    }
+  }, []);
+
+  const handleFacebookLogin = async () => {
+    if (!window.FB) {
+      setError('Facebook SDK not loaded. Please refresh and try again.');
+      return;
+    }
+    setLoading(true);
+    setError('');
+    window.FB.login(
+      (response) => {
+        if (response.authResponse) {
+          handleSocialLogin('facebook', { access_token: response.authResponse.accessToken });
+        } else {
+          setLoading(false);
+        }
+      },
+      { scope: 'email,public_profile' },
+    );
+  };
 
   // ---- Auto-detect country code from IP ----
   useEffect(() => {
@@ -180,12 +288,12 @@ export default function LoginPage() {
     setError('');
     setLoading(true);
     try {
-      const result = await api.post('/v1/auth/otp/verify', {
+      const result = await api.postLong('/v1/auth/otp/verify', {
         identifier: getFullIdentifier(),
         otp_code: code,
         full_name: fullName.trim(),
         marketing_consent: marketingConsent,
-      });
+      }, 30_000);
       // Login (stores token, triggers user fetch)
       await login({
         access_token: result.access_token,
@@ -194,9 +302,21 @@ export default function LoginPage() {
       // Navigate to the originally requested page
       navigate(from, { replace: true });
     } catch (err) {
-      setError(err.message || 'Invalid code. Please try again.');
-      setOtp(Array(OTP_LENGTH).fill(''));
-      otpRefs.current[0]?.focus();
+      const msg = err.message || '';
+      const isConnectionIssue =
+        msg.includes('connection error') ||
+        msg.includes('took too long') ||
+        msg.includes('temporarily unavailable') ||
+        msg.includes('try again in');
+      if (isConnectionIssue) {
+        // Keep OTP digits so user can retry without re-entering
+        setError('Could not reach the server. Please check your connection and try again.');
+      } else {
+        // Invalid OTP or similar — clear and re-enter
+        setError(msg || 'Invalid code. Please try again.');
+        setOtp(Array(OTP_LENGTH).fill(''));
+        otpRefs.current[0]?.focus();
+      }
     } finally {
       setLoading(false);
     }
@@ -213,6 +333,8 @@ export default function LoginPage() {
   // ---- Format timer ----
   const formatTimer = (s) => `${Math.floor(s / 60)}:${(s % 60).toString().padStart(2, '0')}`;
 
+  const hasSocialLogin = GOOGLE_CLIENT_ID || FACEBOOK_APP_ID;
+
   return (
     <PageShell activeNav="login">
       <section className="login-section" style={getOverride('loginSection')}>
@@ -223,7 +345,7 @@ export default function LoginPage() {
               <h2>Welcome</h2>
               <p>
                 {step === 'input'
-                  ? 'Enter your email or phone to receive a verification code'
+                  ? 'Sign in to access your astrological insights'
                   : `Code sent to ${maskedId}`}
               </p>
             </div>
@@ -235,8 +357,32 @@ export default function LoginPage() {
             )}
 
             {step === 'input' ? (
-              /* ---- Step 1: Enter email or phone ---- */
+              /* ---- Step 1: Social + Enter email or phone ---- */
               <div className="login-form">
+                {/* Social Login Buttons */}
+                {hasSocialLogin && (
+                  <>
+                    <div className="social-buttons">
+                      {GOOGLE_CLIENT_ID && (
+                        <div ref={googleBtnRef} className="google-btn-container"></div>
+                      )}
+                      {FACEBOOK_APP_ID && (
+                        <button
+                          type="button"
+                          className="btn-social btn-facebook"
+                          onClick={handleFacebookLogin}
+                          disabled={loading}
+                        >
+                          <i className="fab fa-facebook-f"></i> Continue with Facebook
+                        </button>
+                      )}
+                    </div>
+                    <div className="social-login-divider">
+                      <span>or continue with email / phone</span>
+                    </div>
+                  </>
+                )}
+
                 <div className="identifier-group">
                   {inputType === 'sms' && (
                     <select

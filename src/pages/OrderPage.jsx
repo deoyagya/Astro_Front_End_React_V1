@@ -1,6 +1,9 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import PageShell from '../components/PageShell';
 import ApiError from '../components/ApiError';
+import EmbeddedCheckoutModal from '../components/EmbeddedCheckoutModal';
+import RazorpayCheckoutModal from '../components/RazorpayCheckoutModal';
+import usePaymentGateway from '../hooks/usePaymentGateway';
 import { api } from '../api/client';
 import { useSharedEffects } from '../hooks/useSharedEffects';
 import '../styles/report-pages.css';
@@ -9,6 +12,7 @@ import { useStyles } from '../context/StyleContext';
 export default function OrderPage() {
   const { getOverride } = useStyles('order');
   useSharedEffects();
+  const gw = usePaymentGateway();
 
   /* ── State ─────────────────────────────────────────────── */
   const [reports, setReports] = useState([]);        // from GET /report-prices
@@ -18,6 +22,8 @@ export default function OrderPage() {
   const [validating, setValidating] = useState(false);
   const [loading, setLoading] = useState(false);      // order creation
   const [error, setError] = useState('');
+  const [clientSecret, setClientSecret] = useState(''); // Stripe Embedded Checkout
+  const [razorpayOrder, setRazorpayOrder] = useState(null); // Razorpay order data
   const debounceRef = useRef(null);
 
   /* ── Fetch report prices on mount ──────────────────────── */
@@ -95,7 +101,7 @@ export default function OrderPage() {
     return '$0.00';
   }, [validatedCart]);
 
-  /* ── Create Stripe Checkout Session then redirect ────── */
+  /* ── Create payment order (Stripe or Razorpay) ────────── */
   const proceedToPayment = async () => {
     if (!selectedIds.length) {
       setError('Please select at least one report.');
@@ -111,19 +117,23 @@ export default function OrderPage() {
     try {
       const orderData = await api.postLong('/v1/payment/create-order', {
         amount: validatedCart.total_cents,
-        currency: 'USD',
+        currency: gw.currency || 'USD',
+        gateway: gw.gateway || undefined,
         items: validatedCart.items.map((it) => ({
           id: it.id,
           name: it.name,
           price: it.price_cents,
         })),
         receipt: `astroyagya_order_${Date.now()}`,
-        success_url: `${window.location.origin}/my-reports?payment_success=true`,
-        cancel_url: `${window.location.origin}/order?payment_cancelled=true`,
       });
 
-      if (orderData.checkout_url) {
-        window.location.href = orderData.checkout_url;
+      if (orderData.gateway === 'razorpay' && orderData.order_id) {
+        setRazorpayOrder(orderData);
+        return;
+      }
+
+      if (orderData.client_secret) {
+        setClientSecret(orderData.client_secret);
         return;
       }
       setError('Unable to start checkout. Please try again.');
@@ -137,6 +147,29 @@ export default function OrderPage() {
   /* ── Render ─────────────────────────────────────────────── */
   return (
     <PageShell activeNav="reports">
+      {clientSecret && (
+        <EmbeddedCheckoutModal
+          clientSecret={clientSecret}
+          onClose={() => setClientSecret('')}
+        />
+      )}
+      {razorpayOrder && (
+        <RazorpayCheckoutModal
+          orderId={razorpayOrder.order_id}
+          amount={razorpayOrder.amount}
+          currency={razorpayOrder.currency}
+          razorpayKeyId={razorpayOrder.razorpay_key_id}
+          onSuccess={(result) => {
+            setRazorpayOrder(null);
+            if (result.verified) {
+              window.location.href = '/checkout/return?payment=success&gateway=razorpay';
+            } else {
+              setError('Payment verification failed. Please contact support.');
+            }
+          }}
+          onClose={() => setRazorpayOrder(null)}
+        />
+      )}
       <div className="report-page">
         <div className="container">
           <div className="cart-header">

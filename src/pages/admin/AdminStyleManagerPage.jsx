@@ -18,7 +18,7 @@ export default function AdminStyleManagerPage() {
 
   const apiGet = useCallback((key) => api.get(`/v1/admin/styles/${key}`), []);
   const apiPut = useCallback((key, body) => api.put(`/v1/admin/styles/${key}`, body), []);
-  const apiDelete = useCallback((key) => api.delete(`/v1/admin/styles/${key}`), []);
+  const apiDelete = useCallback((key) => api.del(`/v1/admin/styles/${key}`), []);
 
   return (
     <PageShell activeNav="admin">

@@ -14,6 +14,9 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import PageShell from '../components/PageShell';
+import EmbeddedCheckoutModal from '../components/EmbeddedCheckoutModal';
+import RazorpayCheckoutModal from '../components/RazorpayCheckoutModal';
+import usePaymentGateway from '../hooks/usePaymentGateway';
 import { api } from '../api/client';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
@@ -46,6 +49,7 @@ export default function PricingPage() {
   const [searchParams] = useSearchParams();
   const { user, isAuthenticated, refreshUser } = useAuth();
   const { toast } = useToast();
+  const gw = usePaymentGateway();
 
   const [plans, setPlans] = useState([]);
   const [creditPacks, setCreditPacks] = useState([]);
@@ -61,6 +65,8 @@ export default function PricingPage() {
 
   // Checkout state
   const [checkoutLoading, setCheckoutLoading] = useState(null);
+  const [clientSecret, setClientSecret] = useState('');
+  const [razorpayCheckout, setRazorpayCheckout] = useState(null); // Razorpay checkout data
 
   /* ---- Fetch plans + credit packs ---- */
   useEffect(() => {
@@ -131,7 +137,7 @@ export default function PricingPage() {
     }
   }, [couponCode]);
 
-  /* ---- Checkout (Stripe redirect) ---- */
+  /* ---- Checkout (Stripe or Razorpay) ---- */
   const handleCheckout = useCallback(async (planSlug) => {
     if (!isAuthenticated) {
       navigate('/login');
@@ -145,22 +151,37 @@ export default function PricingPage() {
         plan_slug: planSlug,
         billing_cycle: yearly ? 'yearly' : 'monthly',
         coupon_code: couponResult?.valid ? couponCode.trim().toUpperCase() : undefined,
-        success_url: `${window.location.origin}/pricing?session_id={CHECKOUT_SESSION_ID}`,
-        cancel_url: `${window.location.origin}/pricing?cancelled=true`,
+        gateway: gw.gateway || undefined,
       });
 
-      if (checkoutData.checkout_url) {
-        window.location.href = checkoutData.checkout_url;
+      // Razorpay checkout
+      if (checkoutData.gateway === 'razorpay') {
+        setRazorpayCheckout({
+          subscriptionId: checkoutData.razorpay_subscription_id || checkoutData.subscription_id,
+          orderId: checkoutData.subscription_id,
+          amount: checkoutData.amount,
+          currency: checkoutData.currency || 'INR',
+          razorpayKeyId: checkoutData.razorpay_key_id,
+          mode: checkoutData.razorpay_subscription_id ? 'subscription' : 'payment',
+        });
+        setCheckoutLoading(null);
         return;
       }
 
-      toast('Checkout URL not received. Please try again.', 'error');
+      // Stripe checkout
+      if (checkoutData.client_secret) {
+        setClientSecret(checkoutData.client_secret);
+        setCheckoutLoading(null);
+        return;
+      }
+
+      toast('Unable to start checkout. Please try again.', 'error');
       setCheckoutLoading(null);
     } catch (err) {
       toast(err.message || 'Checkout failed. Please try again.', 'error');
       setCheckoutLoading(null);
     }
-  }, [isAuthenticated, navigate, yearly, couponResult, couponCode]);
+  }, [isAuthenticated, navigate, yearly, couponResult, couponCode, gw.gateway]);
 
   /* ---- Price formatting (USD / Stripe) ---- */
   const formatPrice = (plan) => {
@@ -313,6 +334,33 @@ export default function PricingPage() {
 
   return (
     <PageShell activeNav="pricing">
+      {clientSecret && (
+        <EmbeddedCheckoutModal
+          clientSecret={clientSecret}
+          onClose={() => setClientSecret('')}
+        />
+      )}
+      {razorpayCheckout && (
+        <RazorpayCheckoutModal
+          orderId={razorpayCheckout.orderId}
+          subscriptionId={razorpayCheckout.subscriptionId}
+          amount={razorpayCheckout.amount}
+          currency={razorpayCheckout.currency}
+          razorpayKeyId={razorpayCheckout.razorpayKeyId}
+          mode={razorpayCheckout.mode}
+          prefill={{ email: user?.email || '' }}
+          onSuccess={async (result) => {
+            setRazorpayCheckout(null);
+            if (result.verified) {
+              if (refreshUser) await refreshUser();
+              navigate('/my-data/subscription', { replace: true });
+            } else {
+              toast('Payment verification failed. Please contact support.', 'error');
+            }
+          }}
+          onClose={() => setRazorpayCheckout(null)}
+        />
+      )}
       <div className="pricing-page">
         <div className="container">
           {/* Header */}
@@ -323,9 +371,19 @@ export default function PricingPage() {
               detailed reports, and personalized guidance.
             </p>
             <p className="gateway-info">
-              <i className="fas fa-cc-stripe"></i>{' '}
-              Prices shown in USD{' '}
-              <span className="gateway-badge">Stripe</span>
+              {gw.gateway === 'razorpay' ? (
+                <>
+                  <i className="fas fa-rupee-sign"></i>{' '}
+                  Prices shown in INR{' '}
+                  <span className="gateway-badge razorpay">Razorpay</span>
+                </>
+              ) : (
+                <>
+                  <i className="fas fa-cc-stripe"></i>{' '}
+                  Prices shown in USD{' '}
+                  <span className="gateway-badge">Stripe</span>
+                </>
+              )}
             </p>
           </div>
 
@@ -534,7 +592,7 @@ export default function PricingPage() {
           {/* Trust badges */}
           <div className="pricing-faq">
             <p>
-              All payments are securely processed by Stripe. Cancel anytime.
+              All payments are securely processed. Cancel anytime.
             </p>
             <div className="trust-icons">
               <div className="trust-item">
@@ -550,8 +608,17 @@ export default function PricingPage() {
                 <span>Cancel Anytime</span>
               </div>
               <div className="trust-item">
-                <i className="fas fa-cc-stripe"></i>
-                <span>Powered by Stripe</span>
+                {gw.gateway === 'razorpay' ? (
+                  <>
+                    <i className="fas fa-rupee-sign"></i>
+                    <span>Powered by Razorpay</span>
+                  </>
+                ) : (
+                  <>
+                    <i className="fas fa-cc-stripe"></i>
+                    <span>Powered by Stripe</span>
+                  </>
+                )}
               </div>
             </div>
           </div>

@@ -334,6 +334,77 @@
     line-height: 1.4;
 }
 
+/* ===== SOCIAL LOGIN BUTTONS ===== */
+.social-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 8px;
+}
+
+.google-btn-container {
+    display: flex;
+    justify-content: center;
+}
+
+.btn-social {
+    width: 100%;
+    padding: 12px 20px;
+    border-radius: 50px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: all 0.2s;
+}
+
+.btn-facebook {
+    background: #1877F2;
+    color: white;
+    border: none;
+}
+
+.btn-facebook:hover:not(:disabled) {
+    background: #166FE5;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(24, 119, 242, 0.3);
+}
+
+.btn-facebook:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.social-login-divider {
+    text-align: center;
+    margin: 16px 0;
+    position: relative;
+}
+
+.social-login-divider::before,
+.social-login-divider::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    width: 35%;
+    height: 1px;
+    background: #2a2f3e;
+}
+
+.social-login-divider::before { left: 0; }
+.social-login-divider::after { right: 0; }
+
+.social-login-divider span {
+    color: var(--text-secondary, #c7cfdd);
+    font-size: 0.82rem;
+    background: rgba(30, 33, 48, 0.9);
+    padding: 0 12px;
+    position: relative;
+}
+
 /* Responsive */
 @media (max-width: 500px) {
     .login-card {

@@ -38,6 +38,8 @@ export default function BirthChartPage() {
     ampm, setAmpm,
     birthPlace, setBirthPlace,
     saveBirthData,
+    validate,
+    buildPayload,
   } = useBirthData({ reportType: 'full' });
 
   const [selectedChart, setSelectedChart] = useState('d1');
@@ -57,21 +59,10 @@ export default function BirthChartPage() {
     setError('');
     setSelectedHouse(null);
 
-    if (!fullName.trim()) {
-      setError('Please enter your full name.');
-      return;
-    }
-    if (!birthDate) {
-      setError('Please select your date of birth.');
-      return;
-    }
-    if (!birthPlace) {
-      setError('Please select a birth place from the dropdown.');
-      return;
-    }
+    const err = validate();
+    if (err) { setError(err); return; }
 
-    const tob = to24Hour(hour, minute, ampm);
-    const payload = { name: fullName.trim(), dob: birthDate, tob, place_of_birth: birthPlace.name };
+    const payload = buildPayload();
     const params = new URLSearchParams({ include_vargas: 'true', include_dasha: 'false', include_ashtakavarga: 'false' });
 
     setLoading(true);
@@ -84,7 +75,7 @@ export default function BirthChartPage() {
     } finally {
       setLoading(false);
     }
-  }, [fullName, birthDate, hour, minute, ampm, birthPlace, saveBirthData]);
+  }, [validate, buildPayload, saveBirthData]);
 
   /* Extract data from bundle */
   const bundle = chartBundle?.bundle || {};
