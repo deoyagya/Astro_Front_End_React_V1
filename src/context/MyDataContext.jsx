@@ -25,6 +25,15 @@ export function MyDataProvider({ children }) {
 
   const hasBirthData = !!birthPayload;
 
+  /**
+   * Clear all loaded data — forces child pages back to placeholder state.
+   * Used when switching users in dropdown (before Load button is clicked).
+   */
+  const clearData = useCallback(() => {
+    setBirthPayload(null);
+    setChartBundle(null);
+  }, []);
+
   const loadBirthData = useCallback((payload, { triggerExternal = false } = {}) => {
     // Sanitize payload — ensure tob has a valid default (backend requires "HH:MM")
     const clean = { ...payload };
@@ -34,6 +43,18 @@ export function MyDataProvider({ children }) {
     // Strip seconds if present (e.g. "06:00:00" → "06:00")
     if (clean.tob && clean.tob.split(':').length > 2) {
       clean.tob = clean.tob.split(':').slice(0, 2).join(':');
+    }
+    // Ensure gender is a valid value (backend requires 'male' or 'female')
+    if (!clean.gender || !['male', 'female'].includes(clean.gender)) {
+      clean.gender = 'male';
+    }
+    // Backend requires ALL THREE (lat + lon + tz_id) or NONE.
+    // If any is missing, strip all — backend will geocode from place_of_birth.
+    const hasAllGeo = clean.lat != null && clean.lon != null && !!clean.tz_id;
+    if (!hasAllGeo) {
+      delete clean.lat;
+      delete clean.lon;
+      delete clean.tz_id;
     }
     setBirthPayload(clean);
     setRefreshKey((prev) => prev + 1);
@@ -49,7 +70,7 @@ export function MyDataProvider({ children }) {
 
   return (
     <MyDataContext.Provider value={{
-      birthPayload, hasBirthData, loadBirthData, refreshKey,
+      birthPayload, hasBirthData, loadBirthData, clearData, refreshKey,
       chartBundle, setChartBundle,
       registerExternalLoadHandler,
     }}>

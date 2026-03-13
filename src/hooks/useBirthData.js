@@ -159,13 +159,14 @@ export function useBirthData(options = {}) {
       gender,
       place_of_birth: birthPlace?.name || '',
     };
-    // Always include lat/lon if available (backend resolves tz from lat/lon)
-    if (birthPlace?.lat != null && birthPlace?.lon != null) {
+    // Backend requires ALL THREE (lat + lon + tz_id) or NONE.
+    // If any is missing, omit all — backend will geocode from place_of_birth.
+    const hasLat = birthPlace?.lat != null;
+    const hasLon = birthPlace?.lon != null;
+    const hasTz = !!birthPlace?.timezone;
+    if (hasLat && hasLon && hasTz) {
       payload.lat = birthPlace.lat;
       payload.lon = birthPlace.lon;
-    }
-    // Include tz_id if known (optional — backend resolves from lat/lon if missing)
-    if (birthPlace?.timezone) {
       payload.tz_id = birthPlace.timezone;
     }
     return payload;

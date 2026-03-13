@@ -13,14 +13,10 @@
 import { useState, useEffect, useRef } from 'react';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import PageShell from '../../components/PageShell';
-import PlaceAutocomplete from '../../components/PlaceAutocomplete';
-import DateInput from '../../components/form/DateInput';
-import TimeSelectGroup from '../../components/form/TimeSelectGroup';
 import VedicChart from '../../components/chart/VedicChart';
 import { useBirthData } from '../../hooks/useBirthData';
 import { MyDataProvider, useMyData } from '../../context/MyDataContext';
 import { useAuth } from '../../context/AuthContext';
-import { useStyles } from '../../context/StyleContext';
 import { api } from '../../api/client';
 import '../../styles/mydata.css';
 
@@ -39,13 +35,12 @@ const TABS = [
 /* ---- Inner layout (needs MyDataContext) ---- */
 function MyDataInner() {
   const bd = useBirthData({ reportType: 'mydata' });
-  const { loadBirthData, setChartBundle, chartBundle, registerExternalLoadHandler } = useMyData();
+  const { loadBirthData, clearData, setChartBundle, chartBundle, registerExternalLoadHandler } = useMyData();
   const { user } = useAuth();
   const isPremium = user?.role === 'premium' || user?.role === 'admin';
   const [formError, setFormError] = useState('');
   const [chartLoading, setChartLoading] = useState(false);
   const [chartVisible, setChartVisible] = useState(false);
-  const autoLoaded = useRef(false);
   const skipNextCancelRef = useRef(false);
   const navigate = useNavigate();
   const location = useLocation();
@@ -65,9 +60,14 @@ function MyDataInner() {
     return () => { cancelled = true; };
   }, []);
 
-  // Handle selecting a saved chart from the dropdown
+  // Handle selecting a saved chart from the dropdown.
+  // ONLY populates form fields — does NOT load data.
+  // User must click "Load" button to fetch data for the selected chart.
   const handleChartSelect = (chartId) => {
     setSelectedChartId(chartId);
+    // Clear all stale data so child pages show placeholder, not old user's data
+    clearData();
+    setChartVisible(false);
     if (!chartId) return;
     const chart = savedCharts.find((c) => c.id === chartId);
     if (!chart) return;
@@ -80,11 +80,10 @@ function MyDataInner() {
       lat: bdData.lat,
       lon: bdData.lon,
       tz_id: bdData.tz_id || bdData.timezone || '',
-      gender: bdData.gender || '',
+      gender: bdData.gender || 'male',
     };
+    // Only populate form fields — data loads on "Load" button click
     bd.applyBirthData(payload);
-    loadBirthData(payload);
-    fetchChartData(payload, true);
   };
 
   // Register form-sync handler so SavedCharts Load updates form fields,
@@ -103,19 +102,9 @@ function MyDataInner() {
     return () => registerExternalLoadHandler(null);
   }, [bd.applyBirthData, registerExternalLoadHandler, navigate]);
 
-  // Auto-load birth data on mount when saved data is already available
-  useEffect(() => {
-    if (!bd.loaded || autoLoaded.current) return;
-    if (bd.birthDate && bd.birthPlace) {
-      autoLoaded.current = true;
-      const payload = bd.buildPayload();
-      if (payload.dob && payload.place_of_birth) {
-        loadBirthData(payload);
-        // Also fetch chart data silently (no modal auto-open on page load)
-        fetchChartData(payload, false);
-      }
-    }
-  }, [bd.loaded, bd.birthDate, bd.birthPlace, bd.buildPayload, loadBirthData]);
+  // NOTE: No auto-load on mount. User must click "Load" button to fetch data.
+  // Form fields are populated from saved data via useBirthData, but no API calls
+  // are made until the user explicitly clicks Load.
 
   /**
    * Fetch chart data with vargas for chart rendering.
@@ -192,7 +181,7 @@ function MyDataInner() {
             <p>Your complete astrological profile at a glance</p>
           </div>
 
-          {/* Compact birth form */}
+          {/* Compact birth form — dropdown + single-line birth summary + actions */}
           <div className="mydata-birth-form">
             <div className="form-group">
               <label htmlFor="md-name">Full Name</label>
@@ -204,60 +193,23 @@ function MyDataInner() {
               >
                 <option value="">-- Select a chart --</option>
                 {savedCharts.map((chart) => {
-                  const name = chart.birth_data?.name || 'Unnamed';
+                  const bdInfo = chart.birth_data || {};
+                  const name = bdInfo.name || 'Unnamed';
+                  const dob = bdInfo.dob || '';
+                  const place = bdInfo.place_of_birth || '';
+                  // Show "Name — DOB | Place" in dropdown for quick identification
+                  const label = dob || place
+                    ? `${name} — ${dob}${place ? ' | ' + place : ''}`
+                    : name;
                   return (
                     <option key={chart.id} value={chart.id}>
-                      {name}
+                      {label}
                     </option>
                   );
                 })}
               </select>
             </div>
 
-            <div className="form-group">
-              <label htmlFor="md-dob">Date of Birth</label>
-              <DateInput
-                id="md-dob"
-                value={bd.birthDate}
-                onChange={(val) => bd.setBirthDate(val)}
-                max="2025-12-31"
-                min="1900-01-01"
-                disabled={true}
-              />
-            </div>
-
-            <div className="form-group">
-              <label>Time of Birth</label>
-              <TimeSelectGroup
-                hourId="md-hour" minuteId="md-min" ampmId="md-ampm"
-                hourValue={bd.hour} minuteValue={bd.minute} ampmValue={bd.ampm}
-                onHourChange={bd.setHour} onMinuteChange={bd.setMinute} onAmpmChange={bd.setAmpm}
-                disabled={true}
-              />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="md-gender">Gender</label>
-              <select
-                id="md-gender"
-                value={bd.gender}
-                onChange={(e) => bd.setGender(e.target.value)}
-                disabled={true}
-              >
-                <option value="female">Female</option>
-                <option value="male">Male</option>
-              </select>
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="md-place">Place of Birth</label>
-              <PlaceAutocomplete
-                id="md-place"
-                value={bd.birthPlace?.name || ''}
-                onSelect={bd.setBirthPlace}
-                disabled={true}
-              />
-            </div>
 
             <button className="btn-load" onClick={handleLoad} disabled={!bd.loaded || chartLoading}>
               {chartLoading ? (
@@ -267,16 +219,25 @@ function MyDataInner() {
               )}
             </button>
 
-            {/* View Chart button — only visible when chart data exists */}
-            {chartBundle && (
-              <button
-                className="btn-chart"
-                onClick={() => setChartVisible((v) => !v)}
-              >
-                <i className={`fas ${chartVisible ? 'fa-chevron-up' : 'fa-chart-pie'}`}></i>
-                {chartVisible ? 'Hide Chart' : 'Chart'}
-              </button>
-            )}
+            {/* Chart button — always visible */}
+            <button
+              className="btn-chart"
+              onClick={() => {
+                if (!chartBundle) {
+                  // Auto-load chart data first, then show
+                  const payload = bd.buildPayload();
+                  if (payload.dob && payload.place_of_birth) {
+                    fetchChartData(payload, true);
+                  }
+                } else {
+                  setChartVisible((v) => !v);
+                }
+              }}
+              disabled={chartLoading || (!chartBundle && (!bd.birthDate || !bd.birthPlace))}
+            >
+              <i className={`fas ${chartVisible && chartBundle ? 'fa-chevron-up' : 'fa-chart-pie'}`}></i>
+              {chartVisible && chartBundle ? 'Hide Chart' : 'Chart'}
+            </button>
           </div>
 
           {formError && <p className="mydata-form-error">{formError}</p>}
