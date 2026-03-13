@@ -68,7 +68,15 @@ export function useBirthData(options = {}) {
   // Apply birth data from a saved record
   const applyBirthData = useCallback((bd) => {
     if (bd.name) setFullName(bd.name);
-    if (bd.dob) setBirthDate(bd.dob);
+    if (bd.dob) {
+      // Normalize dob to YYYY-MM-DD (type="date" input requirement)
+      let dob = bd.dob;
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(dob)) {
+        const d = new Date(dob);
+        if (!isNaN(d.getTime())) dob = d.toISOString().split('T')[0];
+      }
+      setBirthDate(dob);
+    }
     if (bd.tob) {
       const { hour: h, minute: m, ampm: ap } = from24Hour(bd.tob);
       setHour(h);
@@ -135,9 +143,18 @@ export function useBirthData(options = {}) {
 
   // Build API payload from current form state
   const buildPayload = useCallback(() => {
+    // Ensure dob is always YYYY-MM-DD regardless of how it was stored
+    let normalizedDob = birthDate;
+    if (birthDate && !/^\d{4}-\d{2}-\d{2}$/.test(birthDate)) {
+      // Try to parse non-ISO formats (MM/DD/YYYY, DD/MM/YYYY, etc.)
+      const d = new Date(birthDate);
+      if (!isNaN(d.getTime())) {
+        normalizedDob = d.toISOString().split('T')[0];
+      }
+    }
     const payload = {
       name: fullName.trim(),
-      dob: birthDate,
+      dob: normalizedDob,
       tob: to24Hour(hour, minute, ampm),
       gender,
       place_of_birth: birthPlace?.name || '',

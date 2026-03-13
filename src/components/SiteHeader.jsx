@@ -30,7 +30,6 @@ const MY_DATA_MENU_ITEMS = [
   { label: 'My Details',       icon: 'fa-id-card',       href: '/my-data/details' },
   { label: 'Avakhada Chakra',  icon: 'fa-dharmachakra',  href: '/my-data/avakhada' },
   { label: 'My Personality',   icon: 'fa-brain',         href: '/my-data/personality' },
-  { label: 'Saved Charts',     icon: 'fa-bookmark',      href: '/my-data/saved-charts' },
   { label: 'Birth Details',    icon: 'fa-baby',          href: '/my-data/birth-details' },
   { label: 'Yogas & Rajyogas', icon: 'fa-sun',           href: '/my-data/yogas' },
   { label: 'Sade Sati',        icon: 'fa-moon',          href: '/my-data/sade-sati' },
@@ -143,6 +142,11 @@ export default function SiteHeader({ active = 'home' }) {
                       ))}
                     </div>
                   )}
+                </li>
+                <li>
+                  <a href="/admin/users" className={pathname.startsWith('/admin/users') ? 'active' : ''}>
+                    <i className="fas fa-users"></i> Users
+                  </a>
                 </li>
                 <li>
                   <a href="/admin/orders" className={pathname.startsWith('/admin/orders') ? 'active' : ''}>
