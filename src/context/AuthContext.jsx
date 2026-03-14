@@ -137,9 +137,7 @@ export function AuthProvider({ children }) {
 
     silentRefreshInFlightRef.current = true;
     try {
-      const data = await api.postEmpty(
-        `/v1/auth/refresh?refresh_token=${encodeURIComponent(refreshToken)}`
-      );
+      const data = await api.post('/v1/auth/refresh', { refresh_token: refreshToken });
       localStorage.setItem('auth_token', data.access_token);
       localStorage.setItem('auth_refresh_token', data.refresh_token);
       setToken(data.access_token);
@@ -162,9 +160,7 @@ export function AuthProvider({ children }) {
     }
     setRefreshing(true);
     try {
-      const data = await api.postEmpty(
-        `/v1/auth/refresh?refresh_token=${encodeURIComponent(refreshToken)}`
-      );
+      const data = await api.post('/v1/auth/refresh', { refresh_token: refreshToken });
       localStorage.setItem('auth_token', data.access_token);
       localStorage.setItem('auth_refresh_token', data.refresh_token);
       setToken(data.access_token);

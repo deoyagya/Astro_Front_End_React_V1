@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import DOMPurify from 'dompurify';
 
 const reports = [
   {
@@ -193,7 +194,7 @@ export function useReportsEffects() {
       const report = reports.find((item) => item.id === id);
       if (!report) return;
 
-      modalContent.innerHTML = `
+      modalContent.innerHTML = DOMPurify.sanitize(`
         <button class="modal-close" data-close="sample"><i class="fas fa-times"></i></button>
         <div class="sample-header">
           <i class="fas ${report.icon}"></i>
@@ -230,7 +231,7 @@ export function useReportsEffects() {
           <p>This is a SAMPLE preview. Full report includes personalized analysis with exact planetary positions and complete remedies.</p>
           <button class="btn-order" data-order="${report.id}">Order Full Report</button>
         </div>
-      `;
+      `);
 
       sampleModal.classList.add('show');
     };

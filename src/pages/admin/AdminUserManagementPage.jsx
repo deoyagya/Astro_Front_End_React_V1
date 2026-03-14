@@ -240,10 +240,12 @@ export default function AdminUserManagementPage() {
     }
   };
 
-  const exportActivity = (userId) => {
-    const token = localStorage.getItem('access_token');
-    const base = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
-    window.open(`${base}/v1/admin/users/${userId}/activity/export?token=${token}`, '_blank');
+  const exportActivity = async (userId) => {
+    try {
+      await api.download(`/v1/admin/users/${userId}/activity/export`, `user_${userId}_activity.csv`);
+    } catch (err) {
+      setToast({ type: 'error', msg: err.message });
+    }
   };
 
   // ── CSV Import ──

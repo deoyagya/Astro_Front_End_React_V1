@@ -182,8 +182,13 @@ async function attemptSilentRefresh() {
   const { signal, clear } = createTimeout(DEFAULT_TIMEOUT_MS);
   try {
     const resp = await fetch(
-      `${API_BASE}/v1/auth/refresh?refresh_token=${encodeURIComponent(refreshToken)}`,
-      { method: 'POST', headers: { 'Content-Type': 'application/json' }, signal },
+      `${API_BASE}/v1/auth/refresh`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ refresh_token: refreshToken }),
+        signal,
+      },
     );
     if (resp.ok) {
       const data = await resp.json();

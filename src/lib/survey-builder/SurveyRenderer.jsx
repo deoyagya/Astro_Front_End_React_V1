@@ -8,6 +8,7 @@
  */
 
 import { useState, useEffect } from 'react';
+import DOMPurify from 'dompurify';
 import { COMPONENT_MAP } from './components';
 import { validateResponses } from './utils';
 
@@ -109,7 +110,7 @@ export default function SurveyRenderer({
     <div className="sb-renderer">
       {/* Header */}
       {form.header_html && (
-        <div className="sb-renderer-header" dangerouslySetInnerHTML={{ __html: form.header_html }} />
+        <div className="sb-renderer-header" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(form.header_html) }} />
       )}
 
       {/* Title & Description */}
@@ -175,7 +176,7 @@ export default function SurveyRenderer({
 
       {/* Footer */}
       {form.footer_html && (
-        <div className="sb-renderer-footer" dangerouslySetInnerHTML={{ __html: form.footer_html }} />
+        <div className="sb-renderer-footer" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(form.footer_html) }} />
       )}
     </div>
   );
