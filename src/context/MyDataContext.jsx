@@ -12,6 +12,7 @@
  */
 
 import { createContext, useContext, useState, useCallback, useRef } from 'react';
+import { sanitizeGeo } from '../hooks/useBirthData';
 
 const MyDataContext = createContext(null);
 
@@ -49,13 +50,10 @@ export function MyDataProvider({ children }) {
       clean.gender = 'male';
     }
     // Backend requires ALL THREE (lat + lon + tz_id) or NONE.
-    // If any is missing, strip all — backend will geocode from place_of_birth.
-    const hasAllGeo = clean.lat != null && clean.lon != null && !!clean.tz_id;
-    if (!hasAllGeo) {
-      delete clean.lat;
-      delete clean.lon;
-      delete clean.tz_id;
-    }
+    const geo = sanitizeGeo({ lat: clean.lat, lon: clean.lon, tz_id: clean.tz_id });
+    delete clean.lat; delete clean.lon; delete clean.tz_id;
+    Object.assign(clean, geo);
+    console.log('[MyDataCtx] loadBirthData → clean payload:', JSON.stringify(clean));
     setBirthPayload(clean);
     setRefreshKey((prev) => prev + 1);
     // Sync birth form fields ONLY when triggered by a child page (e.g. SavedCharts)

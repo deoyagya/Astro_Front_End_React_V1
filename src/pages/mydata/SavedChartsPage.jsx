@@ -6,6 +6,7 @@
  */
 
 import { useState, useEffect } from 'react';
+import { sanitizeGeo } from '../../hooks/useBirthData';
 import { useMyData } from '../../context/MyDataContext';
 import { useStyles } from '../../context/StyleContext';
 import { api } from '../../api/client';
@@ -73,10 +74,8 @@ export default function SavedChartsPage() {
       dob: bd.dob || '',
       tob: bd.tob || '',
       place_of_birth: bd.place_of_birth || '',
-      lat: bd.lat,
-      lon: bd.lon,
-      tz_id: bd.tz_id || bd.timezone || '',
       gender: bd.gender || '',
+      ...sanitizeGeo(bd),
     };
     loadBirthData(payload, { triggerExternal: true });
   }

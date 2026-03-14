@@ -9,6 +9,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import PageShell from '../../components/PageShell';
 import { api } from '../../api/client';
+import { sanitizeGeo } from '../../hooks/useBirthData';
 import DateInput from '../../components/form/DateInput';
 import TimeSelectGroup from '../../components/form/TimeSelectGroup';
 import PlaceAutocomplete from '../../components/PlaceAutocomplete';
@@ -433,9 +434,7 @@ export default function AdminRuleCVWizardPage() {
         name: birthData.name || 'CV Test Subject',
         dob: birthData.dob,
         tob: timeStr,
-        lat: birthData.birthPlace?.lat || 0,
-        lon: birthData.birthPlace?.lon || 0,
-        tz_id: birthData.birthPlace?.timezone || 'Asia/Kolkata',
+        ...sanitizeGeo(birthData.birthPlace),
         max_rounds: 2,
         user_question: useCustomQuestion ? customQuestion : (selectedQuestion?.question_text || ''),
       };
@@ -460,9 +459,7 @@ export default function AdminRuleCVWizardPage() {
         name: birthData.name || 'CV Test Subject',
         dob: birthData.dob,
         tob: timeStr,
-        lat: birthData.birthPlace?.lat || 0,
-        lon: birthData.birthPlace?.lon || 0,
-        tz_id: birthData.birthPlace?.timezone || 'Asia/Kolkata',
+        ...sanitizeGeo(birthData.birthPlace),
         max_rounds: 2,
         user_question: useCustomQuestion ? customQuestion : (selectedQuestion?.question_text || ''),
       };

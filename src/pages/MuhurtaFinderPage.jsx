@@ -3,6 +3,7 @@ import PageShell from '../components/PageShell';
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import PlaceAutocomplete from '../components/PlaceAutocomplete';
 import { api } from '../api/client';
+import { sanitizeGeo } from '../hooks/useBirthData';
 import { useAuth } from '../context/AuthContext';
 import { useStyles } from '../context/StyleContext';
 import RazorpayCheckoutModal from '../components/RazorpayCheckoutModal';
@@ -258,9 +259,7 @@ export default function MuhurtaFinderPage() {
       event_type: selectedEvent,
       start_date: startDate,
       end_date: endDate,
-      lat: place.lat,
-      lon: place.lon,
-      tz_id: place.timezone || undefined,
+      ...sanitizeGeo(place),
     };
 
     // Add birth data if available
@@ -296,9 +295,7 @@ export default function MuhurtaFinderPage() {
       event_type: selectedEvent,
       start_date: startDate,
       end_date: endDate,
-      lat: place.lat,
-      lon: place.lon,
-      tz_id: place.timezone || undefined,
+      ...sanitizeGeo(place),
       email: reportEmail,
     };
     const birthData = getBirthData();

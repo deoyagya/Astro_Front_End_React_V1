@@ -19,6 +19,25 @@ const LS_KEY = 'saved_birth_data';
 // Time conversion utilities (centralized — replaces duplicates across pages)
 // ---------------------------------------------------------------------------
 
+/**
+ * Sanitize geo fields for backend: ALL THREE (lat + lon + tz_id) or NONE.
+ * Backend rejects partial triplets with "If you provide lat/lon/tz_id manually,
+ * you must provide ALL three." — this function enforces that contract.
+ *
+ * @param {object} place - { lat, lon, timezone } or { lat, lon, tz_id }
+ * @returns {object} Either { lat, lon, tz_id } or {} (empty)
+ */
+export function sanitizeGeo(place) {
+  if (!place) return {};
+  const lat = place.lat;
+  const lon = place.lon;
+  const tz = place.timezone || place.tz_id || null;
+  if (lat != null && lon != null && tz) {
+    return { lat, lon, tz_id: tz };
+  }
+  return {};
+}
+
 /** Convert 12h AM/PM to 24h time string "HH:MM" */
 export function to24Hour(hour, minute, ampm) {
   let h = parseInt(hour, 10);
@@ -160,15 +179,7 @@ export function useBirthData(options = {}) {
       place_of_birth: birthPlace?.name || '',
     };
     // Backend requires ALL THREE (lat + lon + tz_id) or NONE.
-    // If any is missing, omit all — backend will geocode from place_of_birth.
-    const hasLat = birthPlace?.lat != null;
-    const hasLon = birthPlace?.lon != null;
-    const hasTz = !!birthPlace?.timezone;
-    if (hasLat && hasLon && hasTz) {
-      payload.lat = birthPlace.lat;
-      payload.lon = birthPlace.lon;
-      payload.tz_id = birthPlace.timezone;
-    }
+    Object.assign(payload, sanitizeGeo(birthPlace));
     return payload;
   }, [fullName, birthDate, hour, minute, ampm, gender, birthPlace]);
 

@@ -5,7 +5,7 @@ import DateInput from '../components/form/DateInput';
 import TimeSelectGroup from '../components/form/TimeSelectGroup';
 import PlaceAutocomplete from '../components/PlaceAutocomplete';
 import { api } from '../api/client';
-import { useBirthData, to24Hour } from '../hooks/useBirthData';
+import { useBirthData, to24Hour, sanitizeGeo } from '../hooks/useBirthData';
 import '../styles/rule-cv-wizard.css';
 import { useStyles } from '../context/StyleContext';
 
@@ -105,8 +105,7 @@ export default function CompatibilityPage() {
       dob: dobA,
       tob: to24Hour(hourA, minuteA, ampmA),
       place_of_birth: placeA.name,
-      ...(placeA.lat != null && placeA.lon != null ? { lat: placeA.lat, lon: placeA.lon } : {}),
-      ...(placeA.timezone ? { tz_id: placeA.timezone } : {}),
+      ...sanitizeGeo(placeA),
     };
     const personB = {
       name: nameB.trim(),
@@ -114,8 +113,7 @@ export default function CompatibilityPage() {
       dob: dobB,
       tob: to24Hour(hourB, minuteB, ampmB),
       place_of_birth: placeB.name,
-      ...(placeB.lat != null && placeB.lon != null ? { lat: placeB.lat, lon: placeB.lon } : {}),
-      ...(placeB.timezone ? { tz_id: placeB.timezone } : {}),
+      ...sanitizeGeo(placeB),
     };
 
     // Determine groom vs bride based on gender

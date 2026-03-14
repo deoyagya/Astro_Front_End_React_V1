@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import PageShell from '../../components/PageShell';
 import { api } from '../../api/client';
+import { sanitizeGeo } from '../../hooks/useBirthData';
 import DateInput from '../../components/form/DateInput';
 import TimeSelectGroup from '../../components/form/TimeSelectGroup';
 import PlaceAutocomplete from '../../components/PlaceAutocomplete';
@@ -398,9 +399,7 @@ export default function AdminPipelineWizardPage() {
         dob: birthData.dob,
         tob: timeStr,
         place_of_birth: birthData.birthPlace?.name || '',
-        lat: birthData.birthPlace?.lat,
-        lon: birthData.birthPlace?.lon,
-        tz_id: birthData.birthPlace?.timezone || 'Asia/Kolkata',
+        ...sanitizeGeo(birthData.birthPlace),
         subdomain_id: parseInt(subdomainId, 10),
         user_question: question || undefined,
         interpretation_mode: interpMode,
