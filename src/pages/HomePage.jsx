@@ -142,32 +142,32 @@ export default function HomePage() {
                         </div>
       
                         <div className="areas-grid">
-                            <a href="/reports#career" className="area-card">
+                            <a href="/career-report" className="area-card">
                                 <i className="fas fa-briefcase"></i>
                                 <h4>Career & Finance</h4>
                                 <p>10th house analysis, professional timing</p>
                             </a>
-                            <a href="/reports#love" className="area-card">
+                            <a href="/love-marriage-report" className="area-card">
                                 <i className="fas fa-heart"></i>
                                 <h4>Love & Marriage</h4>
                                 <p>7th house, Venus, relationship timing</p>
                             </a>
-                            <a href="/reports#education" className="area-card">
+                            <a href="/education-report" className="area-card">
                                 <i className="fas fa-brain"></i>
                                 <h4>Education & Intelligence</h4>
                                 <p>5th house, Mercury, Jupiter influences</p>
                             </a>
-                            <a href="/reports#health" className="area-card">
-                                <i className="fas fa-spa"></i>
+                            <a href="/health-report" className="area-card">
+                                <i className="fas fa-heartbeat"></i>
                                 <h4>Health & Wellness</h4>
                                 <p>6th house, lagna, planetary afflictions</p>
                             </a>
-                            <a href="/reports#spiritual" className="area-card">
+                            <a href="/spiritual-report" className="area-card">
                                 <i className="fas fa-om"></i>
                                 <h4>Spiritual Growth</h4>
                                 <p>12th house, Ketu, spiritual inclinations</p>
                             </a>
-                            <a href="/reports#family" className="area-card">
+                            <a href="/family-report" className="area-card">
                                 <i className="fas fa-home"></i>
                                 <h4>Family & Children</h4>
                                 <p>4th house, 5th house, benefics</p>

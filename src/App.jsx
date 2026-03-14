@@ -12,6 +12,9 @@ import HoroscopePage from './pages/HoroscopePage';
 import CareerReportPage from './pages/CareerReportPage';
 import LoveMarriageReportPage from './pages/LoveMarriageReportPage';
 import EducationReportPage from './pages/EducationReportPage';
+import HealthReportPage from './pages/HealthReportPage';
+import SpiritualReportPage from './pages/SpiritualReportPage';
+import FamilyReportPage from './pages/FamilyReportPage';
 import MyReportsPage from './pages/MyReportsPage';
 import OrderPage from './pages/OrderPage';
 import PaymentPage from './pages/PaymentPage';
@@ -78,9 +81,12 @@ export default function App() {
         <Route path="/horoscope" element={<ProtectedRoute><HoroscopePage /></ProtectedRoute>} />
         <Route path="/muhurta" element={<ProtectedRoute><MuhurtaFinderPage /></ProtectedRoute>} />
         <Route path="/chart-wizard" element={<ProtectedRoute><ChartWizardPage /></ProtectedRoute>} />
-        <Route path="/career-report" element={<ProtectedRoute><CareerReportPage /></ProtectedRoute>} />
-        <Route path="/love-marriage-report" element={<ProtectedRoute><LoveMarriageReportPage /></ProtectedRoute>} />
-        <Route path="/education-report" element={<ProtectedRoute><EducationReportPage /></ProtectedRoute>} />
+        <Route path="/career-report" element={<CareerReportPage />} />
+        <Route path="/love-marriage-report" element={<LoveMarriageReportPage />} />
+        <Route path="/education-report" element={<EducationReportPage />} />
+        <Route path="/health-report" element={<HealthReportPage />} />
+        <Route path="/spiritual-report" element={<SpiritualReportPage />} />
+        <Route path="/family-report" element={<FamilyReportPage />} />
         <Route path="/my-reports" element={<ProtectedRoute><MyReportsPage /></ProtectedRoute>} />
         <Route path="/order" element={<ProtectedRoute><OrderPage /></ProtectedRoute>} />
         <Route path="/payment" element={<ProtectedRoute><PaymentPage /></ProtectedRoute>} />
