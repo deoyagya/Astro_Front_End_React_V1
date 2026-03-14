@@ -53,7 +53,6 @@ export function MyDataProvider({ children }) {
     const geo = sanitizeGeo({ lat: clean.lat, lon: clean.lon, tz_id: clean.tz_id });
     delete clean.lat; delete clean.lon; delete clean.tz_id;
     Object.assign(clean, geo);
-    console.log('[MyDataCtx] loadBirthData → clean payload:', JSON.stringify(clean));
     setBirthPayload(clean);
     setRefreshKey((prev) => prev + 1);
     // Sync birth form fields ONLY when triggered by a child page (e.g. SavedCharts)

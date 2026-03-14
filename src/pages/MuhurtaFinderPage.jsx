@@ -205,12 +205,14 @@ export default function MuhurtaFinderPage() {
       .finally(() => setChartsLoading(false));
   }, [isAuthenticated]);
 
-  // Reset results when form inputs change
+  // Reset results when ANY form input changes — forces user to re-search
   useEffect(() => {
     setResult(null);
     setWindowPage(0);
     setReportStatus('');
-  }, [selectedEvent, startOffset, duration]);
+    setPaymentRequired(false);
+    setPricing(null);
+  }, [selectedEvent, startOffset, duration, selectedChartId, birthMode, place]);
 
   // Build birth_data payload from selected mode
   const getBirthData = useCallback(() => {
