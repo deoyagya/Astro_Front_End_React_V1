@@ -144,8 +144,8 @@ function MyDataInner() {
     const payload = bd.buildPayload();
     loadBirthData(payload);
     bd.saveBirthData();
-    // Fetch chart data and auto-open modal
-    fetchChartData(payload, true);
+    // Fetch chart data but keep it hidden — user clicks "Show Chart" to reveal
+    fetchChartData(payload, false);
   };
 
   // Close chart modal and cancel in-flight chart fetches when navigating.
@@ -236,7 +236,7 @@ function MyDataInner() {
               disabled={chartLoading || (!chartBundle && (!bd.birthDate || !bd.birthPlace))}
             >
               <i className={`fas ${chartVisible && chartBundle ? 'fa-chevron-up' : 'fa-chart-pie'}`}></i>
-              {chartVisible && chartBundle ? 'Hide Chart' : 'Chart'}
+              {chartVisible && chartBundle ? 'Hide Chart' : 'Show Chart'}
             </button>
           </div>
 
