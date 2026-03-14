@@ -278,6 +278,322 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
     font-size: 1rem;
 }
 
+/* ────────────────────────────────────────────────────────────
+   Dasha Drill-Down (5-level navigator)
+   ──────────────────────────────────────────────────────────── */
+
+.dasha-drilldown {
+    margin-top: 12px;
+}
+
+/* Current Running Period Summary */
+.dasha-current-summary {
+    background: rgba(46, 213, 115, 0.08);
+    border: 1px solid rgba(46, 213, 115, 0.25);
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin-bottom: 18px;
+}
+
+.dasha-current-label {
+    color: #2ed573;
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 8px;
+}
+
+.dasha-current-label i {
+    margin-right: 6px;
+}
+
+.dasha-current-chain {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px;
+}
+
+.dasha-current-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.dasha-current-chip .chip-planet {
+    font-weight: 700;
+    font-size: 0.95rem;
+}
+
+.dasha-current-chip .chip-level {
+    font-size: 0.75rem;
+    color: #8892a4;
+    font-weight: 400;
+}
+
+.dasha-current-chip .chip-arrow {
+    color: #555;
+    font-size: 0.6rem;
+    margin: 0 4px;
+}
+
+/* Breadcrumb Navigation */
+.dasha-breadcrumb {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 2px;
+    margin-bottom: 10px;
+    padding: 8px 12px;
+    background: rgba(30, 34, 48, 0.7);
+    border-radius: 8px;
+    font-size: 0.85rem;
+}
+
+.dasha-breadcrumb-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    color: #555;
+}
+
+.dasha-breadcrumb-item i {
+    font-size: 0.6rem;
+}
+
+.dasha-breadcrumb-btn {
+    background: none;
+    border: none;
+    color: #8892a4;
+    cursor: pointer;
+    font-size: 0.85rem;
+    padding: 2px 6px;
+    border-radius: 4px;
+    transition: color 0.15s, background 0.15s;
+    font-family: inherit;
+}
+
+.dasha-breadcrumb-btn:hover {
+    color: #c4b0ff;
+    background: rgba(123, 91, 255, 0.1);
+}
+
+.dasha-breadcrumb-btn.active {
+    color: #fff;
+    font-weight: 600;
+}
+
+/* Back Button */
+.dasha-back-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(123, 91, 255, 0.1);
+    border: 1px solid rgba(123, 91, 255, 0.25);
+    color: #c4b0ff;
+    padding: 8px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.875rem;
+    font-family: inherit;
+    margin-bottom: 14px;
+    transition: background 0.15s, border-color 0.15s;
+}
+
+.dasha-back-btn:hover {
+    background: rgba(123, 91, 255, 0.2);
+    border-color: rgba(123, 91, 255, 0.4);
+}
+
+/* Level Header */
+.dasha-level-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #c4b0ff;
+    font-weight: 600;
+    font-size: 0.95rem;
+    padding-bottom: 10px;
+    margin-bottom: 8px;
+    border-bottom: 1px solid rgba(123, 91, 255, 0.15);
+}
+
+.dasha-level-header i {
+    font-size: 0.85rem;
+}
+
+.dasha-level-count {
+    margin-left: auto;
+    font-weight: 400;
+    font-size: 0.8rem;
+    color: #666;
+}
+
+/* Period List */
+.dasha-period-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+/* Individual Period Item */
+.dasha-drill-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: rgba(40, 44, 60, 0.5);
+    border: 1px solid rgba(60, 65, 85, 0.4);
+    border-radius: 10px;
+    padding: 12px 16px;
+    transition: background 0.15s, border-color 0.15s, transform 0.1s;
+}
+
+.dasha-drill-item.clickable {
+    cursor: pointer;
+}
+
+.dasha-drill-item.clickable:hover {
+    background: rgba(123, 91, 255, 0.08);
+    border-color: rgba(123, 91, 255, 0.3);
+    transform: translateX(3px);
+}
+
+.dasha-drill-item.current {
+    background: rgba(46, 213, 115, 0.07);
+    border-color: rgba(46, 213, 115, 0.3);
+}
+
+.dasha-drill-item.current.clickable:hover {
+    background: rgba(46, 213, 115, 0.12);
+    border-color: rgba(46, 213, 115, 0.45);
+}
+
+/* Planet Badge */
+.dasha-drill-planet {
+    min-width: 80px;
+    text-align: center;
+    border-left: 3px solid;
+    padding-left: 10px;
+}
+
+.dasha-drill-planet .planet-name {
+    display: block;
+    font-weight: 700;
+    font-size: 1rem;
+}
+
+.dasha-drill-planet .planet-level {
+    display: block;
+    font-size: 0.7rem;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-top: 1px;
+}
+
+/* Info Section */
+.dasha-drill-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.dasha-drill-dates {
+    color: #c7cfdd;
+    font-size: 0.9rem;
+    white-space: nowrap;
+}
+
+.dasha-drill-duration {
+    color: #666;
+    font-size: 0.8rem;
+    margin-top: 2px;
+}
+
+.dasha-drill-duration i {
+    margin-right: 4px;
+    font-size: 0.7rem;
+}
+
+/* Right Side (status + arrow) */
+.dasha-drill-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+}
+
+.dasha-current-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: rgba(46, 213, 115, 0.15);
+    color: #2ed573;
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.dasha-current-badge i {
+    font-size: 0.45rem;
+}
+
+.dasha-drill-arrow {
+    color: #555;
+    font-size: 0.9rem;
+    transition: color 0.15s, transform 0.15s;
+}
+
+.dasha-drill-item.clickable:hover .dasha-drill-arrow {
+    color: #c4b0ff;
+    transform: translateX(3px);
+}
+
+/* Deepest Level Note */
+.dasha-deepest-note {
+    text-align: center;
+    color: #666;
+    font-size: 0.85rem;
+    padding: 14px;
+    margin-top: 12px;
+    border-top: 1px solid rgba(60, 65, 85, 0.3);
+}
+
+.dasha-deepest-note i {
+    margin-right: 6px;
+    color: #7b5bff;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+    .dasha-drill-item {
+        flex-wrap: wrap;
+        gap: 8px;
+        padding: 10px 12px;
+    }
+
+    .dasha-drill-planet {
+        min-width: 60px;
+    }
+
+    .dasha-drill-dates {
+        white-space: normal;
+        font-size: 0.82rem;
+    }
+
+    .dasha-breadcrumb {
+        font-size: 0.78rem;
+    }
+
+    .dasha-current-chain {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
+
 /* Compatibility Specific */
 .compatibility-score {
     text-align: center;

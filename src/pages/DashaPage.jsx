@@ -1,55 +1,242 @@
 import PageShell from '../components/PageShell';
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import DateInput from '../components/form/DateInput';
 import TimeSelectGroup from '../components/form/TimeSelectGroup';
 import PlaceAutocomplete from '../components/PlaceAutocomplete';
 import { api } from '../api/client';
 import { useBirthData, to24Hour } from '../hooks/useBirthData';
-import { useStyles } from '../context/StyleContext';
 
-/** Recursively render dasha tree nodes */
-function DashaNode({ node, depth = 0 }) {
-  const { getOverride } = useStyles('dasha');
-  const [expanded, setExpanded] = useState(depth === 0);
-  const hasSub = node.sub_periods && node.sub_periods.length > 0;
-  const isCurrent = node.is_current || false;
+// ---------------------------------------------------------------------------
+// Constants
+// ---------------------------------------------------------------------------
 
-  const levelLabels = ['Mahadasha', 'Antardasha', 'Pratyantardasha', 'Sookshma', 'Prana'];
-  const levelLabel = levelLabels[depth] || `Level ${depth + 1}`;
+const LEVEL_LABELS = ['Mahadasha', 'Antardasha', 'Pratyantardasha', 'Sookshma', 'Prana'];
+const LEVEL_ICONS  = ['fa-sun', 'fa-moon', 'fa-star', 'fa-circle', 'fa-dot-circle'];
 
-  const startDate = node.start ? new Date(node.start).toLocaleDateString('en-IN', { year: 'numeric', month: 'short', day: 'numeric' }) : '';
-  const endDate = node.end ? new Date(node.end).toLocaleDateString('en-IN', { year: 'numeric', month: 'short', day: 'numeric' }) : '';
+/** Planet → accent colour (Vedic association) */
+const PLANET_COLORS = {
+  Sun:     '#ffa502',
+  Moon:    '#dfe6e9',
+  Mars:    '#ff4757',
+  Mercury: '#2ed573',
+  Jupiter: '#eccc68',
+  Venus:   '#ff6b81',
+  Saturn:  '#a29bfe',
+  Rahu:    '#70a1ff',
+  Ketu:    '#636e72',
+};
+
+function fmtDate(iso) {
+  if (!iso) return '';
+  return new Date(iso).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+}
+
+/** Human-readable duration between two ISO dates */
+function durationLabel(start, end) {
+  if (!start || !end) return '';
+  const ms = new Date(end) - new Date(start);
+  const totalDays = Math.round(ms / 86400000);
+  if (totalDays < 1) return '< 1 day';
+  const years = Math.floor(totalDays / 365);
+  const months = Math.floor((totalDays % 365) / 30);
+  const days = totalDays % 30;
+  const parts = [];
+  if (years)  parts.push(`${years}y`);
+  if (months) parts.push(`${months}m`);
+  if (days && !years) parts.push(`${days}d`); // skip days when years are shown
+  return parts.join(' ') || '< 1 day';
+}
+
+// ---------------------------------------------------------------------------
+// DashaDrillDown — the 5-level drill-down navigator
+// ---------------------------------------------------------------------------
+
+function DashaDrillDown({ dashaTree }) {
+  // Navigation stack: array of { node, label } objects.
+  // Empty stack = showing Mahadasha list (Level 1).
+  const [navStack, setNavStack] = useState([]);
+
+  // Current list of periods to display
+  const currentPeriods = useMemo(() => {
+    if (navStack.length === 0) return dashaTree;
+    return navStack[navStack.length - 1].node.sub_periods || [];
+  }, [navStack, dashaTree]);
+
+  const currentDepth = navStack.length; // 0 = Mahadasha, 1 = Antardasha, etc.
+  const levelLabel = LEVEL_LABELS[currentDepth] || `Level ${currentDepth + 1}`;
+  const maxDepth = 4; // 0-indexed: 0=MD, 1=AD, 2=PD, 3=SD, 4=Pr
+
+  // Drill into a period
+  const drillIn = useCallback((period) => {
+    if (!period.sub_periods || period.sub_periods.length === 0) return;
+    setNavStack(prev => [...prev, {
+      node: period,
+      label: period.planet,
+    }]);
+  }, []);
+
+  // Go back one level
+  const goBack = useCallback(() => {
+    setNavStack(prev => prev.slice(0, -1));
+  }, []);
+
+  // Go to specific level in breadcrumb
+  const goToLevel = useCallback((idx) => {
+    if (idx < 0) {
+      setNavStack([]);
+    } else {
+      setNavStack(prev => prev.slice(0, idx + 1));
+    }
+  }, []);
+
+  // Reset when dashaTree changes
+  const resetNav = useCallback(() => setNavStack([]), []);
+
+  // Find current period path for highlighting
+  const currentPath = useMemo(() => {
+    const path = [];
+    let list = dashaTree;
+    while (list) {
+      const cur = list.find(p => p.is_current);
+      if (!cur) break;
+      path.push(cur.planet);
+      list = cur.sub_periods;
+    }
+    return path;
+  }, [dashaTree]);
+
+  // Build summary of current running period chain
+  const currentSummary = useMemo(() => {
+    const parts = [];
+    let list = dashaTree;
+    while (list) {
+      const cur = list.find(p => p.is_current);
+      if (!cur) break;
+      parts.push({ planet: cur.planet, level: LEVEL_LABELS[parts.length], start: cur.start, end: cur.end });
+      list = cur.sub_periods;
+    }
+    return parts;
+  }, [dashaTree]);
 
   return (
-    <div style={{ marginLeft: depth > 0 ? 20 : 0 }}>
-      <div
-        className={`dasha-item ${isCurrent ? 'current' : ''}`}
-        style={{ cursor: hasSub ? 'pointer' : 'default' }}
-        onClick={() => hasSub && setExpanded(!expanded)}
-      >
-        <div className="period">
-          {hasSub && (
-            <i className={`fas fa-chevron-${expanded ? 'down' : 'right'}`} style={{ marginRight: 8, fontSize: '0.875rem' }}></i>
-          )}
-          {node.planet} {levelLabel}
+    <div className="dasha-drilldown">
+      {/* Current Running Period Summary */}
+      {currentSummary.length > 0 && navStack.length === 0 && (
+        <div className="dasha-current-summary">
+          <div className="dasha-current-label">
+            <i className="fas fa-clock"></i> Currently Running
+          </div>
+          <div className="dasha-current-chain">
+            {currentSummary.map((item, i) => (
+              <span key={i} className="dasha-current-chip">
+                <span className="chip-planet" style={{ color: PLANET_COLORS[item.planet] || '#c4b0ff' }}>
+                  {item.planet}
+                </span>
+                <span className="chip-level">{item.level}</span>
+                {i < currentSummary.length - 1 && <i className="fas fa-chevron-right chip-arrow"></i>}
+              </span>
+            ))}
+          </div>
         </div>
-        <div className="dates">{startDate} — {endDate}</div>
-        {isCurrent && (
-          <span style={{ color: '#2ed573', fontSize: '0.9375rem', marginTop: 4, display: 'inline-block' }}>
-            <i className="fas fa-clock"></i> Current Period
-          </span>
-        )}
-      </div>
-      {expanded && hasSub && (
-        <div>
-          {node.sub_periods.map((sub, idx) => (
-            <DashaNode key={`${sub.planet}-${idx}`} node={sub} depth={depth + 1} />
+      )}
+
+      {/* Breadcrumb Navigation */}
+      {navStack.length > 0 && (
+        <div className="dasha-breadcrumb">
+          <button className="dasha-breadcrumb-btn" onClick={() => goToLevel(-1)}>
+            <i className="fas fa-layer-group"></i> All Mahadasha
+          </button>
+          {navStack.map((item, idx) => (
+            <span key={idx} className="dasha-breadcrumb-item">
+              <i className="fas fa-chevron-right"></i>
+              <button
+                className={`dasha-breadcrumb-btn ${idx === navStack.length - 1 ? 'active' : ''}`}
+                onClick={() => goToLevel(idx)}
+              >
+                {item.label} {LEVEL_LABELS[idx]}
+              </button>
+            </span>
           ))}
+        </div>
+      )}
+
+      {/* Back Button */}
+      {navStack.length > 0 && (
+        <button className="dasha-back-btn" onClick={goBack}>
+          <i className="fas fa-arrow-left"></i>
+          Back to {LEVEL_LABELS[currentDepth - 1]} view
+        </button>
+      )}
+
+      {/* Level Header */}
+      <div className="dasha-level-header">
+        <i className={`fas ${LEVEL_ICONS[currentDepth] || 'fa-circle'}`}></i>
+        <span>{levelLabel} Periods</span>
+        <span className="dasha-level-count">{currentPeriods.length} periods</span>
+      </div>
+
+      {/* Period List */}
+      <div className="dasha-period-list">
+        {currentPeriods.map((period, idx) => {
+          const hasSub = period.sub_periods && period.sub_periods.length > 0;
+          const isCurrent = period.is_current || false;
+          const canDrill = hasSub && currentDepth < maxDepth;
+          const planetColor = PLANET_COLORS[period.planet] || '#c4b0ff';
+
+          return (
+            <div
+              key={`${period.planet}-${idx}`}
+              className={`dasha-drill-item ${isCurrent ? 'current' : ''} ${canDrill ? 'clickable' : ''}`}
+              onClick={() => canDrill && drillIn(period)}
+            >
+              {/* Planet badge */}
+              <div className="dasha-drill-planet" style={{ borderColor: planetColor }}>
+                <span className="planet-name" style={{ color: planetColor }}>{period.planet}</span>
+                <span className="planet-level">{levelLabel}</span>
+              </div>
+
+              {/* Dates and duration */}
+              <div className="dasha-drill-info">
+                <div className="dasha-drill-dates">
+                  {fmtDate(period.start)} — {fmtDate(period.end)}
+                </div>
+                <div className="dasha-drill-duration">
+                  <i className="fas fa-hourglass-half"></i> {durationLabel(period.start, period.end)}
+                </div>
+              </div>
+
+              {/* Status / Drill indicator */}
+              <div className="dasha-drill-right">
+                {isCurrent && (
+                  <span className="dasha-current-badge">
+                    <i className="fas fa-circle"></i> Active
+                  </span>
+                )}
+                {canDrill && (
+                  <span className="dasha-drill-arrow">
+                    <i className="fas fa-chevron-right"></i>
+                  </span>
+                )}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Deepest level message */}
+      {currentDepth === maxDepth && (
+        <div className="dasha-deepest-note">
+          <i className="fas fa-info-circle"></i>
+          This is the Prana Dasha level — the finest subdivision of planetary periods.
         </div>
       )}
     </div>
   );
 }
+
+// ---------------------------------------------------------------------------
+// Main DashaPage
+// ---------------------------------------------------------------------------
 
 export default function DashaPage() {
   const {
@@ -77,7 +264,7 @@ export default function DashaPage() {
     const payload = buildPayload();
     const params = new URLSearchParams({
       include_dasha: 'true',
-      dasha_depth: '3',
+      dasha_depth: '5',
       include_vargas: 'false',
       include_ashtakavarga: 'false',
     });
@@ -95,10 +282,6 @@ export default function DashaPage() {
   }, [validate, buildPayload, saveBirthData]);
 
   const dashaTree = dashaData?.bundle?.dasha_tree || [];
-
-  // Find current mahadasha and antardasha for the summary
-  const currentMD = dashaTree.find(d => d.is_current);
-  const currentAD = currentMD?.sub_periods?.find(d => d.is_current);
 
   return (
     <PageShell activeNav="tools">
@@ -170,7 +353,7 @@ export default function DashaPage() {
                   )}
                 </button>
                 <p className="preview-note">
-                  <i className="fas fa-info-circle"></i> Full analysis available in paid report
+                  <i className="fas fa-info-circle"></i> 5-level deep Vimshottari Dasha with drill-down
                 </p>
               </form>
             </div>
@@ -182,40 +365,15 @@ export default function DashaPage() {
               {loading ? (
                 <div className="api-loading">
                   <i className="fas fa-spinner fa-spin"></i>
-                  <p>Computing Vimshottari Dasha...</p>
+                  <p>Computing Vimshottari Dasha (5 levels)...</p>
                 </div>
               ) : dashaTree.length > 0 ? (
-                <div className="dasha-timeline" id="dashaTimeline">
-                  {dashaTree.map((md, idx) => (
-                    <DashaNode key={`${md.planet}-${idx}`} node={md} depth={0} />
-                  ))}
-                </div>
+                <DashaDrillDown dashaTree={dashaTree} />
               ) : (
                 <div className="dasha-timeline" style={{ textAlign: 'center', padding: 40, color: '#c7cfdd' }}>
                   <i className="fas fa-clock" style={{ fontSize: '2rem', marginBottom: 10, display: 'block', color: '#7b5bff' }}></i>
                   Enter your birth details and click Calculate to see your dasha timeline
                 </div>
-              )}
-
-              {/* Current Antardasha summary */}
-              {currentAD && (
-                <>
-                  <h3 className="section-subtitle">Current Antardasha</h3>
-                  <div style={{ background: 'rgba(40,44,60,0.6)', padding: '15px', borderRadius: '8px' }}>
-                    <p style={{ color: '#c7cfdd' }}>
-                      Current Antardasha:{' '}
-                      <strong style={{ color: '#fff' }}>
-                        {currentAD.planet} ({currentAD.start ? new Date(currentAD.start).getFullYear() : ''}–
-                        {currentAD.end ? new Date(currentAD.end).getFullYear() : ''})
-                      </strong>
-                    </p>
-                    {currentMD && (
-                      <p style={{ color: '#c7cfdd', marginTop: 10 }}>
-                        Mahadasha Lord: <strong style={{ color: '#b794ff' }}>{currentMD.planet}</strong>
-                      </p>
-                    )}
-                  </div>
-                </>
               )}
 
               <p className="preview-note" style={{ marginTop: '20px' }}>
