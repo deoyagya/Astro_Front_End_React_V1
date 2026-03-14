@@ -262,6 +262,11 @@ export default function LoginPage() {
     if (e.key === 'Backspace' && !otp[index] && index > 0) {
       otpRefs.current[index - 1]?.focus();
     }
+    // Submit on Enter when all digits filled
+    if (e.key === 'Enter') {
+      const code = otp.join('');
+      if (code.length === OTP_LENGTH) handleVerify();
+    }
   };
 
   const handleOtpPaste = (e) => {
@@ -462,6 +467,7 @@ export default function LoginPage() {
                     placeholder="Your full name"
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
+                    onKeyDown={(e) => e.key === 'Enter' && otp.join('').length === OTP_LENGTH && handleVerify()}
                     required
                   />
                   <label className="consent-checkbox">
