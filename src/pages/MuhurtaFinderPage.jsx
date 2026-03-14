@@ -259,7 +259,10 @@ export default function MuhurtaFinderPage() {
       event_type: selectedEvent,
       start_date: startDate,
       end_date: endDate,
-      ...sanitizeGeo(place),
+      // Muhurta endpoints require lat+lon always; tz_id is optional
+      lat: place.lat,
+      lon: place.lon,
+      ...(place.timezone ? { tz_id: place.timezone } : {}),
     };
 
     // Add birth data if available
@@ -295,7 +298,10 @@ export default function MuhurtaFinderPage() {
       event_type: selectedEvent,
       start_date: startDate,
       end_date: endDate,
-      ...sanitizeGeo(place),
+      // Muhurta endpoints require lat+lon always; tz_id is optional
+      lat: place.lat,
+      lon: place.lon,
+      ...(place.timezone ? { tz_id: place.timezone } : {}),
       email: reportEmail,
     };
     const birthData = getBirthData();
