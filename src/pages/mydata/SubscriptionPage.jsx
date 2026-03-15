@@ -366,7 +366,8 @@ export default function SubscriptionPage() {
                 <button
                   type="button"
                   className="pack-purchase-btn"
-                  onClick={(e) => { e.preventDefault(); handlePurchasePack(pack); }}
+                  onMouseDown={(e) => e.preventDefault()}
+                  onClick={() => handlePurchasePack(pack)}
                   disabled={purchasingPack === pack.id || gwLoading}
                 >
                   {purchasingPack === pack.id ? (
