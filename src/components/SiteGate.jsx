@@ -89,7 +89,7 @@ export default function SiteGate({ children }) {
           <p style={styles.sending}>Sending access code...</p>
         )}
 
-        {(status === 'ready' || status === 'verifying') && (
+        {(status === 'ready' || status === 'verifying' || status === 'error') && (
           <form onSubmit={handleVerify} style={styles.form}>
             <input
               ref={inputRef}
