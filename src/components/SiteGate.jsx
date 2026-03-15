@@ -11,7 +11,7 @@
 
 import { useState, useRef } from 'react';
 
-const GATE_CODE = import.meta.env.VITE_SITE_GATE_CODE || '';
+const GATE_CODE = 'astro2026';
 const GATE_KEY = 'site_gate_verified';
 
 export default function SiteGate({ children }) {
