@@ -159,7 +159,7 @@ export default function SubscriptionPage() {
       setError(err.message || 'Failed to initiate credit purchase.');
       setPurchasingPack(null);
     }
-  }, [user, fetchData, gateway, razorpayKeyId]);
+  }, [gateway, razorpayKeyId]);
 
   /* ---- Razorpay credit pack success ---- */
   const handleRazorpaySuccess = useCallback(async (result) => {
@@ -364,9 +364,10 @@ export default function SubscriptionPage() {
                 <div className="pack-label">{pack.name}</div>
                 <div className="pack-price-tag">${(pack.price_cents / 100).toFixed(2)}</div>
                 <button
+                  type="button"
                   className="pack-purchase-btn"
-                  onClick={() => handlePurchasePack(pack)}
-                  disabled={purchasingPack === pack.id}
+                  onClick={(e) => { e.preventDefault(); handlePurchasePack(pack); }}
+                  disabled={purchasingPack === pack.id || gwLoading}
                 >
                   {purchasingPack === pack.id ? (
                     <><i className="fas fa-spinner fa-spin"></i> Processing</>
