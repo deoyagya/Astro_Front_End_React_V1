@@ -1,18 +1,23 @@
 /**
- * SiteGate — Temporary passcode-based site access control.
+ * SiteGate — Temporary site access control via environment-stored passcode.
  *
- * Simple hardcoded passcode. No API calls, no emails.
+ * The access code is set via Vercel env var VITE_SITE_GATE_CODE.
+ * If the env var is empty/missing, the gate is disabled (site is open).
  * Verified flag stored in sessionStorage (resets when browser closes).
  *
- * To disable: remove <SiteGate> wrapper from App.jsx.
+ * To disable: remove VITE_SITE_GATE_CODE from Vercel env vars and redeploy,
+ * or remove <SiteGate> wrapper from App.jsx.
  */
 
 import { useState, useRef } from 'react';
 
-const GATE_PASSCODE = '108108';
+const GATE_CODE = import.meta.env.VITE_SITE_GATE_CODE || '';
 const GATE_KEY = 'site_gate_verified';
 
 export default function SiteGate({ children }) {
+  // If no gate code configured, gate is disabled — let everyone through
+  if (!GATE_CODE) return children;
+
   const [verified, setVerified] = useState(() => sessionStorage.getItem(GATE_KEY) === 'yes');
   const [code, setCode] = useState('');
   const [error, setError] = useState('');
@@ -20,11 +25,11 @@ export default function SiteGate({ children }) {
 
   const handleVerify = (e) => {
     e.preventDefault();
-    if (code.trim() === GATE_PASSCODE) {
+    if (code.trim() === GATE_CODE) {
       sessionStorage.setItem(GATE_KEY, 'yes');
       setVerified(true);
     } else {
-      setError('Wrong code. Try again.');
+      setError('Incorrect access code.');
       setCode('');
       setTimeout(() => inputRef.current?.focus(), 100);
     }
@@ -37,14 +42,14 @@ export default function SiteGate({ children }) {
       <div style={styles.card}>
         <div style={styles.icon}>&#9734;</div>
         <h1 style={styles.title}>Astro Yagya</h1>
-        <p style={styles.subtitle}>Enter the access code to continue</p>
+        <p style={styles.subtitle}>This site is under development.<br />Enter the access code to continue.</p>
 
         <form onSubmit={handleVerify} style={styles.form}>
           <input
             ref={inputRef}
             type="password"
             autoFocus
-            maxLength={10}
+            maxLength={20}
             placeholder="Access code"
             value={code}
             onChange={(e) => { setCode(e.target.value); setError(''); }}
@@ -100,6 +105,7 @@ const styles = {
     color: '#b0a89e',
     fontSize: '0.95rem',
     margin: '0 0 2rem',
+    lineHeight: 1.5,
   },
   form: {
     display: 'flex',
