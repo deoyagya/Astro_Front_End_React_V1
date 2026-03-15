@@ -49,6 +49,7 @@ import MuhurtaFinderPage from './pages/MuhurtaFinderPage';
 import ChartWizardPage from './pages/ChartWizardPage';
 import PricingPage from './pages/PricingPage';
 import ChatWidget from './components/ChatWidget';
+import SiteGate from './components/SiteGate';
 
 // My Data pages
 import MyDataLayout from './pages/mydata/MyDataLayout';
@@ -64,6 +65,7 @@ import SubscriptionPage from './pages/mydata/SubscriptionPage';
 
 export default function App() {
   return (
+    <SiteGate>
     <AuthProvider>
       <Routes>
         {/* Public routes */}
@@ -143,5 +145,6 @@ export default function App() {
       </Routes>
       <ChatWidget />
     </AuthProvider>
+    </SiteGate>
   );
 }
