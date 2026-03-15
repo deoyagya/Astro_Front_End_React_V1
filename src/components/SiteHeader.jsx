@@ -166,25 +166,16 @@ export default function SiteHeader({ active = 'home' }) {
                     <a href={freeToolsHref} className={active === 'tools' ? 'active' : ''}>
                       <i className="fas fa-tools"></i> Free Tools
                     </a>
-                  </li>
-                  <li>
-                    <a href="/muhurta" className={active === 'muhurta' ? 'active' : ''}>
-                      <i className="fas fa-clock"></i> Muhurta
-                    </a>
-                  </li>
-                  <li>
-                    <a href="/chart-wizard" className={active === 'wizard' ? 'active' : ''}>
-                      <i className="fas fa-magic"></i> Chart Wizard
-                    </a>
+                    <ul className="nav-submenu">
+                      <li><a href="/birth-chart"><i className="fas fa-chart-pie"></i> Birth Chart (Kundli)</a></li>
+                      <li><a href="/dasha"><i className="fas fa-clock"></i> Dasha Calculator</a></li>
+                      <li><a href="/compatibility"><i className="fas fa-heart"></i> Compatibility</a></li>
+                      <li><a href="/horoscope"><i className="fas fa-sun"></i> Daily Horoscope</a></li>
+                    </ul>
                   </li>
                   <li>
                     <a href="/pricing" className={active === 'pricing' ? 'active' : ''}>
                       <i className="fas fa-crown"></i> Pricing
-                    </a>
-                  </li>
-                  <li>
-                    <a href="/reports" className={active === 'reports' ? 'active' : ''}>
-                      <i className="fas fa-file-alt"></i> Reports
                     </a>
                   </li>
                 </>

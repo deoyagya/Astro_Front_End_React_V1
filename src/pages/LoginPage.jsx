@@ -28,6 +28,7 @@ export default function LoginPage() {
   const [identifier, setIdentifier] = useState('');
   const [inputType, setInputType] = useState(null); // "email" | "sms" | null
   const [countryCode, setCountryCode] = useState('+91');
+  const [termsAccepted, setTermsAccepted] = useState(false);
   const [dialCodes, setDialCodes] = useState([]);
   const [step, setStep] = useState('input'); // "input" | "otp"
   const [otp, setOtp] = useState(Array(OTP_LENGTH).fill(''));
@@ -421,11 +422,22 @@ export default function LoginPage() {
                     {' '}Code will be sent via {inputType === 'email' ? 'email' : 'SMS'}
                   </p>
                 )}
+                <label className="terms-checkbox">
+                  <input
+                    type="checkbox"
+                    checked={termsAccepted}
+                    onChange={(e) => setTermsAccepted(e.target.checked)}
+                  />
+                  <span>
+                    I agree to the <a href="#" id="terms-link-cb">Terms of Use</a> and{' '}
+                    <a href="#" id="privacy-link-cb">Privacy Policy</a>
+                  </span>
+                </label>
                 <button
                   type="button"
                   className="btn-send"
                   onClick={handleSendCode}
-                  disabled={loading || !inputType}
+                  disabled={loading || !inputType || !termsAccepted}
                 >
                   {loading ? (
                     <><i className="fas fa-spinner fa-spin"></i> Sending...</>
@@ -507,11 +519,7 @@ export default function LoginPage() {
             )}
 
             <div className="login-footer">
-              <p>
-                By continuing, you agree to our{' '}
-                <a href="#" id="terms-link-login">Terms of Use</a> and{' '}
-                <a href="#" id="privacy-link-login">Privacy Policy</a>
-              </p>
+              <p>Your data is secure and encrypted</p>
             </div>
           </div>
         </div>

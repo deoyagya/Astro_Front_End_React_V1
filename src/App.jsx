@@ -72,13 +72,15 @@ export default function App() {
         <Route path="/pricing" element={<PricingPage />} />
         <Route path="/survey/:slug" element={<PublicSurveyPage />} />
 
+        {/* Free tools — no login required */}
+        <Route path="/birth-chart" element={<BirthChartPage />} />
+        <Route path="/birth-chart/house/:houseNum" element={<HouseExplorePage />} />
+        <Route path="/dasha" element={<DashaPage />} />
+        <Route path="/compatibility" element={<CompatibilityPage />} />
+        <Route path="/horoscope" element={<HoroscopePage />} />
+
         {/* Protected routes — require authentication */}
         <Route path="/reports" element={<ProtectedRoute><ReportsPage /></ProtectedRoute>} />
-        <Route path="/birth-chart" element={<ProtectedRoute><BirthChartPage /></ProtectedRoute>} />
-        <Route path="/birth-chart/house/:houseNum" element={<ProtectedRoute><HouseExplorePage /></ProtectedRoute>} />
-        <Route path="/dasha" element={<ProtectedRoute><DashaPage /></ProtectedRoute>} />
-        <Route path="/compatibility" element={<ProtectedRoute><CompatibilityPage /></ProtectedRoute>} />
-        <Route path="/horoscope" element={<ProtectedRoute><HoroscopePage /></ProtectedRoute>} />
         <Route path="/muhurta" element={<ProtectedRoute><MuhurtaFinderPage /></ProtectedRoute>} />
         <Route path="/chart-wizard" element={<ProtectedRoute><ChartWizardPage /></ProtectedRoute>} />
         <Route path="/career-report" element={<CareerReportPage />} />

@@ -288,6 +288,35 @@
     cursor: not-allowed;
 }
 
+/* ===== TERMS CHECKBOX ===== */
+.terms-checkbox {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 16px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    color: var(--text-muted, #a0a8b8);
+}
+
+.terms-checkbox input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    margin-top: 2px;
+    accent-color: #7b5bff;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.terms-checkbox a {
+    color: var(--accent, #b794ff);
+    text-decoration: none;
+}
+
+.terms-checkbox a:hover {
+    text-decoration: underline;
+}
+
 /* ===== NAME + CONSENT GROUP (Phase 21A) ===== */
 .consent-group {
     margin: 16px 0;
