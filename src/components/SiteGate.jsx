@@ -11,7 +11,7 @@
 
 import { useState, useRef } from 'react';
 
-const GATE_CODE = 'astro2026';
+const GATE_CODE = import.meta.env.VITE_SITE_GATE_CODE || '';
 const GATE_KEY = 'site_gate_verified';
 
 export default function SiteGate({ children }) {
@@ -25,7 +25,7 @@ export default function SiteGate({ children }) {
 
   const handleVerify = (e) => {
     e.preventDefault();
-    if (code.trim() === GATE_CODE) {
+    if (code.trim() === GATE_CODE.trim()) {
       sessionStorage.setItem(GATE_KEY, 'yes');
       setVerified(true);
     } else {
