@@ -1,6 +1,7 @@
 import LegalModals from './LegalModals';
 import SiteFooter from './SiteFooter';
 import SiteHeader from './SiteHeader';
+import BackendIndicator from './BackendIndicator';
 
 export default function PageShell({ activeNav, children }) {
   return (
@@ -10,6 +11,7 @@ export default function PageShell({ activeNav, children }) {
       <SiteFooter />
       <div className="stars" id="stars"></div>
       <LegalModals />
+      <BackendIndicator />
     </>
   );
 }

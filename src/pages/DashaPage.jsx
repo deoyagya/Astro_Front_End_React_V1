@@ -128,13 +128,17 @@ function DashaDrillDown({ dashaTree }) {
           </div>
           <div className="dasha-current-chain">
             {currentSummary.map((item, i) => (
-              <span key={i} className="dasha-current-chip">
-                <span className="chip-planet" style={{ color: PLANET_COLORS[item.planet] || '#c4b0ff' }}>
-                  {item.planet}
-                </span>
-                <span className="chip-level">{item.level}</span>
-                {i < currentSummary.length - 1 && <i className="fas fa-chevron-right chip-arrow"></i>}
-              </span>
+              <div key={i} className="dasha-current-chip">
+                <div className="chip-top-row">
+                  <span className="chip-planet" style={{ color: PLANET_COLORS[item.planet] || '#c4b0ff' }}>
+                    {item.planet}
+                  </span>
+                  <span className="chip-level">{item.level}</span>
+                </div>
+                <div className="chip-date-row">
+                  {fmtDate(item.start)} — {fmtDate(item.end)} ({durationLabel(item.start, item.end)})
+                </div>
+              </div>
             ))}
           </div>
         </div>

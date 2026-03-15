@@ -174,6 +174,26 @@ export default function SiteHeader({ active = 'home' }) {
                     </ul>
                   </li>
                   <li>
+                    <a href="#" className={active === 'kundli' ? 'active' : ''}>
+                      <i className="fas fa-scroll"></i> Kundli
+                    </a>
+                    <ul className="nav-submenu">
+                      <li><a href="/birth-chart"><i className="fas fa-chart-pie"></i> Free Kundli Generation</a></li>
+                      <li><a href="/compatibility"><i className="fas fa-ring"></i> Kundli Matching</a></li>
+                      <li><a href="/manglik-dosha"><i className="fas fa-exclamation-triangle"></i> Manglik Dosha Remedies</a></li>
+                      <li><a href="/reports"><i className="fas fa-file-pdf"></i> Birth Chart Analysis (Premium)</a></li>
+                    </ul>
+                  </li>
+                  <li>
+                    <a href="#" className={active === 'consult' ? 'active' : ''}>
+                      <i className="fas fa-headset"></i> Consult
+                    </a>
+                    <ul className="nav-submenu">
+                      <li><a href="/chat"><i className="fas fa-comments"></i> Live Chat with Astrologer</a></li>
+                      <li><a href="/ask-question"><i className="fas fa-question-circle"></i> Ask a Question</a></li>
+                    </ul>
+                  </li>
+                  <li>
                     <a href="/pricing" className={active === 'pricing' ? 'active' : ''}>
                       <i className="fas fa-crown"></i> Pricing
                     </a>
@@ -218,7 +238,7 @@ export default function SiteHeader({ active = 'home' }) {
                             <i className={`fas fa-chevron-${myAstroExpanded ? 'up' : 'down'} submenu-chevron`}></i>
                           </button>
 
-                          <a href="/order" className="dropdown-item" onClick={() => setDropdownOpen(false)}>
+                          <a href="/my-orders" className="dropdown-item" onClick={() => setDropdownOpen(false)}>
                             <i className="fas fa-shopping-cart"></i> My Orders
                           </a>
                           <div className="dropdown-divider"></div>

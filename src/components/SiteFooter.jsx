@@ -15,29 +15,37 @@ export default function SiteFooter() {
             </div>
 
             <div className="footer-links">
-              <h4>Quick Links</h4>
+              <h4>Free Tools</h4>
               <ul>
-                <li><a href="/"><i className="fas fa-chevron-right"></i> Home</a></li>
-                <li><a href="/#free-tools"><i className="fas fa-chevron-right"></i> Free Tools</a></li>
-                <li><a href="/reports"><i className="fas fa-chevron-right"></i> Reports</a></li>
-                <li><a href="/login"><i className="fas fa-chevron-right"></i> Login</a></li>
+                <li><a href="/birth-chart"><i className="fas fa-chevron-right"></i> Birth Chart (Kundli)</a></li>
+                <li><a href="/dasha"><i className="fas fa-chevron-right"></i> Dasha Calculator</a></li>
+                <li><a href="/compatibility"><i className="fas fa-chevron-right"></i> Compatibility</a></li>
+                <li><a href="/horoscope"><i className="fas fa-chevron-right"></i> Daily Horoscope</a></li>
               </ul>
             </div>
 
             <div className="footer-links">
-              <h4>Tools</h4>
+              <h4>Kundli Reports</h4>
               <ul>
-                <li><a href="/birth-chart"><i className="fas fa-chevron-right"></i> Birth Chart</a></li>
-                <li><a href="/dasha"><i className="fas fa-chevron-right"></i> Dasha Calculator</a></li>
-                <li><a href="/compatibility"><i className="fas fa-chevron-right"></i> Compatibility</a></li>
-                <li><a href="/horoscope"><i className="fas fa-chevron-right"></i> Horoscope</a></li>
+                <li><a href="/birth-chart"><i className="fas fa-chevron-right"></i> Free Kundli Generation</a></li>
+                <li><a href="/compatibility"><i className="fas fa-chevron-right"></i> Kundli Matching</a></li>
+                <li><a href="/manglik-dosha"><i className="fas fa-chevron-right"></i> Manglik Dosha Remedies</a></li>
+                <li><a href="/reports"><i className="fas fa-chevron-right"></i> Birth Chart Analysis (Premium)</a></li>
+              </ul>
+            </div>
+
+            <div className="footer-links">
+              <h4>Consult Astrologer</h4>
+              <ul>
+                <li><a href="/chat"><i className="fas fa-chevron-right"></i> Live Chat with Astrologer</a></li>
+                <li><a href="/ask-question"><i className="fas fa-chevron-right"></i> Ask a Question</a></li>
+                <li><a href="/pricing"><i className="fas fa-chevron-right"></i> Pricing Plans</a></li>
               </ul>
             </div>
 
             <div className="footer-contact">
               <h4>Contact</h4>
-              <p><i className="fas fa-envelope"></i> support@stroyagya.com</p>
-              <p><i className="fas fa-phone-alt"></i> +91 98765 43210</p>
+              <p><i className="fas fa-envelope"></i> support@astroyagyadeo.com</p>
             </div>
           </div>
         )}

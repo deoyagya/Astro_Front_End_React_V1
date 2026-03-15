@@ -1,0 +1,483 @@
+/* ─── My Orders Page ─── */
+
+.mo-page {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 32px 20px 60px;
+}
+
+/* Header */
+.mo-header {
+  margin-bottom: 28px;
+}
+.mo-header h1 {
+  font-size: 1.8rem;
+  color: #fff;
+  margin: 0 0 6px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.mo-header h1 i {
+  color: #9d7bff;
+}
+.mo-header p {
+  color: #8e8ea0;
+  font-size: 0.95rem;
+  margin: 0;
+}
+
+/* Loading */
+.mo-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+  color: #9d7bff;
+  gap: 14px;
+  font-size: 1.1rem;
+}
+.mo-loading i {
+  font-size: 2rem;
+}
+.mo-loading p {
+  color: #8e8ea0;
+  margin: 0;
+}
+
+/* Error */
+.mo-error {
+  background: rgba(248, 113, 113, 0.12);
+  border: 1px solid rgba(248, 113, 113, 0.3);
+  border-radius: 10px;
+  padding: 14px 18px;
+  color: #f87171;
+  margin-bottom: 20px;
+  font-size: 0.92rem;
+}
+.mo-error i {
+  margin-right: 8px;
+}
+
+/* Filter tabs */
+.mo-filters {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+.mo-filter-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  color: #aaa;
+  padding: 8px 16px;
+  font-size: 0.88rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.mo-filter-btn:hover {
+  background: rgba(157, 123, 255, 0.1);
+  border-color: rgba(157, 123, 255, 0.3);
+  color: #ccc;
+}
+.mo-filter-btn.active {
+  background: rgba(157, 123, 255, 0.15);
+  border-color: #9d7bff;
+  color: #fff;
+}
+.mo-filter-count {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  padding: 1px 8px;
+  font-size: 0.78rem;
+  min-width: 20px;
+  text-align: center;
+}
+.mo-filter-btn.active .mo-filter-count {
+  background: rgba(157, 123, 255, 0.3);
+}
+
+/* Empty state */
+.mo-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 250px;
+  text-align: center;
+  color: #8e8ea0;
+}
+.mo-empty i {
+  font-size: 3rem;
+  margin-bottom: 16px;
+  opacity: 0.4;
+}
+.mo-empty h3 {
+  color: #ccc;
+  margin: 0 0 8px;
+  font-size: 1.15rem;
+}
+.mo-empty p {
+  margin: 0;
+  font-size: 0.9rem;
+  max-width: 400px;
+}
+
+/* Order list */
+.mo-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Order card */
+.mo-card {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  overflow: hidden;
+  transition: all 0.2s;
+}
+.mo-card:hover {
+  border-color: rgba(157, 123, 255, 0.25);
+  background: rgba(255, 255, 255, 0.06);
+}
+.mo-card-expanded {
+  border-color: rgba(157, 123, 255, 0.35);
+}
+
+/* Card main row (clickable) */
+.mo-card-main {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 20px;
+  cursor: pointer;
+  user-select: none;
+}
+
+/* Type icon */
+.mo-card-type {
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.15rem;
+  background: rgba(255, 255, 255, 0.06);
+  flex-shrink: 0;
+}
+
+/* Details column */
+.mo-card-details {
+  flex: 1;
+  min-width: 0;
+}
+.mo-card-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 4px;
+}
+.mo-card-type-label {
+  font-weight: 600;
+  font-size: 0.92rem;
+}
+.mo-card-receipt {
+  color: #8e8ea0;
+  font-size: 0.82rem;
+  font-family: 'SF Mono', 'Fira Code', monospace;
+}
+.mo-card-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  font-size: 0.8rem;
+  color: #6e6e80;
+}
+.mo-card-meta span {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.mo-card-provider {
+  text-transform: capitalize;
+}
+
+/* Amount */
+.mo-card-amount {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #e0e0e0;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* Status badge */
+.mo-card-status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+.mo-status-paid {
+  background: rgba(72, 199, 142, 0.15);
+  color: #48c78e;
+}
+.mo-status-pending {
+  background: rgba(245, 197, 66, 0.15);
+  color: #f5c542;
+}
+.mo-status-failed {
+  background: rgba(248, 113, 113, 0.15);
+  color: #f87171;
+}
+.mo-status-refunded {
+  background: rgba(99, 179, 237, 0.15);
+  color: #63b3ed;
+}
+.mo-status-processing {
+  background: rgba(157, 123, 255, 0.15);
+  color: #9d7bff;
+}
+
+/* Expand arrow */
+.mo-card-expand {
+  color: #6e6e80;
+  font-size: 0.8rem;
+  padding: 0 4px;
+  flex-shrink: 0;
+  transition: color 0.2s;
+}
+.mo-card:hover .mo-card-expand {
+  color: #aaa;
+}
+
+/* ─── Expanded body ─── */
+.mo-card-body {
+  padding: 0 20px 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  animation: moSlideDown 0.2s ease;
+}
+@keyframes moSlideDown {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Items table */
+.mo-items-table {
+  margin: 16px 0;
+}
+.mo-items-header {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 12px;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #6e6e80;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+.mo-items-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 12px;
+  font-size: 0.88rem;
+  color: #ccc;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+}
+.mo-items-row:last-child {
+  border-bottom: none;
+}
+
+/* Question results */
+.mo-question-results {
+  margin: 16px 0;
+}
+.mo-qr-summary {
+  display: flex;
+  gap: 18px;
+  padding: 12px 16px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 8px;
+  margin-bottom: 12px;
+}
+.mo-qr-stat {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85rem;
+  color: #bbb;
+}
+.mo-qr-item {
+  padding: 12px 14px;
+  border-left: 3px solid rgba(255, 255, 255, 0.08);
+  margin-bottom: 8px;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 0 8px 8px 0;
+}
+.mo-qr-question {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 6px;
+}
+.mo-qr-area {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #9d7bff;
+  font-weight: 600;
+}
+.mo-qr-text {
+  font-size: 0.9rem;
+  color: #ddd;
+}
+.mo-qr-status {
+  font-size: 0.78rem;
+  text-transform: capitalize;
+  color: #8e8ea0;
+  margin-bottom: 6px;
+}
+.mo-qr-done {
+  color: #48c78e;
+}
+.mo-qr-fail {
+  color: #f87171;
+}
+.mo-qr-answer {
+  margin-top: 8px;
+  padding: 10px 14px;
+  background: rgba(157, 123, 255, 0.06);
+  border-radius: 8px;
+  font-size: 0.88rem;
+  color: #ccc;
+  line-height: 1.55;
+}
+.mo-qr-answer p {
+  margin: 0;
+}
+.mo-qr-score {
+  font-weight: 600;
+  color: #f5c542;
+  margin-bottom: 6px;
+  font-size: 0.84rem;
+}
+.mo-qr-error {
+  margin-top: 4px;
+  font-size: 0.82rem;
+  color: #f87171;
+  font-style: italic;
+}
+.mo-qr-loading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px;
+  color: #8e8ea0;
+  font-size: 0.9rem;
+}
+
+/* Meta rows */
+.mo-card-meta-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  font-size: 0.84rem;
+}
+.mo-meta-label {
+  color: #6e6e80;
+}
+.mo-meta-value {
+  color: #aaa;
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  font-size: 0.8rem;
+  word-break: break-all;
+}
+
+/* Actions */
+.mo-card-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 14px;
+}
+.mo-action-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 18px;
+  border-radius: 8px;
+  border: 1px solid rgba(157, 123, 255, 0.3);
+  background: rgba(157, 123, 255, 0.1);
+  color: #9d7bff;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.mo-action-btn:hover {
+  background: rgba(157, 123, 255, 0.2);
+  border-color: #9d7bff;
+  color: #c4b5ff;
+}
+
+/* ─── Responsive ─── */
+@media (max-width: 640px) {
+  .mo-page {
+    padding: 20px 14px 50px;
+  }
+  .mo-header h1 {
+    font-size: 1.4rem;
+  }
+  .mo-card-main {
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 14px 14px;
+  }
+  .mo-card-type {
+    width: 36px;
+    height: 36px;
+    font-size: 1rem;
+  }
+  .mo-card-details {
+    flex: 1 1 calc(100% - 60px);
+  }
+  .mo-card-amount {
+    font-size: 0.95rem;
+  }
+  .mo-card-status {
+    font-size: 0.75rem;
+    padding: 4px 10px;
+  }
+  .mo-card-meta {
+    gap: 8px;
+    font-size: 0.75rem;
+  }
+  .mo-filters {
+    gap: 6px;
+  }
+  .mo-filter-btn {
+    padding: 6px 12px;
+    font-size: 0.82rem;
+  }
+  .mo-qr-summary {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .mo-card-body {
+    padding: 0 14px 16px;
+  }
+}

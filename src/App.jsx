@@ -18,6 +18,7 @@ import FamilyReportPage from './pages/FamilyReportPage';
 import MyReportsPage from './pages/MyReportsPage';
 import OrderPage from './pages/OrderPage';
 import PaymentPage from './pages/PaymentPage';
+import AskQuestionPage from './pages/AskQuestionPage';
 import CheckoutReturnPage from './pages/CheckoutReturnPage';
 import HouseExplorePage from './pages/HouseExplorePage';
 import AdminThemesPage from './pages/admin/AdminThemesPage';
@@ -48,6 +49,7 @@ import PublicSurveyPage from './pages/PublicSurveyPage';
 import MuhurtaFinderPage from './pages/MuhurtaFinderPage';
 import ChartWizardPage from './pages/ChartWizardPage';
 import PricingPage from './pages/PricingPage';
+import MyOrdersPage from './pages/MyOrdersPage';
 import ChatWidget from './components/ChatWidget';
 import SiteGate from './components/SiteGate';
 
@@ -81,6 +83,9 @@ export default function App() {
         <Route path="/compatibility" element={<CompatibilityPage />} />
         <Route path="/horoscope" element={<HoroscopePage />} />
 
+        {/* Ask a Question — public browse, auth for ordering */}
+        <Route path="/ask-question" element={<AskQuestionPage />} />
+
         {/* Protected routes — require authentication */}
         <Route path="/reports" element={<ProtectedRoute><ReportsPage /></ProtectedRoute>} />
         <Route path="/muhurta" element={<ProtectedRoute><MuhurtaFinderPage /></ProtectedRoute>} />
@@ -93,6 +98,7 @@ export default function App() {
         <Route path="/family-report" element={<FamilyReportPage />} />
         <Route path="/my-reports" element={<ProtectedRoute><MyReportsPage /></ProtectedRoute>} />
         <Route path="/order" element={<ProtectedRoute><OrderPage /></ProtectedRoute>} />
+        <Route path="/my-orders" element={<ProtectedRoute><MyOrdersPage /></ProtectedRoute>} />
         <Route path="/payment" element={<ProtectedRoute><PaymentPage /></ProtectedRoute>} />
         <Route path="/checkout/return" element={<CheckoutReturnPage />} />
 
