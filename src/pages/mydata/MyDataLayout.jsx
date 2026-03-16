@@ -6,7 +6,7 @@
  *   1. Compact birth-data form (auto-loads saved data via useBirthData)
  *   2. Dropdown navigation for 8 sub-pages
  *   3. MyDataProvider context so children share the birth payload
- *   4. Chart modal — auto-opens D1 chart on Load, re-openable via button
+ *   4. Optional inline chart — fetched on Load but only shown when user clicks Show Chart
  *   5. White content area wrapping child pages
  */
 
@@ -109,7 +109,7 @@ function MyDataInner() {
   /**
    * Fetch chart data with vargas for chart rendering.
    * @param {object} payload - Birth data payload
-   * @param {boolean} openModal - Whether to auto-open modal after fetch
+   * @param {boolean} openModal - Whether to auto-show the inline chart after fetch
    */
   const fetchChartDataRef = useRef(null);
   const fetchRequestId = useRef(0);
@@ -144,8 +144,10 @@ function MyDataInner() {
     const payload = bd.buildPayload();
     loadBirthData(payload);
     bd.saveBirthData();
-    // Fetch chart data and auto-show the chart on Load
-    fetchChartData(payload, true);
+    // Fetch chart data in the background, but keep the chart hidden
+    // until the user explicitly clicks "Show Chart".
+    setChartVisible(false);
+    fetchChartData(payload, false);
   };
 
   // Close chart modal and cancel in-flight chart fetches when navigating.
