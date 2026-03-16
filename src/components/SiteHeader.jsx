@@ -3,8 +3,6 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useStyles } from '../context/StyleContext';
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
-
 const ADMIN_MENU_ITEMS = [
   { label: 'Observability', icon: 'fa-tachometer-alt',  href: '/admin/observability' },
   { label: 'Pipeline Wizard', icon: 'fa-flask',         href: '/admin/pipeline-wizard' },
@@ -17,8 +15,6 @@ const ADMIN_MENU_ITEMS = [
   { label: 'Muhurta',      icon: 'fa-clock',            href: '/admin/muhurta' },
   { label: 'Rule CV Wizard', icon: 'fa-balance-scale',  href: '/admin/rule-cv-wizard' },
   { label: 'Rule Builder',  icon: 'fa-project-diagram', href: '/admin/rule-builder' },
-  { label: 'Rule Admin',    icon: 'fa-gavel',           href: `${API_BASE}/admin`, external: true },
-  { label: 'DB Admin',      icon: 'fa-database',        href: `${API_BASE}/db-admin`, external: true },
   { label: 'Wizard Content', icon: 'fa-photo-video',    href: '/admin/wizard-content' },
   { label: 'Subscriptions', icon: 'fa-credit-card',     href: '/admin/subscriptions' },
   { label: 'Gateway Config', icon: 'fa-globe',          href: '/admin/gateway-config' },
@@ -163,11 +159,9 @@ export default function SiteHeader({ active = 'home' }) {
                           href={item.href}
                           className={`manage-data-item ${isItemActive(item.href, pathname) ? 'active' : ''}`}
                           onClick={() => setManageMenuOpen(false)}
-                          {...(item.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
                         >
                           <i className={`fas ${item.icon}`}></i>
                           {item.label}
-                          {item.external && <i className="fas fa-external-link-alt" style={{ fontSize: '0.65em', marginLeft: 4, opacity: 0.5 }}></i>}
                         </a>
                       ))}
                     </div>
