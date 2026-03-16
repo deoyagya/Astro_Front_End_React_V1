@@ -124,8 +124,15 @@ export default function SiteHeader({ active = 'home' }) {
   };
 
   const handleSubmenuLinkClick = (e, targetPath) => {
-    handleProtectedNav(e, targetPath);
-    if (isAuthenticated) setOpenNavMenu(null);
+    e.preventDefault();
+    if (!isAuthenticated) {
+      navigate('/login', { state: { from: { pathname: targetPath } } });
+      return;
+    }
+    setOpenNavMenu(null);
+    setDropdownOpen(false);
+    setMyAstroExpanded(false);
+    navigate(targetPath);
   };
 
   return (

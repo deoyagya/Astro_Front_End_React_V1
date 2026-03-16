@@ -104,4 +104,26 @@ describe('SiteHeader', () => {
     expect(kundliTrigger).toHaveAttribute('aria-expanded', 'true');
     expect(screen.getAllByText(/Threat and Opportunity/i).length).toBeGreaterThan(0);
   });
+
+  it('navigates authenticated users to the temporal forecast page from the Kundli submenu', () => {
+    authState.value = {
+      isAuthenticated: true,
+      user: { email: 'ria@example.com', role: 'premium' },
+      logout: vi.fn(),
+    };
+
+    render(
+      <MemoryRouter initialEntries={['/']}>
+        <Routes>
+          <Route path="/" element={<SiteHeader active="home" />} />
+          <Route path="/my-data/temporal-forecast" element={<div>Temporal Forecast Screen</div>} />
+        </Routes>
+      </MemoryRouter>,
+    );
+
+    fireEvent.click(screen.getByRole('link', { name: /^Kundli$/i }));
+    fireEvent.click(screen.getAllByRole('link', { name: /Threat and Opportunity/i })[0]);
+
+    expect(screen.getByText('Temporal Forecast Screen')).toBeInTheDocument();
+  });
 });
