@@ -5,14 +5,17 @@
  * Sections: Hero → What's Inside → Sample Snapshot → Features → Testimonials → FAQ → CTA.
  */
 
-import { useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useCallback, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import ChartSelectionModal from './ChartSelectionModal';
 import '../styles/report-landing.css';
 
 export default function ReportLandingPage({ config }) {
   const navigate = useNavigate();
+  const location = useLocation();
   const { isAuthenticated } = useAuth();
+  const [isChartModalOpen, setIsChartModalOpen] = useState(false);
 
   const {
     slug,
@@ -42,21 +45,23 @@ export default function ReportLandingPage({ config }) {
   const savings = originalPriceCents ? Math.round((1 - priceCents / originalPriceCents) * 100) : 0;
 
   const handleOrder = useCallback(() => {
-    // Add to cart and navigate
-    const cart = JSON.parse(localStorage.getItem('cart') || '[]');
-    if (!cart.some(item => item.id === slug)) {
-      cart.push({ id: slug, name: title, price: priceCents, icon });
-      localStorage.setItem('cart', JSON.stringify(cart));
-    }
     if (isAuthenticated) {
-      navigate('/order');
+      setIsChartModalOpen(true);
     } else {
-      navigate('/login', { state: { from: '/order' } });
+      navigate('/login', { state: { from: { pathname: location.pathname } } });
     }
-  }, [slug, title, priceCents, icon, isAuthenticated, navigate]);
+  }, [isAuthenticated, location.pathname, navigate]);
 
   return (
     <div className="rpl">
+      <ChartSelectionModal
+        isOpen={isChartModalOpen}
+        onClose={() => setIsChartModalOpen(false)}
+        reportSlug={slug}
+        reportName={title}
+        reportPrice={priceCents}
+        reportIcon={icon}
+      />
       {/* ===== HERO ===== */}
       <section className="rpl-hero">
         <div className="rpl-hero-bg"></div>

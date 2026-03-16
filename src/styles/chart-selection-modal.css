@@ -1,0 +1,280 @@
+.csm-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(5, 8, 14, 0.82);
+  backdrop-filter: blur(6px);
+}
+
+.csm-modal {
+  width: min(100%, 640px);
+  max-height: 88vh;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid rgba(115, 128, 153, 0.2);
+  border-radius: 18px;
+  background: linear-gradient(180deg, #0f1726 0%, #0a101b 100%);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.45);
+}
+
+.csm-header,
+.csm-footer {
+  padding: 18px 22px;
+  border-color: rgba(115, 128, 153, 0.14);
+}
+
+.csm-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(115, 128, 153, 0.14);
+}
+
+.csm-header-info {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.csm-header-info > i {
+  font-size: 1.25rem;
+  color: #f3b554;
+}
+
+.csm-header-info h3,
+.csm-empty h4,
+.csm-chart-details h4,
+.csm-total {
+  color: #f4f7fb;
+}
+
+.csm-header-info h3 {
+  margin: 0;
+  font-size: 1.05rem;
+}
+
+.csm-report-name,
+.csm-count,
+.csm-chart-details p,
+.csm-checkbox-label {
+  color: #9ba7bd;
+}
+
+.csm-report-name {
+  margin: 4px 0 0;
+  font-size: 0.87rem;
+}
+
+.csm-close-btn {
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: #9ba7bd;
+  padding: 8px 10px;
+  cursor: pointer;
+}
+
+.csm-close-btn:hover {
+  background: rgba(155, 167, 189, 0.12);
+  color: #f4f7fb;
+}
+
+.csm-body {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.csm-loading,
+.csm-error,
+.csm-empty {
+  padding: 54px 24px;
+  text-align: center;
+}
+
+.csm-loading,
+.csm-empty {
+  color: #9ba7bd;
+}
+
+.csm-error {
+  color: #ff8f8f;
+}
+
+.csm-loading i,
+.csm-error i,
+.csm-empty i {
+  display: block;
+  margin-bottom: 14px;
+  font-size: 1.9rem;
+}
+
+.csm-btn-retry,
+.csm-btn-generate,
+.csm-btn-pay {
+  border: 0;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.csm-btn-retry,
+.csm-btn-generate {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 18px;
+  text-decoration: none;
+}
+
+.csm-btn-retry {
+  background: rgba(255, 143, 143, 0.16);
+  color: #ffd0d0;
+}
+
+.csm-btn-generate,
+.csm-btn-pay {
+  background: linear-gradient(135deg, #c7822f 0%, #e4b15b 100%);
+  color: #1a1307;
+}
+
+.csm-select-all {
+  padding: 14px 22px;
+  border-bottom: 1px solid rgba(115, 128, 153, 0.1);
+}
+
+.csm-checkbox-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.csm-checkbox-label input,
+.csm-chart-item input {
+  accent-color: #e4b15b;
+}
+
+.csm-chart-list {
+  padding: 12px;
+}
+
+.csm-chart-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 8px;
+  padding: 14px 12px;
+  border: 1px solid transparent;
+  border-radius: 14px;
+  background: rgba(17, 24, 39, 0.65);
+  text-align: left;
+  cursor: pointer;
+}
+
+.csm-chart-item:hover,
+.csm-chart-item.csm-selected {
+  border-color: rgba(228, 177, 91, 0.4);
+  background: rgba(228, 177, 91, 0.08);
+}
+
+.csm-chart-avatar {
+  width: 40px;
+  height: 40px;
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  background: rgba(228, 177, 91, 0.12);
+  color: #f3c97f;
+}
+
+.csm-chart-details {
+  flex: 1;
+  min-width: 0;
+}
+
+.csm-chart-details h4 {
+  margin: 0;
+  font-size: 0.96rem;
+}
+
+.csm-chart-details p {
+  margin: 4px 0 0;
+  display: flex;
+  gap: 12px;
+  font-size: 0.81rem;
+}
+
+.csm-chart-details span,
+.csm-chart-place {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.csm-chart-price strong,
+.csm-chart-price {
+  color: #f3c97f;
+  font-weight: 700;
+}
+
+.csm-footer {
+  border-top: 1px solid rgba(115, 128, 153, 0.14);
+}
+
+.csm-order-error {
+  margin-bottom: 12px;
+  padding: 10px 12px;
+  border: 1px solid rgba(255, 143, 143, 0.24);
+  border-radius: 12px;
+  background: rgba(255, 143, 143, 0.08);
+  color: #ffb4b4;
+}
+
+.csm-footer-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.csm-summary-text {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.csm-btn-pay {
+  padding: 12px 22px;
+}
+
+.csm-btn-pay:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+@media (max-width: 640px) {
+  .csm-overlay {
+    padding: 0;
+    align-items: flex-end;
+  }
+
+  .csm-modal {
+    width: 100%;
+    max-height: 92vh;
+    border-radius: 18px 18px 0 0;
+  }
+
+  .csm-footer-summary {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .csm-btn-pay {
+    width: 100%;
+  }
+}
