@@ -128,7 +128,7 @@ function MyDataInner() {
         setChartVisible(true);
       }
     } catch (err) {
-      console.error('Chart fetch failed:', err);
+      console.error('Chart fetch failed:', err?.message || err);
     } finally {
       if (thisRequest === fetchRequestId.current) {
         setChartLoading(false);
@@ -144,8 +144,8 @@ function MyDataInner() {
     const payload = bd.buildPayload();
     loadBirthData(payload);
     bd.saveBirthData();
-    // Fetch chart data but keep it hidden — user clicks "Show Chart" to reveal
-    fetchChartData(payload, false);
+    // Fetch chart data and auto-show the chart on Load
+    fetchChartData(payload, true);
   };
 
   // Close chart modal and cancel in-flight chart fetches when navigating.

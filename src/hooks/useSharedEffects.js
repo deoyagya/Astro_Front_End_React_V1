@@ -5,10 +5,15 @@ let notificationStylesInjected = false;
 export function showNotification(message, type = 'success') {
   const notification = document.createElement('div');
   notification.className = `notification ${type}`;
-  notification.innerHTML = `
-    <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i>
-    <span>${message}</span>
-  `;
+
+  const icon = document.createElement('i');
+  icon.className = `fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}`;
+
+  const text = document.createElement('span');
+  text.textContent = message;
+
+  notification.appendChild(icon);
+  notification.appendChild(text);
 
   notification.style.cssText = `
     position: fixed;

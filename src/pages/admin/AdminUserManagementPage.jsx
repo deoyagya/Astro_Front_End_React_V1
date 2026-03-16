@@ -259,7 +259,7 @@ export default function AdminUserManagementPage() {
         `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000'}/v1/admin/users/import-csv`,
         {
           method: 'POST',
-          headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` },
+          headers: { Authorization: `Bearer ${localStorage.getItem('auth_token')}` },
           body: formData,
         }
       );
