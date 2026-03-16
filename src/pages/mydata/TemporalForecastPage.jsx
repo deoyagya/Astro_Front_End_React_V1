@@ -344,7 +344,7 @@ export default function TemporalForecastPage() {
             <div className="tf-pf-item"><i className="fas fa-check-circle"></i> Sade Sati detection</div>
             <div className="tf-pf-item"><i className="fas fa-check-circle"></i> AI-powered interpretations</div>
           </div>
-          <a href="/reports" className="btn-upgrade-tf">
+          <a href="/pricing" className="btn-upgrade-tf">
             <i className="fas fa-arrow-up"></i> Upgrade to Premium
           </a>
         </div>
