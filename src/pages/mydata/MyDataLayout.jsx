@@ -28,7 +28,7 @@ const TABS = [
   { label: 'Yogas & Rajyogas', icon: 'fa-sun',          to: '/my-data/yogas' },
   { label: 'Sade Sati',        icon: 'fa-moon',         to: '/my-data/sade-sati' },
   { label: 'Transit',          icon: 'fa-globe',        to: '/my-data/transit' },
-  { label: 'Temporal Forecast', icon: 'fa-hourglass-half', to: '/my-data/temporal-forecast', premium: true },
+  { label: 'Threat and Opportunity', icon: 'fa-hourglass-half', to: '/my-data/temporal-forecast', premium: true },
   { label: 'Subscription', icon: 'fa-crown', to: '/my-data/subscription' },
 ];
 

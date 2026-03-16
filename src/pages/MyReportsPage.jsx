@@ -14,6 +14,7 @@ const REPORT_TYPE_MAP = {
   love: { icon: 'fa-heart', label: 'Love & Marriage Report' },
   manglik: { icon: 'fa-fire', label: 'Manglik Dosha Analysis & Remedies' },
   'birth-chart-analysis': { icon: 'fa-chart-pie', label: 'Complete Birth Chart Analysis' },
+  temporal_forecast: { icon: 'fa-hourglass-half', label: 'Threat and Opportunity Report' },
   education: { icon: 'fa-brain', label: 'Education & Intelligence Report' },
   health: { icon: 'fa-spa', label: 'Health & Wellness Report' },
   spiritual: { icon: 'fa-om', label: 'Spiritual Growth Report' },

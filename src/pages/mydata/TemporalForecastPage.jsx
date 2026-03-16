@@ -143,6 +143,7 @@ export default function TemporalForecastPage() {
   const [forecastData, setForecastData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [deliveryState, setDeliveryState] = useState({ sending: false, message: '', error: '' });
   const [filter, setFilter] = useState('all'); // all | opportunity | threat | mixed
   const [expandedCard, setExpandedCard] = useState(null);
 
@@ -255,6 +256,33 @@ export default function TemporalForecastPage() {
     setTimelineError({});
     setTimelineLoading({});
   }, [chartParams]);
+
+  const handleDeliverReport = useCallback(async () => {
+    if (!chartParams) return;
+    setDeliveryState({ sending: true, message: '', error: '' });
+    try {
+      const result = await api.postLong('/v1/temporal-forecast/deliver', {
+        ...chartParams,
+        chart_name: birthPayload?.name || user?.full_name || 'Your Chart',
+        place_of_birth: birthPayload?.place_of_birth || '',
+        send_email: true,
+      }, 120_000);
+
+      setDeliveryState({
+        sending: false,
+        message: result.emailed
+          ? `Saved to My Reports and emailed to ${result.recipient}.`
+          : 'Saved to My Reports. Email could not be sent from this environment.',
+        error: '',
+      });
+    } catch (err) {
+      setDeliveryState({
+        sending: false,
+        message: '',
+        error: err.message || 'Failed to generate the report deliverable.',
+      });
+    }
+  }, [birthPayload?.name, birthPayload?.place_of_birth, chartParams, user?.full_name]);
 
   /** Fetch timeline for a single life area. */
   const fetchTimeline = useCallback(async (lifeAreaId, rangeIndex) => {
@@ -393,8 +421,34 @@ export default function TemporalForecastPage() {
             <span>Overall: <strong style={{ color: overallCfg.color }}>{overallCfg.label}</strong></span>
             <span className="tf-score">{overall_score.toFixed(1)}</span>
           </div>
+          <button
+            className="tf-filter-btn active"
+            onClick={handleDeliverReport}
+            disabled={deliveryState.sending}
+            style={{ marginLeft: '12px' }}
+          >
+            {deliveryState.sending ? (
+              <><i className="fas fa-spinner fa-spin"></i> Sending Report...</>
+            ) : (
+              <><i className="fas fa-paper-plane"></i> Email PDF Report</>
+            )}
+          </button>
         </div>
       </div>
+
+      {deliveryState.message && (
+        <div className="api-success">
+          <i className="fas fa-check-circle"></i>
+          <p>{deliveryState.message}</p>
+        </div>
+      )}
+
+      {deliveryState.error && (
+        <div className="api-error">
+          <i className="fas fa-exclamation-triangle"></i>
+          <p>{deliveryState.error}</p>
+        </div>
+      )}
 
       {/* ── Summary Strip ── */}
       <div className="tf-summary-strip">
