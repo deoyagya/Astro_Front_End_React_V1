@@ -52,6 +52,7 @@ import MuhurtaFinderPage from './pages/MuhurtaFinderPage';
 import ChartWizardPage from './pages/ChartWizardPage';
 import PricingPage from './pages/PricingPage';
 import MyOrdersPage from './pages/MyOrdersPage';
+import ThreatOpportunityPage from './pages/ThreatOpportunityPage';
 import ChatWidget from './components/ChatWidget';
 import SiteGate from './components/SiteGate';
 import { LegalModalProvider } from './context/LegalModalContext';
@@ -65,7 +66,6 @@ import BirthDetailsPage from './pages/mydata/BirthDetailsPage';
 import YogasPage from './pages/mydata/YogasPage';
 import SadeSatiPage from './pages/mydata/SadeSatiPage';
 import TransitPage from './pages/mydata/TransitPage';
-import TemporalForecastPage from './pages/mydata/TemporalForecastPage';
 import SubscriptionPage from './pages/mydata/SubscriptionPage';
 
 export default function App() {
@@ -78,6 +78,7 @@ export default function App() {
         <Route path="/" element={<HomePage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/pricing" element={<PricingPage />} />
+        <Route path="/threat-opportunity" element={<ProtectedRoute><ThreatOpportunityPage /></ProtectedRoute>} />
         <Route path="/survey/:slug" element={<PublicSurveyPage />} />
 
         {/* Free tools — no login required */}
@@ -118,7 +119,7 @@ export default function App() {
           <Route path="yogas" element={<YogasPage />} />
           <Route path="sade-sati" element={<SadeSatiPage />} />
           <Route path="transit" element={<TransitPage />} />
-          <Route path="temporal-forecast" element={<TemporalForecastPage />} />
+          <Route path="temporal-forecast" element={<Navigate to="/threat-opportunity" replace />} />
           <Route path="subscription" element={<SubscriptionPage />} />
         </Route>
 

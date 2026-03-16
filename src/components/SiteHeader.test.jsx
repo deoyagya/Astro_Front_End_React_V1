@@ -116,7 +116,7 @@ describe('SiteHeader', () => {
       <MemoryRouter initialEntries={['/']}>
         <Routes>
           <Route path="/" element={<SiteHeader active="home" />} />
-          <Route path="/my-data/temporal-forecast" element={<div>Temporal Forecast Screen</div>} />
+          <Route path="/threat-opportunity" element={<div>Temporal Forecast Screen</div>} />
         </Routes>
       </MemoryRouter>,
     );
