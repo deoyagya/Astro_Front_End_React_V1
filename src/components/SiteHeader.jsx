@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useStyles } from '../context/StyleContext';
 
@@ -48,6 +48,7 @@ const isItemActive = (itemHref, pathname) => {
 export default function SiteHeader({ active = 'home' }) {
   const { getOverride } = useStyles('site-header');
   const { isAuthenticated, user, logout } = useAuth();
+  const navigate = useNavigate();
   const location = useLocation();
   const pathname = location.pathname;
   const freeToolsHref = active === 'home' ? '#free-tools' : '/#free-tools';
@@ -100,6 +101,12 @@ export default function SiteHeader({ active = 'home' }) {
       });
     }
     setMyAstroExpanded(!myAstroExpanded);
+  };
+
+  const handleProtectedNav = (e, targetPath) => {
+    if (isAuthenticated) return;
+    e.preventDefault();
+    navigate('/login', { state: { from: { pathname: targetPath } } });
   };
 
   return (
@@ -163,34 +170,46 @@ export default function SiteHeader({ active = 'home' }) {
                     </a>
                   </li>
                   <li>
-                    <a href={freeToolsHref} className={active === 'tools' ? 'active' : ''}>
+                    <a
+                      href={freeToolsHref}
+                      className={active === 'tools' ? 'active' : ''}
+                      onClick={(e) => handleProtectedNav(e, '/birth-chart')}
+                    >
                       <i className="fas fa-tools"></i> Free Tools
                     </a>
                     <ul className="nav-submenu">
-                      <li><a href="/birth-chart"><i className="fas fa-chart-pie"></i> Birth Chart (Kundli)</a></li>
-                      <li><a href="/dasha"><i className="fas fa-clock"></i> Dasha Calculator</a></li>
-                      <li><a href="/compatibility"><i className="fas fa-heart"></i> Compatibility</a></li>
-                      <li><a href="/horoscope"><i className="fas fa-sun"></i> Daily Horoscope</a></li>
+                      <li><a href="/birth-chart" onClick={(e) => handleProtectedNav(e, '/birth-chart')}><i className="fas fa-chart-pie"></i> Birth Chart (Kundli)</a></li>
+                      <li><a href="/dasha" onClick={(e) => handleProtectedNav(e, '/dasha')}><i className="fas fa-clock"></i> Dasha Calculator</a></li>
+                      <li><a href="/compatibility" onClick={(e) => handleProtectedNav(e, '/compatibility')}><i className="fas fa-heart"></i> Compatibility</a></li>
+                      <li><a href="/horoscope" onClick={(e) => handleProtectedNav(e, '/horoscope')}><i className="fas fa-sun"></i> Daily Horoscope</a></li>
                     </ul>
                   </li>
                   <li>
-                    <a href="#" className={active === 'kundli' ? 'active' : ''}>
+                    <a
+                      href="#"
+                      className={active === 'kundli' ? 'active' : ''}
+                      onClick={(e) => handleProtectedNav(e, '/birth-chart')}
+                    >
                       <i className="fas fa-scroll"></i> Kundli
                     </a>
                     <ul className="nav-submenu">
-                      <li><a href="/birth-chart"><i className="fas fa-chart-pie"></i> Free Kundli Generation</a></li>
-                      <li><a href="/compatibility"><i className="fas fa-ring"></i> Kundli Matching</a></li>
-                      <li><a href="/manglik-dosha"><i className="fas fa-exclamation-triangle"></i> Manglik Dosha Remedies</a></li>
-                      <li><a href="/reports"><i className="fas fa-file-pdf"></i> Birth Chart Analysis (Premium)</a></li>
+                      <li><a href="/birth-chart" onClick={(e) => handleProtectedNav(e, '/birth-chart')}><i className="fas fa-chart-pie"></i> Free Kundli Generation</a></li>
+                      <li><a href="/compatibility" onClick={(e) => handleProtectedNav(e, '/compatibility')}><i className="fas fa-ring"></i> Kundli Matching</a></li>
+                      <li><a href="/manglik-dosha" onClick={(e) => handleProtectedNav(e, '/manglik-dosha')}><i className="fas fa-exclamation-triangle"></i> Manglik Dosha Remedies</a></li>
+                      <li><a href="/reports" onClick={(e) => handleProtectedNav(e, '/reports')}><i className="fas fa-file-pdf"></i> Birth Chart Analysis (Premium)</a></li>
                     </ul>
                   </li>
                   <li>
-                    <a href="#" className={active === 'consult' ? 'active' : ''}>
+                    <a
+                      href="#"
+                      className={active === 'consult' ? 'active' : ''}
+                      onClick={(e) => handleProtectedNav(e, '/chat')}
+                    >
                       <i className="fas fa-headset"></i> Consult
                     </a>
                     <ul className="nav-submenu">
-                      <li><a href="/chat"><i className="fas fa-comments"></i> Live Chat with Astrologer</a></li>
-                      <li><a href="/ask-question"><i className="fas fa-question-circle"></i> Ask a Question</a></li>
+                      <li><a href="/chat" onClick={(e) => handleProtectedNav(e, '/chat')}><i className="fas fa-comments"></i> Live Chat with Astrologer</a></li>
+                      <li><a href="/ask-question" onClick={(e) => handleProtectedNav(e, '/ask-question')}><i className="fas fa-question-circle"></i> Ask a Question</a></li>
                     </ul>
                   </li>
                   <li>

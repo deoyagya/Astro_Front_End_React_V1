@@ -1,0 +1,68 @@
+import { fireEvent, render, screen } from '@testing-library/react';
+import { MemoryRouter, Route, Routes } from 'react-router-dom';
+import SiteHeader from './SiteHeader';
+
+const authState = vi.hoisted(() => ({
+  value: {
+    isAuthenticated: false,
+    user: null,
+    logout: vi.fn(),
+  },
+}));
+
+vi.mock('../context/AuthContext', () => ({
+  useAuth: () => authState.value,
+}));
+
+vi.mock('../context/StyleContext', () => ({
+  useStyles: () => ({
+    getOverride: () => undefined,
+  }),
+}));
+
+describe('SiteHeader', () => {
+  beforeEach(() => {
+    authState.value = {
+      isAuthenticated: false,
+      user: null,
+      logout: vi.fn(),
+    };
+  });
+
+  it('redirects unauthenticated users to login when opening protected nav items', () => {
+    render(
+      <MemoryRouter initialEntries={['/']}>
+        <Routes>
+          <Route path="/" element={<SiteHeader active="home" />} />
+          <Route path="/login" element={<div>Login Screen</div>} />
+        </Routes>
+      </MemoryRouter>,
+    );
+
+    fireEvent.click(screen.getByRole('link', { name: /Free Tools/i }));
+
+    expect(screen.getByText('Login Screen')).toBeInTheDocument();
+  });
+
+  it('allows authenticated users to stay on the page when clicking protected nav items', () => {
+    authState.value = {
+      isAuthenticated: true,
+      user: { email: 'ria@example.com', role: 'free' },
+      logout: vi.fn(),
+    };
+
+    render(
+      <MemoryRouter initialEntries={['/']}>
+        <Routes>
+          <Route path="/" element={<SiteHeader active="home" />} />
+          <Route path="/login" element={<div>Login Screen</div>} />
+        </Routes>
+      </MemoryRouter>,
+    );
+
+    fireEvent.click(screen.getByRole('link', { name: /Free Tools/i }));
+
+    expect(screen.queryByText('Login Screen')).not.toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /Free Tools/i })).toBeInTheDocument();
+  });
+});
