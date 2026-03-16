@@ -22,7 +22,7 @@ function safeStr(val, fallback = '---') {
   if (typeof val === 'object') {
     // Try common name keys used by panchang service
     return val.weekday_name || val.tithi_name || val.name
-      || val.sidereal_time_str || val.lmt_str
+      || val.ghati_str || val.sidereal_time_str || val.lmt_str
       || val.str || val.value || fallback;
   }
   return fallback;
