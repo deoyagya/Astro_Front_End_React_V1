@@ -22,11 +22,11 @@ export default function PublicSurveyPage() {
     return res.json();
   };
 
-  const apiSubmit = async (s, responses, metadata) => {
+  const apiSubmit = async (s, payload) => {
     const res = await fetch(`${API_BASE}/v1/survey/${s}/submit`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ responses, metadata }),
+      body: JSON.stringify(payload),
     });
     if (!res.ok) {
       const err = await res.json().catch(() => ({ detail: 'Submission failed' }));
