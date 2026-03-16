@@ -80,4 +80,28 @@ describe('SiteHeader', () => {
 
     expect(screen.getByText('Login Screen')).toBeInTheDocument();
   });
+
+  it('opens the Kundli submenu on click for authenticated users', () => {
+    authState.value = {
+      isAuthenticated: true,
+      user: { email: 'ria@example.com', role: 'premium' },
+      logout: vi.fn(),
+    };
+
+    render(
+      <MemoryRouter initialEntries={['/']}>
+        <Routes>
+          <Route path="/" element={<SiteHeader active="home" />} />
+        </Routes>
+      </MemoryRouter>,
+    );
+
+    const kundliTrigger = screen.getByRole('link', { name: /^Kundli$/i });
+    expect(kundliTrigger).toHaveAttribute('aria-expanded', 'false');
+
+    fireEvent.click(kundliTrigger);
+
+    expect(kundliTrigger).toHaveAttribute('aria-expanded', 'true');
+    expect(screen.getAllByText(/Threat and Opportunity/i).length).toBeGreaterThan(0);
+  });
 });

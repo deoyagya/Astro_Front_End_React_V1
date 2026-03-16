@@ -96,6 +96,12 @@
     align-items: stretch;
 }
 
+.nav ul > li.nav-open > .nav-submenu {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+}
+
 .nav ul > li > .nav-submenu li {
     margin: 0;
     text-align: left;
