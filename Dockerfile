@@ -16,9 +16,17 @@ RUN npm ci --ignore-scripts=false
 # Pass build-time environment variables
 # These get embedded into the JS bundle by Vite
 ARG VITE_API_BASE_URL
+ARG VITE_STRIPE_PUBLISHABLE_KEY
 ARG VITE_RAZORPAY_KEY_ID
+ARG VITE_GOOGLE_CLIENT_ID
+ARG VITE_FACEBOOK_APP_ID
+ARG VITE_SITE_GATE_CODE
 ENV VITE_API_BASE_URL=$VITE_API_BASE_URL
+ENV VITE_STRIPE_PUBLISHABLE_KEY=$VITE_STRIPE_PUBLISHABLE_KEY
 ENV VITE_RAZORPAY_KEY_ID=$VITE_RAZORPAY_KEY_ID
+ENV VITE_GOOGLE_CLIENT_ID=$VITE_GOOGLE_CLIENT_ID
+ENV VITE_FACEBOOK_APP_ID=$VITE_FACEBOOK_APP_ID
+ENV VITE_SITE_GATE_CODE=$VITE_SITE_GATE_CODE
 
 # Copy source and build
 COPY . .
@@ -26,6 +34,8 @@ RUN npm run build
 
 # --------------- Stage 2: Serve ---------------
 FROM nginx:alpine AS runtime
+
+ARG VITE_API_BASE_URL
 
 # Copy nginx config template
 COPY nginx.conf /etc/nginx/templates/default.conf.template
@@ -36,6 +46,7 @@ COPY --from=build /app/dist /usr/share/nginx/html
 # Railway injects PORT; default to 3000 for local development
 # Nginx template uses envsubst to replace ${PORT} at runtime
 ENV PORT=3000
+ENV API_BASE_ORIGIN=$VITE_API_BASE_URL
 
 EXPOSE ${PORT}
 
