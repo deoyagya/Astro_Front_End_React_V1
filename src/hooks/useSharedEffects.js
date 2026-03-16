@@ -57,64 +57,6 @@ function createStars() {
   }
 }
 
-function setupModalHandlers() {
-  const termsLink = document.getElementById('terms-link');
-  const privacyLink = document.getElementById('privacy-link');
-  const termsLinkLogin = document.getElementById('terms-link-login');
-  const privacyLinkLogin = document.getElementById('privacy-link-login');
-  const termsModal = document.getElementById('termsModal');
-  const privacyModal = document.getElementById('privacyModal');
-  const closeTerms = document.getElementById('closeTerms');
-  const closePrivacy = document.getElementById('closePrivacy');
-
-  const openTerms = (e) => {
-    e.preventDefault();
-    termsModal?.classList.add('show');
-  };
-
-  const openPrivacy = (e) => {
-    e.preventDefault();
-    privacyModal?.classList.add('show');
-  };
-
-  termsLink?.addEventListener('click', openTerms);
-  termsLinkLogin?.addEventListener('click', openTerms);
-  privacyLink?.addEventListener('click', openPrivacy);
-  privacyLinkLogin?.addEventListener('click', openPrivacy);
-
-  const onCloseTerms = () => termsModal?.classList.remove('show');
-  const onClosePrivacy = () => privacyModal?.classList.remove('show');
-
-  closeTerms?.addEventListener('click', onCloseTerms);
-  closePrivacy?.addEventListener('click', onClosePrivacy);
-
-  const onWindowClick = (e) => {
-    if (e.target?.classList?.contains('modal')) {
-      e.target.classList.remove('show');
-    }
-  };
-
-  const onKeyDown = (e) => {
-    if (e.key === 'Escape') {
-      document.querySelectorAll('.modal.show').forEach((modal) => modal.classList.remove('show'));
-    }
-  };
-
-  window.addEventListener('click', onWindowClick);
-  document.addEventListener('keydown', onKeyDown);
-
-  return () => {
-    termsLink?.removeEventListener('click', openTerms);
-    termsLinkLogin?.removeEventListener('click', openTerms);
-    privacyLink?.removeEventListener('click', openPrivacy);
-    privacyLinkLogin?.removeEventListener('click', openPrivacy);
-    closeTerms?.removeEventListener('click', onCloseTerms);
-    closePrivacy?.removeEventListener('click', onClosePrivacy);
-    window.removeEventListener('click', onWindowClick);
-    document.removeEventListener('keydown', onKeyDown);
-  };
-}
-
 export function useSharedEffects() {
   useEffect(() => {
     if (!notificationStylesInjected) {
@@ -134,7 +76,5 @@ export function useSharedEffects() {
     }
 
     createStars();
-    const cleanup = setupModalHandlers();
-    return cleanup;
   }, []);
 }

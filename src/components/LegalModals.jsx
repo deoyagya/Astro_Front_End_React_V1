@@ -1,9 +1,13 @@
+import { useLegalModal } from '../context/LegalModalContext';
+
 export default function LegalModals() {
+  const { activeModal, closeModal } = useLegalModal();
+
   return (
     <>
-      <div className="modal" id="termsModal">
+      <div className={`modal${activeModal === 'terms' ? ' show' : ''}`} onClick={(e) => e.target === e.currentTarget && closeModal()}>
         <div className="modal-content">
-          <button className="modal-close" id="closeTerms"><i className="fas fa-times"></i></button>
+          <button type="button" className="modal-close" onClick={closeModal}><i className="fas fa-times"></i></button>
           <h2>Terms of Use</h2>
           <div className="modal-body">
             <p>Last updated: February 2025</p>
@@ -21,9 +25,9 @@ export default function LegalModals() {
         </div>
       </div>
 
-      <div className="modal" id="privacyModal">
+      <div className={`modal${activeModal === 'privacy' ? ' show' : ''}`} onClick={(e) => e.target === e.currentTarget && closeModal()}>
         <div className="modal-content">
-          <button className="modal-close" id="closePrivacy"><i className="fas fa-times"></i></button>
+          <button type="button" className="modal-close" onClick={closeModal}><i className="fas fa-times"></i></button>
           <h2>Privacy Policy</h2>
           <div className="modal-body">
             <p>Last updated: February 2025</p>

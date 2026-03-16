@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import PageShell from '../components/PageShell';
 import { useSharedEffects } from '../hooks/useSharedEffects';
 import { useAuth } from '../context/AuthContext';
+import { useLegalModal } from '../context/LegalModalContext';
 import { useStyles } from '../context/StyleContext';
 import { api } from '../api/client';
 
@@ -14,6 +15,7 @@ const FACEBOOK_APP_ID = import.meta.env.VITE_FACEBOOK_APP_ID || '';
 export default function LoginPage() {
   useSharedEffects();
   const { login, isAuthenticated } = useAuth();
+  const { openPrivacy, openTerms } = useLegalModal();
   const { getOverride } = useStyles('login');
   const navigate = useNavigate();
   const location = useLocation();
@@ -429,8 +431,10 @@ export default function LoginPage() {
                     onChange={(e) => setTermsAccepted(e.target.checked)}
                   />
                   <span>
-                    I agree to the <a href="#" id="terms-link-cb">Terms of Use</a> and{' '}
-                    <a href="#" id="privacy-link-cb">Privacy Policy</a>
+                    I agree to the{' '}
+                    <button type="button" className="inline-link-button" onClick={openTerms}>Terms of Use</button>
+                    {' '}and{' '}
+                    <button type="button" className="inline-link-button" onClick={openPrivacy}>Privacy Policy</button>
                   </span>
                 </label>
                 <button

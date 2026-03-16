@@ -52,6 +52,7 @@ import PricingPage from './pages/PricingPage';
 import MyOrdersPage from './pages/MyOrdersPage';
 import ChatWidget from './components/ChatWidget';
 import SiteGate from './components/SiteGate';
+import { LegalModalProvider } from './context/LegalModalContext';
 
 // My Data pages
 import MyDataLayout from './pages/mydata/MyDataLayout';
@@ -68,6 +69,7 @@ import SubscriptionPage from './pages/mydata/SubscriptionPage';
 export default function App() {
   return (
     <SiteGate>
+    <LegalModalProvider>
     <AuthProvider>
       <Routes>
         {/* Public routes */}
@@ -151,6 +153,7 @@ export default function App() {
       </Routes>
       <ChatWidget />
     </AuthProvider>
+    </LegalModalProvider>
     </SiteGate>
   );
 }
