@@ -92,7 +92,14 @@ export function AuthProvider({ children }) {
     persistSession({
       accessToken: tokenData.access_token,
       refreshToken: tokenData.refresh_token,
+      user: tokenData.user,
     });
+    if (tokenData.user) {
+      setUser(tokenData.user);
+    } else {
+      // Keep protected routes in loading state until /me resolves.
+      setLoading(true);
+    }
     setToken(tokenData.access_token);
     lastActivityRef.current = Date.now();
   }, []);

@@ -55,6 +55,7 @@ export default function LoginPage() {
       await login({
         access_token: result.access_token,
         refresh_token: result.refresh_token,
+        user: result.user,
       });
       navigate(from, { replace: true });
     } catch (err) {
@@ -306,6 +307,7 @@ export default function LoginPage() {
       await login({
         access_token: result.access_token,
         refresh_token: result.refresh_token,
+        user: result.user,
       });
       // Navigate to the originally requested page
       navigate(from, { replace: true });
