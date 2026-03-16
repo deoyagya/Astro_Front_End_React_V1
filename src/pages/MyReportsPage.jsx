@@ -5,7 +5,6 @@ import ApiError from '../components/ApiError';
 import { useSharedEffects } from '../hooks/useSharedEffects';
 import { api } from '../api/client';
 import '../styles/report-pages.css';
-import { useStyles } from '../context/StyleContext';
 
 /* Map report type IDs to display info */
 const REPORT_TYPE_MAP = {
@@ -20,7 +19,6 @@ const REPORT_TYPE_MAP = {
 };
 
 function formatFileSize(bytes) {
-  const { getOverride } = useStyles('my-reports');
   if (bytes < 1024) return `${bytes} B`;
   if (bytes < 1048576) return `${(bytes / 1024).toFixed(1)} KB`;
   return `${(bytes / 1048576).toFixed(1)} MB`;
