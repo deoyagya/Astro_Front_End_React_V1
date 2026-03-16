@@ -662,6 +662,41 @@ export const manglikConfig = {
   originalPriceCents: 4499,
   pages: 30,
   deliveryHours: 4,
+  stickyCtaEnabled: true,
+  urgencyBadge: 'Marriage season approaching — get your Manglik analysis before it\'s too late',
+
+  statsBar: [
+    { value: '14', label: 'Cancellation Rules Checked' },
+    { value: '50K+', label: 'Reports Delivered' },
+    { value: '93%', label: 'Clients Found Cancellation' },
+    { value: '4.9/5', label: 'Customer Rating' },
+  ],
+
+  problemStatement: {
+    painTitle: 'The Manglik Myth Is Ruining Lives',
+    painText: 'Most astrologers check only 2-3 cancellation conditions and declare you "Manglik" — scaring families, delaying marriages, and causing unnecessary anxiety. Generic websites give yes/no answers with zero nuance.',
+    solutionTitle: 'We Check All 14 Classical Cancellation Rules',
+    solutionText: 'Our Swiss Ephemeris-powered analysis checks every BPHS cancellation condition, scores severity on a 0-100 scale, cross-validates with Navamsa (D9), and gives you a clear, quantified answer — not a vague scare tactic.',
+  },
+
+  comparisonTable: {
+    title: 'Manglik Analysis: Us vs. Everyone Else',
+    subtitle: 'Most services check 2-3 rules. We check all 14 from BPHS.',
+    themLabel: 'Generic Sites',
+    usLabel: 'Astro Yagya',
+    rows: [
+      { feature: 'Mars placement check', them: true, us: true },
+      { feature: 'Cancellation conditions', them: '2-3 only', us: 'All 14 (BPHS)' },
+      { feature: 'Severity scoring (0-100)', them: false, us: true },
+      { feature: 'Navamsa (D9) cross-check', them: false, us: true },
+      { feature: 'Moon-based Manglik check', them: false, us: true },
+      { feature: 'Marriage timing windows', them: false, us: true },
+      { feature: 'Partner matching guide', them: false, us: true },
+      { feature: 'Personalized remedies', them: 'Generic list', us: 'Safety-checked, per chart' },
+      { feature: 'AI cross-validation', them: false, us: true },
+      { feature: 'Classical source citations', them: false, us: 'BPHS, Phaladeepika' },
+    ],
+  },
 
   insideItems: [
     {
@@ -763,6 +798,42 @@ export const birthChartAnalysisConfig = {
   originalPriceCents: 8999,
   pages: 50,
   deliveryHours: 6,
+  stickyCtaEnabled: true,
+  urgencyBadge: 'Most comprehensive Vedic birth chart analysis available online',
+
+  statsBar: [
+    { value: '16', label: 'Divisional Charts' },
+    { value: '50+', label: 'Pages of Analysis' },
+    { value: '96', label: 'Rule Primitives' },
+    { value: '6', label: 'Life Areas Covered' },
+  ],
+
+  problemStatement: {
+    painTitle: 'Most "Birth Charts" Online Are Just Sun-Sign Horoscopes',
+    painText: 'Free astrology sites give you a D1 chart and a paragraph of generic text. No divisional charts, no Dasha timeline, no quantitative scores, no remedies. You walk away with the same vague "predictions" everyone else gets.',
+    solutionTitle: '50+ Pages of Swiss Ephemeris Precision + AI Cross-Validation',
+    solutionText: 'We compute all 16 divisional charts (D1-D60), full 120-year Vimshottari Dasha, Ashtakavarga scores, Shadbala strength, yoga identification, and transit forecast. Every prediction is produced by one AI, then independently verified by a second AI against your actual chart data.',
+  },
+
+  comparisonTable: {
+    title: 'Birth Chart Analysis: The Real Deal vs. Generic',
+    subtitle: 'What you actually get matters more than what the label says.',
+    themLabel: 'Free Sites / Basic Apps',
+    usLabel: 'Astro Yagya Premium',
+    rows: [
+      { feature: 'D1 Rashi chart', them: true, us: true },
+      { feature: 'Divisional charts', them: 'D9 only', us: 'All 16 (D1-D60)' },
+      { feature: 'Vimshottari Dasha', them: 'Basic', us: '120-year with interpretations' },
+      { feature: 'Ashtakavarga scores', them: false, us: true },
+      { feature: 'Shadbala strength', them: false, us: '6-fold scoring' },
+      { feature: 'Yoga identification', them: '1-2 yogas', us: '10+ categories, scored' },
+      { feature: 'Transit forecast', them: false, us: '10-year forward' },
+      { feature: 'AI interpretation', them: false, us: 'Dual-LLM cross-validated' },
+      { feature: 'Personalized remedies', them: 'Generic', us: 'Chart-specific with safety' },
+      { feature: 'Source citations', them: false, us: 'BPHS, Phaladeepika, Jaimini' },
+      { feature: 'Pages of analysis', them: '1-2', us: '50+' },
+    ],
+  },
 
   insideItems: [
     {

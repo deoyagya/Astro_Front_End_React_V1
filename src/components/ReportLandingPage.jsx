@@ -2,10 +2,18 @@
  * ReportLandingPage — High-conversion landing page for each report type.
  *
  * PUBLIC page (no auth required) for SEO. User clicks "Order Now" → /order.
- * Sections: Hero → What's Inside → Sample Snapshot → Features → Testimonials → FAQ → CTA.
+ * Sections: Hero → Stats → Problem → What's Inside → Sample Snapshot →
+ *           Comparison → Features → Testimonials → FAQ → CTA → Sticky CTA.
+ *
+ * Optional high-conversion fields (set in config, ignored if absent):
+ *   - statsBar[]         — key numbers above the fold
+ *   - problemStatement   — pain point + solution narrative
+ *   - comparisonTable    — "Us vs Others" table
+ *   - urgencyBadge       — limited-time-offer text
+ *   - stickyCtaEnabled   — sticky bottom buy bar on scroll
  */
 
-import { useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import '../styles/report-landing.css';
@@ -13,6 +21,7 @@ import '../styles/report-landing.css';
 export default function ReportLandingPage({ config }) {
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
+  const [showSticky, setShowSticky] = useState(false);
 
   const {
     slug,
@@ -35,11 +44,25 @@ export default function ReportLandingPage({ config }) {
     testimonials,
     faqs,
     whyChoose,
+    // High-conversion optional sections
+    statsBar,
+    problemStatement,
+    comparisonTable,
+    urgencyBadge,
+    stickyCtaEnabled,
   } = config;
 
   const priceDisplay = `$${(priceCents / 100).toFixed(2)}`;
   const originalPrice = originalPriceCents ? `$${(originalPriceCents / 100).toFixed(2)}` : null;
   const savings = originalPriceCents ? Math.round((1 - priceCents / originalPriceCents) * 100) : 0;
+
+  // Sticky CTA: show after scrolling past hero
+  useEffect(() => {
+    if (!stickyCtaEnabled) return;
+    const onScroll = () => setShowSticky(window.scrollY > 600);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, [stickyCtaEnabled]);
 
   const handleOrder = useCallback(() => {
     // Add to cart and navigate
@@ -63,6 +86,11 @@ export default function ReportLandingPage({ config }) {
         <div className="rpl-container">
           <div className="rpl-hero-grid">
             <div className="rpl-hero-content">
+              {urgencyBadge && (
+                <div className="rpl-urgency-badge">
+                  <i className="fas fa-bolt"></i> {urgencyBadge}
+                </div>
+              )}
               <div className="rpl-hero-badge">
                 <i className="fas fa-star"></i> Premium Vedic Report
               </div>
@@ -125,6 +153,45 @@ export default function ReportLandingPage({ config }) {
           </div>
         </div>
       </section>
+
+      {/* ===== STATS BAR ===== */}
+      {statsBar && statsBar.length > 0 && (
+        <section className="rpl-stats-bar">
+          <div className="rpl-container">
+            <div className="rpl-stats-grid">
+              {statsBar.map((stat, i) => (
+                <div key={i} className="rpl-stat">
+                  <span className="rpl-stat-num">{stat.value}</span>
+                  <span className="rpl-stat-label">{stat.label}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* ===== PROBLEM STATEMENT ===== */}
+      {problemStatement && (
+        <section className="rpl-section rpl-problem">
+          <div className="rpl-container rpl-container-narrow">
+            <div className="rpl-problem-content">
+              <div className="rpl-problem-pain">
+                <i className="fas fa-times-circle"></i>
+                <h3>{problemStatement.painTitle}</h3>
+                <p>{problemStatement.painText}</p>
+              </div>
+              <div className="rpl-problem-arrow">
+                <i className="fas fa-arrow-down"></i>
+              </div>
+              <div className="rpl-problem-solution">
+                <i className="fas fa-check-circle"></i>
+                <h3>{problemStatement.solutionTitle}</h3>
+                <p>{problemStatement.solutionText}</p>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* ===== WHAT'S INSIDE ===== */}
       <section className="rpl-section" id="whats-inside">
@@ -310,6 +377,48 @@ export default function ReportLandingPage({ config }) {
         </div>
       </section>
 
+      {/* ===== COMPARISON TABLE ===== */}
+      {comparisonTable && (
+        <section className="rpl-section rpl-section-dark">
+          <div className="rpl-container">
+            <div className="rpl-section-header">
+              <span className="rpl-section-badge">Comparison</span>
+              <h2>{comparisonTable.title || 'Why We\'re Different'}</h2>
+              <p>{comparisonTable.subtitle || 'See how we compare to generic astrology services'}</p>
+            </div>
+
+            <div className="rpl-comparison">
+              <table className="rpl-comparison-table">
+                <thead>
+                  <tr>
+                    <th>Feature</th>
+                    <th className="rpl-comp-them">{comparisonTable.themLabel || 'Others'}</th>
+                    <th className="rpl-comp-us">{comparisonTable.usLabel || 'Astro Yagya'}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {comparisonTable.rows.map((row, i) => (
+                    <tr key={i}>
+                      <td>{row.feature}</td>
+                      <td className="rpl-comp-them">
+                        {row.them === true ? <i className="fas fa-check rpl-comp-check"></i> :
+                         row.them === false ? <i className="fas fa-times rpl-comp-x"></i> :
+                         <span>{row.them}</span>}
+                      </td>
+                      <td className="rpl-comp-us">
+                        {row.us === true ? <i className="fas fa-check rpl-comp-check"></i> :
+                         row.us === false ? <i className="fas fa-times rpl-comp-x"></i> :
+                         <span className="rpl-comp-highlight">{row.us}</span>}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* ===== TESTIMONIALS ===== */}
       {testimonials && testimonials.length > 0 && (
         <section className="rpl-section rpl-section-dark">
@@ -386,6 +495,23 @@ export default function ReportLandingPage({ config }) {
           </div>
         </div>
       </section>
+      {/* ===== STICKY CTA BAR ===== */}
+      {stickyCtaEnabled && showSticky && (
+        <div className="rpl-sticky-cta">
+          <div className="rpl-sticky-inner">
+            <div className="rpl-sticky-info">
+              <strong>{title}</strong>
+              <span>
+                {originalPriceCents && <s>${(originalPriceCents / 100).toFixed(2)}</s>}
+                {' '}{priceDisplay}
+              </span>
+            </div>
+            <button className="rpl-btn-primary rpl-btn-sm" onClick={handleOrder}>
+              <i className="fas fa-scroll"></i> Order Now
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

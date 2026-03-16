@@ -860,6 +860,255 @@
   margin-right: 6px;
 }
 
+/* ─── URGENCY BADGE ─── */
+
+.rpl-urgency-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: linear-gradient(135deg, #ff4757, #ff6b81);
+  color: #fff;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 6px 18px;
+  border-radius: 20px;
+  margin-bottom: 12px;
+  animation: rpl-pulse 2s ease-in-out infinite;
+}
+
+@keyframes rpl-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(255,71,87,0.4); }
+  50% { box-shadow: 0 0 0 8px rgba(255,71,87,0); }
+}
+
+/* ─── STATS BAR ─── */
+
+.rpl-stats-bar {
+  background: rgba(123,91,255,0.06);
+  border-top: 1px solid rgba(123,91,255,0.12);
+  border-bottom: 1px solid rgba(123,91,255,0.12);
+  padding: 28px 0;
+}
+
+.rpl-stats-grid {
+  display: flex;
+  justify-content: center;
+  gap: 60px;
+  flex-wrap: wrap;
+}
+
+.rpl-stat {
+  text-align: center;
+}
+
+.rpl-stat-num {
+  display: block;
+  font-size: 2rem;
+  font-weight: 800;
+  color: #fff;
+  font-family: 'Cinzel', serif;
+}
+
+.rpl-stat-label {
+  display: block;
+  font-size: 0.78rem;
+  color: #8892a4;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-top: 4px;
+}
+
+/* ─── PROBLEM STATEMENT ─── */
+
+.rpl-problem-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+}
+
+.rpl-problem-pain,
+.rpl-problem-solution {
+  padding: 30px;
+  border-radius: 14px;
+  text-align: center;
+  max-width: 600px;
+  width: 100%;
+}
+
+.rpl-problem-pain {
+  background: rgba(255,71,87,0.06);
+  border: 1px solid rgba(255,71,87,0.2);
+}
+
+.rpl-problem-pain > i {
+  font-size: 2rem;
+  color: #ff4757;
+  margin-bottom: 12px;
+}
+
+.rpl-problem-pain h3 {
+  color: #ff6b81;
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+}
+
+.rpl-problem-pain p {
+  color: #a0a8b8;
+  font-size: 0.95rem;
+}
+
+.rpl-problem-arrow {
+  font-size: 1.5rem;
+  color: #7b5bff;
+  animation: rpl-bounce 1.5s ease infinite;
+}
+
+@keyframes rpl-bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(6px); }
+}
+
+.rpl-problem-solution {
+  background: rgba(46,213,115,0.06);
+  border: 1px solid rgba(46,213,115,0.2);
+}
+
+.rpl-problem-solution > i {
+  font-size: 2rem;
+  color: #2ed573;
+  margin-bottom: 12px;
+}
+
+.rpl-problem-solution h3 {
+  color: #2ed573;
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+}
+
+.rpl-problem-solution p {
+  color: #a0a8b8;
+  font-size: 0.95rem;
+}
+
+/* ─── COMPARISON TABLE ─── */
+
+.rpl-comparison {
+  max-width: 700px;
+  margin: 0 auto;
+  overflow-x: auto;
+}
+
+.rpl-comparison-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.rpl-comparison-table th,
+.rpl-comparison-table td {
+  padding: 14px 18px;
+  text-align: center;
+  border-bottom: 1px solid rgba(60,65,85,0.3);
+}
+
+.rpl-comparison-table th:first-child,
+.rpl-comparison-table td:first-child {
+  text-align: left;
+  color: #c7cfdd;
+}
+
+.rpl-comparison-table thead th {
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #8892a4;
+  font-weight: 600;
+}
+
+.rpl-comparison-table thead th.rpl-comp-us {
+  color: #7b5bff;
+  background: rgba(123,91,255,0.06);
+  border-radius: 10px 10px 0 0;
+}
+
+.rpl-comparison-table td.rpl-comp-us {
+  background: rgba(123,91,255,0.04);
+}
+
+.rpl-comp-check {
+  color: #2ed573;
+  font-size: 1rem;
+}
+
+.rpl-comp-x {
+  color: #ff4757;
+  font-size: 1rem;
+}
+
+.rpl-comp-them span {
+  color: #666;
+  font-size: 0.85rem;
+}
+
+.rpl-comp-highlight {
+  color: #2ed573;
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+/* ─── STICKY CTA BAR ─── */
+
+.rpl-sticky-cta {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 999;
+  background: rgba(10,13,20,0.96);
+  border-top: 1px solid rgba(123,91,255,0.3);
+  backdrop-filter: blur(12px);
+  padding: 12px 24px;
+  animation: rpl-slideUp 0.3s ease;
+}
+
+@keyframes rpl-slideUp {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+.rpl-sticky-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.rpl-sticky-info {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.rpl-sticky-info strong {
+  color: #fff;
+  font-size: 0.95rem;
+}
+
+.rpl-sticky-info span {
+  color: #c4b0ff;
+  font-size: 0.9rem;
+}
+
+.rpl-sticky-info s {
+  color: #555;
+  margin-right: 6px;
+}
+
 /* ─── RESPONSIVE ─── */
 
 @media (max-width: 900px) {
