@@ -181,7 +181,7 @@ export default function SiteHeader({ active = 'home' }) {
                       <li><a href="/birth-chart"><i className="fas fa-chart-pie"></i> Free Kundli Generation</a></li>
                       <li><a href="/compatibility"><i className="fas fa-ring"></i> Kundli Matching</a></li>
                       <li><a href="/manglik-dosha"><i className="fas fa-exclamation-triangle"></i> Manglik Dosha Remedies</a></li>
-                      <li><a href="/reports"><i className="fas fa-file-pdf"></i> Birth Chart Analysis (Premium)</a></li>
+                      <li><a href="/birth-chart-analysis"><i className="fas fa-file-pdf"></i> Birth Chart Analysis (Premium)</a></li>
                     </ul>
                   </li>
                   <li>
