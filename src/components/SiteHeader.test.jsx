@@ -65,4 +65,19 @@ describe('SiteHeader', () => {
     expect(screen.queryByText('Login Screen')).not.toBeInTheDocument();
     expect(screen.getByRole('link', { name: /Free Tools/i })).toBeInTheDocument();
   });
+
+  it('shows the Threat and Opportunity item under Kundli and protects it for unauthenticated users', () => {
+    render(
+      <MemoryRouter initialEntries={['/']}>
+        <Routes>
+          <Route path="/" element={<SiteHeader active="home" />} />
+          <Route path="/login" element={<div>Login Screen</div>} />
+        </Routes>
+      </MemoryRouter>,
+    );
+
+    fireEvent.click(screen.getByRole('link', { name: /Threat and Opportunity/i }));
+
+    expect(screen.getByText('Login Screen')).toBeInTheDocument();
+  });
 });
