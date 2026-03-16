@@ -25,7 +25,8 @@ const RETRY_DELAY_MS = 1_000; // 1 s delay before auto-retry
 const HEALTH_CHECK_TIMEOUT_MS = 5_000; // 5 s for health ping
 
 // HTTP methods safe to auto-retry on network failure
-const RETRYABLE_METHODS = new Set(['GET', 'POST']);
+// Restrict to idempotent reads to avoid duplicate side effects.
+const RETRYABLE_METHODS = new Set(['GET']);
 
 // User-friendly messages (never show raw browser errors)
 const USER_MESSAGES = {
