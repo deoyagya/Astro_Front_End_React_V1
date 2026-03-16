@@ -32,7 +32,7 @@ export default function SiteFooter() {
                 <li><a href="/birth-chart"><i className="fas fa-chevron-right"></i> Free Kundli Generation</a></li>
                 <li><a href="/compatibility"><i className="fas fa-chevron-right"></i> Kundli Matching</a></li>
                 <li><a href="/manglik-dosha"><i className="fas fa-chevron-right"></i> Manglik Dosha Remedies</a></li>
-                <li><a href="/reports"><i className="fas fa-chevron-right"></i> Birth Chart Analysis (Premium)</a></li>
+                <li><a href="/birth-chart-analysis"><i className="fas fa-chevron-right"></i> Birth Chart Analysis (Premium)</a></li>
               </ul>
             </div>
 

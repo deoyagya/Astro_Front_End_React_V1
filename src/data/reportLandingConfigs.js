@@ -648,3 +648,267 @@ export const familyConfig = {
 
   whyChoose: SHARED_WHY_CHOOSE,
 };
+
+// ─── MANGLIK DOSHA ─────────────────────────────────────────────
+
+export const manglikConfig = {
+  slug: 'love',
+  icon: 'fa-fire',
+  iconColor: '#ff4757',
+  title: 'Manglik Dosha Analysis & Remedies',
+  tagline: 'Is Mars blocking your marriage? Get a complete Mangal Dosha assessment with severity scoring, cancellation checks, and personalized Vedic remedies.',
+  metaDescription: 'Manglik Dosha analysis — Mars in 1st/4th/7th/8th/12th house check, dosha severity scoring, BPHS cancellation conditions, and personalized Vedic remedies for marriage.',
+  priceCents: 2499,
+  originalPriceCents: 4499,
+  pages: 30,
+  deliveryHours: 4,
+  stickyCtaEnabled: true,
+  urgencyBadge: null,
+  showCoverage: false,
+
+  statsBar: [
+    { value: '14', label: 'Cancellation Rules Checked' },
+    { value: '50K+', label: 'Reports Delivered' },
+    { value: '93%', label: 'Clients Found Cancellation' },
+    { value: '4.9/5', label: 'Customer Rating' },
+  ],
+
+  problemStatement: {
+    painTitle: 'The Manglik Myth Is Ruining Lives',
+    painText: 'Most astrologers check only 2-3 cancellation conditions and declare you "Manglik" — scaring families, delaying marriages, and causing unnecessary anxiety. Generic websites give yes/no answers with zero nuance.',
+    solutionTitle: 'We Check All 14 Classical Cancellation Rules',
+    solutionText: 'Our analysis checks every BPHS cancellation condition, scores severity on a 0-100 scale, verifies with Navamsa (D9), and gives you a clear, quantified answer — not a vague scare tactic.',
+  },
+
+  comparisonTable: {
+    title: 'Manglik Analysis: Us vs. Everyone Else',
+    subtitle: 'Most services check 2-3 rules. We check all 14 from BPHS.',
+    themLabel: 'Generic Sites',
+    usLabel: 'Astro Yagya',
+    rows: [
+      { feature: 'Mars placement check', them: true, us: true },
+      { feature: 'Cancellation conditions', them: '2-3 only', us: 'All 14 (BPHS)' },
+      { feature: 'Severity scoring (0-100)', them: false, us: true },
+      { feature: 'Navamsa (D9) cross-check', them: false, us: true },
+      { feature: 'Moon-based Manglik check', them: false, us: true },
+      { feature: 'Marriage timing windows', them: false, us: true },
+      { feature: 'Partner matching guide', them: false, us: true },
+      { feature: 'Personalized remedies', them: 'Generic list', us: 'Safety-checked, per chart' },
+      { feature: 'Independent verification', them: false, us: true },
+      { feature: 'Classical source citations', them: false, us: 'BPHS, Phaladeepika' },
+    ],
+  },
+
+  insideItems: [
+    {
+      icon: 'fa-search',
+      title: 'Manglik Status Determination',
+      description: 'Precise Mars placement analysis across all 5 classical houses (1st, 4th, 7th, 8th, 12th) from both Lagna and Moon.',
+      highlights: ['Lagna-based Manglik check', 'Moon-based Manglik check', 'Partial vs. full Manglik classification'],
+    },
+    {
+      icon: 'fa-balance-scale',
+      title: 'Dosha Severity Scoring',
+      description: 'Not all Manglik Doshas are equal. We score severity based on Mars dignity, house lordship, and aspect patterns.',
+      highlights: ['0-100 severity scale', 'Mars sign & dignity factor', 'Aspect-based aggravation or mitigation'],
+    },
+    {
+      icon: 'fa-shield-alt',
+      title: 'Cancellation Conditions (BPHS)',
+      description: '14 classical cancellation rules from Brihat Parashara Hora Shastra — most astrologers check only 2-3.',
+      highlights: ['Jupiter aspect cancellation', 'Venus conjunction in 7th', 'Mars in own sign/exaltation', 'Saturn in 1st/4th/7th/8th/12th (mutual Manglik)', 'Navamsa-level cancellation check'],
+    },
+    {
+      icon: 'fa-ring',
+      title: 'Marriage Compatibility Impact',
+      description: 'How your Manglik status affects partner matching — and what to look for in a compatible chart.',
+      highlights: ['Double Manglik compatibility', 'Manglik-to-non-Manglik risk assessment', 'Nakshatra-based mitigation'],
+    },
+    {
+      icon: 'fa-clock',
+      title: 'Marriage Timing Windows',
+      description: 'When Mars-related obstacles ease and marriage windows open — precise Dasha and transit analysis.',
+      highlights: ['Jupiter transit over 7th house', 'Venus activation periods', 'Mars pacification windows'],
+    },
+    {
+      icon: 'fa-gem',
+      title: 'Personalized Remedies',
+      description: 'Classical remedies grounded in BPHS and Phaladeepika — not generic internet advice.',
+      highlights: ['Mangal Shanti Puja guidance', 'Red Coral suitability check (with safety)', 'Hanuman Chalisa & Kumbh Vivah details', 'Charity and fasting prescriptions'],
+    },
+  ],
+
+  sampleSnapshot: {
+    title: 'Manglik Dosha Assessment',
+    subtitle: 'Sample — Born 14 Feb 1995, Jaipur',
+    score: 45,
+    scoreLabel: 'Severity',
+    scoreColor: '#ffa502',
+    metrics: [
+      { label: 'Mars Strength', value: 62, color: '#ff4757' },
+      { label: 'Dosha Severity', value: 45, color: '#ffa502' },
+      { label: 'Cancellation Score', value: 70, color: '#2ed573' },
+      { label: 'Marriage Yoga', value: 78, color: '#7b5bff' },
+    ],
+    findings: [
+      { type: 'warning', text: 'Manglik Dosha present — Mars in 7th house from Lagna' },
+      { type: 'positive', text: 'Partial cancellation — Jupiter aspects 7th house, reducing severity by 40%' },
+      { type: 'positive', text: 'Mars in own sign (Aries) — dosha intensity naturally reduced per BPHS' },
+      { type: 'neutral', text: 'Marriage window 2026-2027 — Venus Mahadasha + Jupiter transit favorable' },
+    ],
+  },
+
+  features: [
+    { icon: 'fa-fire', title: 'Mars Placement Check', description: 'Complete analysis of Mars in all 12 houses from both Lagna and Moon chart.', color: '#ff4757' },
+    { icon: 'fa-check-double', title: '14 Cancellation Rules', description: 'Every classical BPHS cancellation condition checked — not just the common 2-3.', color: '#2ed573' },
+    { icon: 'fa-tachometer-alt', title: 'Severity Scoring', description: 'Quantified 0-100 severity scale based on Mars dignity, aspects, and house lordship.', color: '#ffa502' },
+    { icon: 'fa-moon', title: 'Navamsa Verification', description: 'D9 chart cross-check confirms whether dosha persists in the marriage chart.', color: '#70a1ff' },
+    { icon: 'fa-user-friends', title: 'Partner Matching Guide', description: 'What to look for in a partner\'s chart to neutralize Manglik effects.', color: '#a29bfe' },
+    { icon: 'fa-pray', title: 'Classical Remedies', description: 'Gemstones, mantras, pujas, and lifestyle remedies with safety checks.', color: '#eccc68' },
+  ],
+
+  planetsCovered: ['Mars (Mangal)', 'Jupiter (Cancellation)', 'Venus (Marriage)', 'Saturn (Delay)', 'Rahu (Unconventional)', 'Moon (Emotional)', 'Sun (Authority)'],
+  housesCovered: ['1st (Self)', '4th (Happiness)', '7th (Marriage)', '8th (Longevity)', '12th (Bed Pleasures)', 'D9 Navamsa', 'Upapada Lagna'],
+
+  testimonials: [
+    { name: 'Pooja & Arun', location: 'Pune, India', quote: 'Everyone said I was Manglik and should not marry before 28. This report showed 3 cancellation conditions — I married happily at 25. The severity score gave us confidence.', highlight: 'Cancellation Found' },
+    { name: 'Ritu S.', location: 'Bhopal, India', quote: 'The Kumbh Vivah was recommended as a remedy. After performing it with proper guidance, we got married within 6 months. The timing windows were precise.', highlight: 'Remedy Worked' },
+    { name: 'Vikrant M.', location: 'Sydney, Australia', quote: 'My parents were worried about my Manglik status. The detailed severity scoring (only 32/100) and Jupiter cancellation put everyone at ease. Worth every rupee.', highlight: 'Family Relieved' },
+  ],
+
+  faqs: null,
+  whyChoose: null,
+};
+
+// ─── BIRTH CHART ANALYSIS (PREMIUM) ────────────────────────────
+
+export const birthChartAnalysisConfig = {
+  slug: 'birth-chart-analysis',
+  icon: 'fa-chart-pie',
+  iconColor: '#7b5bff',
+  title: 'Complete Birth Chart Analysis',
+  tagline: 'Your definitive Vedic birth chart — 50+ pages of planetary positions, Dasha timelines, divisional charts, yogas, and AI-validated life predictions.',
+  metaDescription: 'Premium Vedic birth chart analysis — Lagna chart, Navamsa, Dashamsa, all 16 Vargas, Vimshottari Dasha, Ashtakavarga, Yogas, transit forecast, and personalized remedies.',
+  priceCents: 4999,
+  originalPriceCents: 8999,
+  pages: 50,
+  deliveryHours: 6,
+  stickyCtaEnabled: true,
+  urgencyBadge: null,
+  showCoverage: false,
+
+  statsBar: [
+    { value: '16', label: 'Divisional Charts' },
+    { value: '50+', label: 'Pages of Analysis' },
+    { value: '96', label: 'Rule Primitives' },
+    { value: '6', label: 'Life Areas Covered' },
+  ],
+
+  problemStatement: {
+    painTitle: 'Most "Birth Charts" Online Are Just Sun-Sign Horoscopes',
+    painText: 'Free astrology sites give you a D1 chart and a paragraph of generic text. No divisional charts, no Dasha timeline, no quantitative scores, no remedies. You walk away with the same vague "predictions" everyone else gets.',
+    solutionTitle: '50+ Pages of Precision Vedic Analysis',
+    solutionText: 'We compute all 16 divisional charts (D1-D60), full 120-year Vimshottari Dasha, Ashtakavarga scores, Shadbala strength, yoga identification, and transit forecast. Every prediction is independently verified against your actual chart data before delivery.',
+  },
+
+  comparisonTable: {
+    title: 'Birth Chart Analysis: The Real Deal vs. Generic',
+    subtitle: 'What you actually get matters more than what the label says.',
+    themLabel: 'Free Sites / Basic Apps',
+    usLabel: 'Astro Yagya Premium',
+    rows: [
+      { feature: 'D1 Rashi chart', them: true, us: true },
+      { feature: 'Divisional charts', them: 'D9 only', us: 'All 16 (D1-D60)' },
+      { feature: 'Vimshottari Dasha', them: 'Basic', us: '120-year with interpretations' },
+      { feature: 'Ashtakavarga scores', them: false, us: true },
+      { feature: 'Shadbala strength', them: false, us: '6-fold scoring' },
+      { feature: 'Yoga identification', them: '1-2 yogas', us: '10+ categories, scored' },
+      { feature: 'Transit forecast', them: false, us: '10-year forward' },
+      { feature: 'AI interpretation', them: false, us: 'Independently verified' },
+      { feature: 'Personalized remedies', them: 'Generic', us: 'Chart-specific with safety' },
+      { feature: 'Source citations', them: false, us: 'BPHS, Phaladeepika, Jaimini' },
+      { feature: 'Pages of analysis', them: '1-2', us: '50+' },
+    ],
+  },
+
+  insideItems: [
+    {
+      icon: 'fa-compass',
+      title: 'Lagna & Planetary Analysis',
+      description: 'Complete birth chart with all 9 planets, ascendant, and Nakshatra analysis — the foundation of everything.',
+      highlights: ['Ascendant lord strength & dignity', 'All 9 planets: sign, house, Nakshatra, pada', 'Combustion, retrogression, exaltation status'],
+    },
+    {
+      icon: 'fa-layer-group',
+      title: '16 Divisional Charts (D1-D60)',
+      description: 'Not just D1 and D9 — full Shodasvarga (16 divisional charts) for granular life-area analysis.',
+      highlights: ['D1 Rashi, D9 Navamsa, D10 Dasamsa', 'D2 Hora (wealth), D3 Drekkana (siblings)', 'D7 Saptamsa (children), D12 Dwadasamsa (parents)', 'D24 Chaturvimsamsa (education), D30 Trimsamsa (health)'],
+    },
+    {
+      icon: 'fa-clock',
+      title: 'Vimshottari Dasha Timeline',
+      description: '120-year Dasha tree with Mahadasha, Antardasha, and Pratyantardasha — your life roadmap.',
+      highlights: ['Current Dasha period highlighted', 'Key transition dates for next 20 years', 'Dasha-Bhukti interpretation for major periods'],
+    },
+    {
+      icon: 'fa-star',
+      title: 'Yoga Identification',
+      description: 'All classical yogas in your chart — Rajayoga, Dhana Yoga, Panch Mahapurusha, Gajakesari, and more.',
+      highlights: ['10+ yoga categories scanned', 'Strength and activation timing', 'Rare yoga identification (Viparita, Neechabhanga)'],
+    },
+    {
+      icon: 'fa-chart-bar',
+      title: 'Ashtakavarga & Shadbala',
+      description: 'Quantitative planetary strength analysis — which planets are truly powerful in your chart.',
+      highlights: ['BAV and SAV scores', 'Shadbala 6-fold strength', 'Vimshopaka dignity scores across Vargas'],
+    },
+    {
+      icon: 'fa-bullseye',
+      title: 'Life Predictions & Remedies',
+      description: 'Career, marriage, health, wealth, education, and spiritual — all 6 life areas covered with timing and remedies.',
+      highlights: ['Independently verified predictions', '10-year transit forecast', 'Gemstone recommendations with safety checks', 'Mantra and lifestyle prescriptions'],
+    },
+  ],
+
+  sampleSnapshot: {
+    title: 'Complete Birth Chart Analysis',
+    subtitle: 'Sample — Born 15 Aug 1990, Mumbai',
+    score: 82,
+    scoreLabel: 'Chart Strength',
+    scoreColor: '#7b5bff',
+    metrics: [
+      { label: 'Lagna Strength', value: 85, color: '#2ed573' },
+      { label: 'Yoga Count', value: 78, color: '#7b5bff' },
+      { label: 'Dasha Favorability', value: 72, color: '#ffa502' },
+      { label: 'Transit Outlook', value: 88, color: '#2ed573' },
+    ],
+    findings: [
+      { type: 'positive', text: 'Gajakesari Yoga — Jupiter in Kendra from Moon, enhancing wisdom and prosperity' },
+      { type: 'positive', text: '3 Rajayogas identified — strong leadership and authority potential' },
+      { type: 'warning', text: 'Sade Sati begins 2026 — Saturn transit over natal Moon requires preparation' },
+      { type: 'neutral', text: 'Mercury Mahadasha starting 2027 — excellent for communication, business, and intellectual pursuits' },
+    ],
+  },
+
+  features: [
+    { icon: 'fa-chart-pie', title: 'D1 Rashi Chart', description: 'The fundamental birth chart — all planets, houses, aspects, and conjunctions analyzed.', color: '#7b5bff' },
+    { icon: 'fa-moon', title: 'D9 Navamsa', description: 'The soul chart — marriage quality, inner nature, and spiritual potential.', color: '#a29bfe' },
+    { icon: 'fa-chess-king', title: 'D10 Dasamsa', description: 'Career and profession chart — your professional destiny decoded.', color: '#ffa502' },
+    { icon: 'fa-stream', title: '120-Year Dasha', description: 'Complete Vimshottari timeline with interpretations for every major period.', color: '#70a1ff' },
+    { icon: 'fa-star', title: 'Yoga Scanner', description: '10+ yoga types identified, scored, and timed for activation.', color: '#eccc68' },
+    { icon: 'fa-brain', title: 'Independently Verified', description: 'Every prediction is reviewed and validated against your actual chart data before delivery.', color: '#2ed573' },
+  ],
+
+  planetsCovered: ['Sun (Soul)', 'Moon (Mind)', 'Mars (Energy)', 'Mercury (Intellect)', 'Jupiter (Wisdom)', 'Venus (Love)', 'Saturn (Karma)', 'Rahu (Desire)', 'Ketu (Liberation)'],
+  housesCovered: ['All 12 Houses', 'D1-D60 (16 Vargas)', 'Ashtakavarga Grid', 'Shadbala Scores', 'Chara Karakas', 'Nakshatra Padas', 'Bhava Chalit'],
+
+  testimonials: [
+    { name: 'Aditya K.', location: 'Mumbai, India', quote: 'I have consulted 3 astrologers over 10 years. This 50-page report had more accurate detail than all of them combined. The Dasha timeline was a revelation.', highlight: '10x Depth' },
+    { name: 'Nisha R.', location: 'Bangalore, India', quote: 'The independent verification process is what convinced me. Every claim references the actual chart data — no vague predictions. The yoga identification found 4 yogas my previous astrologer missed.', highlight: 'Verified Analysis' },
+    { name: 'Alex W.', location: 'New York, USA', quote: 'I was skeptical of online astrology. The 16 divisional charts and Ashtakavarga analysis proved this is the real deal — computational precision meets classical wisdom.', highlight: 'Skeptic Converted' },
+    { name: 'Sunita M.', location: 'Delhi, India', quote: 'Bought this for my son\'s career guidance. The D10 analysis and career timing windows helped him decide when to switch jobs. Promotion came in the exact predicted month.', highlight: 'Career Timing' },
+  ],
+
+  faqs: null,
+  whyChoose: null,
+};

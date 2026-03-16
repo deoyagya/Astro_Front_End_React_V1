@@ -196,7 +196,7 @@ export default function SiteHeader({ active = 'home' }) {
                       <li><a href="/birth-chart" onClick={(e) => handleProtectedNav(e, '/birth-chart')}><i className="fas fa-chart-pie"></i> Free Kundli Generation</a></li>
                       <li><a href="/compatibility" onClick={(e) => handleProtectedNav(e, '/compatibility')}><i className="fas fa-ring"></i> Kundli Matching</a></li>
                       <li><a href="/manglik-dosha" onClick={(e) => handleProtectedNav(e, '/manglik-dosha')}><i className="fas fa-exclamation-triangle"></i> Manglik Dosha Remedies</a></li>
-                      <li><a href="/reports" onClick={(e) => handleProtectedNav(e, '/reports')}><i className="fas fa-file-pdf"></i> Birth Chart Analysis (Premium)</a></li>
+                      <li><a href="/birth-chart-analysis" onClick={(e) => handleProtectedNav(e, '/birth-chart-analysis')}><i className="fas fa-file-pdf"></i> Birth Chart Analysis (Premium)</a></li>
                     </ul>
                   </li>
                   <li>

@@ -15,6 +15,8 @@ import EducationReportPage from './pages/EducationReportPage';
 import HealthReportPage from './pages/HealthReportPage';
 import SpiritualReportPage from './pages/SpiritualReportPage';
 import FamilyReportPage from './pages/FamilyReportPage';
+import ManglikDoshaPage from './pages/ManglikDoshaPage';
+import BirthChartAnalysisPage from './pages/BirthChartAnalysisPage';
 import MyReportsPage from './pages/MyReportsPage';
 import OrderPage from './pages/OrderPage';
 import PaymentPage from './pages/PaymentPage';
@@ -98,6 +100,8 @@ export default function App() {
         <Route path="/health-report" element={<HealthReportPage />} />
         <Route path="/spiritual-report" element={<SpiritualReportPage />} />
         <Route path="/family-report" element={<FamilyReportPage />} />
+        <Route path="/manglik-dosha" element={<ManglikDoshaPage />} />
+        <Route path="/birth-chart-analysis" element={<BirthChartAnalysisPage />} />
         <Route path="/my-reports" element={<ProtectedRoute><MyReportsPage /></ProtectedRoute>} />
         <Route path="/order" element={<ProtectedRoute><OrderPage /></ProtectedRoute>} />
         <Route path="/my-orders" element={<ProtectedRoute><MyOrdersPage /></ProtectedRoute>} />
