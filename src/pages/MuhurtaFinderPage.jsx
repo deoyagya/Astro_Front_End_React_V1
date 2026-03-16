@@ -367,7 +367,7 @@ export default function MuhurtaFinderPage() {
     setRazorpayOrder(null);
     if (result.verified) {
       // Payment verified — redirect to success
-      window.location.href = `/checkout-return?payment=success&gateway=razorpay`;
+      window.location.href = `/checkout/return?payment=success&gateway=razorpay`;
     } else {
       setError(result.error || 'Payment verification failed. Please contact support.');
     }
