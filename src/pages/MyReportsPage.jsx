@@ -12,6 +12,8 @@ const REPORT_TYPE_MAP = {
   life_reading: { icon: 'fa-scroll', label: 'Life Reading Report' },
   career: { icon: 'fa-briefcase', label: 'Career & Finance Report' },
   love: { icon: 'fa-heart', label: 'Love & Marriage Report' },
+  manglik: { icon: 'fa-fire', label: 'Manglik Dosha Analysis & Remedies' },
+  'birth-chart-analysis': { icon: 'fa-chart-pie', label: 'Complete Birth Chart Analysis' },
   education: { icon: 'fa-brain', label: 'Education & Intelligence Report' },
   health: { icon: 'fa-spa', label: 'Health & Wellness Report' },
   spiritual: { icon: 'fa-om', label: 'Spiritual Growth Report' },

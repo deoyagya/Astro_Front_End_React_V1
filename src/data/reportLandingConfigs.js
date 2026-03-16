@@ -652,7 +652,7 @@ export const familyConfig = {
 // ─── MANGLIK DOSHA ─────────────────────────────────────────────
 
 export const manglikConfig = {
-  slug: 'love',
+  slug: 'manglik',
   icon: 'fa-fire',
   iconColor: '#ff4757',
   title: 'Manglik Dosha Analysis & Remedies',
