@@ -53,8 +53,10 @@ export default function CheckoutReturnPage() {
     const checkStatus = async () => {
       try {
         const data = await api.get(`/v1/payment/session-status?session_id=${sessionId}`);
+        const isPaid = data?.payment_status === 'paid';
+        const isComplete = data?.status === 'complete';
 
-        if (data.status === 'complete') {
+        if (isComplete || isPaid) {
           setStatus('complete');
           setEmail(data.customer_email || '');
           if (data.order_type) setOrderType(data.order_type);

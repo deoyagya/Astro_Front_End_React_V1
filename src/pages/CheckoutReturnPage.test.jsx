@@ -86,4 +86,25 @@ describe('CheckoutReturnPage', () => {
     expect(mocks.refreshUserMock).toHaveBeenCalledTimes(1);
     expect(mocks.navigateMock).toHaveBeenCalledWith('/my-reports?tab=questions&order=order-123', { replace: true });
   });
+
+  it('treats a paid stripe session as successful even if status is still open', async () => {
+    mocks.currentSearchParams = new URLSearchParams('session_id=cs_test_456&type=question');
+    mocks.apiGetMock.mockResolvedValue({
+      status: 'open',
+      payment_status: 'paid',
+      order_type: 'question',
+      order_id: 'order-456',
+    });
+
+    render(<CheckoutReturnPage />);
+
+    await act(async () => {
+      await Promise.resolve();
+      await Promise.resolve();
+    });
+
+    expect(screen.getByText(/Payment Successful/i)).toBeInTheDocument();
+    expect(mocks.refreshUserMock).toHaveBeenCalledTimes(1);
+    expect(mocks.navigateMock).toHaveBeenCalledWith('/my-reports?tab=questions&order=order-456', { replace: true });
+  });
 });
