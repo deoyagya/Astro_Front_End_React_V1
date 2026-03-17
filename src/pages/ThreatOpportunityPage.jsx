@@ -7,12 +7,13 @@ import TemporalForecastPage from './mydata/TemporalForecastPage';
 import '../styles/mydata.css';
 
 function ThreatOpportunityInner() {
-  const bd = useBirthData({ reportType: 'temporal_forecast' });
+  const bd = useBirthData({ reportType: 'temporal_forecast', skipAutoLoad: true });
   const { loadBirthData, clearData, setChartBundle } = useMyData();
   const [savedCharts, setSavedCharts] = useState([]);
   const [selectedChartId, setSelectedChartId] = useState('');
   const [chartLoading, setChartLoading] = useState(false);
   const [formError, setFormError] = useState('');
+  const [viewMode, setViewMode] = useState('simple');
   const fetchRequestId = useRef(0);
 
   useEffect(() => {
@@ -28,7 +29,10 @@ function ThreatOpportunityInner() {
   const handleChartSelect = (chartId) => {
     setSelectedChartId(chartId);
     clearData();
-    if (!chartId) return;
+    if (!chartId) {
+      bd.resetBirthData();
+      return;
+    }
 
     const chart = savedCharts.find((entry) => entry.id === chartId);
     if (!chart) return;
@@ -67,6 +71,12 @@ function ThreatOpportunityInner() {
 
   const handleLoad = () => {
     setFormError('');
+    if (!selectedChartId) {
+      clearData();
+      bd.resetBirthData();
+      setFormError('Please select a saved chart before loading the forecast.');
+      return;
+    }
     const err = bd.validate();
     if (err) {
       setFormError(err);
@@ -121,12 +131,29 @@ function ThreatOpportunityInner() {
                 <><i className="fas fa-bolt"></i> Load Forecast</>
               )}
             </button>
+
+            <div className="tf-view-toggle tf-shell-view-toggle" role="tablist" aria-label="Forecast detail level">
+              <button
+                className={`tf-view-toggle-btn ${viewMode === 'simple' ? 'active' : ''}`}
+                onClick={() => setViewMode('simple')}
+                type="button"
+              >
+                Simple
+              </button>
+              <button
+                className={`tf-view-toggle-btn ${viewMode === 'advanced' ? 'active' : ''}`}
+                onClick={() => setViewMode('advanced')}
+                type="button"
+              >
+                Advanced
+              </button>
+            </div>
           </div>
 
           {formError && <p className="mydata-form-error">{formError}</p>}
 
           <div className="mydata-content-area">
-            <TemporalForecastPage />
+            <TemporalForecastPage viewMode={viewMode} selectedChartId={selectedChartId} />
           </div>
         </div>
       </div>

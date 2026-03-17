@@ -104,16 +104,21 @@ const INTENSITY_CONFIG = {
   low:      { badge: 'tf-badge-low',       label: 'Low' },
 };
 
-/** Range slider presets — auto-interval keeps data points manageable. */
-const RANGE_PRESETS = [
-  { label: '3 Months',  days: 90,   interval: 7  },
-  { label: '6 Months',  days: 180,  interval: 7  },
-  { label: '1 Year',    days: 365,  interval: 14 },
-  { label: '2 Years',   days: 730,  interval: 14 },
-  { label: '5 Years',   days: 1825, interval: 60 },
-  { label: '10 Years',  days: 3650, interval: 60 },
-  { label: '20 Years',  days: 7300, interval: 90 },
-];
+const MAX_TIMELINE_MONTHS = 240;
+
+function addMonths(baseDate, monthOffset) {
+  const next = new Date(baseDate);
+  next.setHours(0, 0, 0, 0);
+  next.setMonth(next.getMonth() + monthOffset);
+  return next;
+}
+
+function formatMonthYear(value) {
+  return value.toLocaleDateString('en-AU', {
+    month: 'short',
+    year: 'numeric',
+  });
+}
 
 /** Custom tooltip for the timeline Recharts area chart. */
 function TimelineTooltip({ active, payload }) {
@@ -136,8 +141,104 @@ function TimelineTooltip({ active, payload }) {
   );
 }
 
+function formatDisplayDate(value) {
+  if (!value) return 'TBD';
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return String(value);
+  return date.toLocaleDateString('en-AU', {
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric',
+  });
+}
 
-export default function TemporalForecastPage() {
+function getSimpleTone(windowType) {
+  if (windowType === 'opportunity') return 'Favourable period';
+  if (windowType === 'threat') return 'Caution period';
+  return 'Mixed period';
+}
+
+function buildSimpleSummary(forecast) {
+  const dateRange = `${formatDisplayDate(forecast.start)} to ${formatDisplayDate(forecast.end)}`;
+  if (forecast.window_type === 'opportunity') {
+    return `This looks like a supportive phase for ${forecast.premium_label.toLowerCase()} from ${dateRange}. The stronger indicators currently outweigh the cautions.`;
+  }
+  if (forecast.window_type === 'threat') {
+    return `This looks like a caution-heavy phase for ${forecast.premium_label.toLowerCase()} from ${dateRange}. Move more carefully while the pressure points are active.`;
+  }
+  return `This period is mixed for ${forecast.premium_label.toLowerCase()} from ${dateRange}. There is progress available, but it comes with trade-offs and timing sensitivity.`;
+}
+
+function buildSimpleAction(forecast) {
+  if (forecast.window_type === 'opportunity') {
+    return 'Lean into the opening, but act with structure so the gains hold.';
+  }
+  if (forecast.window_type === 'threat') {
+    return 'Slow down, reduce avoidable risk, and focus on protection before expansion.';
+  }
+  return 'Take selective action only in the strongest pockets and avoid overcommitting.';
+}
+
+function buildSimpleReason(forecast) {
+  const reasons = [];
+  if (forecast.primary_trigger) reasons.push(forecast.primary_trigger);
+  if (forecast.double_transit && forecast.double_transit_houses?.length) {
+    reasons.push(`Double transit support is active on houses ${forecast.double_transit_houses.join(', ')}`);
+  }
+  if (forecast.sade_sati_phase && forecast.sade_sati_phase !== 'none') {
+    reasons.push(`Sade Sati is in its ${forecast.sade_sati_phase} phase`);
+  }
+  if (forecast.dasha_path) {
+    reasons.push(`The active dasha line is ${forecast.dasha_path}`);
+  }
+  return reasons.slice(0, 3);
+}
+
+function getWindowApproach(windowType) {
+  if (windowType === 'opportunity') {
+    return 'Take action in a structured way and use the opening while support is active.';
+  }
+  if (windowType === 'threat') {
+    return 'Slow down, protect against avoidable risk, and prioritise remedies and caution.';
+  }
+  return 'Stay selective. This is a transitional period with both openings and pressure points.';
+}
+
+function clamp(value, min, max) {
+  return Math.min(max, Math.max(min, value));
+}
+
+function buildTimelineSegments(points = []) {
+  if (!Array.isArray(points) || points.length === 0) return [];
+  const segments = [];
+  let current = {
+    type: points[0].window_type,
+    start: points[0].date,
+    end: points[0].date,
+    maxScore: points[0].score || 0,
+  };
+
+  for (let i = 1; i < points.length; i += 1) {
+    const point = points[i];
+    if (point.window_type === current.type) {
+      current.end = point.date;
+      current.maxScore = Math.max(current.maxScore, point.score || 0);
+      continue;
+    }
+    segments.push(current);
+    current = {
+      type: point.window_type,
+      start: point.date,
+      end: point.date,
+      maxScore: point.score || 0,
+    };
+  }
+  segments.push(current);
+  return segments;
+}
+
+
+export default function TemporalForecastPage({ viewMode = 'simple', selectedChartId = '' }) {
   const { birthPayload, refreshKey, hasBirthData, chartBundle } = useMyData();
   const { user } = useAuth();
   const [forecastData, setForecastData] = useState(null);
@@ -146,12 +247,13 @@ export default function TemporalForecastPage() {
   const [deliveryState, setDeliveryState] = useState({ sending: false, message: '', error: '' });
   const [filter, setFilter] = useState('all'); // all | opportunity | threat | mixed
   const [expandedCard, setExpandedCard] = useState(null);
-
   // Timeline state — keyed per life_area_id
   const [timelineData, setTimelineData] = useState({});
   const [timelineLoading, setTimelineLoading] = useState({});
   const [timelineError, setTimelineError] = useState({});
-  const [timelineRange, setTimelineRange] = useState({});
+  const [timelineStartRange, setTimelineStartRange] = useState({});
+  const [timelineEndRange, setTimelineEndRange] = useState({});
+  const [activeTimelineDrag, setActiveTimelineDrag] = useState(null);
 
   // Determine if user is premium (for LLM interpretation)
   const isPremium = user?.role === 'premium' || user?.role === 'admin';
@@ -263,8 +365,10 @@ export default function TemporalForecastPage() {
     try {
       const result = await api.postLong('/v1/temporal-forecast/deliver', {
         ...chartParams,
+        saved_chart_id: selectedChartId || undefined,
         chart_name: birthPayload?.name || user?.full_name || 'Your Chart',
         place_of_birth: birthPayload?.place_of_birth || '',
+        presentation_mode: viewMode,
         send_email: true,
       }, 120_000);
 
@@ -282,16 +386,20 @@ export default function TemporalForecastPage() {
         error: err.message || 'Failed to generate the report deliverable.',
       });
     }
-  }, [birthPayload?.name, birthPayload?.place_of_birth, chartParams, user?.full_name]);
+  }, [birthPayload?.name, birthPayload?.place_of_birth, chartParams, selectedChartId, user?.full_name, viewMode]);
 
   /** Fetch timeline for a single life area. */
-  const fetchTimeline = useCallback(async (lifeAreaId, rangeIndex) => {
+  const fetchTimeline = useCallback(async (lifeAreaId, startMonthOffset, endMonthOffset) => {
     if (!chartParams) return;
-    const preset = RANGE_PRESETS[rangeIndex ?? 0];
     const now = new Date();
-    const scanStart = now.toISOString().slice(0, 10);
-    const end = new Date(now.getTime() + preset.days * 86400000);
-    const scanEnd = end.toISOString().slice(0, 10);
+    const safeStartOffset = Math.max(0, Math.min(startMonthOffset ?? 0, MAX_TIMELINE_MONTHS - 1));
+    const safeEndOffset = Math.max(safeStartOffset + 1, Math.min(endMonthOffset ?? 6, MAX_TIMELINE_MONTHS));
+    const scanStartDate = addMonths(now, safeStartOffset);
+    const scanEndDate = addMonths(now, safeEndOffset);
+    const scanStart = scanStartDate.toISOString().slice(0, 10);
+    const scanEnd = scanEndDate.toISOString().slice(0, 10);
+    const effectiveDays = Math.max(1, Math.round((scanEndDate - scanStartDate) / 86400000));
+    const intervalDays = Math.min(90, Math.max(7, Math.round(effectiveDays / 26)));
 
     setTimelineLoading((p) => ({ ...p, [lifeAreaId]: true }));
     setTimelineError((p) => ({ ...p, [lifeAreaId]: '' }));
@@ -311,7 +419,7 @@ export default function TemporalForecastPage() {
         life_area_id: lifeAreaId,
         scan_start: scanStart,
         scan_end: scanEnd,
-        interval_days: preset.interval,
+        interval_days: intervalDays,
       }, 120_000);
       setTimelineData((p) => ({ ...p, [lifeAreaId]: result }));
     } catch (err) {
@@ -320,6 +428,63 @@ export default function TemporalForecastPage() {
       setTimelineLoading((p) => ({ ...p, [lifeAreaId]: false }));
     }
   }, [chartParams]);
+
+  const updateTimelineRangeFromClientX = useCallback((lifeAreaId, handle, clientX, trackEl) => {
+    if (!trackEl) return;
+    const rect = trackEl.getBoundingClientRect();
+    const ratio = clamp((clientX - rect.left) / rect.width, 0, 1);
+    const offset = Math.round(ratio * MAX_TIMELINE_MONTHS);
+
+    if (handle === 'start') {
+      setTimelineStartRange((p) => {
+        const currentEnd = timelineEndRange[lifeAreaId] ?? 6;
+        return {
+          ...p,
+          [lifeAreaId]: clamp(offset, 0, currentEnd - 1),
+        };
+      });
+      return;
+    }
+
+    setTimelineEndRange((p) => {
+      const currentStart = timelineStartRange[lifeAreaId] ?? 0;
+      return {
+        ...p,
+        [lifeAreaId]: clamp(offset, currentStart + 1, MAX_TIMELINE_MONTHS),
+      };
+    });
+  }, [timelineEndRange, timelineStartRange]);
+
+  useEffect(() => {
+    if (!activeTimelineDrag) return undefined;
+
+    const handlePointerMove = (event) => {
+      updateTimelineRangeFromClientX(
+        activeTimelineDrag.lifeAreaId,
+        activeTimelineDrag.handle,
+        event.clientX,
+        activeTimelineDrag.trackEl,
+      );
+    };
+
+    const handlePointerUp = () => {
+      setActiveTimelineDrag(null);
+    };
+
+    window.addEventListener('pointermove', handlePointerMove);
+    window.addEventListener('pointerup', handlePointerUp);
+
+    return () => {
+      window.removeEventListener('pointermove', handlePointerMove);
+      window.removeEventListener('pointerup', handlePointerUp);
+    };
+  }, [activeTimelineDrag, updateTimelineRangeFromClientX]);
+
+  useEffect(() => {
+    if (viewMode !== 'simple' || !expandedCard) return;
+    if (timelineData[expandedCard] || timelineLoading[expandedCard]) return;
+    fetchTimeline(expandedCard, 0, 6);
+  }, [expandedCard, fetchTimeline, timelineData, timelineLoading, viewMode]);
 
   // Filtered forecasts
   const filteredForecasts = useMemo(() => {
@@ -404,7 +569,7 @@ export default function TemporalForecastPage() {
 
   const { opportunity_count, threat_count, mixed_count, overall_type, overall_score, dasha_path, sade_sati_phase, transit_date } = forecastData;
   const overallCfg = TYPE_CONFIG[overall_type] || TYPE_CONFIG.mixed;
-
+  const today = new Date();
   return (
     <div className="tf-container">
       {/* ── Header ── */}
@@ -500,16 +665,22 @@ export default function TemporalForecastPage() {
           const cfg = TYPE_CONFIG[f.window_type] || TYPE_CONFIG.mixed;
           const intCfg = INTENSITY_CONFIG[f.intensity] || INTENSITY_CONFIG.low;
           const isExpanded = expandedCard === f.life_area_id;
+          const toggleExpandedCard = () => setExpandedCard(isExpanded ? null : f.life_area_id);
 
           return (
             <div
               key={f.life_area_id}
               className={`tf-card ${isExpanded ? 'tf-card-expanded' : ''}`}
               style={{ borderColor: cfg.color + '40' }}
-              onClick={() => setExpandedCard(isExpanded ? null : f.life_area_id)}
             >
               {/* Card Header */}
-              <div className="tf-card-header">
+              <button
+                type="button"
+                className="tf-card-header"
+                onClick={toggleExpandedCard}
+                aria-expanded={isExpanded}
+                aria-label={`${isExpanded ? 'Collapse' : 'Expand'} ${f.premium_label}`}
+              >
                 <div className="tf-card-icon" style={{ color: cfg.color }}>
                   <i className={`fas ${f.icon}`}></i>
                 </div>
@@ -525,7 +696,7 @@ export default function TemporalForecastPage() {
                     {intCfg.label}
                   </span>
                 </div>
-              </div>
+              </button>
 
               {/* Score Bar */}
               <div className="tf-score-bar">
@@ -554,63 +725,144 @@ export default function TemporalForecastPage() {
               {/* Expanded Details */}
               {isExpanded && (
                 <div className="tf-card-details">
-                  {/* Key Transits */}
-                  {f.key_transits && f.key_transits.length > 0 && (
-                    <div className="tf-detail-section">
-                      <h4><i className="fas fa-planet-ringed"></i> Key Transits</h4>
-                      <div className="tf-transit-list">
-                        {f.key_transits.map((t, idx) => (
-                          <div key={idx} className="tf-transit-item">
-                            <span className="tf-transit-planet">{t.planet}</span>
-                            <span className="tf-transit-sign">{t.sign} (H{t.house_from_lagna})</span>
-                            {t.is_retrograde && <span className="tf-retro-badge">R</span>}
-                            <span className={`tf-nature-badge tf-nature-${t.functional_nature?.replace(/_/g, '-')}`}>
-                              {t.functional_nature?.replace(/_/g, ' ')}
-                            </span>
+                  {viewMode === 'simple' ? (
+                    <>
+                      <div className="tf-detail-section">
+                        <h4><i className="fas fa-sparkles"></i> Plain-English Outlook</h4>
+                        <p className="tf-simple-intro">
+                          {buildSimpleSummary(f)}
+                        </p>
+                        {timelineLoading[f.life_area_id] && (
+                          <div className="tf-simple-loading">Preparing threat and opportunity windows...</div>
+                        )}
+                        {timelineData[f.life_area_id] && (
+                          <div className="tf-simple-table-wrap">
+                            <div className="tf-simple-table-head">
+                              <span>Duration</span>
+                              <span>Window Type</span>
+                              <span>Best Approach / Remedy</span>
+                            </div>
+                            <div className="tf-simple-table-body">
+                              {buildTimelineSegments(timelineData[f.life_area_id].points)
+                                .filter((segment) => segment.type === 'opportunity' || segment.type === 'threat')
+                                .map((segment, idx) => (
+                                  <div key={`${segment.type}-${segment.start}-${idx}`} className="tf-simple-table-row">
+                                    <div className="tf-simple-table-duration">
+                                      {formatDisplayDate(segment.start)} - {formatDisplayDate(segment.end)}
+                                    </div>
+                                    <div>
+                                      <span className={`tf-simple-window-badge tf-simple-window-${segment.type}`}>
+                                        {segment.type === 'opportunity' ? 'Opportunity' : 'Threat'}
+                                      </span>
+                                    </div>
+                                    <div className="tf-simple-table-guidance">
+                                      {getWindowApproach(segment.type)}
+                                    </div>
+                                  </div>
+                                ))}
+                              {buildTimelineSegments(timelineData[f.life_area_id].points)
+                                .filter((segment) => segment.type === 'opportunity' || segment.type === 'threat').length === 0 && (
+                                  <div className="tf-simple-table-empty">
+                                    No distinct threat or opportunity windows were found inside this selected range.
+                                  </div>
+                                )}
+                            </div>
                           </div>
-                        ))}
+                        )}
+                        {buildSimpleReason(f).length > 0 && (
+                          <div className="tf-simple-reasons-block">
+                            <div className="tf-simple-reasons-title">Why we are saying this</div>
+                            <div className="tf-simple-reasons">
+                              {buildSimpleReason(f).map((reason) => (
+                                <span key={reason} className="tf-simple-reason-chip">{reason}</span>
+                              ))}
+                            </div>
+                          </div>
+                        )}
                       </div>
-                    </div>
-                  )}
 
-                  {/* Special Indicators */}
-                  <div className="tf-detail-section tf-indicators">
-                    {f.double_transit && (
-                      <div className="tf-indicator tf-indicator-positive">
-                        <i className="fas fa-check-double"></i>
-                        <span>Double Transit (Houses {f.double_transit_houses?.join(', ')})</span>
+                      {f.interpretation && (
+                        <div className="tf-interpretation">
+                          <h4><i className="fas fa-brain"></i> AI Guidance</h4>
+                          <p>{f.interpretation}</p>
+                          <div className="tf-ai-review-note">
+                            Simple view uses the same reviewed forecast as Advanced mode. The interpretation comes from the shared generator and reviewer pipeline before it is simplified for presentation.
+                          </div>
+                        </div>
+                      )}
+                    </>
+                  ) : (
+                    <>
+                      {/* Key Transits */}
+                      {f.key_transits && f.key_transits.length > 0 && (
+                        <div className="tf-detail-section">
+                          <h4><i className="fas fa-planet-ringed"></i> Key Transits</h4>
+                          <div className="tf-transit-list">
+                            {f.key_transits.map((t, idx) => (
+                              <div key={idx} className="tf-transit-item">
+                                <span className="tf-transit-planet">{t.planet}</span>
+                                <span className="tf-transit-sign">{t.sign} (H{t.house_from_lagna})</span>
+                                {t.is_retrograde && <span className="tf-retro-badge">R</span>}
+                                <span className={`tf-nature-badge tf-nature-${t.functional_nature?.replace(/_/g, '-')}`}>
+                                  {t.functional_nature?.replace(/_/g, ' ')}
+                                </span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      <div className="tf-detail-section">
+                        <h4><i className="fas fa-calendar-alt"></i> Forecast Window</h4>
+                        <div className="tf-date-chips">
+                          <span className="tf-date-chip">
+                            <i className="fas fa-play"></i> Start: {formatDisplayDate(f.start)}
+                          </span>
+                          <span className="tf-date-chip">
+                            <i className="fas fa-flag-checkered"></i> End: {formatDisplayDate(f.end)}
+                          </span>
+                        </div>
                       </div>
-                    )}
-                    {f.sade_sati_phase !== 'none' && (
-                      <div className="tf-indicator tf-indicator-warning">
-                        <i className="fas fa-ring"></i>
-                        <span>Sade Sati — {f.sade_sati_phase} phase</span>
+
+                      {/* Special Indicators */}
+                      <div className="tf-detail-section tf-indicators">
+                        {f.double_transit && (
+                          <div className="tf-indicator tf-indicator-positive">
+                            <i className="fas fa-check-double"></i>
+                            <span>Double Transit (Houses {f.double_transit_houses?.join(', ')})</span>
+                          </div>
+                        )}
+                        {f.sade_sati_phase !== 'none' && (
+                          <div className="tf-indicator tf-indicator-warning">
+                            <i className="fas fa-ring"></i>
+                            <span>Sade Sati — {f.sade_sati_phase} phase</span>
+                          </div>
+                        )}
+                        <div className="tf-indicator">
+                          <i className="fas fa-satellite-dish"></i>
+                          <span>Dasha: {f.dasha_path} ({f.dasha_lord_nature})</span>
+                        </div>
+                        <div className="tf-indicator">
+                          <i className="fas fa-home"></i>
+                          <span>Primary Houses: {f.primary_houses?.join(', ')}</span>
+                        </div>
                       </div>
-                    )}
-                    <div className="tf-indicator">
-                      <i className="fas fa-satellite-dish"></i>
-                      <span>Dasha: {f.dasha_path} ({f.dasha_lord_nature})</span>
-                    </div>
-                    <div className="tf-indicator">
-                      <i className="fas fa-home"></i>
-                      <span>Primary Houses: {f.primary_houses?.join(', ')}</span>
-                    </div>
-                  </div>
 
-                  {/* LLM Interpretation (Premium) */}
-                  {f.interpretation && (
-                    <div className="tf-interpretation">
-                      <h4><i className="fas fa-brain"></i> AI Interpretation</h4>
-                      <p>{f.interpretation}</p>
-                    </div>
-                  )}
+                      {/* LLM Interpretation (Premium) */}
+                      {f.interpretation && (
+                        <div className="tf-interpretation">
+                          <h4><i className="fas fa-brain"></i> AI Interpretation</h4>
+                          <p>{f.interpretation}</p>
+                        </div>
+                      )}
 
-                  {/* Premium upsell if no interpretation */}
-                  {!f.interpretation && !isPremium && (
-                    <div className="tf-premium-upsell">
-                      <i className="fas fa-crown"></i>
-                      <span>Upgrade to Premium for AI-powered interpretations of each life area</span>
-                    </div>
+                      {!f.interpretation && !isPremium && (
+                        <div className="tf-premium-upsell">
+                          <i className="fas fa-crown"></i>
+                          <span>Upgrade to Premium for AI-powered interpretations of each life area</span>
+                        </div>
+                      )}
+                    </>
                   )}
 
                   {/* ── Timeline Section ── */}
@@ -619,32 +871,74 @@ export default function TemporalForecastPage() {
 
                     {/* Range Slider + Load Button */}
                     <div className="tf-timeline-controls">
-                      <label className="tf-range-label">
-                        {RANGE_PRESETS[timelineRange[f.life_area_id] ?? 0].label}
-                      </label>
-                      <div className="tf-range-slider-row">
-                        <span className="tf-range-end-label">Now</span>
-                        <input
-                          type="range"
-                          min={0}
-                          max={RANGE_PRESETS.length - 1}
-                          value={timelineRange[f.life_area_id] ?? 0}
-                          className="tf-range-slider"
-                          onClick={(e) => e.stopPropagation()}
-                          onChange={(e) => {
-                            e.stopPropagation();
-                            const idx = Number(e.target.value);
-                            setTimelineRange((p) => ({ ...p, [f.life_area_id]: idx }));
-                          }}
-                        />
-                        <span className="tf-range-end-label">20 Years</span>
+                      <div className="tf-range-control-group">
+                        <label className="tf-range-label">Select custom timeline range</label>
+                        <div className="tf-dual-range-wrap" onClick={(e) => e.stopPropagation()}>
+                          <div className="tf-dual-range-track"></div>
+                          <div
+                            className="tf-dual-range-fill"
+                            style={{
+                              left: `${((timelineStartRange[f.life_area_id] ?? 0) / MAX_TIMELINE_MONTHS) * 100}%`,
+                              width: `${(((timelineEndRange[f.life_area_id] ?? 6) - (timelineStartRange[f.life_area_id] ?? 0)) / MAX_TIMELINE_MONTHS) * 100}%`,
+                            }}
+                          ></div>
+                          <button
+                            type="button"
+                            className="tf-range-thumb tf-range-thumb-start"
+                            style={{
+                              left: `${((timelineStartRange[f.life_area_id] ?? 0) / MAX_TIMELINE_MONTHS) * 100}%`,
+                            }}
+                            onPointerDown={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              setActiveTimelineDrag({
+                                lifeAreaId: f.life_area_id,
+                                handle: 'start',
+                                trackEl: e.currentTarget.parentElement,
+                              });
+                            }}
+                            aria-label="Adjust timeline start"
+                          />
+                          <button
+                            type="button"
+                            className="tf-range-thumb tf-range-thumb-end"
+                            style={{
+                              left: `${((timelineEndRange[f.life_area_id] ?? 6) / MAX_TIMELINE_MONTHS) * 100}%`,
+                            }}
+                            onPointerDown={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              setActiveTimelineDrag({
+                                lifeAreaId: f.life_area_id,
+                                handle: 'end',
+                                trackEl: e.currentTarget.parentElement,
+                              });
+                            }}
+                            aria-label="Adjust timeline end"
+                          />
+                        </div>
+                      </div>
+                      <div className="tf-range-axis">
+                        <span>{formatMonthYear(today)}</span>
+                        <span>{formatMonthYear(addMonths(today, MAX_TIMELINE_MONTHS))}</span>
+                      </div>
+                      <div className="tf-range-summary">
+                        Timeline window: {formatDisplayDate(
+                          addMonths(today, timelineStartRange[f.life_area_id] ?? 0),
+                        )} to {formatDisplayDate(
+                          addMonths(today, timelineEndRange[f.life_area_id] ?? 6),
+                        )}
                       </div>
                       <button
                         className="tf-timeline-load-btn"
                         disabled={timelineLoading[f.life_area_id]}
                         onClick={(e) => {
                           e.stopPropagation();
-                          fetchTimeline(f.life_area_id, timelineRange[f.life_area_id] ?? 0);
+                          fetchTimeline(
+                            f.life_area_id,
+                            timelineStartRange[f.life_area_id] ?? 0,
+                            timelineEndRange[f.life_area_id] ?? 6,
+                          );
                         }}
                       >
                         {timelineLoading[f.life_area_id]
@@ -668,6 +962,9 @@ export default function TemporalForecastPage() {
                         <div className="tf-timeline-chart-wrapper" onClick={(e) => e.stopPropagation()}>
                           {/* Peak badges */}
                           <div className="tf-timeline-peaks">
+                            <span className="tf-peak-badge tf-peak-range">
+                              <i className="fas fa-calendar-alt"></i> Range: {formatDisplayDate(tl.scan_start)} to {formatDisplayDate(tl.scan_end)}
+                            </span>
                             {tl.peak_opportunity && (
                               <span className="tf-peak-badge tf-peak-opp">
                                 <i className="fas fa-arrow-up"></i> Peak Opportunity: {tl.peak_opportunity.date} (score {tl.peak_opportunity.score})
@@ -687,6 +984,26 @@ export default function TemporalForecastPage() {
                             <span><i className="fas fa-arrows-alt-h" style={{color:'#ffa502'}}></i> {tl.mixed_count} mixed</span>
                             <span className="tf-timeline-interval">Every {tl.interval_days} days</span>
                           </div>
+
+                          {viewMode === 'simple' && (
+                            <div className="tf-simple-timeline">
+                              <h5>Chronological sequence</h5>
+                              <div className="tf-simple-sequence">
+                                {buildTimelineSegments(tl.points).map((segment, idx) => (
+                                  <div key={`${segment.type}-${segment.start}-${idx}`} className={`tf-simple-segment tf-simple-segment-${segment.type}`}>
+                                    <div className="tf-simple-segment-dates">
+                                      {formatDisplayDate(segment.start)} to {formatDisplayDate(segment.end)}
+                                    </div>
+                                    <div className="tf-simple-segment-text">
+                                      {segment.type === 'opportunity' && 'Supportive period — better for action and forward movement.'}
+                                      {segment.type === 'threat' && 'Caution period — slow down and manage avoidable risks.'}
+                                      {segment.type === 'mixed' && 'Mixed period — selective action works better than full commitment.'}
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          )}
 
                           {/* Recharts Area Chart */}
                           <ResponsiveContainer width="100%" height={260}>
@@ -761,9 +1078,15 @@ export default function TemporalForecastPage() {
               )}
 
               {/* Expand indicator */}
-              <div className="tf-card-expand-hint">
+              <button
+                type="button"
+                className="tf-card-expand-hint"
+                onClick={toggleExpandedCard}
+                aria-expanded={isExpanded}
+                aria-label={`${isExpanded ? 'Collapse' : 'Expand'} ${f.premium_label} details`}
+              >
                 <i className={`fas fa-chevron-${isExpanded ? 'up' : 'down'}`}></i>
-              </div>
+              </button>
             </div>
           );
         })}

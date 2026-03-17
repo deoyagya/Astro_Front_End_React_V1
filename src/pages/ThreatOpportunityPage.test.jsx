@@ -7,6 +7,19 @@ const apiMocks = vi.hoisted(() => ({
   post: vi.fn(),
 }));
 
+const birthDataMocks = vi.hoisted(() => ({
+  applyBirthData: vi.fn(),
+  validate: vi.fn(() => null),
+  buildPayload: vi.fn(() => ({
+    name: 'Sonam',
+    dob: '1990-01-01',
+    tob: '10:30',
+    place_of_birth: 'Melbourne',
+  })),
+  saveBirthData: vi.fn(),
+  resetBirthData: vi.fn(),
+}));
+
 vi.mock('../components/PageShell', () => ({
   default: ({ children }) => <div>{children}</div>,
 }));
@@ -21,15 +34,11 @@ vi.mock('../api/client', () => ({
 vi.mock('../hooks/useBirthData', () => ({
   useBirthData: () => ({
     loaded: true,
-    applyBirthData: vi.fn(),
-    validate: vi.fn(() => null),
-    buildPayload: vi.fn(() => ({
-      name: 'Sonam',
-      dob: '1990-01-01',
-      tob: '10:30',
-      place_of_birth: 'Melbourne',
-    })),
-    saveBirthData: vi.fn(),
+    applyBirthData: birthDataMocks.applyBirthData,
+    validate: birthDataMocks.validate,
+    buildPayload: birthDataMocks.buildPayload,
+    saveBirthData: birthDataMocks.saveBirthData,
+    resetBirthData: birthDataMocks.resetBirthData,
   }),
 }));
 
@@ -65,5 +74,20 @@ describe('ThreatOpportunityPage', () => {
     expect(await screen.findByText(/Threat and Opportunity/i)).toBeInTheDocument();
     expect(screen.getByText('Temporal Forecast Body')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /Load Forecast/i })).toBeInTheDocument();
+  });
+
+  it('does not load a forecast when no saved chart is selected', async () => {
+    render(
+      <MemoryRouter>
+        <ThreatOpportunityPage />
+      </MemoryRouter>,
+    );
+
+    const loadButton = await screen.findByRole('button', { name: /Load Forecast/i });
+    fireEvent.click(loadButton);
+
+    expect(await screen.findByText(/Please select a saved chart before loading the forecast/i)).toBeInTheDocument();
+    expect(apiMocks.post).not.toHaveBeenCalled();
+    expect(birthDataMocks.resetBirthData).toHaveBeenCalled();
   });
 });
