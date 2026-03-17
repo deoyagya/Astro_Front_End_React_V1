@@ -31,7 +31,7 @@ export default function OrderPage() {
     let cancelled = false;
     (async () => {
       try {
-        const data = await api.get('/v1/payment/report-prices');
+        const data = await api.get(`/v1/payment/report-prices?currency=${encodeURIComponent(gw.currency || 'USD')}`);
         if (!cancelled) {
           setReports(data.reports || []);
           // Restore previously selected IDs from localStorage
@@ -47,7 +47,7 @@ export default function OrderPage() {
       }
     })();
     return () => { cancelled = true; };
-  }, []);
+  }, [gw.currency]);
 
   /* ── Debounced cart validation on selection change ──────── */
   const validateCart = useCallback(async (ids) => {
@@ -59,7 +59,10 @@ export default function OrderPage() {
     }
     setValidating(true);
     try {
-      const data = await api.post('/v1/payment/validate-cart', { item_ids: ids });
+      const data = await api.post('/v1/payment/validate-cart', {
+        item_ids: ids,
+        currency: gw.currency || 'USD',
+      });
       setValidatedCart(data);
       // Persist selected items
       localStorage.setItem('cart_ids', JSON.stringify(ids));
@@ -78,7 +81,7 @@ export default function OrderPage() {
     } finally {
       setValidating(false);
     }
-  }, []);
+  }, [gw.currency]);
 
   useEffect(() => {
     if (fetchingPrices) return; // Don't validate until prices are loaded
@@ -98,8 +101,8 @@ export default function OrderPage() {
 
   const displayTotal = useMemo(() => {
     if (validatedCart) return validatedCart.total_display;
-    return '$0.00';
-  }, [validatedCart]);
+    return gw.currency === 'INR' ? '₹0' : '$0.00';
+  }, [gw.currency, validatedCart]);
 
   /* ── Create payment order (Stripe or Razorpay) ────────── */
   const proceedToPayment = async () => {

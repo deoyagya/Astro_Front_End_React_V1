@@ -28,6 +28,7 @@ export default function CheckoutReturnPage() {
     const razorpayPayment = searchParams.get('payment');
     const gateway = searchParams.get('gateway');
     const typeParam = searchParams.get('type');
+    const razorpayOrderId = searchParams.get('order_id');
 
     if (typeParam) setOrderType(typeParam);
 
@@ -37,7 +38,9 @@ export default function CheckoutReturnPage() {
       localStorage.removeItem('cart');
       localStorage.removeItem('cart_ids');
       if (refreshUser) refreshUser();
-      const redirectPath = typeParam === 'question' ? '/my-reports' : '/my-reports';
+      const redirectPath = typeParam === 'question' && razorpayOrderId
+        ? `/my-reports?tab=questions&order=${encodeURIComponent(razorpayOrderId)}`
+        : '/my-reports';
       setTimeout(() => navigate(redirectPath, { replace: true }), 3000);
       return;
     }

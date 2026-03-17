@@ -2,8 +2,11 @@ import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import PageShell from '../components/PageShell';
 import EmbeddedCheckoutModal from '../components/EmbeddedCheckoutModal';
+import RazorpayCheckoutModal from '../components/RazorpayCheckoutModal';
 import { useAuth } from '../context/AuthContext';
 import { api } from '../api/client';
+import usePaymentGateway from '../hooks/usePaymentGateway';
+import { formatUsdCentsForUser } from '../utils/localPricing';
 import '../styles/ask-question.css';
 
 const PRICE_PER_QUESTION = 500; // cents
@@ -12,6 +15,7 @@ const PAGE_SIZE = 5;
 export default function AskQuestionPage() {
   const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
+  const gw = usePaymentGateway();
 
   // Catalog state
   const [catalog, setCatalog] = useState([]);
@@ -35,6 +39,7 @@ export default function AskQuestionPage() {
   const [ordering, setOrdering] = useState(false);
   const [orderError, setOrderError] = useState('');
   const [clientSecret, setClientSecret] = useState('');
+  const [razorpayOrder, setRazorpayOrder] = useState(null);
 
   // Drag state
   const [draggedQuestion, setDraggedQuestion] = useState(null);
@@ -164,7 +169,7 @@ export default function AskQuestionPage() {
 
   // Calculate totals
   const totalCents = selectedQuestions.reduce((sum, q) => sum + q.priceCents, 0);
-  const totalDollars = (totalCents / 100).toFixed(2);
+  const totalDisplay = formatUsdCentsForUser(totalCents, gw);
 
   // Group selected questions by theme for display
   const groupedByTheme = selectedQuestions.reduce((acc, q) => {
@@ -222,10 +227,18 @@ export default function AskQuestionPage() {
     try {
       const result = await api.post('/v1/questions/create-order', {
         question_ids: selectedQuestions.map((q) => q.id),
-        gateway: 'stripe',
+        gateway: gw.gateway || undefined,
+        currency: gw.currency || 'USD',
       });
 
-      if (result.client_secret) {
+      if (result.gateway === 'razorpay' && result.order_id) {
+        setRazorpayOrder({
+          orderId: result.order_id,
+          amount: result.amount,
+          currency: result.currency || 'INR',
+          razorpayKeyId: result.razorpay_key_id,
+        });
+      } else if (result.client_secret) {
         // Open Stripe Embedded Checkout modal
         setClientSecret(result.client_secret);
       } else {
@@ -352,7 +365,7 @@ export default function AskQuestionPage() {
                       )}
                     </div>
                     <div className="aq-q-actions">
-                      <span className="aq-q-price">${(q.cost_cents / 100).toFixed(2)}</span>
+                      <span className="aq-q-price">{formatUsdCentsForUser(q.cost_cents || PRICE_PER_QUESTION, gw)}</span>
                       <button
                         className="aq-add-btn"
                         onClick={() => addQuestion(q, q.lifeArea, q.theme)}
@@ -401,7 +414,7 @@ export default function AskQuestionPage() {
               {selectedQuestions.length > 0 && (
                 <div className="aq-cart-header-right">
                   <div className="aq-cart-total-badge">
-                    <span className="aq-cart-total-badge-amount">${totalDollars}</span>
+                    <span className="aq-cart-total-badge-amount">{totalDisplay}</span>
                   </div>
                   <button className="aq-clear-btn" onClick={clearAll}>
                     <i className="fas fa-trash-alt"></i> Clear All
@@ -433,7 +446,7 @@ export default function AskQuestionPage() {
                             <span className="aq-cart-item-text">{q.text}</span>
                           </div>
                           <div className="aq-cart-item-actions">
-                            <span className="aq-cart-item-price">${(q.priceCents / 100).toFixed(2)}</span>
+                            <span className="aq-cart-item-price">{formatUsdCentsForUser(q.priceCents, gw)}</span>
                             <button
                               className="aq-remove-btn"
                               onClick={() => removeQuestion(q.id)}
@@ -456,12 +469,12 @@ export default function AskQuestionPage() {
                   </div>
                   <div className="aq-calc-row">
                     <span>Price per question</span>
-                    <span>$5.00</span>
+                    <span>{formatUsdCentsForUser(PRICE_PER_QUESTION, gw)}</span>
                   </div>
                   <div className="aq-calc-divider"></div>
                   <div className="aq-calc-row aq-calc-total">
                     <span>Total</span>
-                    <span>${totalDollars}</span>
+                    <span>{totalDisplay}</span>
                   </div>
                 </div>
 
@@ -479,12 +492,12 @@ export default function AskQuestionPage() {
                   {ordering ? (
                     <><i className="fas fa-spinner fa-spin"></i> Processing...</>
                   ) : (
-                    <><i className="fas fa-lock"></i> Place Order — ${totalDollars}</>
+                    <><i className="fas fa-lock"></i> Place Order — {totalDisplay}</>
                   )}
                 </button>
 
                 <p className="aq-secure-note">
-                  <i className="fas fa-shield-alt"></i> Secure payment via Stripe. Your answers will be generated using AI-powered Vedic astrology analysis.
+                  <i className="fas fa-shield-alt"></i> Secure payment via {gw.gateway === 'razorpay' ? 'Razorpay' : 'Stripe'}. Your answers will be generated using AI-powered Vedic astrology analysis.
                 </p>
               </>
             )}
@@ -497,6 +510,25 @@ export default function AskQuestionPage() {
         <EmbeddedCheckoutModal
           clientSecret={clientSecret}
           onClose={() => setClientSecret('')}
+        />
+      )}
+      {razorpayOrder && (
+        <RazorpayCheckoutModal
+          orderId={razorpayOrder.orderId}
+          amount={razorpayOrder.amount}
+          currency={razorpayOrder.currency}
+          razorpayKeyId={razorpayOrder.razorpayKeyId}
+          verifyUrl="/v1/questions/verify-razorpay"
+          onSuccess={(result) => {
+            setRazorpayOrder(null);
+            if (result.verified) {
+              const orderQuery = result.order_id ? `&order_id=${encodeURIComponent(result.order_id)}` : '';
+              window.location.href = `/checkout/return?payment=success&gateway=razorpay&type=question${orderQuery}`;
+            } else {
+              setOrderError(result.error || 'Payment verification failed');
+            }
+          }}
+          onClose={() => setRazorpayOrder(null)}
         />
       )}
     </PageShell>

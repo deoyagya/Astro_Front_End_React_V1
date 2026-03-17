@@ -19,6 +19,7 @@ import { useStyles } from '../../context/StyleContext';
 import EmbeddedCheckoutModal from '../../components/EmbeddedCheckoutModal';
 import RazorpayCheckoutModal from '../../components/RazorpayCheckoutModal';
 import usePaymentGateway from '../../hooks/usePaymentGateway';
+import { formatUsdCentsForUser } from '../../utils/localPricing';
 import '../../styles/subscription.css';
 
 /* ---- Icon map ---- */
@@ -32,7 +33,8 @@ const PLAN_ICONS = {
 export default function SubscriptionPage() {
   const navigate = useNavigate();
   const { user, refreshUser } = useAuth();
-  const { gateway, razorpayKeyId, loading: gwLoading } = usePaymentGateway();
+  const paymentContext = usePaymentGateway();
+  const { gateway, razorpayKeyId, loading: gwLoading } = paymentContext;
 
   // Razorpay credit pack order
   const [razorpayOrder, setRazorpayOrder] = useState(null);
@@ -362,7 +364,7 @@ export default function SubscriptionPage() {
               <div key={pack.id} className="credit-pack-inline-card">
                 <div className="pack-credits-count">{pack.credit_amount}</div>
                 <div className="pack-label">{pack.name}</div>
-                <div className="pack-price-tag">${(pack.price_cents / 100).toFixed(2)}</div>
+                <div className="pack-price-tag">{formatUsdCentsForUser(pack.price_cents, paymentContext)}</div>
                 <button
                   type="button"
                   className="pack-purchase-btn"

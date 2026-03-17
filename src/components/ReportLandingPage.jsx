@@ -8,13 +8,16 @@
 import { useCallback, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import usePaymentGateway from '../hooks/usePaymentGateway';
 import ChartSelectionModal from './ChartSelectionModal';
+import { formatUsdCentsForUser } from '../utils/localPricing';
 import '../styles/report-landing.css';
 
 export default function ReportLandingPage({ config }) {
   const navigate = useNavigate();
   const location = useLocation();
   const { isAuthenticated } = useAuth();
+  const gw = usePaymentGateway();
   const [isChartModalOpen, setIsChartModalOpen] = useState(false);
 
   const {
@@ -40,8 +43,8 @@ export default function ReportLandingPage({ config }) {
     whyChoose,
   } = config;
 
-  const priceDisplay = `$${(priceCents / 100).toFixed(2)}`;
-  const originalPrice = originalPriceCents ? `$${(originalPriceCents / 100).toFixed(2)}` : null;
+  const priceDisplay = formatUsdCentsForUser(priceCents, gw);
+  const originalPrice = originalPriceCents ? formatUsdCentsForUser(originalPriceCents, gw) : null;
   const savings = originalPriceCents ? Math.round((1 - priceCents / originalPriceCents) * 100) : 0;
 
   const handleOrder = useCallback(() => {

@@ -4,6 +4,7 @@ import { api } from '../api/client';
 import usePaymentGateway from '../hooks/usePaymentGateway';
 import EmbeddedCheckoutModal from './EmbeddedCheckoutModal';
 import RazorpayCheckoutModal from './RazorpayCheckoutModal';
+import { formatUsdCentsForUser } from '../utils/localPricing';
 import '../styles/chart-selection-modal.css';
 
 export default function ChartSelectionModal({
@@ -64,8 +65,8 @@ export default function ChartSelectionModal({
 
   const totalCharts = selectedChartIds.length;
   const totalCents = totalCharts * reportPrice;
-  const unitDisplay = useMemo(() => `$${(reportPrice / 100).toFixed(2)}`, [reportPrice]);
-  const totalDisplay = useMemo(() => `$${(totalCents / 100).toFixed(2)}`, [totalCents]);
+  const unitDisplay = useMemo(() => formatUsdCentsForUser(reportPrice, gw), [gw, reportPrice]);
+  const totalDisplay = useMemo(() => formatUsdCentsForUser(totalCents, gw), [gw, totalCents]);
 
   const handleProceedToPay = useCallback(async () => {
     if (!selectedChartIds.length) {
