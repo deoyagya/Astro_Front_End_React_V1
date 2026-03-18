@@ -4,6 +4,7 @@ import PageShell from '../../components/PageShell';
 import { api } from '../../api/client';
 import '../../styles/admin.css';
 import { useStyles } from '../../context/StyleContext';
+import { normalizeReportConfigForEditor } from './reportConfigAdmin';
 
 const DIVISIONAL_CHARTS = [
   { value: 'D1',  label: 'D1 — Rashi (Birth Chart)' },
@@ -117,47 +118,30 @@ export default function AdminReportWizardPage() {
     try {
       setLoading(true);
       const config = await api.get(`/v1/admin/report-configs/${configId}`);
+      const normalized = normalizeReportConfigForEditor(config);
 
-      // Screen 1
-      setReportName(config.name || '');
-      setDescription(config.description || '');
-      setIncludeCharts(Boolean(config.include_charts));
-      setSelectedCharts(config.divisional_charts || []);
-      setAddBadge(Boolean(config.badge_text));
-      setBadgeText(config.badge_text || '');
-      setReportLength(config.report_length ?? '');
-      setSampleReportLink(config.sample_report_link || '');
-
-      // Map questions from config
-      if (config.questions && config.questions.length > 0) {
-        setSelectedQuestions(config.questions.map((q, idx) => ({
-          id: q.question_id || q.id,
-          question_id_display: q.question_id_display || q.question_id || '',
-          question_text: q.question_text || '',
-          cost_amount: q.cost_amount ?? q.cost_snapshot ?? 0,
-          cost_currency: q.cost_currency || 'USD',
-          theme_name: q.theme_name || '',
-          life_area_name: q.life_area_name || '',
-          display_order: q.display_order ?? idx,
-        })));
-      }
-
-      // Screen 2
-      setPricingMode(config.pricing_mode || 'fixed');
-      setFixedPrice(config.fixed_price != null ? (config.fixed_price / 100).toString() : '');
-      setNumIterations(config.num_iterations ?? 1);
-      setDiscountMode(config.discount_mode || 'none');
-      setDiscountValue(config.discount_value != null ? config.discount_value.toString() : '');
-      setDiscountValidity(config.discount_validity || '');
-
-      // Screen 3
-      setCreatorModel(config.creator_model || '');
-      setReviewerModel(config.reviewer_model || '');
-      setReviewIterations(config.review_iterations ?? 1);
-      setIterCostMode(config.iter_cost_mode || 'fixed');
-      setIterCostValue(config.iter_cost_value != null ? config.iter_cost_value.toString() : '');
-      setCreatorPrompt(config.creator_prompt || '');
-      setReviewerPrompt(config.reviewer_prompt || '');
+      setReportName(normalized.reportName);
+      setDescription(normalized.description);
+      setIncludeCharts(normalized.includeCharts);
+      setSelectedCharts(normalized.selectedCharts);
+      setAddBadge(normalized.addBadge);
+      setBadgeText(normalized.badgeText);
+      setReportLength(normalized.reportLength);
+      setSampleReportLink(normalized.sampleReportLink);
+      setSelectedQuestions(normalized.selectedQuestions);
+      setPricingMode(normalized.pricingMode);
+      setFixedPrice(normalized.fixedPrice);
+      setNumIterations(normalized.numIterations);
+      setDiscountMode(normalized.discountMode);
+      setDiscountValue(normalized.discountValue);
+      setDiscountValidity(normalized.discountValidity);
+      setCreatorModel(normalized.creatorModel);
+      setReviewerModel(normalized.reviewerModel);
+      setReviewIterations(normalized.reviewIterations);
+      setIterCostMode(normalized.iterCostMode);
+      setIterCostValue(normalized.iterCostValue);
+      setCreatorPrompt(normalized.creatorPrompt);
+      setReviewerPrompt(normalized.reviewerPrompt);
     } catch (err) {
       setError(err.message);
     } finally {
