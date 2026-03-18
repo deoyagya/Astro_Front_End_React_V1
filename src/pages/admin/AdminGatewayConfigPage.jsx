@@ -22,6 +22,7 @@ const EMPTY_FORM = {
 
 export default function AdminGatewayConfigPage() {
   const [configs, setConfigs] = useState([]);
+  const [countryOptions, setCountryOptions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
@@ -50,6 +51,26 @@ export default function AdminGatewayConfigPage() {
   }, []);
 
   useEffect(() => { fetchConfigs(); }, [fetchConfigs]);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function fetchCountryOptions() {
+      try {
+        const data = await api.get('/v1/admin/gateway-config/country-lookup');
+        if (!cancelled) {
+          setCountryOptions(data?.countries || []);
+        }
+      } catch {
+        if (!cancelled) {
+          setCountryOptions([]);
+        }
+      }
+    }
+
+    fetchCountryOptions();
+    return () => { cancelled = true; };
+  }, []);
 
   /* ---- Open form for add/edit ---- */
   const handleAdd = () => {
@@ -189,11 +210,20 @@ export default function AdminGatewayConfigPage() {
                   onChange={(e) => setForm((f) => ({ ...f, country_code: e.target.value }))}
                   placeholder='2-letter ISO code (e.g. IN, US) or "*" for default'
                   maxLength={2}
+                  list="gateway-country-code-options"
                   disabled={!!editingId}
                   style={{ textTransform: 'uppercase' }}
                 />
+                <datalist id="gateway-country-code-options">
+                  {countryOptions.map((item) => (
+                    <option key={item.code} value={item.code}>
+                      {item.label}
+                    </option>
+                  ))}
+                  <option value="*">Default catch-all rule</option>
+                </datalist>
                 <small style={{ color: '#8b949e', fontSize: '0.8rem' }}>
-                  Use "*" as a catch-all default for unmatched countries.
+                  Use "*" as a catch-all default for unmatched countries, or pick a suggested ISO code from the list.
                 </small>
               </div>
 
