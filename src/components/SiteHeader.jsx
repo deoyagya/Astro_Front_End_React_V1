@@ -17,6 +17,8 @@ const ADMIN_MENU_ITEMS = [
   { label: 'Rule Builder',  icon: 'fa-project-diagram', href: '/admin/rule-builder' },
   { label: 'Wizard Content', icon: 'fa-photo-video',    href: '/admin/wizard-content' },
   { label: 'Subscriptions', icon: 'fa-credit-card',     href: '/admin/subscriptions' },
+  { label: 'Users',         icon: 'fa-users',           href: '/admin/users' },
+  { label: 'Orders',        icon: 'fa-receipt',         href: '/admin/orders' },
   { label: 'Gateway Config', icon: 'fa-globe',          href: '/admin/gateway-config' },
   { label: 'Style Manager', icon: 'fa-palette',         href: '/admin/style-manager' },
   { label: 'Surveys',       icon: 'fa-poll-h',          href: '/admin/surveys' },
@@ -147,7 +149,7 @@ export default function SiteHeader({ active = 'home' }) {
           <nav className="nav">
             <ul>
               {isAdmin ? (
-                /* ---- Admin: "Manage Data" dropdown + standalone Order Management tab ---- */
+                /* ---- Admin: all admin surfaces live under one "Manage Data" dropdown ---- */
                 <>
                 <li className="nav-manage-data" ref={manageMenuRef}>
                   <button
@@ -173,16 +175,6 @@ export default function SiteHeader({ active = 'home' }) {
                       ))}
                     </div>
                   )}
-                </li>
-                <li>
-                  <a href="/admin/users" className={pathname.startsWith('/admin/users') ? 'active' : ''}>
-                    <i className="fas fa-users"></i> Users
-                  </a>
-                </li>
-                <li>
-                  <a href="/admin/orders" className={pathname.startsWith('/admin/orders') ? 'active' : ''}>
-                    <i className="fas fa-receipt"></i> Orders
-                  </a>
                 </li>
                 </>
               ) : (

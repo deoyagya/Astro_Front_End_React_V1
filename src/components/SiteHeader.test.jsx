@@ -126,4 +126,27 @@ describe('SiteHeader', () => {
 
     expect(screen.getByText('Temporal Forecast Screen')).toBeInTheDocument();
   });
+
+  it('surfaces admin users and orders inside the Manage Data menu', () => {
+    authState.value = {
+      isAuthenticated: true,
+      user: { email: 'admin@example.com', role: 'admin' },
+      logout: vi.fn(),
+    };
+
+    render(
+      <MemoryRouter initialEntries={['/admin/observability']}>
+        <Routes>
+          <Route path="/admin/observability" element={<SiteHeader active="home" />} />
+        </Routes>
+      </MemoryRouter>,
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: /Manage Data/i }));
+
+    expect(screen.getByRole('link', { name: /Users/i })).toHaveAttribute('href', '/admin/users');
+    expect(screen.getByRole('link', { name: /Orders/i })).toHaveAttribute('href', '/admin/orders');
+    expect(screen.queryByRole('link', { name: /^Users$/i })).toBeInTheDocument();
+    expect(screen.queryByRole('link', { name: /^Orders$/i })).toBeInTheDocument();
+  });
 });
