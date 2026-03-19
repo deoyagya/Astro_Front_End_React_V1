@@ -4,6 +4,7 @@ import PageShell from '../../components/PageShell';
 import { api } from '../../api/client';
 import '../../styles/admin.css';
 import { useStyles } from '../../context/StyleContext';
+import { getReportConfigTotalCostCents } from './reportConfigAdmin';
 
 export default function AdminReportsPage() {
   const { getStyle, getOverride } = useStyles('admin-reports');
@@ -118,7 +119,7 @@ export default function AdminReportsPage() {
                         </div>
                       )}
                     </td>
-                    <td style={{ fontWeight: 600, whiteSpace: 'nowrap' }}>{formatCost(config.total_cost_cents)}</td>
+                    <td style={{ fontWeight: 600, whiteSpace: 'nowrap' }}>{formatCost(getReportConfigTotalCostCents(config))}</td>
                     <td style={{ fontSize: '0.9375rem', color: '#c7cfdd' }}>
                       <div>{config.creator_model}</div>
                       <div style={{ color: '#a0a8b8', fontSize: '0.875rem' }}>+ {config.reviewer_model}</div>

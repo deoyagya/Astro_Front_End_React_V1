@@ -63,6 +63,22 @@ a {
   color: inherit;
 }
 
+.footer-link-button,
+.inline-link-button {
+  background: none;
+  border: none;
+  color: var(--accent);
+  cursor: pointer;
+  font: inherit;
+  padding: 0;
+  text-decoration: underline;
+}
+
+.footer-link-button:hover,
+.inline-link-button:hover {
+  color: var(--accent-heading);
+}
+
 img {
   max-width: 100%;
   display: block;

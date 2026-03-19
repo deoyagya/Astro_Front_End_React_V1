@@ -15,6 +15,8 @@ import EducationReportPage from './pages/EducationReportPage';
 import HealthReportPage from './pages/HealthReportPage';
 import SpiritualReportPage from './pages/SpiritualReportPage';
 import FamilyReportPage from './pages/FamilyReportPage';
+import ManglikDoshaPage from './pages/ManglikDoshaPage';
+import BirthChartAnalysisPage from './pages/BirthChartAnalysisPage';
 import MyReportsPage from './pages/MyReportsPage';
 import OrderPage from './pages/OrderPage';
 import PaymentPage from './pages/PaymentPage';
@@ -50,8 +52,10 @@ import MuhurtaFinderPage from './pages/MuhurtaFinderPage';
 import ChartWizardPage from './pages/ChartWizardPage';
 import PricingPage from './pages/PricingPage';
 import MyOrdersPage from './pages/MyOrdersPage';
+import ThreatOpportunityPage from './pages/ThreatOpportunityPage';
 import ChatWidget from './components/ChatWidget';
 import SiteGate from './components/SiteGate';
+import { LegalModalProvider } from './context/LegalModalContext';
 
 // My Data pages
 import MyDataLayout from './pages/mydata/MyDataLayout';
@@ -62,18 +66,19 @@ import BirthDetailsPage from './pages/mydata/BirthDetailsPage';
 import YogasPage from './pages/mydata/YogasPage';
 import SadeSatiPage from './pages/mydata/SadeSatiPage';
 import TransitPage from './pages/mydata/TransitPage';
-import TemporalForecastPage from './pages/mydata/TemporalForecastPage';
 import SubscriptionPage from './pages/mydata/SubscriptionPage';
 
 export default function App() {
   return (
     <SiteGate>
+    <LegalModalProvider>
     <AuthProvider>
       <Routes>
         {/* Public routes */}
         <Route path="/" element={<HomePage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/pricing" element={<PricingPage />} />
+        <Route path="/threat-opportunity" element={<ProtectedRoute><ThreatOpportunityPage /></ProtectedRoute>} />
         <Route path="/survey/:slug" element={<PublicSurveyPage />} />
 
         {/* Free tools — no login required */}
@@ -96,6 +101,8 @@ export default function App() {
         <Route path="/health-report" element={<HealthReportPage />} />
         <Route path="/spiritual-report" element={<SpiritualReportPage />} />
         <Route path="/family-report" element={<FamilyReportPage />} />
+        <Route path="/manglik-dosha" element={<ManglikDoshaPage />} />
+        <Route path="/birth-chart-analysis" element={<BirthChartAnalysisPage />} />
         <Route path="/my-reports" element={<ProtectedRoute><MyReportsPage /></ProtectedRoute>} />
         <Route path="/order" element={<ProtectedRoute><OrderPage /></ProtectedRoute>} />
         <Route path="/my-orders" element={<ProtectedRoute><MyOrdersPage /></ProtectedRoute>} />
@@ -112,7 +119,7 @@ export default function App() {
           <Route path="yogas" element={<YogasPage />} />
           <Route path="sade-sati" element={<SadeSatiPage />} />
           <Route path="transit" element={<TransitPage />} />
-          <Route path="temporal-forecast" element={<TemporalForecastPage />} />
+          <Route path="temporal-forecast" element={<Navigate to="/threat-opportunity" replace />} />
           <Route path="subscription" element={<SubscriptionPage />} />
         </Route>
 
@@ -151,6 +158,7 @@ export default function App() {
       </Routes>
       <ChatWidget />
     </AuthProvider>
+    </LegalModalProvider>
     </SiteGate>
   );
 }

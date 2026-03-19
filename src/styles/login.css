@@ -308,12 +308,14 @@
     flex-shrink: 0;
 }
 
-.terms-checkbox a {
+.terms-checkbox a,
+.terms-checkbox .inline-link-button {
     color: var(--accent, #b794ff);
     text-decoration: none;
 }
 
-.terms-checkbox a:hover {
+.terms-checkbox a:hover,
+.terms-checkbox .inline-link-button:hover {
     text-decoration: underline;
 }
 

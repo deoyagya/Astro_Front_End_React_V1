@@ -34,10 +34,21 @@ const EMPTY_FORM = {
 export default function AdminWizardContentPage() {
   const { getStyle, getOverride } = useStyles('admin-wizard-content');
   const [rows, setRows] = useState([]);
+  const [themes, setThemes] = useState([]);
+  const [lifeAreas, setLifeAreas] = useState([]);
   const [filterCat, setFilterCat] = useState('');
   const [filterStep, setFilterStep] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [previewLoading, setPreviewLoading] = useState(false);
+  const [previewError, setPreviewError] = useState(null);
+  const [previewData, setPreviewData] = useState(null);
+  const [previewForm, setPreviewForm] = useState({
+    consultation_category: 'A',
+    step_number: 0,
+    theme_id: '',
+    life_area_id: '',
+  });
 
   // Modal state
   const [showModal, setShowModal] = useState(false);
@@ -61,6 +72,40 @@ export default function AdminWizardContentPage() {
   }, [filterCat, filterStep]);
 
   useEffect(() => { fetchContent(); }, [fetchContent]);
+
+  useEffect(() => {
+    api
+      .get('/v1/admin/taxonomy/themes?include_inactive=true')
+      .then((data) => {
+        const nextThemes = Array.isArray(data) ? data : [];
+        setThemes(nextThemes);
+      })
+      .catch(() => {});
+  }, []);
+
+  useEffect(() => {
+    const activeThemeId = previewForm.theme_id;
+    if (!activeThemeId) {
+      setLifeAreas([]);
+      setPreviewForm((prev) => ({ ...prev, life_area_id: '' }));
+      return;
+    }
+
+    api
+      .get(`/v1/admin/taxonomy/themes/${activeThemeId}/life-areas?include_inactive=true`)
+      .then((data) => {
+        const nextAreas = Array.isArray(data) ? data : [];
+        setLifeAreas(nextAreas);
+        setPreviewForm((prev) => {
+          if (!prev.life_area_id) return prev;
+          const stillExists = nextAreas.some((area) => area.id === prev.life_area_id);
+          return stillExists ? prev : { ...prev, life_area_id: '' };
+        });
+      })
+      .catch(() => {
+        setLifeAreas([]);
+      });
+  }, [previewForm.theme_id]);
 
   const openCreate = () => {
     setEditingId(null);
@@ -116,6 +161,38 @@ export default function AdminWizardContentPage() {
     setForm((prev) => ({ ...prev, [field]: value }));
   };
 
+  const handlePreviewField = (field, value) => {
+    setPreviewForm((prev) => ({
+      ...prev,
+      [field]: value,
+      ...(field === 'theme_id' ? { life_area_id: '' } : {}),
+    }));
+  };
+
+  const handleLoadPreview = async () => {
+    if (!previewForm.consultation_category || previewForm.step_number === '') {
+      setPreviewError('Select a category and step number before loading the preview.');
+      return;
+    }
+
+    setPreviewLoading(true);
+    setPreviewError(null);
+    try {
+      const query = new URLSearchParams();
+      if (previewForm.theme_id) query.set('theme_id', previewForm.theme_id);
+      if (previewForm.life_area_id) query.set('life_area_id', previewForm.life_area_id);
+      const queryString = query.toString();
+      const url = `/v1/admin/wizard-content/preview/${previewForm.consultation_category}/${previewForm.step_number}${queryString ? `?${queryString}` : ''}`;
+      const data = await api.get(url);
+      setPreviewData(data);
+    } catch (err) {
+      setPreviewError(err.message);
+      setPreviewData(null);
+    } finally {
+      setPreviewLoading(false);
+    }
+  };
+
   return (
     <PageShell active="admin">
       <div className="admin-page">
@@ -142,6 +219,139 @@ export default function AdminWizardContentPage() {
             <i className="fas fa-plus"></i> Add Content
           </button>
         </div>
+
+        <section
+          style={{
+            marginBottom: '1.5rem',
+            padding: '1.2rem',
+            borderRadius: '18px',
+            border: '1px solid rgba(123, 91, 255, 0.2)',
+            background: 'rgba(20, 24, 38, 0.72)',
+          }}
+        >
+          <div style={{ marginBottom: '1rem' }}>
+            <h3 style={{ margin: '0 0 0.35rem', color: '#f0ebff' }}>
+              <i className="fas fa-eye" style={{ marginRight: '0.5rem', color: '#8d6bff' }}></i>
+              Preview Resolved Wizard Content
+            </h3>
+            <p style={{ margin: 0, color: '#a8a2bc' }}>
+              Simulate the content cascade the end user sees for a category, step, theme, and life area combination.
+            </p>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '0.75rem', alignItems: 'end' }}>
+            <div className="wiz-field">
+              <label className="wiz-label">Category</label>
+              <select
+                className="wiz-select"
+                aria-label="Preview Category"
+                value={previewForm.consultation_category}
+                onChange={(e) => handlePreviewField('consultation_category', e.target.value)}
+              >
+                {CATEGORIES.slice(1).map((c) => (
+                  <option key={c.value} value={c.value}>{c.label}</option>
+                ))}
+              </select>
+            </div>
+            <div className="wiz-field">
+              <label className="wiz-label">Step #</label>
+              <input
+                className="wiz-input"
+                type="number"
+                aria-label="Preview Step Number"
+                value={previewForm.step_number}
+                onChange={(e) => handlePreviewField('step_number', e.target.value)}
+              />
+            </div>
+            <div className="wiz-field">
+              <label className="wiz-label">Theme</label>
+              <select
+                className="wiz-select"
+                aria-label="Preview Theme"
+                value={previewForm.theme_id}
+                onChange={(e) => handlePreviewField('theme_id', e.target.value)}
+              >
+                <option value="">All themes</option>
+                {themes.map((theme) => (
+                  <option key={theme.id} value={theme.id}>{theme.name}</option>
+                ))}
+              </select>
+            </div>
+            <div className="wiz-field">
+              <label className="wiz-label">Life Area</label>
+              <select
+                className="wiz-select"
+                aria-label="Preview Life Area"
+                value={previewForm.life_area_id}
+                onChange={(e) => handlePreviewField('life_area_id', e.target.value)}
+                disabled={!previewForm.theme_id || lifeAreas.length === 0}
+              >
+                <option value="">All life areas</option>
+                {lifeAreas.map((area) => (
+                  <option key={area.id} value={area.id}>{area.name}</option>
+                ))}
+              </select>
+            </div>
+            <button className="btn-admin-add" onClick={handleLoadPreview} disabled={previewLoading}>
+              <i className={`fas ${previewLoading ? 'fa-spinner fa-spin' : 'fa-bolt'}`}></i>
+              {previewLoading ? ' Loading Preview' : ' Load Preview'}
+            </button>
+          </div>
+
+          {previewError && <div className="wiz-error" style={{ marginTop: '1rem' }}>{previewError}</div>}
+
+          {previewData && (
+            <div
+              style={{
+                marginTop: '1rem',
+                borderRadius: '16px',
+                border: '1px solid rgba(90, 102, 148, 0.28)',
+                background: 'rgba(12, 16, 28, 0.68)',
+                padding: '1rem',
+              }}
+            >
+              <div style={{ marginBottom: '0.85rem' }}>
+                <div style={{ color: '#f2eeff', fontWeight: 700, marginBottom: '0.3rem' }}>
+                  {previewData.step_label || 'No step-level label override'}
+                </div>
+                <div style={{ color: '#bdb7cf', lineHeight: 1.6 }}>
+                  {previewData.step_help || 'No step-level help text override resolved for this combination.'}
+                </div>
+              </div>
+
+              <div style={{ display: 'grid', gap: '0.75rem' }}>
+                {Object.keys(previewData.fields || {}).length === 0 ? (
+                  <div style={{ color: '#918ba7' }}>No field-level overrides resolved for this combination.</div>
+                ) : (
+                  Object.entries(previewData.fields || {}).map(([fieldKey, field]) => (
+                    <div
+                      key={fieldKey}
+                      style={{
+                        borderRadius: '14px',
+                        border: '1px solid rgba(93, 104, 146, 0.22)',
+                        background: 'rgba(20, 24, 39, 0.92)',
+                        padding: '0.9rem 1rem',
+                      }}
+                    >
+                      <div style={{ color: '#cbbcff', fontWeight: 700, marginBottom: '0.35rem' }}>
+                        {fieldKey}
+                      </div>
+                      {field.label && <div style={{ color: '#f3efff', marginBottom: '0.25rem' }}>Label: {field.label}</div>}
+                      {field.help_text && <div style={{ color: '#b8b2cb', marginBottom: '0.25rem' }}>Help: {field.help_text}</div>}
+                      {field.tooltip && <div style={{ color: '#b8b2cb', marginBottom: '0.25rem' }}>Tooltip: {field.tooltip}</div>}
+                      {(field.image_url || field.video_url) && (
+                        <div style={{ color: '#8fd2ff' }}>
+                          {field.image_url && <span style={{ marginRight: '1rem' }}>Image: {field.image_url}</span>}
+                          {field.video_url && <span>Video: {field.video_url}</span>}
+                        </div>
+                      )}
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
+          )}
+        </section>
 
         {error && <div className="wiz-error" style={{ margin: '1rem 0' }}>{error}</div>}
 

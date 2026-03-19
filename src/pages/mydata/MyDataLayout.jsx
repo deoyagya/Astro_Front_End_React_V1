@@ -6,7 +6,7 @@
  *   1. Compact birth-data form (auto-loads saved data via useBirthData)
  *   2. Dropdown navigation for 8 sub-pages
  *   3. MyDataProvider context so children share the birth payload
- *   4. Chart modal — auto-opens D1 chart on Load, re-openable via button
+ *   4. Optional inline chart — fetched on Load but only shown when user clicks Show Chart
  *   5. White content area wrapping child pages
  */
 
@@ -28,7 +28,7 @@ const TABS = [
   { label: 'Yogas & Rajyogas', icon: 'fa-sun',          to: '/my-data/yogas' },
   { label: 'Sade Sati',        icon: 'fa-moon',         to: '/my-data/sade-sati' },
   { label: 'Transit',          icon: 'fa-globe',        to: '/my-data/transit' },
-  { label: 'Temporal Forecast', icon: 'fa-hourglass-half', to: '/my-data/temporal-forecast', premium: true },
+  { label: 'Threat and Opportunity', icon: 'fa-hourglass-half', to: '/threat-opportunity', premium: true },
   { label: 'Subscription', icon: 'fa-crown', to: '/my-data/subscription' },
 ];
 
@@ -109,7 +109,7 @@ function MyDataInner() {
   /**
    * Fetch chart data with vargas for chart rendering.
    * @param {object} payload - Birth data payload
-   * @param {boolean} openModal - Whether to auto-open modal after fetch
+   * @param {boolean} openModal - Whether to auto-show the inline chart after fetch
    */
   const fetchChartDataRef = useRef(null);
   const fetchRequestId = useRef(0);
@@ -128,7 +128,7 @@ function MyDataInner() {
         setChartVisible(true);
       }
     } catch (err) {
-      console.error('Chart fetch failed:', err);
+      console.error('Chart fetch failed:', err?.message || err);
     } finally {
       if (thisRequest === fetchRequestId.current) {
         setChartLoading(false);
@@ -144,7 +144,9 @@ function MyDataInner() {
     const payload = bd.buildPayload();
     loadBirthData(payload);
     bd.saveBirthData();
-    // Fetch chart data but keep it hidden — user clicks "Show Chart" to reveal
+    // Fetch chart data in the background, but keep the chart hidden
+    // until the user explicitly clicks "Show Chart".
+    setChartVisible(false);
     fetchChartData(payload, false);
   };
 

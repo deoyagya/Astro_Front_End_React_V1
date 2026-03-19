@@ -8,6 +8,7 @@ import { useAuth } from '../context/AuthContext';
 import { useStyles } from '../context/StyleContext';
 import RazorpayCheckoutModal from '../components/RazorpayCheckoutModal';
 import usePaymentGateway from '../hooks/usePaymentGateway';
+import { formatUsdCentsForUser } from '../utils/localPricing';
 
 // Fallback hardcoded events (used if API is unavailable)
 const FALLBACK_EVENT_TYPES = [
@@ -367,7 +368,7 @@ export default function MuhurtaFinderPage() {
     setRazorpayOrder(null);
     if (result.verified) {
       // Payment verified — redirect to success
-      window.location.href = `/checkout-return?payment=success&gateway=razorpay`;
+      window.location.href = `/checkout/return?payment=success&gateway=razorpay`;
     } else {
       setError(result.error || 'Payment verification failed. Please contact support.');
     }
@@ -685,7 +686,7 @@ export default function MuhurtaFinderPage() {
                         )}
                         <span className="price-effective">
                           {pricing.effective_price_cents
-                            ? `$${(pricing.effective_price_cents / 100).toFixed(2)}`
+                            ? formatUsdCentsForUser(pricing.effective_price_cents, { currency: gwCurrency })
                             : pricing.price_display}
                         </span>
                         {pricing.discount_pct > 0 && (

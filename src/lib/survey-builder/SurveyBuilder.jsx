@@ -20,7 +20,7 @@ import DropZone from './DropZone';
 import QuestionConfigurator from './QuestionConfigurator';
 import SurveyRenderer from './SurveyRenderer';
 import { DEFAULT_QUESTION, DEFAULT_SETTINGS, COMPONENT_TYPES } from './constants';
-import { generateQuestionId } from './utils';
+import { generateQuestionId, slugify } from './utils';
 
 /* ---- Reducer ---- */
 function formReducer(state, action) {
@@ -77,6 +77,7 @@ export default function SurveyBuilder({
   const [savedFormId, setSavedFormId] = useState(formId);
   const [toast, setToast] = useState('');
   const [loading, setLoading] = useState(false);
+  const [slugTouched, setSlugTouched] = useState(Boolean(formId));
 
   // Load existing form in edit mode
   useEffect(() => {
@@ -94,6 +95,7 @@ export default function SurveyBuilder({
           settings: data.settings || { ...DEFAULT_SETTINGS },
         }});
         setSavedFormId(data.id);
+        setSlugTouched(Boolean(data.slug));
       })
       .catch(() => showToast('Failed to load survey'))
       .finally(() => setLoading(false));
@@ -103,6 +105,11 @@ export default function SurveyBuilder({
     setToast(msg);
     setTimeout(() => setToast(''), 3000);
   }
+
+  useEffect(() => {
+    if (slugTouched) return;
+    dispatch({ type: 'SET_META', key: 'slug', value: slugify(form.title || '') });
+  }, [form.title, slugTouched]);
 
   /* ---- Drag Handlers ---- */
   function handleDragEnd(event) {
@@ -196,6 +203,7 @@ export default function SurveyBuilder({
             className="sb-title-input"
             type="text"
             placeholder="Survey Title"
+            aria-label="Survey Title"
             value={form.title}
             onChange={(e) => dispatch({ type: 'SET_META', key: 'title', value: e.target.value })}
           />
@@ -203,8 +211,12 @@ export default function SurveyBuilder({
             className="sb-slug-input"
             type="text"
             placeholder="url-slug (auto-generated)"
+            aria-label="Survey Slug"
             value={form.slug}
-            onChange={(e) => dispatch({ type: 'SET_META', key: 'slug', value: e.target.value })}
+            onChange={(e) => {
+              setSlugTouched(true);
+              dispatch({ type: 'SET_META', key: 'slug', value: e.target.value });
+            }}
           />
         </div>
         <div className="sb-builder-actions">
@@ -228,9 +240,88 @@ export default function SurveyBuilder({
           className="sb-meta-input"
           type="text"
           placeholder="Description (optional)"
+          aria-label="Survey Description"
           value={form.description}
           onChange={(e) => dispatch({ type: 'SET_META', key: 'description', value: e.target.value })}
         />
+        <div className="sb-settings-grid">
+          <div className="sb-settings-card">
+            <h4 className="sb-settings-title">
+              <i className="fas fa-sliders-h" /> Form Experience
+            </h4>
+            <div className="sb-settings-fields">
+              <label className="sb-settings-field">
+                <span>Submit Button Text</span>
+                <input
+                  type="text"
+                  placeholder="Submit"
+                  aria-label="Submit Button Text"
+                  value={form.settings?.submit_text || ''}
+                  onChange={(e) => dispatch({
+                    type: 'SET_META',
+                    key: 'settings',
+                    value: { ...form.settings, submit_text: e.target.value },
+                  })}
+                />
+              </label>
+              <label className="sb-settings-field">
+                <span>Thank You Message</span>
+                <textarea
+                  rows={3}
+                  placeholder="Thank you for your feedback!"
+                  aria-label="Thank You Message"
+                  value={form.settings?.thank_you_message || ''}
+                  onChange={(e) => dispatch({
+                    type: 'SET_META',
+                    key: 'settings',
+                    value: { ...form.settings, thank_you_message: e.target.value },
+                  })}
+                />
+              </label>
+              <label className="sb-settings-toggle">
+                <input
+                  type="checkbox"
+                  aria-label="Show Progress Indicator"
+                  checked={Boolean(form.settings?.show_progress)}
+                  onChange={(e) => dispatch({
+                    type: 'SET_META',
+                    key: 'settings',
+                    value: { ...form.settings, show_progress: e.target.checked },
+                  })}
+                />
+                <span>Show progress indicator on the public survey</span>
+              </label>
+            </div>
+          </div>
+
+          <div className="sb-settings-card">
+            <h4 className="sb-settings-title">
+              <i className="fas fa-window-maximize" /> Intro and Outro Content
+            </h4>
+            <div className="sb-settings-fields">
+              <label className="sb-settings-field">
+                <span>Header HTML</span>
+                <textarea
+                  rows={5}
+                  placeholder="<p>Welcome message shown above the survey</p>"
+                  aria-label="Header HTML"
+                  value={form.header_html || ''}
+                  onChange={(e) => dispatch({ type: 'SET_META', key: 'header_html', value: e.target.value })}
+                />
+              </label>
+              <label className="sb-settings-field">
+                <span>Footer HTML</span>
+                <textarea
+                  rows={5}
+                  placeholder="<p>Closing note shown below the survey</p>"
+                  aria-label="Footer HTML"
+                  value={form.footer_html || ''}
+                  onChange={(e) => dispatch({ type: 'SET_META', key: 'footer_html', value: e.target.value })}
+                />
+              </label>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Main Content */}

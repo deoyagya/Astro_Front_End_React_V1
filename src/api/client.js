@@ -1,3 +1,9 @@
+import {
+  clearSession,
+  getAccessToken,
+  refreshStoredSession,
+} from '../auth/session';
+
 /**
  * API Client — Centralized fetch wrapper for Vedic Astro backend.
  *
@@ -19,7 +25,8 @@ const RETRY_DELAY_MS = 1_000; // 1 s delay before auto-retry
 const HEALTH_CHECK_TIMEOUT_MS = 5_000; // 5 s for health ping
 
 // HTTP methods safe to auto-retry on network failure
-const RETRYABLE_METHODS = new Set(['GET', 'POST']);
+// Restrict to idempotent reads to avoid duplicate side effects.
+const RETRYABLE_METHODS = new Set(['GET']);
 
 // User-friendly messages (never show raw browser errors)
 const USER_MESSAGES = {
@@ -176,41 +183,13 @@ function sanitizeErrorMessage(raw, statusCode) {
  * Returns true if the refresh succeeded (new tokens stored), false otherwise.
  */
 async function attemptSilentRefresh() {
-  const refreshToken = localStorage.getItem('auth_refresh_token');
-  if (!refreshToken) return false;
-
-  const { signal, clear } = createTimeout(DEFAULT_TIMEOUT_MS);
-  try {
-    const resp = await fetch(
-      `${API_BASE}/v1/auth/refresh`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ refresh_token: refreshToken }),
-        signal,
-      },
-    );
-    if (resp.ok) {
-      const data = await resp.json();
-      localStorage.setItem('auth_token', data.access_token);
-      localStorage.setItem('auth_refresh_token', data.refresh_token);
-      // Signal to other tabs that we refreshed
-      localStorage.setItem('session_refresh_event', Date.now().toString());
-      return true;
-    }
-  } catch {
-    // Network error or timeout — fall through
-  } finally {
-    clear();
-  }
-  return false;
+  const refreshed = await refreshStoredSession({ timeoutMs: DEFAULT_TIMEOUT_MS });
+  return !!refreshed;
 }
 
 /** Clear all auth state and redirect to login page. */
 function clearAuthAndRedirect() {
-  localStorage.removeItem('auth_token');
-  localStorage.removeItem('auth_refresh_token');
-  localStorage.removeItem('auth_user');
+  clearSession();
   window.location.href = '/login';
 }
 
@@ -223,7 +202,7 @@ function clearAuthAndRedirect() {
  * @returns {Promise<any>}   — parsed JSON response
  */
 async function apiRequest(endpoint, options = {}) {
-  const token = localStorage.getItem('auth_token');
+  const token = getAccessToken();
   const headers = {
     'Content-Type': 'application/json',
     ...options.headers,
@@ -393,7 +372,7 @@ export const api = {
    * @param {object} options  — fetch options
    */
   raw: async (endpoint, options = {}) => {
-    const token = localStorage.getItem('auth_token');
+    const token = getAccessToken();
     const headers = { ...options.headers };
     if (token) {
       headers['Authorization'] = `Bearer ${token}`;
@@ -435,7 +414,7 @@ export const api = {
    * @param {string} filename — fallback filename (e.g. "Career_Report.pdf")
    */
   download: async (endpoint, filename = 'report.pdf') => {
-    const token = localStorage.getItem('auth_token');
+    const token = getAccessToken();
     const headers = {};
     if (token) {
       headers['Authorization'] = `Bearer ${token}`;

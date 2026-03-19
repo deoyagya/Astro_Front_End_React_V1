@@ -11,6 +11,7 @@ import PageShell from '../../components/PageShell';
 import { SurveyBuilder, SurveyStats } from '../../lib/survey-builder';
 import { api } from '../../api/client';
 import '../../styles/admin.css';
+import '../../styles/admin-survey-builder.css';
 
 export default function AdminSurveyBuilderPage() {
   const { formId } = useParams();
@@ -20,6 +21,7 @@ export default function AdminSurveyBuilderPage() {
   const [activeTab, setActiveTab] = useState(initialTab);
   const [stats, setStats] = useState(null);
   const [submissions, setSubmissions] = useState([]);
+  const [formMeta, setFormMeta] = useState(null);
 
   // API callbacks injected into the reusable SurveyBuilder
   const apiCreate = useCallback(
@@ -57,7 +59,18 @@ export default function AdminSurveyBuilderPage() {
     load();
   }, [activeTab, formId]);
 
+  useEffect(() => {
+    if (!formId) {
+      setFormMeta(null);
+      return;
+    }
+    apiGet(formId)
+      .then((data) => setFormMeta(data))
+      .catch(() => {});
+  }, [formId, apiGet]);
+
   const handleSaved = (savedForm) => {
+    setFormMeta(savedForm || null);
     // After creating a new form, navigate to edit mode
     if (!formId && savedForm?.id) {
       navigate(`/admin/surveys/${savedForm.id}/edit`, { replace: true });
@@ -68,35 +81,84 @@ export default function AdminSurveyBuilderPage() {
     navigate('/admin/surveys');
   };
 
+  const publicUrl = formMeta?.slug ? `${window.location.origin}/survey/${formMeta.slug}` : '';
+
+  const handleCopyLink = async () => {
+    if (!publicUrl) return;
+    try {
+      await navigator.clipboard.writeText(publicUrl);
+    } catch {
+      window.prompt('Copy survey link', publicUrl);
+    }
+  };
+
+  const handleExport = () => {
+    if (!formId) return;
+    window.open(`${api.baseUrl}/v1/admin/surveys/${formId}/export`, '_blank', 'noopener,noreferrer');
+  };
+
   return (
     <PageShell activeNav="admin">
       <div className="admin-page">
         <div style={{ maxWidth: 1200, margin: '0 auto', padding: '20px 20px' }}>
-          {/* Back link */}
-          <button
-            onClick={() => navigate('/admin/surveys')}
-            style={{
-              background: 'transparent', border: 'none', color: '#8b949e',
-              cursor: 'pointer', fontSize: 14, marginBottom: 12, padding: 0,
-            }}
-          >
-            <i className="fas fa-arrow-left" style={{ marginRight: 6 }}></i> Back to Surveys
-          </button>
+          <div className="asb-breadcrumb">
+            <button
+              onClick={() => navigate('/admin/surveys')}
+              className="asb-breadcrumb-btn"
+            >
+              <i className="fas fa-arrow-left"></i> Back to Surveys
+            </button>
+          </div>
+
+          <div className="asb-hero">
+            <div>
+              <h1>{formId ? 'Edit Survey Form' : 'Create Survey Form'}</h1>
+              <p>
+                Design the form experience, publish it, review submissions, and export responses from one workspace.
+              </p>
+            </div>
+            <div className="asb-hero-actions">
+              {formId && publicUrl && (
+                <>
+                  <button className="asb-action-btn" onClick={handleCopyLink}>
+                    <i className="fas fa-link"></i> Copy Public Link
+                  </button>
+                  <a className="asb-action-btn" href={publicUrl} target="_blank" rel="noreferrer">
+                    <i className="fas fa-external-link-alt"></i> Open Public Survey
+                  </a>
+                </>
+              )}
+              {formId && (
+                <button className="asb-action-btn asb-action-btn-primary" onClick={handleExport}>
+                  <i className="fas fa-file-export"></i> Export CSV
+                </button>
+              )}
+            </div>
+          </div>
+
+          <div className="asb-summary-grid">
+            <div className="asb-summary-card">
+              <span className="asb-summary-label">Status</span>
+              <strong className={`asb-status ${formMeta?.status || 'draft'}`}>{formMeta?.status || 'draft'}</strong>
+            </div>
+            <div className="asb-summary-card">
+              <span className="asb-summary-label">Questions</span>
+              <strong>{formMeta?.questions?.length ?? 'Drafting'}</strong>
+            </div>
+            <div className="asb-summary-card">
+              <span className="asb-summary-label">Responses</span>
+              <strong>{stats?.total_submissions ?? 0}</strong>
+            </div>
+          </div>
 
           {/* Tab switcher (only when editing existing form) */}
           {formId && (
-            <div style={{ display: 'flex', gap: 4, marginBottom: 16 }}>
+            <div className="asb-tabs">
               {['builder', 'stats', 'submissions'].map((tab) => (
                 <button
                   key={tab}
                   onClick={() => setActiveTab(tab)}
-                  style={{
-                    background: activeTab === tab ? '#7b5bff' : '#21262d',
-                    color: activeTab === tab ? '#fff' : '#8b949e',
-                    border: 'none', borderRadius: 6, padding: '8px 16px',
-                    fontSize: 13, fontWeight: 600, cursor: 'pointer',
-                    textTransform: 'capitalize',
-                  }}
+                  className={`asb-tab ${activeTab === tab ? 'active' : ''}`}
                 >
                   {tab === 'builder' && <i className="fas fa-edit" style={{ marginRight: 6 }}></i>}
                   {tab === 'stats' && <i className="fas fa-chart-bar" style={{ marginRight: 6 }}></i>}
@@ -133,34 +195,31 @@ export default function AdminSurveyBuilderPage() {
 
           {/* Submissions tab */}
           {activeTab === 'submissions' && formId && (
-            <div style={{
-              background: '#161b22', borderRadius: 12, border: '1px solid #30363d',
-              overflow: 'hidden',
-            }}>
+            <div className="asb-submissions-panel">
               {submissions.length === 0 ? (
-                <p style={{ color: '#8b949e', textAlign: 'center', padding: 40 }}>
+                <p className="asb-empty">
                   No submissions yet.
                 </p>
               ) : (
-                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13, color: '#c9d1d9' }}>
+                <table className="asb-submissions-table">
                   <thead>
-                    <tr style={{ borderBottom: '1px solid #30363d' }}>
-                      <th style={thStyle}>#</th>
-                      <th style={thStyle}>Submitted At</th>
-                      <th style={thStyle}>Email</th>
-                      <th style={thStyle}>Responses</th>
+                    <tr>
+                      <th>#</th>
+                      <th>Submitted At</th>
+                      <th>Email</th>
+                      <th>Responses</th>
                     </tr>
                   </thead>
                   <tbody>
                     {submissions.map((sub, idx) => (
-                      <tr key={sub.id} style={{ borderBottom: '1px solid #21262d' }}>
-                        <td style={tdStyle}>{idx + 1}</td>
-                        <td style={tdStyle}>
+                      <tr key={sub.id}>
+                        <td>{idx + 1}</td>
+                        <td>
                           {new Date(sub.submitted_at).toLocaleString()}
                         </td>
-                        <td style={tdStyle}>{sub.respondent_email || '—'}</td>
-                        <td style={tdStyle}>
-                          <code style={{ fontSize: 12, color: '#8b949e' }}>
+                        <td>{sub.respondent_email || '—'}</td>
+                        <td>
+                          <code className="asb-response-code">
                             {JSON.stringify(sub.responses).slice(0, 120)}
                             {JSON.stringify(sub.responses).length > 120 ? '...' : ''}
                           </code>
@@ -177,9 +236,3 @@ export default function AdminSurveyBuilderPage() {
     </PageShell>
   );
 }
-
-const thStyle = {
-  padding: '10px 14px', textAlign: 'left', color: '#8b949e',
-  fontWeight: 600, fontSize: 12, textTransform: 'uppercase',
-};
-const tdStyle = { padding: '10px 14px' };

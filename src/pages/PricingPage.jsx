@@ -20,6 +20,7 @@ import usePaymentGateway from '../hooks/usePaymentGateway';
 import { api } from '../api/client';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
+import { formatDiscountValue, formatLocalCurrency, formatUsdCentsForUser } from '../utils/localPricing';
 import '../styles/pricing.css';
 import { useStyles } from '../context/StyleContext';
 
@@ -67,13 +68,17 @@ export default function PricingPage() {
   const [checkoutLoading, setCheckoutLoading] = useState(null);
   const [clientSecret, setClientSecret] = useState('');
   const [razorpayCheckout, setRazorpayCheckout] = useState(null); // Razorpay checkout data
+  const paymentContext = {
+    currency: gw.currency || 'USD',
+    exchangeRate: gw.exchangeRate || 1,
+  };
 
   /* ---- Fetch plans + credit packs ---- */
   useEffect(() => {
     const fetchData = async () => {
       try {
         const [plansRes, packsRes] = await Promise.all([
-          api.get('/v1/subscription/plans'),
+          api.get(`/v1/subscription/plans?currency=${encodeURIComponent(gw.currency || 'USD')}`),
           api.get('/v1/subscription/credit-packs'),
         ]);
 
@@ -86,7 +91,7 @@ export default function PricingPage() {
       }
     };
     fetchData();
-  }, []);
+  }, [gw.currency, toast]);
 
   /* ---- Handle Stripe return (redirect back after checkout) ---- */
   useEffect(() => {
@@ -152,6 +157,7 @@ export default function PricingPage() {
         billing_cycle: yearly ? 'yearly' : 'monthly',
         coupon_code: couponResult?.valid ? couponCode.trim().toUpperCase() : undefined,
         gateway: gw.gateway || undefined,
+        currency: gw.currency || undefined,
       });
 
       // Razorpay checkout
@@ -181,30 +187,40 @@ export default function PricingPage() {
       toast(err.message || 'Checkout failed. Please try again.', 'error');
       setCheckoutLoading(null);
     }
-  }, [isAuthenticated, navigate, yearly, couponResult, couponCode, gw.gateway]);
+  }, [isAuthenticated, navigate, yearly, couponResult, couponCode, gw.gateway, gw.currency]);
 
-  /* ---- Price formatting (USD / Stripe) ---- */
+  /* ---- Price formatting (localized display / USD source of truth) ---- */
   const formatPrice = (plan) => {
+    const localPrices = plan.local_prices;
+    if (localPrices && localPrices.currency === paymentContext.currency) {
+      const display = yearly ? localPrices.yearly_display : localPrices.monthly_display;
+      return display || 'Free';
+    }
     const cents = yearly ? plan.price_yearly_cents : plan.price_monthly_cents;
     if (!cents || cents === 0) return 'Free';
-    return `$${(cents / 100).toFixed(2)}`;
+    return formatUsdCentsForUser(cents, paymentContext);
   };
 
   const formatMonthlyEquivalent = (plan) => {
+    const localPrices = plan.local_prices;
+    if (localPrices && localPrices.currency === paymentContext.currency) {
+      if (!localPrices.monthly_equivalent) return null;
+      return formatLocalCurrency(localPrices.monthly_equivalent, paymentContext.currency);
+    }
     const cents = plan.price_yearly_cents;
     if (!cents) return null;
-    return `$${(cents / 1200).toFixed(2)}`;
+    return formatUsdCentsForUser(Math.round(cents / 12), paymentContext);
   };
 
   const formatOriginalMonthly = (plan) => {
     const cents = plan.price_monthly_cents;
     if (!cents) return '';
-    return `$${(cents / 100).toFixed(2)}/mo`;
+    return `${formatUsdCentsForUser(cents, paymentContext)}/mo`;
   };
 
   const formatCreditPrice = (cents) => {
     if (!cents || cents === 0) return 'Free';
-    return `$${(cents / 100).toFixed(2)}`;
+    return formatUsdCentsForUser(cents, paymentContext);
   };
 
   const getFeatureDisplay = (plan, featureKey) => {
@@ -330,7 +346,6 @@ export default function PricingPage() {
   }
 
   const sortedPlans = [...plans].sort((a, b) => (a.display_order || 0) - (b.display_order || 0));
-  const currencySymbol = '$';
 
   return (
     <PageShell activeNav="pricing">
@@ -502,9 +517,7 @@ export default function PricingPage() {
                 {couponResult.valid ? (
                   <>
                     <i className="fas fa-check-circle"></i>{' '}
-                    {couponResult.discount_type === 'percentage'
-                      ? `${couponResult.discount_value}% off`
-                      : `${currencySymbol}${(couponResult.discount_value / 100).toLocaleString()} off`}{' '}
+                    {formatDiscountValue(couponResult.discount_value, couponResult.discount_type, paymentContext)}{' '}
                     — Applied!
                   </>
                 ) : (
@@ -572,7 +585,7 @@ export default function PricingPage() {
                     <div className="pack-name">{pack.name}</div>
                     <div className="pack-price">{formatCreditPrice(pack.price_cents)}</div>
                     <div className="pack-unit">
-                      ${((pack.price_cents / 100) / pack.credit_amount).toFixed(2)} per question
+                      {formatUsdCentsForUser(Math.round(pack.price_cents / pack.credit_amount), paymentContext)} per question
                     </div>
                     <button
                       className="pack-buy-btn"

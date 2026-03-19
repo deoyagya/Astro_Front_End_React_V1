@@ -1,0 +1,276 @@
+.asb-breadcrumb {
+  margin-bottom: 16px;
+}
+
+.asb-breadcrumb-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(150, 132, 255, 0.28);
+  background: rgba(20, 24, 38, 0.72);
+  color: #d7d5e6;
+  font-size: 0.92rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.asb-breadcrumb-btn:hover {
+  border-color: rgba(150, 132, 255, 0.54);
+  color: #f3efff;
+}
+
+.asb-hero {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 24px 28px;
+  border-radius: 24px;
+  border: 1px solid rgba(134, 121, 255, 0.22);
+  background:
+    radial-gradient(circle at top right, rgba(123, 91, 255, 0.18), transparent 32%),
+    linear-gradient(180deg, rgba(20, 24, 38, 0.98), rgba(14, 17, 28, 0.96));
+  box-shadow: 0 24px 60px rgba(4, 8, 20, 0.28);
+  margin-bottom: 18px;
+}
+
+.asb-hero h1 {
+  margin: 0 0 8px;
+  color: #f5f4ff;
+  font-size: clamp(2rem, 3vw, 2.5rem);
+  line-height: 1.05;
+}
+
+.asb-hero p {
+  margin: 0;
+  max-width: 760px;
+  color: #b8b2cb;
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+.asb-hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  align-items: flex-start;
+  gap: 10px;
+  min-width: 260px;
+}
+
+.asb-action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 16px;
+  border-radius: 14px;
+  border: 1px solid rgba(130, 114, 255, 0.3);
+  background: rgba(18, 22, 36, 0.86);
+  color: #ece8ff;
+  font-size: 0.95rem;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.asb-action-btn:hover {
+  border-color: rgba(150, 132, 255, 0.62);
+  transform: translateY(-1px);
+}
+
+.asb-action-btn-primary {
+  background: linear-gradient(135deg, #8e67ff, #b58cff);
+  border-color: transparent;
+  color: #0d0820;
+}
+
+.asb-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.asb-summary-card {
+  padding: 18px 20px;
+  border-radius: 18px;
+  border: 1px solid rgba(91, 100, 139, 0.3);
+  background: rgba(18, 23, 39, 0.85);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+}
+
+.asb-summary-label {
+  display: block;
+  margin-bottom: 8px;
+  color: #918ba7;
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.asb-summary-card strong {
+  color: #f6f3ff;
+  font-size: 1.28rem;
+}
+
+.asb-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  text-transform: capitalize;
+}
+
+.asb-status.draft {
+  color: #ffd79d;
+}
+
+.asb-status.live,
+.asb-status.published {
+  color: #86f0bb;
+}
+
+.asb-tabs {
+  display: inline-flex;
+  gap: 8px;
+  padding: 8px;
+  margin-bottom: 18px;
+  border-radius: 18px;
+  border: 1px solid rgba(130, 114, 255, 0.25);
+  background: rgba(16, 20, 33, 0.78);
+}
+
+.asb-tab {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 11px 16px;
+  min-width: 118px;
+  border: none;
+  border-radius: 12px;
+  background: transparent;
+  color: #c8c1dc;
+  font-size: 0.94rem;
+  font-weight: 700;
+  text-transform: capitalize;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.asb-tab:hover {
+  color: #fff;
+  background: rgba(126, 97, 255, 0.14);
+}
+
+.asb-tab.active {
+  background: linear-gradient(135deg, rgba(132, 98, 255, 0.95), rgba(107, 83, 231, 0.95));
+  color: #fff;
+  box-shadow: 0 10px 24px rgba(90, 68, 194, 0.35);
+}
+
+.asb-submissions-panel {
+  border-radius: 20px;
+  border: 1px solid rgba(84, 92, 130, 0.32);
+  background: rgba(18, 23, 39, 0.88);
+  overflow: hidden;
+}
+
+.asb-empty {
+  margin: 0;
+  padding: 48px 24px;
+  text-align: center;
+  color: #9e98b4;
+  font-size: 1rem;
+}
+
+.asb-submissions-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.asb-submissions-table th,
+.asb-submissions-table td {
+  padding: 16px 18px;
+  text-align: left;
+  vertical-align: top;
+  border-bottom: 1px solid rgba(78, 86, 121, 0.24);
+  color: #ddd7ef;
+  font-size: 0.92rem;
+}
+
+.asb-submissions-table thead th {
+  background: rgba(22, 27, 45, 0.92);
+  color: #a8a2bc;
+  font-size: 0.76rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.asb-submissions-table tbody tr:hover {
+  background: rgba(123, 91, 255, 0.04);
+}
+
+.asb-response-code {
+  display: inline-block;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(10, 13, 23, 0.84);
+  color: #d7d0ef;
+  font-size: 0.82rem;
+  line-height: 1.45;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+@media (max-width: 1080px) {
+  .asb-hero {
+    flex-direction: column;
+  }
+
+  .asb-hero-actions {
+    justify-content: flex-start;
+    min-width: 0;
+  }
+
+  .asb-summary-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 720px) {
+  .asb-tabs {
+    display: grid;
+    width: 100%;
+  }
+
+  .asb-tab {
+    width: 100%;
+  }
+
+  .asb-submissions-table,
+  .asb-submissions-table thead,
+  .asb-submissions-table tbody,
+  .asb-submissions-table tr,
+  .asb-submissions-table th,
+  .asb-submissions-table td {
+    display: block;
+  }
+
+  .asb-submissions-table thead {
+    display: none;
+  }
+
+  .asb-submissions-table tr {
+    padding: 14px 16px;
+    border-bottom: 1px solid rgba(78, 86, 121, 0.24);
+  }
+
+  .asb-submissions-table td {
+    padding: 8px 0;
+    border-bottom: none;
+  }
+}

@@ -5,7 +5,6 @@ import ApiError from '../components/ApiError';
 import { useSharedEffects } from '../hooks/useSharedEffects';
 import { api } from '../api/client';
 import '../styles/report-pages.css';
-import { useStyles } from '../context/StyleContext';
 
 /* Map report type IDs to display info */
 const REPORT_TYPE_MAP = {
@@ -13,6 +12,9 @@ const REPORT_TYPE_MAP = {
   life_reading: { icon: 'fa-scroll', label: 'Life Reading Report' },
   career: { icon: 'fa-briefcase', label: 'Career & Finance Report' },
   love: { icon: 'fa-heart', label: 'Love & Marriage Report' },
+  manglik: { icon: 'fa-fire', label: 'Manglik Dosha Analysis & Remedies' },
+  'birth-chart-analysis': { icon: 'fa-chart-pie', label: 'Complete Birth Chart Analysis' },
+  temporal_forecast: { icon: 'fa-hourglass-half', label: 'Threat and Opportunity Report' },
   education: { icon: 'fa-brain', label: 'Education & Intelligence Report' },
   health: { icon: 'fa-spa', label: 'Health & Wellness Report' },
   spiritual: { icon: 'fa-om', label: 'Spiritual Growth Report' },
@@ -20,7 +22,6 @@ const REPORT_TYPE_MAP = {
 };
 
 function formatFileSize(bytes) {
-  const { getOverride } = useStyles('my-reports');
   if (bytes < 1024) return `${bytes} B`;
   if (bytes < 1048576) return `${(bytes / 1024).toFixed(1)} KB`;
   return `${(bytes / 1048576).toFixed(1)} MB`;

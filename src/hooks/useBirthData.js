@@ -113,6 +113,16 @@ export function useBirthData(options = {}) {
     }
   }, []);
 
+  const resetBirthData = useCallback(() => {
+    setFullName(user?.full_name || '');
+    setBirthDate('');
+    setHour('6');
+    setMinute('00');
+    setAmpm('AM');
+    setGender('female');
+    setBirthPlace(null);
+  }, [user?.full_name]);
+
   // Load saved birth data on mount
   useEffect(() => {
     if (skipAutoLoad || loadedRef.current) {
@@ -234,5 +244,6 @@ export function useBirthData(options = {}) {
     buildPayload,
     validate,
     applyBirthData,
+    resetBirthData,
   };
 }

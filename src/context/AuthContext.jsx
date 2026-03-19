@@ -1,4 +1,15 @@
 import { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
+import {
+  clearSession,
+  getAccessToken,
+  getRefreshToken,
+  getStoredUser,
+  getTokenExpiry,
+  persistSession,
+  refreshStoredSession,
+  sessionKeys,
+  setStoredUser,
+} from '../auth/session';
 import { api } from '../api/client';
 import SessionTimeoutModal from '../components/SessionTimeoutModal';
 
@@ -7,16 +18,6 @@ const WARNING_BEFORE_EXPIRY_SEC = 300;  // Show modal 5 min before expiry (if id
 const CHECK_INTERVAL_MS = 15000;        // Check expiry every 15 seconds
 const IDLE_THRESHOLD_MS = 25 * 60 * 1000; // 25 min idle = genuinely inactive
 const SILENT_REFRESH_BUFFER_SEC = 120;  // Silently refresh 2 min before expiry
-
-/** Decode JWT exp claim (seconds since epoch). Returns null on failure. */
-function getTokenExpiry(token) {
-  try {
-    const payload = JSON.parse(atob(token.split('.')[1]));
-    return payload.exp || null;
-  } catch {
-    return null;
-  }
-}
 
 const AuthContext = createContext(null);
 
@@ -29,15 +30,8 @@ const AuthContext = createContext(null);
  *   - Only shows timeout modal when user is genuinely idle
  */
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(() => {
-    try {
-      const saved = localStorage.getItem('auth_user');
-      return saved ? JSON.parse(saved) : null;
-    } catch {
-      return null;
-    }
-  });
-  const [token, setToken] = useState(() => localStorage.getItem('auth_token'));
+  const [user, setUser] = useState(() => getStoredUser());
+  const [token, setToken] = useState(() => getAccessToken());
   const [loading, setLoading] = useState(true);
 
   // Session timeout modal state
@@ -80,14 +74,12 @@ export function AuthProvider({ children }) {
         .get('/v1/auth/me')
         .then((userData) => {
           setUser(userData);
-          localStorage.setItem('auth_user', JSON.stringify(userData));
+          setStoredUser(userData);
         })
         .catch(() => {
           setToken(null);
           setUser(null);
-          localStorage.removeItem('auth_token');
-          localStorage.removeItem('auth_refresh_token');
-          localStorage.removeItem('auth_user');
+          clearSession();
         })
         .finally(() => setLoading(false));
     } else {
@@ -97,9 +89,16 @@ export function AuthProvider({ children }) {
 
   /** Login — called after successful OTP verification. */
   const login = useCallback(async (tokenData) => {
-    localStorage.setItem('auth_token', tokenData.access_token);
-    if (tokenData.refresh_token) {
-      localStorage.setItem('auth_refresh_token', tokenData.refresh_token);
+    persistSession({
+      accessToken: tokenData.access_token,
+      refreshToken: tokenData.refresh_token,
+      user: tokenData.user,
+    });
+    if (tokenData.user) {
+      setUser(tokenData.user);
+    } else {
+      // Keep protected routes in loading state until /me resolves.
+      setLoading(true);
     }
     setToken(tokenData.access_token);
     lastActivityRef.current = Date.now();
@@ -107,9 +106,7 @@ export function AuthProvider({ children }) {
 
   /** Logout — clear all auth state. */
   const logout = useCallback(() => {
-    localStorage.removeItem('auth_token');
-    localStorage.removeItem('auth_refresh_token');
-    localStorage.removeItem('auth_user');
+    clearSession();
     setToken(null);
     setUser(null);
   }, []);
@@ -119,7 +116,7 @@ export function AuthProvider({ children }) {
     try {
       const userData = await api.get('/v1/auth/me');
       setUser(userData);
-      localStorage.setItem('auth_user', JSON.stringify(userData));
+      setStoredUser(userData);
       return userData;
     } catch {
       return null;
@@ -132,16 +129,14 @@ export function AuthProvider({ children }) {
    */
   const silentRefresh = useCallback(async () => {
     if (silentRefreshInFlightRef.current) return;
-    const refreshToken = localStorage.getItem('auth_refresh_token');
+    const refreshToken = getRefreshToken();
     if (!refreshToken) return;
 
     silentRefreshInFlightRef.current = true;
     try {
-      const data = await api.post('/v1/auth/refresh', { refresh_token: refreshToken });
-      localStorage.setItem('auth_token', data.access_token);
-      localStorage.setItem('auth_refresh_token', data.refresh_token);
+      const data = await refreshStoredSession();
+      if (!data) return;
       setToken(data.access_token);
-      localStorage.setItem('session_refresh_event', Date.now().toString());
     } catch {
       // Silent refresh failed — don't logout yet, the modal flow will handle it
     } finally {
@@ -153,18 +148,19 @@ export function AuthProvider({ children }) {
    * Manual refresh — called by "Stay Logged In" button.
    */
   const refreshSession = useCallback(async () => {
-    const refreshToken = localStorage.getItem('auth_refresh_token');
+    const refreshToken = getRefreshToken();
     if (!refreshToken) {
       logout();
       return;
     }
     setRefreshing(true);
     try {
-      const data = await api.post('/v1/auth/refresh', { refresh_token: refreshToken });
-      localStorage.setItem('auth_token', data.access_token);
-      localStorage.setItem('auth_refresh_token', data.refresh_token);
+      const data = await refreshStoredSession();
+      if (!data) {
+        logout();
+        return;
+      }
       setToken(data.access_token);
-      localStorage.setItem('session_refresh_event', Date.now().toString());
       setShowTimeoutModal(false);
       setRemainingSeconds(WARNING_BEFORE_EXPIRY_SEC);
       lastActivityRef.current = Date.now();
@@ -191,7 +187,7 @@ export function AuthProvider({ children }) {
     }
 
     function checkExpiry() {
-      const currentToken = localStorage.getItem('auth_token');
+      const currentToken = getAccessToken();
       if (!currentToken) return;
 
       const exp = getTokenExpiry(currentToken);
@@ -267,8 +263,8 @@ export function AuthProvider({ children }) {
   /* ===== Cross-Tab Sync (localStorage events) ===== */
   useEffect(() => {
     function handleStorageChange(e) {
-      if (e.key === 'session_refresh_event') {
-        const newToken = localStorage.getItem('auth_token');
+      if (e.key === sessionKeys.REFRESH_EVENT_KEY) {
+        const newToken = getAccessToken();
         if (newToken) {
           setToken(newToken);
           setShowTimeoutModal(false);
@@ -278,7 +274,7 @@ export function AuthProvider({ children }) {
             countdownRef.current = null;
           }
         }
-      } else if (e.key === 'auth_token' && !e.newValue) {
+      } else if (e.key === sessionKeys.ACCESS_TOKEN_KEY && !e.newValue) {
         setToken(null);
         setUser(null);
         setShowTimeoutModal(false);

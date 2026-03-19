@@ -62,7 +62,9 @@
 .sb-slug-input:focus { border-color: var(--sb-accent); }
 
 .sb-meta-fields {
-  padding-bottom: 12px;
+  padding-bottom: 18px;
+  display: grid;
+  gap: 16px;
 }
 .sb-meta-input {
   width: 100%;
@@ -75,6 +77,84 @@
   outline: none;
 }
 .sb-meta-input:focus { border-color: var(--sb-accent); }
+
+.sb-settings-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.sb-settings-card {
+  background: var(--sb-surface);
+  border: 1px solid var(--sb-border);
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.sb-settings-title {
+  margin: 0 0 14px;
+  font-size: 0.95rem;
+  color: var(--sb-accent-light);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sb-settings-fields {
+  display: grid;
+  gap: 12px;
+}
+
+.sb-settings-field {
+  display: grid;
+  gap: 6px;
+}
+
+.sb-settings-field span {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--sb-text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.sb-settings-field input,
+.sb-settings-field textarea {
+  width: 100%;
+  padding: 8px 12px;
+  background: var(--sb-bg);
+  border: 1px solid var(--sb-border);
+  border-radius: 8px;
+  color: var(--sb-text);
+  font-size: 0.86rem;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.sb-settings-field textarea {
+  resize: vertical;
+  min-height: 96px;
+}
+
+.sb-settings-field input:focus,
+.sb-settings-field textarea:focus {
+  border-color: var(--sb-accent);
+}
+
+.sb-settings-toggle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--sb-text);
+  font-size: 0.86rem;
+  cursor: pointer;
+}
+
+.sb-settings-toggle input[type="checkbox"] {
+  accent-color: var(--sb-accent);
+  width: 16px;
+  height: 16px;
+}
 
 .sb-builder-actions {
   display: flex;
@@ -115,21 +195,23 @@
 
 /* ---- 3-Panel Layout ---- */
 .sb-builder-body {
-  display: flex;
+  display: grid;
+  grid-template-columns: 240px minmax(0, 1fr) 320px;
   gap: 16px;
   min-height: 500px;
+  align-items: start;
 }
 
 /* ---- Cabinet (left) ---- */
 .sb-cabinet {
-  width: 220px;
-  flex-shrink: 0;
   background: var(--sb-surface);
   border: 1px solid var(--sb-border);
   border-radius: 12px;
   padding: 16px;
   overflow-y: auto;
   max-height: 70vh;
+  position: sticky;
+  top: 16px;
 }
 .sb-cabinet-title {
   font-size: 0.95rem;
@@ -168,7 +250,6 @@
 
 /* ---- DropZone (center) ---- */
 .sb-dropzone {
-  flex: 1;
   background: var(--sb-surface);
   border: 2px dashed var(--sb-border);
   border-radius: 12px;
@@ -257,14 +338,14 @@
 
 /* ---- Configurator (right) ---- */
 .sb-configurator {
-  width: 280px;
-  flex-shrink: 0;
   background: var(--sb-surface);
   border: 1px solid var(--sb-border);
   border-radius: 12px;
   padding: 16px;
   overflow-y: auto;
   max-height: 70vh;
+  position: sticky;
+  top: 16px;
 }
 .sb-configurator-empty {
   display: flex;
@@ -801,14 +882,34 @@
    RESPONSIVE
    ============================================================ */
 
-@media (max-width: 900px) {
+@media (max-width: 1180px) {
   .sb-builder-body {
-    flex-direction: column;
+    grid-template-columns: minmax(220px, 240px) minmax(0, 1fr);
   }
-  .sb-cabinet { width: 100%; max-height: none; }
+
+  .sb-configurator {
+    grid-column: 1 / -1;
+    position: static;
+    max-height: none;
+  }
+}
+
+@media (max-width: 900px) {
+  .sb-settings-grid,
+  .sb-builder-body {
+    grid-template-columns: 1fr;
+  }
+
+  .sb-cabinet,
+  .sb-dropzone,
+  .sb-configurator {
+    width: 100%;
+    max-height: none;
+    position: static;
+  }
+
   .sb-cabinet-list { flex-direction: row; flex-wrap: wrap; }
   .sb-cabinet-item { flex: 0 0 auto; }
-  .sb-configurator { width: 100%; max-height: none; }
 }
 
 @media (max-width: 600px) {

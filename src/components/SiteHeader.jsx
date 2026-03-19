@@ -1,9 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useStyles } from '../context/StyleContext';
-
-const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
 
 const ADMIN_MENU_ITEMS = [
   { label: 'Observability', icon: 'fa-tachometer-alt',  href: '/admin/observability' },
@@ -17,10 +15,10 @@ const ADMIN_MENU_ITEMS = [
   { label: 'Muhurta',      icon: 'fa-clock',            href: '/admin/muhurta' },
   { label: 'Rule CV Wizard', icon: 'fa-balance-scale',  href: '/admin/rule-cv-wizard' },
   { label: 'Rule Builder',  icon: 'fa-project-diagram', href: '/admin/rule-builder' },
-  { label: 'Rule Admin',    icon: 'fa-gavel',           href: `${API_BASE}/admin`, external: true },
-  { label: 'DB Admin',      icon: 'fa-database',        href: `${API_BASE}/db-admin`, external: true },
   { label: 'Wizard Content', icon: 'fa-photo-video',    href: '/admin/wizard-content' },
   { label: 'Subscriptions', icon: 'fa-credit-card',     href: '/admin/subscriptions' },
+  { label: 'Users',         icon: 'fa-users',           href: '/admin/users' },
+  { label: 'Orders',        icon: 'fa-receipt',         href: '/admin/orders' },
   { label: 'Gateway Config', icon: 'fa-globe',          href: '/admin/gateway-config' },
   { label: 'Style Manager', icon: 'fa-palette',         href: '/admin/style-manager' },
   { label: 'Surveys',       icon: 'fa-poll-h',          href: '/admin/surveys' },
@@ -34,7 +32,7 @@ const MY_DATA_MENU_ITEMS = [
   { label: 'Yogas & Rajyogas', icon: 'fa-sun',           href: '/my-data/yogas' },
   { label: 'Sade Sati',        icon: 'fa-moon',          href: '/my-data/sade-sati' },
   { label: 'Transit',          icon: 'fa-globe',         href: '/my-data/transit' },
-  { label: 'Temporal Forecast', icon: 'fa-hourglass-half', href: '/my-data/temporal-forecast', premium: true },
+  { label: 'Threat and Opportunity', icon: 'fa-hourglass-half', href: '/threat-opportunity', premium: true },
   { label: 'Subscription', icon: 'fa-crown', href: '/my-data/subscription' },
 ];
 
@@ -48,6 +46,7 @@ const isItemActive = (itemHref, pathname) => {
 export default function SiteHeader({ active = 'home' }) {
   const { getOverride } = useStyles('site-header');
   const { isAuthenticated, user, logout } = useAuth();
+  const navigate = useNavigate();
   const location = useLocation();
   const pathname = location.pathname;
   const freeToolsHref = active === 'home' ? '#free-tools' : '/#free-tools';
@@ -60,6 +59,7 @@ export default function SiteHeader({ active = 'home' }) {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [manageMenuOpen, setManageMenuOpen] = useState(false);
   const [myAstroExpanded, setMyAstroExpanded] = useState(false);
+  const [openNavMenu, setOpenNavMenu] = useState(null);
   const [submenuPos, setSubmenuPos] = useState({ top: 0, right: 0 });
   const dropdownRef = useRef(null);
   const manageMenuRef = useRef(null);
@@ -78,10 +78,18 @@ export default function SiteHeader({ active = 'home' }) {
       if (manageMenuRef.current && !manageMenuRef.current.contains(e.target)) {
         setManageMenuOpen(false);
       }
+      const nav = document.querySelector('.nav');
+      if (nav && !nav.contains(e.target)) {
+        setOpenNavMenu(null);
+      }
     };
     document.addEventListener('mousedown', handler);
     return () => document.removeEventListener('mousedown', handler);
   }, []);
+
+  useEffect(() => {
+    setOpenNavMenu(null);
+  }, [pathname]);
 
   const handleLogout = (e) => {
     e.preventDefault();
@@ -102,6 +110,33 @@ export default function SiteHeader({ active = 'home' }) {
     setMyAstroExpanded(!myAstroExpanded);
   };
 
+  const handleProtectedNav = (e, targetPath) => {
+    if (isAuthenticated) return;
+    e.preventDefault();
+    navigate('/login', { state: { from: { pathname: targetPath } } });
+  };
+
+  const handleNavMenuToggle = (e, menuKey, targetPath) => {
+    if (!isAuthenticated) {
+      handleProtectedNav(e, targetPath);
+      return;
+    }
+    e.preventDefault();
+    setOpenNavMenu((current) => (current === menuKey ? null : menuKey));
+  };
+
+  const handleSubmenuLinkClick = (e, targetPath) => {
+    e.preventDefault();
+    if (!isAuthenticated) {
+      navigate('/login', { state: { from: { pathname: targetPath } } });
+      return;
+    }
+    setOpenNavMenu(null);
+    setDropdownOpen(false);
+    setMyAstroExpanded(false);
+    navigate(targetPath);
+  };
+
   return (
     <>
     <header className="header">
@@ -114,7 +149,7 @@ export default function SiteHeader({ active = 'home' }) {
           <nav className="nav">
             <ul>
               {isAdmin ? (
-                /* ---- Admin: "Manage Data" dropdown + standalone Order Management tab ---- */
+                /* ---- Admin: all admin surfaces live under one "Manage Data" dropdown ---- */
                 <>
                 <li className="nav-manage-data" ref={manageMenuRef}>
                   <button
@@ -133,25 +168,13 @@ export default function SiteHeader({ active = 'home' }) {
                           href={item.href}
                           className={`manage-data-item ${isItemActive(item.href, pathname) ? 'active' : ''}`}
                           onClick={() => setManageMenuOpen(false)}
-                          {...(item.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
                         >
                           <i className={`fas ${item.icon}`}></i>
                           {item.label}
-                          {item.external && <i className="fas fa-external-link-alt" style={{ fontSize: '0.65em', marginLeft: 4, opacity: 0.5 }}></i>}
                         </a>
                       ))}
                     </div>
                   )}
-                </li>
-                <li>
-                  <a href="/admin/users" className={pathname.startsWith('/admin/users') ? 'active' : ''}>
-                    <i className="fas fa-users"></i> Users
-                  </a>
-                </li>
-                <li>
-                  <a href="/admin/orders" className={pathname.startsWith('/admin/orders') ? 'active' : ''}>
-                    <i className="fas fa-receipt"></i> Orders
-                  </a>
                 </li>
                 </>
               ) : (
@@ -162,35 +185,66 @@ export default function SiteHeader({ active = 'home' }) {
                       <i className="fas fa-home"></i> Home
                     </a>
                   </li>
-                  <li>
-                    <a href={freeToolsHref} className={active === 'tools' ? 'active' : ''}>
+                  <li
+                    className={openNavMenu === 'tools' ? 'nav-open' : ''}
+                    onMouseEnter={() => isAuthenticated && setOpenNavMenu('tools')}
+                    onMouseLeave={() => setOpenNavMenu((current) => (current === 'tools' ? null : current))}
+                  >
+                    <a
+                      href={freeToolsHref}
+                      className={active === 'tools' ? 'active' : ''}
+                      onClick={(e) => handleNavMenuToggle(e, 'tools', '/birth-chart')}
+                      aria-haspopup="true"
+                      aria-expanded={openNavMenu === 'tools'}
+                    >
                       <i className="fas fa-tools"></i> Free Tools
                     </a>
                     <ul className="nav-submenu">
-                      <li><a href="/birth-chart"><i className="fas fa-chart-pie"></i> Birth Chart (Kundli)</a></li>
-                      <li><a href="/dasha"><i className="fas fa-clock"></i> Dasha Calculator</a></li>
-                      <li><a href="/compatibility"><i className="fas fa-heart"></i> Compatibility</a></li>
-                      <li><a href="/horoscope"><i className="fas fa-sun"></i> Daily Horoscope</a></li>
+                      <li><a href="/birth-chart" onClick={(e) => handleSubmenuLinkClick(e, '/birth-chart')}><i className="fas fa-chart-pie"></i> Birth Chart (Kundli)</a></li>
+                      <li><a href="/dasha" onClick={(e) => handleSubmenuLinkClick(e, '/dasha')}><i className="fas fa-clock"></i> Dasha Calculator</a></li>
+                      <li><a href="/compatibility" onClick={(e) => handleSubmenuLinkClick(e, '/compatibility')}><i className="fas fa-heart"></i> Compatibility</a></li>
+                      <li><a href="/horoscope" onClick={(e) => handleSubmenuLinkClick(e, '/horoscope')}><i className="fas fa-sun"></i> Daily Horoscope</a></li>
                     </ul>
                   </li>
-                  <li>
-                    <a href="#" className={active === 'kundli' ? 'active' : ''}>
+                  <li
+                    className={openNavMenu === 'kundli' ? 'nav-open' : ''}
+                    onMouseEnter={() => isAuthenticated && setOpenNavMenu('kundli')}
+                    onMouseLeave={() => setOpenNavMenu((current) => (current === 'kundli' ? null : current))}
+                  >
+                    <a
+                      href="#"
+                      className={active === 'kundli' ? 'active' : ''}
+                      onClick={(e) => handleNavMenuToggle(e, 'kundli', '/birth-chart')}
+                      aria-haspopup="true"
+                      aria-expanded={openNavMenu === 'kundli'}
+                    >
                       <i className="fas fa-scroll"></i> Kundli
                     </a>
                     <ul className="nav-submenu">
-                      <li><a href="/birth-chart"><i className="fas fa-chart-pie"></i> Free Kundli Generation</a></li>
-                      <li><a href="/compatibility"><i className="fas fa-ring"></i> Kundli Matching</a></li>
-                      <li><a href="/manglik-dosha"><i className="fas fa-exclamation-triangle"></i> Manglik Dosha Remedies</a></li>
-                      <li><a href="/reports"><i className="fas fa-file-pdf"></i> Birth Chart Analysis (Premium)</a></li>
+                      <li><a href="/birth-chart" onClick={(e) => handleSubmenuLinkClick(e, '/birth-chart')}><i className="fas fa-chart-pie"></i> Free Kundli Generation</a></li>
+                      <li><a href="/compatibility" onClick={(e) => handleSubmenuLinkClick(e, '/compatibility')}><i className="fas fa-ring"></i> Kundli Matching</a></li>
+                      <li><a href="/threat-opportunity" onClick={(e) => handleSubmenuLinkClick(e, '/threat-opportunity')}><i className="fas fa-hourglass-half"></i> Threat and Opportunity</a></li>
+                      <li><a href="/manglik-dosha" onClick={(e) => handleSubmenuLinkClick(e, '/manglik-dosha')}><i className="fas fa-exclamation-triangle"></i> Manglik Dosha Remedies</a></li>
+                      <li><a href="/birth-chart-analysis" onClick={(e) => handleSubmenuLinkClick(e, '/birth-chart-analysis')}><i className="fas fa-file-pdf"></i> Birth Chart Analysis (Premium)</a></li>
                     </ul>
                   </li>
-                  <li>
-                    <a href="#" className={active === 'consult' ? 'active' : ''}>
+                  <li
+                    className={openNavMenu === 'consult' ? 'nav-open' : ''}
+                    onMouseEnter={() => isAuthenticated && setOpenNavMenu('consult')}
+                    onMouseLeave={() => setOpenNavMenu((current) => (current === 'consult' ? null : current))}
+                  >
+                    <a
+                      href="#"
+                      className={active === 'consult' ? 'active' : ''}
+                      onClick={(e) => handleNavMenuToggle(e, 'consult', '/chat')}
+                      aria-haspopup="true"
+                      aria-expanded={openNavMenu === 'consult'}
+                    >
                       <i className="fas fa-headset"></i> Consult
                     </a>
                     <ul className="nav-submenu">
-                      <li><a href="/chat"><i className="fas fa-comments"></i> Live Chat with Astrologer</a></li>
-                      <li><a href="/ask-question"><i className="fas fa-question-circle"></i> Ask a Question</a></li>
+                      <li><a href="/chat" onClick={(e) => handleSubmenuLinkClick(e, '/chat')}><i className="fas fa-comments"></i> Live Chat with Astrologer</a></li>
+                      <li><a href="/ask-question" onClick={(e) => handleSubmenuLinkClick(e, '/ask-question')}><i className="fas fa-question-circle"></i> Ask a Question</a></li>
                     </ul>
                   </li>
                   <li>

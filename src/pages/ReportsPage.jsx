@@ -2,12 +2,15 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import PageShell from '../components/PageShell';
 import { useSharedEffects } from '../hooks/useSharedEffects';
+import usePaymentGateway from '../hooks/usePaymentGateway';
 import { api } from '../api/client';
 import { useStyles } from '../context/StyleContext';
+import { formatUsdCentsForUser } from '../utils/localPricing';
 
 export default function ReportsPage() {
   const { getOverride } = useStyles('reports-catalog');
   useSharedEffects();
+  const gw = usePaymentGateway();
   const navigate = useNavigate();
   const [sampleReport, setSampleReport] = useState(null);
   const [reports, setReports] = useState([]);
@@ -45,7 +48,7 @@ export default function ReportsPage() {
   const addToCart = (report) => {
     const cart = getCart();
     if (!cart.some((item) => item.id === report.id)) {
-      cart.push({ id: report.id, name: report.title, price: report.price, icon: report.icon });
+      cart.push({ id: report.id, name: report.title, price: report.price_paisa ?? report.price, icon: report.icon });
       localStorage.setItem('cart', JSON.stringify(cart));
     }
   };
@@ -60,7 +63,7 @@ export default function ReportsPage() {
     const cart = getCart();
     reports.forEach((r) => {
       if (!cart.some((item) => item.id === r.id)) {
-        cart.push({ id: r.id, name: r.title, price: r.price, icon: r.icon });
+        cart.push({ id: r.id, name: r.title, price: r.price_paisa ?? r.price, icon: r.icon });
       }
     });
     localStorage.setItem('cart', JSON.stringify(cart));
@@ -68,7 +71,7 @@ export default function ReportsPage() {
   };
 
   // Calculate bundle pricing from API data
-  const totalPrice = reports.reduce((sum, r) => sum + r.price, 0);
+  const totalPrice = reports.reduce((sum, r) => sum + (r.price_paisa ?? r.price ?? 0), 0);
   const bundleDiscount = 0.4; // 40% off
   const bundlePrice = Math.round(totalPrice * (1 - bundleDiscount));
 
@@ -107,7 +110,9 @@ export default function ReportsPage() {
           {!loading && !error && reports.length > 0 && (
             <>
               <div className="reports-grid">
-                {reports.map((report) => (
+                {reports.map((report) => {
+                  const reportPriceCents = report.price_paisa ?? report.price ?? 0;
+                  return (
                   <div className="report-card" key={report.id} id={report.id}>
                     {report.badge && <div className="card-badge">{report.badge}</div>}
                     <div className="report-icon"><i className={`fas ${report.icon}`}></i></div>
@@ -117,7 +122,7 @@ export default function ReportsPage() {
                       <span><i className="fas fa-calendar-alt"></i> {report.pages} pages</span>
                       <span><i className="fas fa-clock"></i> {report.delivery_hours || 24}hrs delivery</span>
                     </div>
-                    <div className="report-price">${(report.price / 100).toFixed(2)} USD</div>
+                    <div className="report-price">{formatUsdCentsForUser(reportPriceCents, gw)}</div>
                     <div className="report-actions">
                       <button className="btn-sample" onClick={() => setSampleReport(report)}>
                         <i className="fas fa-eye"></i> View Sample
@@ -127,7 +132,8 @@ export default function ReportsPage() {
                       </button>
                     </div>
                   </div>
-                ))}
+                  );
+                })}
               </div>
 
               {/* Bundle Card */}
@@ -136,8 +142,8 @@ export default function ReportsPage() {
                   <h3><i className="fas fa-gift"></i> Complete Life Bundle</h3>
                   <p>Get all {reports.length} life area reports at 40% off + free personalized birth chart analysis</p>
                   <div className="bundle-price">
-                    <span className="original">${(totalPrice / 100).toFixed(2)}</span>
-                    <span className="discounted">${(bundlePrice / 100).toFixed(2)}</span>
+                    <span className="original">{formatUsdCentsForUser(totalPrice, gw)}</span>
+                    <span className="discounted">{formatUsdCentsForUser(bundlePrice, gw)}</span>
                   </div>
                   <button className="btn-bundle" onClick={orderBundle}>Order Complete Bundle</button>
                 </div>
@@ -228,7 +234,7 @@ export default function ReportsPage() {
                 {sampleReport.footerNote || 'This is a sample preview. The full report includes personalized analysis based on your exact birth chart with complete remedies and timing windows.'}
               </p>
               <button className="btn-order" onClick={() => orderReport(sampleReport)}>
-                <i className="fas fa-file-invoice"></i> Order Full Report — ${(sampleReport.price / 100).toFixed(2)}
+                <i className="fas fa-file-invoice"></i> Order Full Report — {formatUsdCentsForUser(sampleReport.price_paisa ?? sampleReport.price ?? 0, gw)}
               </button>
             </div>
           </div>

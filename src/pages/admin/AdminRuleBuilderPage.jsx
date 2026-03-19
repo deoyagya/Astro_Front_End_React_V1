@@ -227,6 +227,27 @@ export default function AdminRuleBuilderPage() {
   const { getOverride } = useStyles('admin-rule-builder');
   const navigate = useNavigate();
 
+  // ── Repository state ──
+  const [domains, setDomains] = useState([]);
+  const [subdomains, setSubdomains] = useState([]);
+  const [selectedDomain, setSelectedDomain] = useState('');
+  const [selectedSubdomain, setSelectedSubdomain] = useState('');
+  const [subdomainData, setSubdomainData] = useState(null);
+  const [selectedRepoRuleId, setSelectedRepoRuleId] = useState('');
+  const [repoRuleMeta, setRepoRuleMeta] = useState({
+    rule_id: '',
+    description: '',
+    weight: '',
+    lock: 'natal',
+    category: '',
+    tradition: '',
+  });
+  const [repoMetadata, setRepoMetadata] = useState({
+    version: '',
+    author: '',
+    primary_tradition: '',
+  });
+
   // ── Taxonomy state ──
   const [themes, setThemes] = useState([]);
   const [lifeAreas, setLifeAreas] = useState([]);
@@ -265,6 +286,53 @@ export default function AdminRuleBuilderPage() {
     } catch (err) { setError(err.message); }
   }, []);
   useEffect(() => { loadThemes(); }, [loadThemes]);
+
+  const loadDomains = useCallback(async () => {
+    try {
+      const data = await api.get('/v1/admin/rules/domains');
+      setDomains(Array.isArray(data) ? data : []);
+    } catch (err) { setError(err.message); }
+  }, []);
+  useEffect(() => { loadDomains(); }, [loadDomains]);
+
+  const handleDomainChange = useCallback(async (domainId) => {
+    setSelectedDomain(domainId);
+    setSelectedSubdomain('');
+    setSelectedRepoRuleId('');
+    setSubdomainData(null);
+    setSubdomains([]);
+    setRepoRuleMeta({
+      rule_id: '',
+      description: '',
+      weight: '',
+      lock: 'natal',
+      category: '',
+      tradition: '',
+    });
+    if (!domainId) return;
+    try {
+      const data = await api.get(`/v1/admin/rules/domains/${domainId}`);
+      setSubdomains(Array.isArray(data) ? data : []);
+    } catch (err) { setError(err.message); }
+  }, []);
+
+  const loadSubdomain = useCallback(async (subdomainId) => {
+    if (!subdomainId) {
+      setSubdomainData(null);
+      setSelectedRepoRuleId('');
+      return;
+    }
+    try {
+      const data = await api.get(`/v1/admin/rules/${subdomainId}`);
+      setSubdomainData(data);
+      setRepoMetadata({
+        version: data.version || '',
+        author: data.author || '',
+        primary_tradition: data.primary_tradition || '',
+      });
+      setSelectedRepoRuleId('');
+    } catch (err) { setError(err.message); }
+  }, []);
 
   // ── Theme change → load life areas ──
   const handleThemeChange = useCallback(async (themeId) => {
@@ -307,6 +375,134 @@ export default function AdminRuleBuilderPage() {
       setRuleTree(createDefaultGroup());
     }
   }, [questions]);
+
+  const handleSubdomainChange = useCallback(async (subdomainId) => {
+    setSelectedSubdomain(subdomainId);
+    setSelectedRepoRuleId('');
+    setRepoRuleMeta({
+      rule_id: '',
+      description: '',
+      weight: '',
+      lock: 'natal',
+      category: '',
+      tradition: '',
+    });
+    await loadSubdomain(subdomainId);
+  }, [loadSubdomain]);
+
+  const loadRepositoryRule = useCallback((ruleId) => {
+    setSelectedRepoRuleId(ruleId);
+    const rule = subdomainData?.rules?.find((entry) => entry.rule_id === ruleId);
+    if (!rule) return;
+    setRepoRuleMeta({
+      rule_id: rule.rule_id || '',
+      description: rule.description || '',
+      weight: String(rule.weight ?? ''),
+      lock: rule.lock || 'natal',
+      category: rule.category || '',
+      tradition: rule.tradition || '',
+    });
+    if (rule.condition && typeof rule.condition === 'object') {
+      setRuleTree(rdlJsonToTree(rule.condition));
+    } else {
+      setRuleTree(createDefaultGroup());
+    }
+    setToast({ type: 'success', msg: `Loaded repository rule ${rule.rule_id}` });
+  }, [subdomainData]);
+
+  const resetRepositoryRuleEditor = useCallback(() => {
+    setSelectedRepoRuleId('');
+    setRepoRuleMeta({
+      rule_id: '',
+      description: '',
+      weight: '',
+      lock: 'natal',
+      category: '',
+      tradition: '',
+    });
+    setRuleTree(createDefaultGroup());
+  }, []);
+
+  const handleRepoMetaField = useCallback((field, value) => {
+    setRepoRuleMeta((prev) => ({ ...prev, [field]: value }));
+  }, []);
+
+  const handleRepositoryRuleSave = useCallback(async () => {
+    if (!selectedSubdomain) {
+      setError('Select a repository subdomain before saving a rule.');
+      return;
+    }
+    if (!repoRuleMeta.rule_id.trim()) {
+      setError('Repository rule ID is required.');
+      return;
+    }
+    if (!ruleJson) {
+      setError('Rule tree is empty.');
+      return;
+    }
+    setSaving(true);
+    setError('');
+    try {
+      const payload = {
+        rule_id: repoRuleMeta.rule_id.trim(),
+        description: repoRuleMeta.description,
+        weight: Number(repoRuleMeta.weight || 0),
+        lock: repoRuleMeta.lock || 'natal',
+        condition: ruleJson,
+        category: repoRuleMeta.category || undefined,
+        tradition: repoRuleMeta.tradition || undefined,
+      };
+      if (selectedRepoRuleId) {
+        await api.put(`/v1/admin/rules/${selectedSubdomain}/${selectedRepoRuleId}`, payload);
+      } else {
+        await api.post(`/v1/admin/rules/${selectedSubdomain}`, payload);
+      }
+      await loadSubdomain(selectedSubdomain);
+      setSelectedRepoRuleId(payload.rule_id);
+      setToast({ type: 'success', msg: selectedRepoRuleId ? 'Repository rule updated.' : 'Repository rule created.' });
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setSaving(false);
+    }
+  }, [loadSubdomain, repoRuleMeta, ruleJson, selectedRepoRuleId, selectedSubdomain]);
+
+  const handleRepositoryRuleDelete = useCallback(async () => {
+    if (!selectedSubdomain || !selectedRepoRuleId) return;
+    setSaving(true);
+    setError('');
+    try {
+      await api.del(`/v1/admin/rules/${selectedSubdomain}/${selectedRepoRuleId}`);
+      await loadSubdomain(selectedSubdomain);
+      resetRepositoryRuleEditor();
+      setToast({ type: 'success', msg: 'Repository rule deleted.' });
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setSaving(false);
+    }
+  }, [loadSubdomain, resetRepositoryRuleEditor, selectedRepoRuleId, selectedSubdomain]);
+
+  const handleRepositoryMetadataSave = useCallback(async () => {
+    if (!selectedSubdomain) {
+      setError('Select a repository subdomain before updating metadata.');
+      return;
+    }
+    setSaving(true);
+    setError('');
+    try {
+      const payload = Object.fromEntries(
+        Object.entries(repoMetadata).filter(([, value]) => value !== '')
+      );
+      await api.put(`/v1/admin/rules/${selectedSubdomain}/metadata`, payload);
+      await loadSubdomain(selectedSubdomain);
+      setToast({ type: 'success', msg: 'Subdomain metadata updated.' });
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setSaving(false);
+    }
+  }, [loadSubdomain, repoMetadata, selectedSubdomain]);
 
   // ── Tree mutation callbacks ──
   const onAddCondition = useCallback((groupId) => {
@@ -606,6 +802,112 @@ export default function AdminRuleBuilderPage() {
           </div>
 
           <div className="rb-container">
+            <div className="rb-data-tags" style={{ marginBottom: '1rem' }}>
+              <div className="rb-data-tags-header">
+                <i className="fas fa-folder-open"></i>
+                <span>Rule Repository Manager</span>
+              </div>
+              <div className="rb-taxonomy-bar" style={{ marginTop: '0.85rem' }}>
+                <div className="rb-taxonomy-group">
+                  <label><i className="fas fa-layer-group"></i> Domain</label>
+                  <select aria-label="Repository Domain" value={selectedDomain} onChange={e => handleDomainChange(e.target.value)}>
+                    <option value="">Select domain...</option>
+                    {domains.map(domain => (
+                      <option key={domain.id} value={domain.id}>{domain.name}</option>
+                    ))}
+                  </select>
+                </div>
+                <div className="rb-taxonomy-group">
+                  <label><i className="fas fa-folder"></i> Subdomain</label>
+                  <select aria-label="Repository Subdomain" value={selectedSubdomain} onChange={e => handleSubdomainChange(e.target.value)} disabled={!selectedDomain}>
+                    <option value="">Select subdomain...</option>
+                    {subdomains.map(subdomain => (
+                      <option key={subdomain.id} value={subdomain.id}>
+                        [{subdomain.id}] {subdomain.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="rb-taxonomy-group">
+                  <label><i className="fas fa-file-alt"></i> Repository Rule</label>
+                  <select aria-label="Repository Rule" value={selectedRepoRuleId} onChange={e => loadRepositoryRule(e.target.value)} disabled={!selectedSubdomain}>
+                    <option value="">Select repository rule...</option>
+                    {(subdomainData?.rules || []).map(rule => (
+                      <option key={rule.rule_id} value={rule.rule_id}>{rule.rule_id}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              {selectedSubdomain && (
+                <>
+                  <div className="rb-taxonomy-bar" style={{ marginTop: '0.85rem' }}>
+                    <div className="rb-taxonomy-group">
+                      <label>Version</label>
+                      <input value={repoMetadata.version} onChange={e => setRepoMetadata(prev => ({ ...prev, version: e.target.value }))} placeholder="1.0.0" />
+                    </div>
+                    <div className="rb-taxonomy-group">
+                      <label>Author</label>
+                      <input value={repoMetadata.author} onChange={e => setRepoMetadata(prev => ({ ...prev, author: e.target.value }))} placeholder="Admin author" />
+                    </div>
+                    <div className="rb-taxonomy-group">
+                      <label>Primary Tradition</label>
+                      <input value={repoMetadata.primary_tradition} onChange={e => setRepoMetadata(prev => ({ ...prev, primary_tradition: e.target.value }))} placeholder="PARASHARI" />
+                    </div>
+                    <div className="rb-taxonomy-group" style={{ justifyContent: 'flex-end' }}>
+                      <label>&nbsp;</label>
+                      <button type="button" className="rb-toolbar-btn" onClick={handleRepositoryMetadataSave} disabled={saving}>
+                        <i className="fas fa-save"></i> Save Metadata
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="rb-taxonomy-bar" style={{ marginTop: '0.5rem' }}>
+                    <div className="rb-taxonomy-group">
+                      <label>Rule ID</label>
+                      <input aria-label="Repository Rule ID" value={repoRuleMeta.rule_id} onChange={e => handleRepoMetaField('rule_id', e.target.value)} placeholder="jobloss_dasha_trigger" />
+                    </div>
+                    <div className="rb-taxonomy-group">
+                      <label>Weight</label>
+                      <input aria-label="Repository Rule Weight" type="number" step="any" value={repoRuleMeta.weight} onChange={e => handleRepoMetaField('weight', e.target.value)} placeholder="0.12" />
+                    </div>
+                    <div className="rb-taxonomy-group">
+                      <label>Lock</label>
+                      <input aria-label="Repository Rule Lock" value={repoRuleMeta.lock} onChange={e => handleRepoMetaField('lock', e.target.value)} placeholder="natal" />
+                    </div>
+                    <div className="rb-taxonomy-group">
+                      <label>Tradition</label>
+                      <input aria-label="Repository Rule Tradition" value={repoRuleMeta.tradition} onChange={e => handleRepoMetaField('tradition', e.target.value)} placeholder="PARASHARI" />
+                    </div>
+                  </div>
+                  <div className="rb-taxonomy-bar" style={{ marginTop: '0.5rem' }}>
+                    <div className="rb-taxonomy-group" style={{ minWidth: '280px', flex: 2 }}>
+                      <label>Description</label>
+                      <input aria-label="Repository Rule Description" value={repoRuleMeta.description} onChange={e => handleRepoMetaField('description', e.target.value)} placeholder="Describe when the rule should fire" />
+                    </div>
+                    <div className="rb-taxonomy-group">
+                      <label>Category</label>
+                      <input aria-label="Repository Rule Category" value={repoRuleMeta.category} onChange={e => handleRepoMetaField('category', e.target.value)} placeholder="timing" />
+                    </div>
+                    <div className="rb-taxonomy-group" style={{ justifyContent: 'flex-end' }}>
+                      <label>&nbsp;</label>
+                      <div style={{ display: 'flex', gap: '0.5rem' }}>
+                        <button type="button" className="rb-toolbar-btn" onClick={resetRepositoryRuleEditor}>
+                          <i className="fas fa-file-medical"></i> New Repository Rule
+                        </button>
+                        <button type="button" className="rb-toolbar-btn rb-toolbar-btn--primary" onClick={handleRepositoryRuleSave} disabled={saving || !selectedSubdomain}>
+                          <i className={`fas ${saving ? 'fa-spinner fa-spin' : 'fa-save'}`}></i> {selectedRepoRuleId ? 'Update Repository Rule' : 'Create Repository Rule'}
+                        </button>
+                        <button type="button" className="rb-toolbar-btn" onClick={handleRepositoryRuleDelete} disabled={saving || !selectedRepoRuleId}>
+                          <i className="fas fa-trash-alt"></i> Delete
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
+
             {/* Taxonomy Bar */}
             <div className="rb-taxonomy-bar">
               <div className="rb-taxonomy-group">

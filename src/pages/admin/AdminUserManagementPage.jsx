@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import PageShell from '../../components/PageShell';
 import { api } from '../../api/client';
+import { getAccessToken } from '../../auth/session';
 import '../../styles/admin.css';
 
 const ROLES = ['free', 'premium', 'admin'];
@@ -259,7 +260,7 @@ export default function AdminUserManagementPage() {
         `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000'}/v1/admin/users/import-csv`,
         {
           method: 'POST',
-          headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` },
+          headers: { Authorization: `Bearer ${getAccessToken()}` },
           body: formData,
         }
       );

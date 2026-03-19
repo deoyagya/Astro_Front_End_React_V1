@@ -1,7 +1,9 @@
 import { useAuth } from '../context/AuthContext';
+import { useLegalModal } from '../context/LegalModalContext';
 
 export default function SiteFooter() {
   const { user } = useAuth();
+  const { openPrivacy, openTerms } = useLegalModal();
   const isAdmin = user?.role === 'admin';
 
   return (
@@ -30,7 +32,7 @@ export default function SiteFooter() {
                 <li><a href="/birth-chart"><i className="fas fa-chevron-right"></i> Free Kundli Generation</a></li>
                 <li><a href="/compatibility"><i className="fas fa-chevron-right"></i> Kundli Matching</a></li>
                 <li><a href="/manglik-dosha"><i className="fas fa-chevron-right"></i> Manglik Dosha Remedies</a></li>
-                <li><a href="/reports"><i className="fas fa-chevron-right"></i> Birth Chart Analysis (Premium)</a></li>
+                <li><a href="/birth-chart-analysis"><i className="fas fa-chevron-right"></i> Birth Chart Analysis (Premium)</a></li>
               </ul>
             </div>
 
@@ -51,7 +53,12 @@ export default function SiteFooter() {
         )}
 
         <div className="footer-bottom">
-          <p>© 2025 – {new Date().getFullYear()} Astro Yagya. All rights reserved. | <a href="#" id="terms-link">Terms of Use</a> | <a href="#" id="privacy-link">Privacy Policy</a></p>
+          <p>
+            © 2025 – {new Date().getFullYear()} Astro Yagya. All rights reserved. |{' '}
+            <button type="button" className="footer-link-button" onClick={openTerms}>Terms of Use</button>
+            {' '}|{' '}
+            <button type="button" className="footer-link-button" onClick={openPrivacy}>Privacy Policy</button>
+          </p>
         </div>
       </div>
     </footer>

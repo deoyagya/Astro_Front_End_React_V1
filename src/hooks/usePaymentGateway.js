@@ -11,14 +11,18 @@
 import { useState, useEffect, useCallback } from 'react';
 import { api } from '../api/client';
 
-const CACHE_KEY = 'payment_gateway_config';
+const CACHE_KEY = 'payment_gateway_config_v2';
 const CACHE_TTL = 1800_000; // 30 minutes
+const FALLBACK_CURRENCY = 'AUD';
+const FALLBACK_COUNTRY = 'AU';
+const FALLBACK_EXCHANGE_RATE = 1.53;
 
 export default function usePaymentGateway() {
   const [state, setState] = useState({
     gateway: null,
-    currency: 'USD',
-    countryCode: 'US',
+    currency: FALLBACK_CURRENCY,
+    countryCode: FALLBACK_COUNTRY,
+    exchangeRate: FALLBACK_EXCHANGE_RATE,
     razorpayKeyId: null,
     stripeKey: null,
     loading: true,
@@ -32,10 +36,16 @@ export default function usePaymentGateway() {
       if (cached) {
         const { data, timestamp } = JSON.parse(cached);
         if (Date.now() - timestamp < CACHE_TTL) {
+          const cachedCurrency = data.currency || 'USD';
+          const cachedExchangeRate = data.exchange_rate;
+          if (cachedCurrency !== 'USD' && !cachedExchangeRate) {
+            throw new Error('Cached gateway config missing exchange rate');
+          }
           setState({
             gateway: data.gateway || data.provider,
-            currency: data.currency || 'USD',
+            currency: cachedCurrency,
             countryCode: data.country_code || 'US',
+            exchangeRate: cachedExchangeRate || 1,
             razorpayKeyId: data.razorpay_key_id || null,
             stripeKey: data.stripe_publishable_key || null,
             loading: false,
@@ -54,6 +64,7 @@ export default function usePaymentGateway() {
         gateway: data.gateway || data.provider || 'stripe',
         currency: data.currency || 'USD',
         countryCode: data.country_code || 'US',
+        exchangeRate: data.exchange_rate || 1,
         razorpayKeyId: data.razorpay_key_id || null,
         stripeKey: data.stripe_publishable_key || null,
         loading: false,
@@ -72,11 +83,12 @@ export default function usePaymentGateway() {
 
       setState(result);
     } catch (err) {
-      // Fallback to Stripe
+      // Fallback to Stripe + AUD display currency when detection is unavailable
       setState({
         gateway: 'stripe',
-        currency: 'USD',
-        countryCode: 'US',
+        currency: FALLBACK_CURRENCY,
+        countryCode: FALLBACK_COUNTRY,
+        exchangeRate: FALLBACK_EXCHANGE_RATE,
         razorpayKeyId: null,
         stripeKey: import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY || null,
         loading: false,
