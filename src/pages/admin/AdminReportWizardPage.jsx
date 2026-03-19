@@ -4,7 +4,10 @@ import PageShell from '../../components/PageShell';
 import { api } from '../../api/client';
 import '../../styles/admin.css';
 import { useStyles } from '../../context/StyleContext';
-import { normalizeReportConfigForEditor } from './reportConfigAdmin';
+import {
+  buildReportConfigPayload,
+  normalizeReportConfigForEditor,
+} from './reportConfigAdmin';
 
 const DIVISIONAL_CHARTS = [
   { value: 'D1',  label: 'D1 — Rashi (Birth Chart)' },
@@ -46,9 +49,15 @@ export default function AdminReportWizardPage() {
   const [includeCharts, setIncludeCharts] = useState(false);
   const [selectedCharts, setSelectedCharts] = useState([]);
   const [addBadge, setAddBadge] = useState(false);
+  const [showBadge, setShowBadge] = useState(true);
   const [badgeText, setBadgeText] = useState('');
   const [reportLength, setReportLength] = useState('');
   const [sampleReportLink, setSampleReportLink] = useState('');
+  const [slug, setSlug] = useState('');
+  const [icon, setIcon] = useState('');
+  const [deliveryHours, setDeliveryHours] = useState(24);
+  const [routeSlug, setRouteSlug] = useState('');
+  const [displayOrder, setDisplayOrder] = useState(0);
 
   // ── Screen 2: Pricing ──
   const [pricingMode, setPricingMode] = useState('fixed');
@@ -124,10 +133,16 @@ export default function AdminReportWizardPage() {
       setDescription(normalized.description);
       setIncludeCharts(normalized.includeCharts);
       setSelectedCharts(normalized.selectedCharts);
+      setShowBadge(normalized.showBadge);
       setAddBadge(normalized.addBadge);
       setBadgeText(normalized.badgeText);
       setReportLength(normalized.reportLength);
       setSampleReportLink(normalized.sampleReportLink);
+      setSlug(normalized.slug);
+      setIcon(normalized.icon);
+      setDeliveryHours(normalized.deliveryHours);
+      setRouteSlug(normalized.routeSlug);
+      setDisplayOrder(normalized.displayOrder);
       setSelectedQuestions(normalized.selectedQuestions);
       setPricingMode(normalized.pricingMode);
       setFixedPrice(normalized.fixedPrice);
@@ -319,34 +334,36 @@ export default function AdminReportWizardPage() {
     setSaving(true);
     setError('');
     try {
-      const payload = {
-        // Screen 1
-        name: reportName.trim(),
-        description: description.trim() || null,
-        include_charts: includeCharts,
-        divisional_charts: includeCharts ? selectedCharts : [],
-        badge_text: addBadge ? badgeText.trim() || null : null,
-        report_length: reportLength ? parseInt(reportLength, 10) : null,
-        sample_report_url: sampleReportLink.trim() || null,
-        question_ids: selectedQuestions.map((q) => q.id),
-
-        // Screen 2
-        pricing_mode: pricingMode,
-        fixed_price: pricingMode === 'fixed' ? Math.round(parseFloat(fixedPrice) * 100) : null,
-        num_iterations: numIterations,
-        discount_mode: discountMode === 'none' ? null : discountMode,
-        discount_value: discountMode !== 'none' ? parseFloat(discountValue) : null,
-        discount_valid_until: discountValidity || null,
-
-        // Screen 3
-        creator_model: creatorModel || 'gemini-2.5-flash',
-        reviewer_model: reviewerModel || 'claude-opus',
-        review_iterations: reviewIterations,
-        iteration_cost_mode: iterCostMode,
-        iteration_cost_value: iterCostValue ? parseFloat(iterCostValue) : null,
-        creator_prompt: creatorPrompt.trim() || null,
-        reviewer_prompt: reviewerPrompt.trim() || null,
-      };
+      const payload = buildReportConfigPayload({
+        reportName,
+        description,
+        includeCharts,
+        selectedCharts,
+        showBadge,
+        addBadge,
+        badgeText,
+        reportLength,
+        sampleReportLink,
+        slug,
+        icon,
+        deliveryHours,
+        routeSlug,
+        displayOrder,
+        selectedQuestions,
+        pricingMode,
+        fixedPrice,
+        numIterations,
+        discountMode,
+        discountValue,
+        discountValidity,
+        creatorModel,
+        reviewerModel,
+        reviewIterations,
+        iterCostMode,
+        iterCostValue,
+        creatorPrompt,
+        reviewerPrompt,
+      });
 
       if (isEditMode) {
         await api.put(`/v1/admin/report-configs/${configId}`, payload);
@@ -527,6 +544,18 @@ export default function AdminReportWizardPage() {
 
         {/* Add Badge */}
         <div className="form-group">
+          <label>Show Badge in Catalog</label>
+          <div className="chart-style-toggle">
+            <button className={!showBadge ? 'active' : ''} onClick={() => setShowBadge(false)}>
+              No
+            </button>
+            <button className={showBadge ? 'active' : ''} onClick={() => setShowBadge(true)}>
+              Yes
+            </button>
+          </div>
+        </div>
+
+        <div className="form-group">
           <label>Add Badge</label>
           <div className="chart-style-toggle">
             <button className={!addBadge ? 'active' : ''} onClick={() => { setAddBadge(false); setBadgeText(''); }}>
@@ -567,6 +596,59 @@ export default function AdminReportWizardPage() {
             value={sampleReportLink}
             onChange={(e) => setSampleReportLink(e.target.value)}
             placeholder="https://example.com/sample-report.pdf"
+          />
+        </div>
+
+        <div className="form-group">
+          <label>Catalog Slug</label>
+          <input
+            type="text"
+            value={slug}
+            onChange={(e) => setSlug(e.target.value)}
+            placeholder="e.g., career-premium"
+          />
+        </div>
+
+        <div className="form-group">
+          <label>Catalog Icon</label>
+          <input
+            type="text"
+            value={icon}
+            onChange={(e) => setIcon(e.target.value)}
+            placeholder="e.g., fa-briefcase"
+          />
+        </div>
+
+        <div className="form-group">
+          <label>Delivery SLA (hours)</label>
+          <input
+            type="number"
+            min="1"
+            max="720"
+            value={deliveryHours}
+            onChange={(e) => setDeliveryHours(e.target.value)}
+            placeholder="e.g., 24"
+          />
+        </div>
+
+        <div className="form-group">
+          <label>Frontend Route Slug</label>
+          <input
+            type="text"
+            value={routeSlug}
+            onChange={(e) => setRouteSlug(e.target.value)}
+            placeholder="e.g., /career-premium-report"
+          />
+        </div>
+
+        <div className="form-group">
+          <label>Display Order</label>
+          <input
+            type="number"
+            min="0"
+            value={displayOrder}
+            onChange={(e) => setDisplayOrder(e.target.value)}
+            placeholder="e.g., 0"
           />
         </div>
       </div>
