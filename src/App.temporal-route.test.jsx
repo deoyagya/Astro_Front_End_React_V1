@@ -26,6 +26,12 @@ vi.mock('./components/ChatWidget', () => ({
 vi.mock('./pages/ThreatOpportunityPage', () => ({
   default: () => <div>Standalone Threat Opportunity Page</div>,
 }));
+vi.mock('./pages/TemporalForecastLandingPage', () => ({
+  default: () => <div>Temporal Forecast Landing</div>,
+}));
+vi.mock('./pages/MuhurtaLandingPage', () => ({
+  default: () => <div>Muhurta Landing</div>,
+}));
 
 vi.mock('./pages/HomePage', () => ({ default: () => <div>Home</div> }));
 vi.mock('./pages/LoginPage', () => ({ default: () => <div>Login</div> }));
@@ -102,6 +108,16 @@ vi.mock('./components/ProtectedRoute', () => ({ default: ({ children }) => child
 vi.mock('./components/AdminProtectedRoute', () => ({ default: ({ children }) => children }));
 
 describe('Temporal forecast routing', () => {
+  it('renders the public temporal landing page on /temporal-forecast', () => {
+    render(
+      <MemoryRouter initialEntries={['/temporal-forecast']}>
+        <App />
+      </MemoryRouter>,
+    );
+
+    expect(screen.getByText('Temporal Forecast Landing')).toBeInTheDocument();
+  });
+
   it('renders the standalone page on /threat-opportunity', () => {
     render(
       <MemoryRouter initialEntries={['/threat-opportunity']}>
@@ -120,5 +136,15 @@ describe('Temporal forecast routing', () => {
     );
 
     expect(screen.getByText('Standalone Threat Opportunity Page')).toBeInTheDocument();
+  });
+
+  it('renders the public muhurta landing page on /muhurta-finder', () => {
+    render(
+      <MemoryRouter initialEntries={['/muhurta-finder']}>
+        <App />
+      </MemoryRouter>,
+    );
+
+    expect(screen.getByText('Muhurta Landing')).toBeInTheDocument();
   });
 });

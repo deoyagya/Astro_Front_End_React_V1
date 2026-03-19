@@ -223,7 +223,8 @@ export default function SiteHeader({ active = 'home' }) {
                     <ul className="nav-submenu">
                       <li><a href="/birth-chart" onClick={(e) => handleSubmenuLinkClick(e, '/birth-chart')}><i className="fas fa-chart-pie"></i> Free Kundli Generation</a></li>
                       <li><a href="/compatibility" onClick={(e) => handleSubmenuLinkClick(e, '/compatibility')}><i className="fas fa-ring"></i> Kundli Matching</a></li>
-                      <li><a href="/threat-opportunity" onClick={(e) => handleSubmenuLinkClick(e, '/threat-opportunity')}><i className="fas fa-hourglass-half"></i> Threat and Opportunity</a></li>
+                      <li><a href="/muhurta-finder" onClick={(e) => handleSubmenuLinkClick(e, '/muhurta-finder')}><i className="fas fa-clock"></i> Muhurta Finder</a></li>
+                      <li><a href="/temporal-forecast" onClick={(e) => handleSubmenuLinkClick(e, '/temporal-forecast')}><i className="fas fa-hourglass-half"></i> Threat and Opportunity</a></li>
                       <li><a href="/manglik-dosha" onClick={(e) => handleSubmenuLinkClick(e, '/manglik-dosha')}><i className="fas fa-exclamation-triangle"></i> Manglik Dosha Remedies</a></li>
                       <li><a href="/birth-chart-analysis" onClick={(e) => handleSubmenuLinkClick(e, '/birth-chart-analysis')}><i className="fas fa-file-pdf"></i> Birth Chart Analysis (Premium)</a></li>
                     </ul>
