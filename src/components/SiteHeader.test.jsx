@@ -66,19 +66,26 @@ describe('SiteHeader', () => {
     expect(screen.getByRole('link', { name: /Free Tools/i })).toBeInTheDocument();
   });
 
-  it('shows the Threat and Opportunity item under Kundli and protects it for unauthenticated users', () => {
+  it('shows the Threat and Opportunity item under Kundli and sends authenticated users to the public landing page', () => {
+    authState.value = {
+      isAuthenticated: true,
+      user: { email: 'ria@example.com', role: 'free' },
+      logout: vi.fn(),
+    };
+
     render(
       <MemoryRouter initialEntries={['/']}>
         <Routes>
           <Route path="/" element={<SiteHeader active="home" />} />
-          <Route path="/login" element={<div>Login Screen</div>} />
+          <Route path="/temporal-forecast" element={<div>Temporal Forecast Landing</div>} />
         </Routes>
       </MemoryRouter>,
     );
 
+    fireEvent.click(screen.getByRole('link', { name: /^Kundli$/i }));
     fireEvent.click(screen.getByRole('link', { name: /Threat and Opportunity/i }));
 
-    expect(screen.getByText('Login Screen')).toBeInTheDocument();
+    expect(screen.getByText('Temporal Forecast Landing')).toBeInTheDocument();
   });
 
   it('opens the Kundli submenu on click for authenticated users', () => {
@@ -105,7 +112,7 @@ describe('SiteHeader', () => {
     expect(screen.getAllByText(/Threat and Opportunity/i).length).toBeGreaterThan(0);
   });
 
-  it('navigates authenticated users to the temporal forecast page from the Kundli submenu', () => {
+  it('navigates authenticated users to the temporal forecast landing page from the Kundli submenu', () => {
     authState.value = {
       isAuthenticated: true,
       user: { email: 'ria@example.com', role: 'premium' },
@@ -116,7 +123,7 @@ describe('SiteHeader', () => {
       <MemoryRouter initialEntries={['/']}>
         <Routes>
           <Route path="/" element={<SiteHeader active="home" />} />
-          <Route path="/threat-opportunity" element={<div>Temporal Forecast Screen</div>} />
+          <Route path="/temporal-forecast" element={<div>Temporal Forecast Landing</div>} />
         </Routes>
       </MemoryRouter>,
     );
@@ -124,7 +131,29 @@ describe('SiteHeader', () => {
     fireEvent.click(screen.getByRole('link', { name: /^Kundli$/i }));
     fireEvent.click(screen.getAllByRole('link', { name: /Threat and Opportunity/i })[0]);
 
-    expect(screen.getByText('Temporal Forecast Screen')).toBeInTheDocument();
+    expect(screen.getByText('Temporal Forecast Landing')).toBeInTheDocument();
+  });
+
+  it('shows the Muhurta Finder item under Kundli and navigates to its public landing page', () => {
+    authState.value = {
+      isAuthenticated: true,
+      user: { email: 'ria@example.com', role: 'free' },
+      logout: vi.fn(),
+    };
+
+    render(
+      <MemoryRouter initialEntries={['/']}>
+        <Routes>
+          <Route path="/" element={<SiteHeader active="home" />} />
+          <Route path="/muhurta-finder" element={<div>Muhurta Landing</div>} />
+        </Routes>
+      </MemoryRouter>,
+    );
+
+    fireEvent.click(screen.getByRole('link', { name: /^Kundli$/i }));
+    fireEvent.click(screen.getByRole('link', { name: /Muhurta Finder/i }));
+
+    expect(screen.getByText('Muhurta Landing')).toBeInTheDocument();
   });
 
   it('surfaces admin users and orders inside the Manage Data menu', () => {

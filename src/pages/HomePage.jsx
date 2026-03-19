@@ -225,7 +225,7 @@ export default function HomePage() {
                                 </div>
                             </div>
                             {isPremium ? (
-                                <a href="/threat-opportunity" className="btn btn-primary tf-showcase-cta">
+                                <a href="/temporal-forecast" className="btn btn-primary tf-showcase-cta">
                                     <i className="fas fa-hourglass-half"></i> View My Forecast
                                 </a>
                             ) : (

@@ -49,10 +49,12 @@ import AdminGatewayConfigPage from './pages/admin/AdminGatewayConfigPage';
 import AdminUserManagementPage from './pages/admin/AdminUserManagementPage';
 import PublicSurveyPage from './pages/PublicSurveyPage';
 import MuhurtaFinderPage from './pages/MuhurtaFinderPage';
+import MuhurtaLandingPage from './pages/MuhurtaLandingPage';
 import ChartWizardPage from './pages/ChartWizardPage';
 import PricingPage from './pages/PricingPage';
 import MyOrdersPage from './pages/MyOrdersPage';
 import ThreatOpportunityPage from './pages/ThreatOpportunityPage';
+import TemporalForecastLandingPage from './pages/TemporalForecastLandingPage';
 import ChatWidget from './components/ChatWidget';
 import SiteGate from './components/SiteGate';
 import { LegalModalProvider } from './context/LegalModalContext';
@@ -78,6 +80,8 @@ export default function App() {
         <Route path="/" element={<HomePage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/pricing" element={<PricingPage />} />
+        <Route path="/muhurta-finder" element={<MuhurtaLandingPage />} />
+        <Route path="/temporal-forecast" element={<TemporalForecastLandingPage />} />
         <Route path="/threat-opportunity" element={<ProtectedRoute><ThreatOpportunityPage /></ProtectedRoute>} />
         <Route path="/survey/:slug" element={<PublicSurveyPage />} />
 
