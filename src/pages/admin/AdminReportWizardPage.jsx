@@ -8,6 +8,11 @@ import {
   buildReportConfigPayload,
   normalizeReportConfigForEditor,
 } from './reportConfigAdmin';
+import {
+  getActiveInputLevel,
+  getBlockingRequirementLabels,
+  getRecommendedEnhancementLabels,
+} from '../../utils/reportInputContracts';
 
 const DIVISIONAL_CHARTS = [
   { value: 'D1',  label: 'D1 — Rashi (Birth Chart)' },
@@ -84,6 +89,9 @@ export default function AdminReportWizardPage() {
   const [error, setError] = useState('');
   const [toast, setToast] = useState(null);
   const [stepErrors, setStepErrors] = useState({});
+  const [inputContract, setInputContract] = useState(null);
+  const [inputContractLoading, setInputContractLoading] = useState(false);
+  const [inputContractError, setInputContractError] = useState('');
 
   // ── Toast auto-clear ──
   useEffect(() => {
@@ -169,6 +177,40 @@ export default function AdminReportWizardPage() {
     loadLLMConfig();
     if (isEditMode) loadExistingConfig();
   }, [loadThemes, loadLLMConfig, loadExistingConfig, isEditMode]);
+
+  useEffect(() => {
+    const slugValue = slug.trim();
+    let cancelled = false;
+
+    if (!slugValue) {
+      setInputContract(null);
+      setInputContractError('');
+      setInputContractLoading(false);
+      return undefined;
+    }
+
+    setInputContractLoading(true);
+    setInputContractError('');
+
+    api.get(`/v1/reports/catalog/${slugValue}/input-contract`)
+      .then((data) => {
+        if (!cancelled) {
+          setInputContract(data);
+          setInputContractLoading(false);
+        }
+      })
+      .catch((err) => {
+        if (!cancelled) {
+          setInputContract(null);
+          setInputContractError(err.message || 'No centralized input contract found for this slug yet.');
+          setInputContractLoading(false);
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [slug]);
 
   // ── Cascading: theme -> life areas (only show areas with questions) ──
   const loadLifeAreas = useCallback(async (themeId) => {
@@ -607,6 +649,89 @@ export default function AdminReportWizardPage() {
             onChange={(e) => setSlug(e.target.value)}
             placeholder="e.g., career-premium"
           />
+        </div>
+
+        <div className="form-group">
+          <label>Centralized Input Contract</label>
+          <div style={{
+            background: 'rgba(20, 24, 38, 0.92)',
+            border: '1px solid rgba(157, 123, 255, 0.22)',
+            borderRadius: 14,
+            padding: 16,
+          }}>
+            {!slug.trim() && (
+              <div style={{ color: '#9fa7bd' }}>
+                Enter a known slug like <strong>career</strong>, <strong>love</strong>, or <strong>education</strong> to preview the centralized requirement contract.
+              </div>
+            )}
+            {slug.trim() && inputContractLoading && (
+              <div style={{ color: '#b794ff' }}>
+                <i className="fas fa-spinner fa-spin" style={{ marginRight: 8 }}></i>
+                Loading contract...
+              </div>
+            )}
+            {slug.trim() && !inputContractLoading && inputContractError && (
+              <div style={{ color: '#ff9aa2' }}>{inputContractError}</div>
+            )}
+            {inputContract && !inputContractLoading && (
+              <div>
+                <div style={{ color: '#fff', fontWeight: 700, marginBottom: 6 }}>
+                  {inputContract.input_mode.replace(/_/g, ' ')} • {(getActiveInputLevel(inputContract)?.label || 'Minimum required')}
+                </div>
+                <div style={{ color: '#9fa7bd', fontSize: '0.95rem', marginBottom: 10 }}>
+                  Blocking if missing:
+                </div>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 12 }}>
+                  {getBlockingRequirementLabels(inputContract, 12).map((label) => (
+                    <span
+                      key={label}
+                      style={{
+                        padding: '6px 10px',
+                        borderRadius: 999,
+                        background: 'rgba(255,255,255,0.06)',
+                        border: '1px solid rgba(157,123,255,0.24)',
+                        color: '#ebe6ff',
+                        fontSize: '0.88rem',
+                      }}
+                    >
+                      {label}
+                    </span>
+                  ))}
+                </div>
+                <div style={{ color: '#9fa7bd', fontSize: '0.95rem', marginBottom: 10 }}>
+                  Recommended enrichments:
+                </div>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 12 }}>
+                  {getRecommendedEnhancementLabels(inputContract, 12).map((label) => (
+                    <span
+                      key={label}
+                      style={{
+                        padding: '6px 10px',
+                        borderRadius: 999,
+                        background: 'rgba(120,255,196,0.08)',
+                        border: '1px solid rgba(120,255,196,0.2)',
+                        color: '#ccffe6',
+                        fontSize: '0.88rem',
+                      }}
+                    >
+                      {label}
+                    </span>
+                  ))}
+                  {getRecommendedEnhancementLabels(inputContract, 12).length === 0 && (
+                    <span style={{ color: '#9fa7bd' }}>No extra enrichment beyond the minimum level.</span>
+                  )}
+                </div>
+                <div style={{ color: '#9fa7bd', fontSize: '0.9rem', lineHeight: 1.6 }}>
+                  {(getActiveInputLevel(inputContract)?.notes || []).map((note) => (
+                    <div key={note}>
+                      <i className="fas fa-info-circle" style={{ marginRight: 8, color: '#b794ff' }}></i>
+                      {note}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
         </div>
 
         <div className="form-group">

@@ -6,6 +6,11 @@ import usePaymentGateway from '../hooks/usePaymentGateway';
 import { api } from '../api/client';
 import { useStyles } from '../context/StyleContext';
 import { formatUsdCentsForUser } from '../utils/localPricing';
+import {
+  getActiveInputLevel,
+  getBlockingRequirementLabels,
+  getRecommendedEnhancementLabels,
+} from '../utils/reportInputContracts';
 
 export default function ReportsPage() {
   const { getOverride } = useStyles('reports-catalog');
@@ -112,6 +117,8 @@ export default function ReportsPage() {
               <div className="reports-grid">
                 {reports.map((report) => {
                   const reportPriceCents = report.price_paisa ?? report.price ?? 0;
+                  const inputLevel = getActiveInputLevel(report.input_contract);
+                  const blockingLabels = getBlockingRequirementLabels(report.input_contract, 5);
                   return (
                   <div className="report-card" key={report.id} id={report.id}>
                     {report.badge && <div className="card-badge">{report.badge}</div>}
@@ -122,6 +129,21 @@ export default function ReportsPage() {
                       <span><i className="fas fa-calendar-alt"></i> {report.pages} pages</span>
                       <span><i className="fas fa-clock"></i> {report.delivery_hours || 24}hrs delivery</span>
                     </div>
+                    {report.input_contract && (
+                      <div className="report-input-summary">
+                        <div className="report-input-summary__title">
+                          <i className="fas fa-list-check"></i> Required Inputs
+                        </div>
+                        <div className="report-input-summary__mode">
+                          {report.input_contract.input_mode.replace(/_/g, ' ')} • {inputLevel?.label || 'Minimum required'}
+                        </div>
+                        <div className="report-input-summary__chips">
+                          {blockingLabels.map((label) => (
+                            <span key={label} className="report-input-chip">{label}</span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                     <div className="report-price">{formatUsdCentsForUser(reportPriceCents, gw)}</div>
                     <div className="report-actions">
                       <button className="btn-sample" onClick={() => setSampleReport(report)}>
@@ -174,6 +196,33 @@ export default function ReportsPage() {
               <i className={`fas ${sampleReport.icon}`}></i>
               <h2>{sampleReport.title} — Sample Preview</h2>
             </div>
+
+            {sampleReport.input_contract && (
+              <div className="sample-input-contract">
+                <h3><i className="fas fa-list-check"></i> Inputs Needed To Produce This Report</h3>
+                <div className="sample-input-grid">
+                  <div>
+                    <strong>Minimum required</strong>
+                    <div className="sample-input-chips">
+                      {getBlockingRequirementLabels(sampleReport.input_contract, 12).map((label) => (
+                        <span key={label} className="report-input-chip">{label}</span>
+                      ))}
+                    </div>
+                  </div>
+                  <div>
+                    <strong>Recommended enrichments</strong>
+                    <div className="sample-input-chips">
+                      {getRecommendedEnhancementLabels(sampleReport.input_contract, 8).map((label) => (
+                        <span key={label} className="report-input-chip report-input-chip--recommended">{label}</span>
+                      ))}
+                      {getRecommendedEnhancementLabels(sampleReport.input_contract, 8).length === 0 && (
+                        <span className="sample-input-note">No extra enrichment is required beyond the minimum level.</span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
 
             {/* Critical areas of concern — shown first */}
             {sampleReport.warnings && sampleReport.warnings.length > 0 && (

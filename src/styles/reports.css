@@ -94,6 +94,58 @@
     margin-bottom: 20px;
 }
 
+.report-input-summary {
+    margin-bottom: 18px;
+    padding: 12px 14px;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(157, 123, 255, 0.18);
+}
+
+.report-input-summary__title {
+    color: #f3efff;
+    font-size: 0.9rem;
+    font-weight: 700;
+    margin-bottom: 6px;
+}
+
+.report-input-summary__title i {
+    color: #b794ff;
+    margin-right: 8px;
+}
+
+.report-input-summary__mode {
+    color: #aeb8ca;
+    font-size: 0.86rem;
+    margin-bottom: 10px;
+    text-transform: capitalize;
+}
+
+.report-input-summary__chips,
+.sample-input-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.report-input-chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 10px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(157, 123, 255, 0.22);
+    color: #efe9ff;
+    font-size: 0.82rem;
+    line-height: 1.2;
+}
+
+.report-input-chip--recommended {
+    border-color: rgba(120, 255, 196, 0.28);
+    background: rgba(120, 255, 196, 0.08);
+    color: #d8ffeb;
+}
+
 .report-actions {
     display: flex;
     gap: 10px;
@@ -224,6 +276,42 @@
     padding: 20px;
     border-radius: 10px;
     margin-bottom: 25px;
+}
+
+.sample-input-contract {
+    margin-top: 20px;
+    margin-bottom: 24px;
+    padding: 20px;
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(157, 123, 255, 0.2);
+}
+
+.sample-input-contract h3 {
+    margin-top: 0;
+    color: #f4efff;
+}
+
+.sample-input-contract h3 i {
+    color: #b794ff;
+    margin-right: 8px;
+}
+
+.sample-input-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+}
+
+.sample-input-grid strong {
+    display: block;
+    margin-bottom: 10px;
+    color: #fff;
+}
+
+.sample-input-note {
+    color: #9fa7bd;
+    font-size: 0.92rem;
 }
 
 .sample-warning h3 {
@@ -358,6 +446,10 @@
     }
     
     .planet-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .sample-input-grid {
         grid-template-columns: 1fr;
     }
 }
