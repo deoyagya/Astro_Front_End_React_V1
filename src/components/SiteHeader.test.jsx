@@ -156,6 +156,28 @@ describe('SiteHeader', () => {
     expect(screen.getByText('Muhurta Landing')).toBeInTheDocument();
   });
 
+  it('shows the Sade Sati Report item under Kundli and navigates to its landing page', () => {
+    authState.value = {
+      isAuthenticated: true,
+      user: { email: 'ria@example.com', role: 'free' },
+      logout: vi.fn(),
+    };
+
+    render(
+      <MemoryRouter initialEntries={['/']}>
+        <Routes>
+          <Route path="/" element={<SiteHeader active="home" />} />
+          <Route path="/sade-sati-report" element={<div>Sade Sati Report Landing</div>} />
+        </Routes>
+      </MemoryRouter>,
+    );
+
+    fireEvent.click(screen.getByRole('link', { name: /^Kundli$/i }));
+    fireEvent.click(screen.getByRole('link', { name: /Sade Sati Report/i }));
+
+    expect(screen.getByText('Sade Sati Report Landing')).toBeInTheDocument();
+  });
+
   it('surfaces admin users and orders inside the Manage Data menu', () => {
     authState.value = {
       isAuthenticated: true,

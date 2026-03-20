@@ -32,6 +32,9 @@ vi.mock('./pages/TemporalForecastLandingPage', () => ({
 vi.mock('./pages/MuhurtaLandingPage', () => ({
   default: () => <div>Muhurta Landing</div>,
 }));
+vi.mock('./pages/SadeSatiReportPage', () => ({
+  default: () => <div>Sade Sati Report Landing</div>,
+}));
 
 vi.mock('./pages/HomePage', () => ({ default: () => <div>Home</div> }));
 vi.mock('./pages/LoginPage', () => ({ default: () => <div>Login</div> }));
@@ -146,5 +149,15 @@ describe('Temporal forecast routing', () => {
     );
 
     expect(screen.getByText('Muhurta Landing')).toBeInTheDocument();
+  });
+
+  it('renders the public sade sati report page on /sade-sati-report', () => {
+    render(
+      <MemoryRouter initialEntries={['/sade-sati-report']}>
+        <App />
+      </MemoryRouter>,
+    );
+
+    expect(screen.getByText('Sade Sati Report Landing')).toBeInTheDocument();
   });
 });

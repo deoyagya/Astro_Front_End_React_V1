@@ -912,3 +912,99 @@ export const birthChartAnalysisConfig = {
   faqs: null,
   whyChoose: null,
 };
+
+export const sadeSatiConfig = {
+  slug: 'sade-sati',
+  icon: 'fa-moon',
+  iconColor: '#f5c451',
+  title: 'Shani Sade Sati Report',
+  tagline: 'A Saturn-focused premium report covering your natal Shani, current transit, complete Sade Sati cycles, Dhaiya periods, Saturn Mahadasha, and remedies.',
+  metaDescription: 'Personalized Shani Sade Sati report with Saturn placement analysis, first/second/third Sade Sati cycles, Dhaiya periods, Mahadasha timing, and remedies.',
+  priceCents: 2999,
+  originalPriceCents: 4999,
+  pages: 23,
+  deliveryHours: 6,
+
+  insideItems: [
+    {
+      icon: 'fa-satellite-dish',
+      title: 'Natal Saturn Analysis',
+      description: 'Understand your Saturn sign, house, lordship, and where Saturn is creating pressure, maturity, delay, or long-term reward.',
+      highlights: ['Saturn sign and house', 'Life-area impact', 'Saturn aspect coverage'],
+    },
+    {
+      icon: 'fa-wave-square',
+      title: 'Current Saturn Transit',
+      description: 'See where Saturn is transiting now and how it is influencing your mind, family life, work pressure, and timing.',
+      highlights: ['Current Saturn sign', 'House from Moon', 'Present Sade Sati status'],
+    },
+    {
+      icon: 'fa-hourglass-half',
+      title: 'All Sade Sati Cycles',
+      description: 'Full first, second, and third Sade Sati cycles split into Rising, Peak, and Setting phases with timing windows.',
+      highlights: ['Cycle-by-cycle dates', 'Phase interpretation', 'What to do and avoid'],
+    },
+    {
+      icon: 'fa-triangle-exclamation',
+      title: 'Dhaiya / Panauti Periods',
+      description: 'Track all Saturn Dhaiya windows and understand how 4th and 8th from Moon can shape pressure and transformation.',
+      highlights: ['4th from Moon periods', '8th from Moon periods', 'Practical caution timing'],
+    },
+    {
+      icon: 'fa-list-timeline',
+      title: 'Saturn Mahadasha Breakdown',
+      description: 'Review Saturn Mahadasha and the Antardasha of each planet operating under Saturn.',
+      highlights: ['Saturn Mahadasha timeline', 'All Antardashas', 'Saturn-specific interpretation'],
+    },
+    {
+      icon: 'fa-hands-praying',
+      title: 'Shani Remedies',
+      description: 'Traditional and practical remedies to reduce pressure, strengthen discipline, and align better with Saturn.',
+      highlights: ['Ethical remedies', 'Saturday remedies', 'Practical cautions'],
+    },
+  ],
+
+  sampleSnapshot: {
+    title: 'Shani Sade Sati Analysis',
+    subtitle: 'Sample structure preview',
+    score: 75,
+    scoreLabel: 'Coverage',
+    scoreColor: '#f5c451',
+    metrics: [
+      { label: 'Natal Saturn', value: 84, color: '#f5c451' },
+      { label: 'Transit Pressure', value: 72, color: '#ff6b81' },
+      { label: 'Sade Sati Timing', value: 91, color: '#7b5bff' },
+      { label: 'Remedies Depth', value: 86, color: '#2ed573' },
+    ],
+    findings: [
+      { type: 'positive', text: 'Dedicated Saturn timing map across Sade Sati, Dhaiya, and Mahadasha' },
+      { type: 'neutral', text: 'Natal Saturn interpretation across work, finance, education, marriage, and health' },
+      { type: 'warning', text: 'Peak Sade Sati and Dhaiya periods highlighted separately for caution' },
+      { type: 'positive', text: 'Traditional plus practical Shani remedies included' },
+    ],
+  },
+
+  features: [
+    { icon: 'fa-moon', title: 'Sade Sati Timeline', description: 'Full rising, peak, and setting phase chronology across major life cycles.', color: '#f5c451' },
+    { icon: 'fa-chart-pie', title: 'D1 + D9 Charts', description: 'Visual reference for Lagna and Navamsa placement alongside Saturn timing.', color: '#70a1ff' },
+    { icon: 'fa-clock', title: 'Current Transit Status', description: 'Current Saturn transit from Moon translated into readable guidance.', color: '#ff6b81' },
+    { icon: 'fa-layer-group', title: 'Dhaiya / Panauti', description: '4th and 8th from Moon periods called out separately.', color: '#ffa502' },
+    { icon: 'fa-list-check', title: 'Mahadasha Sections', description: 'Saturn Mahadasha with all Antardashas broken down clearly.', color: '#2ed573' },
+    { icon: 'fa-pray', title: 'Remedies', description: 'Traditional Saturn remedies plus practical discipline guidance.', color: '#a29bfe' },
+  ],
+
+  planetsCovered: ['Saturn (Primary)', 'Moon (Sade Sati reference)', 'Mercury', 'Venus', 'Sun', 'Mars', 'Rahu', 'Jupiter'],
+  housesCovered: ['12th from Moon', '1st from Moon', '2nd from Moon', '4th from Moon', '8th from Moon', 'Natal Saturn house', 'Navamsa'],
+
+  testimonials: [
+    { name: 'Saturn-focused product', location: 'Premium report', quote: 'This report is built for users who want a dedicated Saturn view rather than a generic chart summary.', highlight: 'Shani Focused' },
+  ],
+
+  faqs: [
+    ...SHARED_FAQS,
+    { q: 'Is this only for people currently in Sade Sati?', a: 'No. The report maps your full Sade Sati and Dhaiya chronology, current Saturn transit, and Saturn Mahadasha timing whether or not Sade Sati is active right now.' },
+    { q: 'Will this report also tell me what to do during difficult Saturn periods?', a: 'Yes. It includes practical cautions, what-to-do guidance, and traditional Saturn remedies.' },
+  ],
+
+  whyChoose: SHARED_WHY_CHOOSE,
+};
