@@ -107,6 +107,7 @@ export default function CheckoutReturnPage() {
   }, [searchParams, navigate, refreshUser]);
 
   const isQuestionOrder = orderType === 'question';
+  const isReportOrder = orderType === 'report';
 
   return (
     <PageShell activeNav="">
@@ -141,6 +142,12 @@ export default function CheckoutReturnPage() {
               <p style={{ color: '#8b949e' }}>
                 {email ? `A confirmation has been sent to ${email}.` : 'Your payment has been processed.'}
               </p>
+              {isReportOrder && (
+                <p style={{ color: '#7b5bff', fontSize: '14px', marginTop: '12px' }}>
+                  <i className="fas fa-file-pdf" style={{ marginRight: '6px' }}></i>
+                  Your PDF report is being prepared, emailed to you, and saved in My Reports.
+                </p>
+              )}
               {isQuestionOrder && (
                 <p style={{ color: '#7b5bff', fontSize: '14px', marginTop: '12px' }}>
                   <i className="fas fa-magic" style={{ marginRight: '6px' }}></i>
@@ -160,7 +167,7 @@ export default function CheckoutReturnPage() {
               <p style={{ color: '#8b949e' }}>
                 {isQuestionOrder
                   ? 'Your payment is being processed. Your question answers will be generated once payment confirms.'
-                  : 'Your payment is still being processed. You\'ll receive a confirmation email once complete.'}
+                  : 'Your payment is still being processed. Your PDF report will be emailed and stored in My Reports once complete.'}
               </p>
               <button
                 onClick={() => navigate('/my-reports', { replace: true })}

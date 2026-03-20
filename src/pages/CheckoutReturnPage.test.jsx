@@ -107,4 +107,26 @@ describe('CheckoutReturnPage', () => {
     expect(mocks.refreshUserMock).toHaveBeenCalledTimes(1);
     expect(mocks.navigateMock).toHaveBeenCalledWith('/my-reports?tab=questions&order=order-456', { replace: true });
   });
+
+  it('shows report-delivery guidance for completed report orders', async () => {
+    mocks.currentSearchParams = new URLSearchParams('session_id=cs_test_report');
+    mocks.apiGetMock.mockResolvedValue({
+      status: 'complete',
+      payment_status: 'paid',
+      customer_email: 'user@example.com',
+      order_type: 'report',
+      order_id: 'order-report-1',
+    });
+
+    render(<CheckoutReturnPage />);
+
+    await act(async () => {
+      await Promise.resolve();
+      await Promise.resolve();
+    });
+
+    expect(screen.getByText(/Payment Successful/i)).toBeInTheDocument();
+    expect(screen.getByText(/Your PDF report is being prepared, emailed to you, and saved in My Reports/i)).toBeInTheDocument();
+    expect(mocks.navigateMock).toHaveBeenCalledWith('/my-reports', { replace: true });
+  });
 });

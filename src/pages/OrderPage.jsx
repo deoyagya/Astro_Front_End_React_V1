@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { Link } from 'react-router-dom';
 import PageShell from '../components/PageShell';
 import ApiError from '../components/ApiError';
 import EmbeddedCheckoutModal from '../components/EmbeddedCheckoutModal';
@@ -194,12 +195,25 @@ export default function OrderPage() {
                     <input
                       type="checkbox"
                       id={report.id}
+                      aria-label={`${report.name} selection`}
                       checked={isSelected(report.id)}
+                      disabled={report.id === 'sade-sati'}
                       onChange={() => toggleReport(report.id)}
                     />
                     <div className="report-info">
                       <h3><i className={`fas ${report.icon}`}></i> {report.name}</h3>
-                      <p>Detailed Vedic astrology analysis with predictions and remedies</p>
+                      <p>
+                        {report.id === 'sade-sati'
+                          ? 'Requires saved chart selection from the dedicated Sade Sati landing page.'
+                          : 'Detailed Vedic astrology analysis with predictions and remedies'}
+                      </p>
+                      {report.id === 'sade-sati' && (
+                        <p style={{ marginTop: '8px' }}>
+                          <Link to="/sade-sati-report" style={{ color: '#7b5bff', fontWeight: 600 }}>
+                            Open Sade Sati order page
+                          </Link>
+                        </p>
+                      )}
                     </div>
                     <div className="report-price">{report.price_display}</div>
                   </div>
