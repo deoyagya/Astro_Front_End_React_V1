@@ -104,6 +104,22 @@ export default function OrderPage() {
     return gw.currency === 'INR' ? '₹0' : '$0.00';
   }, [gw.currency, validatedCart]);
 
+  const orderFlowBlockers = useMemo(() => {
+    if (!validatedCart?.items?.length) return [];
+    return validatedCart.items.filter(
+      (item) => item.requires_saved_chart || item.unsupported_order_flow,
+    );
+  }, [validatedCart]);
+
+  const hasOrderFlowBlockers = orderFlowBlockers.length > 0;
+  const orderFlowHint = useMemo(() => {
+    if (!hasOrderFlowBlockers) return '';
+    if (orderFlowBlockers.some((item) => item.unsupported_order_flow)) {
+      return 'Some selected reports require a guided workflow. Please order them from their dedicated report page.';
+    }
+    return 'Some selected reports require a saved chart before checkout. Please order them from the report page after selecting a saved chart.';
+  }, [hasOrderFlowBlockers, orderFlowBlockers]);
+
   /* ── Create payment order (Stripe or Razorpay) ────────── */
   const proceedToPayment = async () => {
     if (!selectedIds.length) {
@@ -236,6 +252,11 @@ export default function OrderPage() {
                       <i className="fas fa-check-circle"></i> Prices confirmed
                     </p>
                   )}
+                  {hasOrderFlowBlockers && (
+                    <p className="validation-note" style={{ color: '#f6c453' }}>
+                      <i className="fas fa-exclamation-triangle"></i> {orderFlowHint}
+                    </p>
+                  )}
 
                   <ApiError message={error} onDismiss={() => setError('')} />
 
@@ -243,8 +264,8 @@ export default function OrderPage() {
                     className="btn place-order-btn"
                     id="placeOrderBtn"
                     onClick={proceedToPayment}
-                    disabled={loading || validating || !validatedCart}
-                    style={(loading || validating || !validatedCart) ? { opacity: 0.6, cursor: 'not-allowed' } : {}}
+                    disabled={loading || validating || !validatedCart || hasOrderFlowBlockers}
+                    style={(loading || validating || !validatedCart || hasOrderFlowBlockers) ? { opacity: 0.6, cursor: 'not-allowed' } : {}}
                   >
                     {loading ? 'Creating Order...' : validating ? 'Validating...' : 'Place Order'}
                   </button>
