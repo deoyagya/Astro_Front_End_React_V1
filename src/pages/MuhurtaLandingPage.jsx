@@ -187,7 +187,7 @@ export default function MuhurtaLandingPage() {
           <div className="container">
             <div className="ml-section-header">
               <h2>How It Works</h2>
-              <p>Swiss Ephemeris precision + classical wisdom in 4 simple steps</p>
+              <p>Precise timing + classical wisdom in 4 simple steps</p>
             </div>
             <div className="ml-how-grid">
               {HOW_IT_WORKS.map((item) => (
@@ -261,7 +261,7 @@ export default function MuhurtaLandingPage() {
                 <span className="ml-source-dot"></span>
                 <span>Phaladeepika</span>
                 <span className="ml-source-dot"></span>
-                <span>Swiss Ephemeris (NASA-grade)</span>
+                <span>High-precision timing engine</span>
               </div>
             </div>
           </div>

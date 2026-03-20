@@ -36,11 +36,8 @@ export default function ReportLandingPage({ config }) {
     insideItems,
     sampleSnapshot,
     features,
-    planetsCovered,
-    housesCovered,
     testimonials,
     faqs,
-    whyChoose,
   } = config;
 
   const priceDisplay = formatUsdCentsForUser(priceCents, gw);
@@ -101,7 +98,7 @@ export default function ReportLandingPage({ config }) {
               <div className="rpl-trust-row">
                 <span><i className="fas fa-check-circle"></i> 50,000+ Reports Delivered</span>
                 <span><i className="fas fa-check-circle"></i> 4.9/5 Rating</span>
-                <span><i className="fas fa-check-circle"></i> Swiss Ephemeris Engine</span>
+                <span><i className="fas fa-check-circle"></i> Personalized Vedic Report</span>
               </div>
             </div>
 
@@ -226,71 +223,6 @@ export default function ReportLandingPage({ config }) {
                   </div>
                 </div>
               </div>
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* ===== ASTROLOGICAL COVERAGE ===== */}
-      <section className="rpl-section">
-        <div className="rpl-container">
-          <div className="rpl-section-header">
-            <span className="rpl-section-badge">Technical Depth</span>
-            <h2>Astrological Coverage</h2>
-            <p>Powered by Swiss Ephemeris with classical Jyotish principles (BPHS, Phaladeepika)</p>
-          </div>
-
-          <div className="rpl-coverage-grid">
-            {planetsCovered && (
-              <div className="rpl-coverage-card">
-                <h4><i className="fas fa-globe"></i> Planets Analyzed</h4>
-                <div className="rpl-tag-cloud">
-                  {planetsCovered.map((p, i) => (
-                    <span key={i} className="rpl-tag">{p}</span>
-                  ))}
-                </div>
-              </div>
-            )}
-            {housesCovered && (
-              <div className="rpl-coverage-card">
-                <h4><i className="fas fa-th"></i> Houses Examined</h4>
-                <div className="rpl-tag-cloud">
-                  {housesCovered.map((h, i) => (
-                    <span key={i} className="rpl-tag">{h}</span>
-                  ))}
-                </div>
-              </div>
-            )}
-            <div className="rpl-coverage-card">
-              <h4><i className="fas fa-layer-group"></i> Analysis Layers</h4>
-              <div className="rpl-tag-cloud">
-                {['D1 Rashi', 'D9 Navamsa', 'D10 Dasamsa', 'Vimshottari Dasha', 'Transit Impact', 'Ashtakavarga', 'Yogas', 'Remedies'].map((t, i) => (
-                  <span key={i} className="rpl-tag">{t}</span>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ===== WHY CHOOSE ===== */}
-      {whyChoose && (
-        <section className="rpl-section rpl-section-dark">
-          <div className="rpl-container">
-            <div className="rpl-section-header">
-              <span className="rpl-section-badge">Why Choose Us</span>
-              <h2>Not Just Another Horoscope</h2>
-              <p>Here's what sets our reports apart from generic online astrology</p>
-            </div>
-
-            <div className="rpl-why-grid">
-              {whyChoose.map((item, i) => (
-                <div key={i} className="rpl-why-card">
-                  <div className="rpl-why-icon"><i className={`fas ${item.icon}`}></i></div>
-                  <h4>{item.title}</h4>
-                  <p>{item.description}</p>
-                </div>
-              ))}
             </div>
           </div>
         </section>

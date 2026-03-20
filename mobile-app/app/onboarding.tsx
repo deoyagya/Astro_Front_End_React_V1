@@ -24,7 +24,7 @@ const SLIDES = [
     iconColor: '#7b5bff',
     bgGrad: ['rgba(123,91,255,0.25)', 'rgba(5,9,20,1)'] as [string, string],
     title: 'Your Cosmic Blueprint',
-    subtitle: 'Generate precise Vedic birth charts with planetary positions, dignities, and divisional charts — powered by Swiss Ephemeris.',
+    subtitle: 'Generate precise Vedic birth charts with planetary positions, dignities, and divisional charts for your personalized reading.',
   },
   {
     icon: 'sparkles',

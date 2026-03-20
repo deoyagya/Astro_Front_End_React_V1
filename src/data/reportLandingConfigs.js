@@ -3,34 +3,7 @@
  * Each config drives the ReportLandingPage component.
  */
 
-const SHARED_WHY_CHOOSE = [
-  {
-    icon: 'fa-microchip',
-    title: 'Swiss Ephemeris Precision',
-    description: 'Planetary positions calculated to arc-second accuracy using the same engine trusted by professional astronomers worldwide.',
-  },
-  {
-    icon: 'fa-book-open',
-    title: 'Classical Jyotish Sources',
-    description: 'Every interpretation is grounded in BPHS, Phaladeepika, and Jaimini Sutras — no generic sun-sign astrology.',
-  },
-  {
-    icon: 'fa-brain',
-    title: 'AI Cross-Validated',
-    description: 'Dual-LLM pipeline produces interpretations, then a reviewer AI validates claims against your actual chart data.',
-  },
-  {
-    icon: 'fa-gem',
-    title: 'Personalized Remedies',
-    description: 'Gemstone safety checks, mantra prescriptions, and lifestyle guidance tailored to your specific planetary configuration.',
-  },
-];
-
 const SHARED_FAQS = [
-  {
-    q: 'How accurate is the birth chart calculation?',
-    a: 'We use Swiss Ephemeris — the gold standard in astronomical computation — with Lahiri ayanamsa for sidereal calculations. Planetary positions are accurate to within arc-seconds. Your chart is computed for your exact birth time and coordinates.',
-  },
   {
     q: 'Do I need my exact birth time?',
     a: 'Yes, accurate birth time is important for precise house divisions and Dasha calculations. If you are unsure, use the closest time you know. Even a 15-minute difference can shift house cusps.',
@@ -38,14 +11,6 @@ const SHARED_FAQS = [
   {
     q: 'How long does it take to receive my report?',
     a: 'Reports are generated within 2-4 hours of placing your order. Complex reports with AI interpretation may take up to 24 hours. You\'ll receive an email notification when ready.',
-  },
-  {
-    q: 'Can I get a refund if unsatisfied?',
-    a: 'We offer a 100% satisfaction guarantee. If you feel the report doesn\'t meet your expectations, contact us within 7 days for a full refund.',
-  },
-  {
-    q: 'What Vedic system do you use?',
-    a: 'We follow the Parashari system (BPHS — Brihat Parashara Hora Shastra) with Lahiri ayanamsa. Vimshottari Dasha is used for timing predictions. Divisional charts (D1 through D60) are computed for detailed analysis.',
   },
 ];
 
@@ -146,7 +111,7 @@ export const careerConfig = {
     { q: 'I\'m already employed. Is this report still useful?', a: 'Absolutely. The report reveals upcoming promotion windows, salary jump periods, and whether a job change or business venture is supported by your planetary cycles. It\'s especially valuable for timing career moves.' },
   ],
 
-  whyChoose: SHARED_WHY_CHOOSE,
+  whyChoose: null,
 };
 
 // ─── LOVE & MARRIAGE ────────────────────────────────────────────
@@ -246,7 +211,7 @@ export const loveConfig = {
     { q: 'Does it check for Manglik Dosha?', a: 'Yes, comprehensive Mangal Dosha analysis including all classical positions (1st, 4th, 7th, 8th, 12th houses), cancellation conditions per BPHS, severity scoring, and specific remedies if applicable.' },
   ],
 
-  whyChoose: SHARED_WHY_CHOOSE,
+  whyChoose: null,
 };
 
 // ─── EDUCATION & INTELLIGENCE ───────────────────────────────────
@@ -346,7 +311,7 @@ export const educationConfig = {
     { q: 'Can it predict specific exam results?', a: 'The report identifies favorable windows for exam success based on planetary periods and transits. It cannot guarantee specific results, but it shows when your intellectual planets are strongest — the ideal time to attempt competitive exams.' },
   ],
 
-  whyChoose: SHARED_WHY_CHOOSE,
+  whyChoose: null,
 };
 
 // ─── HEALTH & WELLNESS ──────────────────────────────────────────
@@ -446,7 +411,7 @@ export const healthConfig = {
     { q: 'How can planets affect health?', a: 'In Vedic astrology, each planet governs specific body systems (Sun = heart, Moon = mind, Mars = blood, etc.). When these planets are afflicted by aspect or conjunction, the corresponding body area may be vulnerable during specific Dasha periods.' },
   ],
 
-  whyChoose: SHARED_WHY_CHOOSE,
+  whyChoose: null,
 };
 
 // ─── SPIRITUAL GROWTH ───────────────────────────────────────────
@@ -546,7 +511,7 @@ export const spiritualConfig = {
     { q: 'What is Atmakaraka and why does it matter?', a: 'Atmakaraka is the planet with the highest degree in your chart — it represents your soul\'s deepest desire and the primary lesson of this lifetime. Understanding it provides profound clarity about your life purpose.' },
   ],
 
-  whyChoose: SHARED_WHY_CHOOSE,
+  whyChoose: null,
 };
 
 // ─── FAMILY & CHILDREN ──────────────────────────────────────────
@@ -646,7 +611,7 @@ export const familyConfig = {
     { q: 'I don\'t own property yet. Is this report useful?', a: 'Absolutely. The report identifies your best windows for property acquisition, investment in real estate, and timing for major home-related decisions. It\'s most valuable when planning ahead.' },
   ],
 
-  whyChoose: SHARED_WHY_CHOOSE,
+  whyChoose: null,
 };
 
 // ─── MANGLIK DOSHA ─────────────────────────────────────────────
@@ -1006,5 +971,5 @@ export const sadeSatiConfig = {
     { q: 'Will this report also tell me what to do during difficult Saturn periods?', a: 'Yes. It includes practical cautions, what-to-do guidance, and traditional Saturn remedies.' },
   ],
 
-  whyChoose: SHARED_WHY_CHOOSE,
+  whyChoose: null,
 };
