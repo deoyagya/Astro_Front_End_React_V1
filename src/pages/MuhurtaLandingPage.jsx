@@ -246,27 +246,6 @@ export default function MuhurtaLandingPage() {
           </div>
         </section>
 
-        {/* ===== CLASSICAL SOURCES ===== */}
-        <section className="ml-sources">
-          <div className="container">
-            <div className="ml-sources-inner">
-              <div className="ml-source-badge"><i className="fas fa-book-open"></i></div>
-              <h3>Grounded in Classical Authority</h3>
-              <div className="ml-source-list">
-                <span>Muhurtha Chintamani</span>
-                <span className="ml-source-dot"></span>
-                <span>Brihat Parashara Hora Shastra</span>
-                <span className="ml-source-dot"></span>
-                <span>B.V. Raman's Muhurtha</span>
-                <span className="ml-source-dot"></span>
-                <span>Phaladeepika</span>
-                <span className="ml-source-dot"></span>
-                <span>High-precision timing engine</span>
-              </div>
-            </div>
-          </div>
-        </section>
-
         {/* ===== FINAL CTA ===== */}
         <section className="ml-final-cta ml-fade-section" ref={ctaRef}>
           <div className="container">
