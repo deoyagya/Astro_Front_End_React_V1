@@ -148,23 +148,34 @@ export default function MyReportsPage() {
                       </div>
                     </div>
 
-                    <button
-                      className="btn"
-                      onClick={() => handleDownload(report)}
-                      disabled={isDownloading}
-                      style={{
-                        padding: '10px 20px',
-                        fontSize: '0.9rem',
-                        minWidth: '140px',
-                        ...(isDownloading ? { opacity: 0.6, cursor: 'not-allowed' } : {}),
-                      }}
-                    >
-                      {isDownloading ? (
-                        <><i className="fas fa-spinner fa-spin" style={{ marginRight: '6px' }}></i>Downloading...</>
-                      ) : (
-                        <><i className="fas fa-download" style={{ marginRight: '6px' }}></i>Download PDF</>
-                      )}
-                    </button>
+                    <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', flexShrink: 0, marginLeft: '20px' }}>
+                      <button
+                        className="btn"
+                        onClick={() => handleDownload(report)}
+                        disabled={isDownloading}
+                        style={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          gap: '8px',
+                          padding: '10px 16px',
+                          fontSize: '0.9rem',
+                          lineHeight: 1.1,
+                          minWidth: 'auto',
+                          width: 'auto',
+                          margin: 0,
+                          borderRadius: '10px',
+                          whiteSpace: 'nowrap',
+                          ...(isDownloading ? { opacity: 0.6, cursor: 'not-allowed' } : {}),
+                        }}
+                      >
+                        {isDownloading ? (
+                          <><i className="fas fa-spinner fa-spin"></i>Downloading...</>
+                        ) : (
+                          <><i className="fas fa-download"></i>Download PDF</>
+                        )}
+                      </button>
+                    </div>
                   </div>
                 );
               })}
