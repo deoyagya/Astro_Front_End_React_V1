@@ -281,30 +281,6 @@ export default function ReportLandingPage({ config }) {
         </section>
       )}
 
-      {/* ===== FAQ ===== */}
-      {faqs && faqs.length > 0 && (
-        <section className="rpl-section">
-          <div className="rpl-container rpl-container-narrow">
-            <div className="rpl-section-header">
-              <span className="rpl-section-badge">FAQ</span>
-              <h2>Common Questions</h2>
-            </div>
-
-            <div className="rpl-faqs">
-              {faqs.map((faq, i) => (
-                <details key={i} className="rpl-faq-item">
-                  <summary>
-                    <span>{faq.q}</span>
-                    <i className="fas fa-chevron-down"></i>
-                  </summary>
-                  <p>{faq.a}</p>
-                </details>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
-
       {/* ===== FINAL CTA ===== */}
       <section className="rpl-final-cta">
         <div className="rpl-container">

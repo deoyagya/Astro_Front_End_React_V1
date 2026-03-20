@@ -21,6 +21,11 @@ const TYPE_ICONS = {
   review: 'fa-clipboard-check',
   revision: 'fa-pen-to-square',
   translation_batch: 'fa-globe',
+  sade_sati_generator_system: 'fa-moon-stars',
+  sade_sati_reviewer_system: 'fa-shield-halved',
+  sade_sati_generation: 'fa-scroll',
+  sade_sati_review: 'fa-list-check',
+  sade_sati_revision: 'fa-pen-ruler',
 };
 
 export default function AdminPromptsPage() {
