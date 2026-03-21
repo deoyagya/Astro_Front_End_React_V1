@@ -309,34 +309,25 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
     margin-right: 6px;
 }
 
-.dasha-current-chain {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 4px;
+.dasha-current-subtitle {
+    color: #9fb3a7;
+    font-size: 0.88rem;
+    margin-bottom: 12px;
 }
 
-.dasha-current-chip {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
+.dasha-current-path-list .dasha-drill-item {
+    background: rgba(19, 29, 28, 0.34);
+    border-color: rgba(46, 213, 115, 0.18);
 }
 
-.dasha-current-chip .chip-planet {
-    font-weight: 700;
-    font-size: 0.95rem;
+.dasha-current-path-list .dasha-drill-item.clickable:hover {
+    background: rgba(46, 213, 115, 0.12);
+    border-color: rgba(46, 213, 115, 0.34);
+    transform: translateX(3px);
 }
 
-.dasha-current-chip .chip-level {
-    font-size: 0.75rem;
-    color: #8892a4;
-    font-weight: 400;
-}
-
-.dasha-current-chip .chip-arrow {
-    color: #555;
-    font-size: 0.6rem;
-    margin: 0 4px;
+.dasha-drill-item.current-path .dasha-drill-planet .planet-level {
+    color: #8da89a;
 }
 
 /* Breadcrumb Navigation */
@@ -589,9 +580,8 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
         font-size: 0.78rem;
     }
 
-    .dasha-current-chain {
-        flex-direction: column;
-        align-items: flex-start;
+    .dasha-current-summary {
+        padding: 12px 14px;
     }
 }
 
