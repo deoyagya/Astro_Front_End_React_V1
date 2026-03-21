@@ -1,11 +1,5 @@
-import PageShell from '../components/PageShell';
-import ReportLandingPage from '../components/ReportLandingPage';
-import { sadeSatiConfig } from '../data/reportLandingConfigs';
+import ProductReportLandingPage from './ProductReportLandingPage';
 
 export default function SadeSatiReportPage() {
-  return (
-    <PageShell activeNav="kundli">
-      <ReportLandingPage config={sadeSatiConfig} />
-    </PageShell>
-  );
+  return <ProductReportLandingPage slug="sade-sati" defaultActiveNav="kundli" />;
 }
