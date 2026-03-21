@@ -3,34 +3,7 @@
  * Each config drives the ReportLandingPage component.
  */
 
-const SHARED_WHY_CHOOSE = [
-  {
-    icon: 'fa-microchip',
-    title: 'Swiss Ephemeris Precision',
-    description: 'Planetary positions calculated to arc-second accuracy using the same engine trusted by professional astronomers worldwide.',
-  },
-  {
-    icon: 'fa-book-open',
-    title: 'Classical Jyotish Sources',
-    description: 'Every interpretation is grounded in BPHS, Phaladeepika, and Jaimini Sutras — no generic sun-sign astrology.',
-  },
-  {
-    icon: 'fa-brain',
-    title: 'AI Cross-Validated',
-    description: 'Dual-LLM pipeline produces interpretations, then a reviewer AI validates claims against your actual chart data.',
-  },
-  {
-    icon: 'fa-gem',
-    title: 'Personalized Remedies',
-    description: 'Gemstone safety checks, mantra prescriptions, and lifestyle guidance tailored to your specific planetary configuration.',
-  },
-];
-
 const SHARED_FAQS = [
-  {
-    q: 'How accurate is the birth chart calculation?',
-    a: 'We use Swiss Ephemeris — the gold standard in astronomical computation — with Lahiri ayanamsa for sidereal calculations. Planetary positions are accurate to within arc-seconds. Your chart is computed for your exact birth time and coordinates.',
-  },
   {
     q: 'Do I need my exact birth time?',
     a: 'Yes, accurate birth time is important for precise house divisions and Dasha calculations. If you are unsure, use the closest time you know. Even a 15-minute difference can shift house cusps.',
@@ -38,14 +11,6 @@ const SHARED_FAQS = [
   {
     q: 'How long does it take to receive my report?',
     a: 'Reports are generated within 2-4 hours of placing your order. Complex reports with AI interpretation may take up to 24 hours. You\'ll receive an email notification when ready.',
-  },
-  {
-    q: 'Can I get a refund if unsatisfied?',
-    a: 'We offer a 100% satisfaction guarantee. If you feel the report doesn\'t meet your expectations, contact us within 7 days for a full refund.',
-  },
-  {
-    q: 'What Vedic system do you use?',
-    a: 'We follow the Parashari system (BPHS — Brihat Parashara Hora Shastra) with Lahiri ayanamsa. Vimshottari Dasha is used for timing predictions. Divisional charts (D1 through D60) are computed for detailed analysis.',
   },
 ];
 
@@ -146,7 +111,7 @@ export const careerConfig = {
     { q: 'I\'m already employed. Is this report still useful?', a: 'Absolutely. The report reveals upcoming promotion windows, salary jump periods, and whether a job change or business venture is supported by your planetary cycles. It\'s especially valuable for timing career moves.' },
   ],
 
-  whyChoose: SHARED_WHY_CHOOSE,
+  whyChoose: null,
 };
 
 // ─── LOVE & MARRIAGE ────────────────────────────────────────────
@@ -246,7 +211,7 @@ export const loveConfig = {
     { q: 'Does it check for Manglik Dosha?', a: 'Yes, comprehensive Mangal Dosha analysis including all classical positions (1st, 4th, 7th, 8th, 12th houses), cancellation conditions per BPHS, severity scoring, and specific remedies if applicable.' },
   ],
 
-  whyChoose: SHARED_WHY_CHOOSE,
+  whyChoose: null,
 };
 
 // ─── EDUCATION & INTELLIGENCE ───────────────────────────────────
@@ -346,7 +311,7 @@ export const educationConfig = {
     { q: 'Can it predict specific exam results?', a: 'The report identifies favorable windows for exam success based on planetary periods and transits. It cannot guarantee specific results, but it shows when your intellectual planets are strongest — the ideal time to attempt competitive exams.' },
   ],
 
-  whyChoose: SHARED_WHY_CHOOSE,
+  whyChoose: null,
 };
 
 // ─── HEALTH & WELLNESS ──────────────────────────────────────────
@@ -446,7 +411,7 @@ export const healthConfig = {
     { q: 'How can planets affect health?', a: 'In Vedic astrology, each planet governs specific body systems (Sun = heart, Moon = mind, Mars = blood, etc.). When these planets are afflicted by aspect or conjunction, the corresponding body area may be vulnerable during specific Dasha periods.' },
   ],
 
-  whyChoose: SHARED_WHY_CHOOSE,
+  whyChoose: null,
 };
 
 // ─── SPIRITUAL GROWTH ───────────────────────────────────────────
@@ -546,7 +511,7 @@ export const spiritualConfig = {
     { q: 'What is Atmakaraka and why does it matter?', a: 'Atmakaraka is the planet with the highest degree in your chart — it represents your soul\'s deepest desire and the primary lesson of this lifetime. Understanding it provides profound clarity about your life purpose.' },
   ],
 
-  whyChoose: SHARED_WHY_CHOOSE,
+  whyChoose: null,
 };
 
 // ─── FAMILY & CHILDREN ──────────────────────────────────────────
@@ -646,7 +611,7 @@ export const familyConfig = {
     { q: 'I don\'t own property yet. Is this report useful?', a: 'Absolutely. The report identifies your best windows for property acquisition, investment in real estate, and timing for major home-related decisions. It\'s most valuable when planning ahead.' },
   ],
 
-  whyChoose: SHARED_WHY_CHOOSE,
+  whyChoose: null,
 };
 
 // ─── MANGLIK DOSHA ─────────────────────────────────────────────
@@ -910,5 +875,101 @@ export const birthChartAnalysisConfig = {
   ],
 
   faqs: null,
+  whyChoose: null,
+};
+
+export const sadeSatiConfig = {
+  slug: 'sade-sati',
+  icon: 'fa-moon',
+  iconColor: '#f5c451',
+  title: 'Shani Sade Sati Report',
+  tagline: 'A Saturn-focused premium report covering your natal Shani, current transit, complete Sade Sati cycles, Dhaiya periods, Saturn Mahadasha, and remedies.',
+  metaDescription: 'Personalized Shani Sade Sati report with Saturn placement analysis, first/second/third Sade Sati cycles, Dhaiya periods, Mahadasha timing, and remedies.',
+  priceCents: 2999,
+  originalPriceCents: 4999,
+  pages: 23,
+  deliveryHours: 6,
+
+  insideItems: [
+    {
+      icon: 'fa-satellite-dish',
+      title: 'Natal Saturn Analysis',
+      description: 'Understand your Saturn sign, house, lordship, and where Saturn is creating pressure, maturity, delay, or long-term reward.',
+      highlights: ['Saturn sign and house', 'Life-area impact', 'Saturn aspect coverage'],
+    },
+    {
+      icon: 'fa-wave-square',
+      title: 'Current Saturn Transit',
+      description: 'See where Saturn is transiting now and how it is influencing your mind, family life, work pressure, and timing.',
+      highlights: ['Current Saturn sign', 'House from Moon', 'Present Sade Sati status'],
+    },
+    {
+      icon: 'fa-hourglass-half',
+      title: 'All Sade Sati Cycles',
+      description: 'Full first, second, and third Sade Sati cycles split into Rising, Peak, and Setting phases with timing windows.',
+      highlights: ['Cycle-by-cycle dates', 'Phase interpretation', 'What to do and avoid'],
+    },
+    {
+      icon: 'fa-triangle-exclamation',
+      title: 'Dhaiya / Panauti Periods',
+      description: 'Track all Saturn Dhaiya windows and understand how 4th and 8th from Moon can shape pressure and transformation.',
+      highlights: ['4th from Moon periods', '8th from Moon periods', 'Practical caution timing'],
+    },
+    {
+      icon: 'fa-list-timeline',
+      title: 'Saturn Mahadasha Breakdown',
+      description: 'Review Saturn Mahadasha and the Antardasha of each planet operating under Saturn.',
+      highlights: ['Saturn Mahadasha timeline', 'All Antardashas', 'Saturn-specific interpretation'],
+    },
+    {
+      icon: 'fa-hands-praying',
+      title: 'Shani Remedies',
+      description: 'Traditional and practical remedies to reduce pressure, strengthen discipline, and align better with Saturn.',
+      highlights: ['Ethical remedies', 'Saturday remedies', 'Practical cautions'],
+    },
+  ],
+
+  sampleSnapshot: {
+    title: 'Shani Sade Sati Analysis',
+    subtitle: 'Sample structure preview',
+    score: 75,
+    scoreLabel: 'Coverage',
+    scoreColor: '#f5c451',
+    metrics: [
+      { label: 'Natal Saturn', value: 84, color: '#f5c451' },
+      { label: 'Transit Pressure', value: 72, color: '#ff6b81' },
+      { label: 'Sade Sati Timing', value: 91, color: '#7b5bff' },
+      { label: 'Remedies Depth', value: 86, color: '#2ed573' },
+    ],
+    findings: [
+      { type: 'positive', text: 'Dedicated Saturn timing map across Sade Sati, Dhaiya, and Mahadasha' },
+      { type: 'neutral', text: 'Natal Saturn interpretation across work, finance, education, marriage, and health' },
+      { type: 'warning', text: 'Peak Sade Sati and Dhaiya periods highlighted separately for caution' },
+      { type: 'positive', text: 'Traditional plus practical Shani remedies included' },
+    ],
+  },
+
+  features: [
+    { icon: 'fa-moon', title: 'Sade Sati Timeline', description: 'Full rising, peak, and setting phase chronology across major life cycles.', color: '#f5c451' },
+    { icon: 'fa-chart-pie', title: 'D1 + D9 Charts', description: 'Visual reference for Lagna and Navamsa placement alongside Saturn timing.', color: '#70a1ff' },
+    { icon: 'fa-clock', title: 'Current Transit Status', description: 'Current Saturn transit from Moon translated into readable guidance.', color: '#ff6b81' },
+    { icon: 'fa-layer-group', title: 'Dhaiya / Panauti', description: '4th and 8th from Moon periods called out separately.', color: '#ffa502' },
+    { icon: 'fa-list-check', title: 'Mahadasha Sections', description: 'Saturn Mahadasha with all Antardashas broken down clearly.', color: '#2ed573' },
+    { icon: 'fa-pray', title: 'Remedies', description: 'Traditional Saturn remedies plus practical discipline guidance.', color: '#a29bfe' },
+  ],
+
+  planetsCovered: ['Saturn (Primary)', 'Moon (Sade Sati reference)', 'Mercury', 'Venus', 'Sun', 'Mars', 'Rahu', 'Jupiter'],
+  housesCovered: ['12th from Moon', '1st from Moon', '2nd from Moon', '4th from Moon', '8th from Moon', 'Natal Saturn house', 'Navamsa'],
+
+  testimonials: [
+    { name: 'Saturn-focused product', location: 'Premium report', quote: 'This report is built for users who want a dedicated Saturn view rather than a generic chart summary.', highlight: 'Shani Focused' },
+  ],
+
+  faqs: [
+    ...SHARED_FAQS,
+    { q: 'Is this only for people currently in Sade Sati?', a: 'No. The report maps your full Sade Sati and Dhaiya chronology, current Saturn transit, and Saturn Mahadasha timing whether or not Sade Sati is active right now.' },
+    { q: 'Will this report also tell me what to do during difficult Saturn periods?', a: 'Yes. It includes practical cautions, what-to-do guidance, and traditional Saturn remedies.' },
+  ],
+
   whyChoose: null,
 };

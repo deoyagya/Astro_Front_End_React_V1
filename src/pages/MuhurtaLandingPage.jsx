@@ -187,7 +187,7 @@ export default function MuhurtaLandingPage() {
           <div className="container">
             <div className="ml-section-header">
               <h2>How It Works</h2>
-              <p>Swiss Ephemeris precision + classical wisdom in 4 simple steps</p>
+              <p>Precise timing + classical wisdom in 4 simple steps</p>
             </div>
             <div className="ml-how-grid">
               {HOW_IT_WORKS.map((item) => (
@@ -241,27 +241,6 @@ export default function MuhurtaLandingPage() {
                 <div className="ml-compare-result-good">
                   <i className="fas fa-arrow-trend-up"></i> Success, prosperity, harmony
                 </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* ===== CLASSICAL SOURCES ===== */}
-        <section className="ml-sources">
-          <div className="container">
-            <div className="ml-sources-inner">
-              <div className="ml-source-badge"><i className="fas fa-book-open"></i></div>
-              <h3>Grounded in Classical Authority</h3>
-              <div className="ml-source-list">
-                <span>Muhurtha Chintamani</span>
-                <span className="ml-source-dot"></span>
-                <span>Brihat Parashara Hora Shastra</span>
-                <span className="ml-source-dot"></span>
-                <span>B.V. Raman's Muhurtha</span>
-                <span className="ml-source-dot"></span>
-                <span>Phaladeepika</span>
-                <span className="ml-source-dot"></span>
-                <span>Swiss Ephemeris (NASA-grade)</span>
               </div>
             </div>
           </div>

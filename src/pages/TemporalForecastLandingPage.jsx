@@ -49,14 +49,6 @@ const THREAT_WARNINGS = [
     text: 'Mars transit triggers accidents, conflicts, and surgeries in 45-day bursts', detail: 'When Mars hits your 8th or 12th house, injuries and enemies become active threats.' },
 ];
 
-const PIPELINE_STEPS = [
-  { label: 'Swiss Ephemeris', desc: 'NASA-grade planetary positions at any future date', icon: 'fa-satellite', color: '#70a1ff' },
-  { label: '136 Classical Rules', desc: 'Evaluated per life area from BPHS & Phaladeepika', icon: 'fa-book-open', color: '#ffa502' },
-  { label: 'Window Classifier', desc: '6-step algorithm: Opportunity / Threat / Mixed', icon: 'fa-filter', color: '#2ed573' },
-  { label: 'AI Cross-Validation', desc: 'Dual-LLM review: Producer generates, Reviewer audits', icon: 'fa-brain', color: '#e84393' },
-  { label: 'Evidence Trail', desc: 'Every claim traced to chart data — no hallucinations', icon: 'fa-link', color: '#9d7bff' },
-];
-
 /* ---- Scroll-triggered fade-in hook ---- */
 function useFadeIn() {
   const ref = useRef(null);
@@ -82,7 +74,6 @@ export default function TemporalForecastLandingPage() {
   const heroRef = useFadeIn();
   const threatRef = useFadeIn();
   const areasRef = useFadeIn();
-  const pipelineRef = useFadeIn();
   const sadeRef = useFadeIn();
   const contrastRef = useFadeIn();
   const ctaRef = useFadeIn();
@@ -229,34 +220,6 @@ export default function TemporalForecastLandingPage() {
           </div>
         </section>
 
-        {/* ===== THE SCIENCE — Pipeline ===== */}
-        <section className="tl-pipeline tl-fade-section" ref={pipelineRef}>
-          <div className="container">
-            <div className="tl-section-header">
-              <h2>The Science Behind It</h2>
-              <p>Not guesswork. A <strong>5-stage computational pipeline</strong> with AI verification.</p>
-            </div>
-            <div className="tl-pipeline-steps">
-              {PIPELINE_STEPS.map((step, i) => (
-                <div key={i} className="tl-pipeline-step">
-                  <div className="tl-pipeline-icon" style={{ background: step.color }}>
-                    <i className={`fas ${step.icon}`}></i>
-                  </div>
-                  <div className="tl-pipeline-body">
-                    <h4>{step.label}</h4>
-                    <p>{step.desc}</p>
-                  </div>
-                  {i < PIPELINE_STEPS.length - 1 && (
-                    <div className="tl-pipeline-arrow">
-                      <i className="fas fa-chevron-right"></i>
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
         {/* ===== SADE SATI WARNING ===== */}
         <section className="tl-sade-sati tl-fade-section" ref={sadeRef}>
           <div className="container">
@@ -362,7 +325,7 @@ export default function TemporalForecastLandingPage() {
                 <span><i className="fas fa-shield-alt"></i> 13 life areas analyzed</span>
                 <span><i className="fas fa-brain"></i> Dual-AI cross-validation</span>
                 <span><i className="fas fa-link"></i> Every claim evidence-backed</span>
-                <span><i className="fas fa-satellite"></i> Swiss Ephemeris precision</span>
+                <span><i className="fas fa-satellite"></i> High-precision timing</span>
               </div>
             </div>
           </div>

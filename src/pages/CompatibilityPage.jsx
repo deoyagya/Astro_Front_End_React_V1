@@ -156,6 +156,22 @@ export default function CompatibilityPage() {
   const manglikGroom = result?.manglik_groom;
   const manglikBride = result?.manglik_bride;
 
+  const getManglikLabel = (entry) => {
+    if (!entry) return 'Non-Manglik';
+    return entry.status_label || (entry.is_manglik ? 'Manglik' : 'Non-Manglik');
+  };
+
+  const getManglikTone = (entry) => {
+    if (!entry) return { bg: 'rgba(46, 213, 115, 0.08)', fg: '#2ed573', icon: 'fa-check-circle' };
+    if (entry.is_manglik) {
+      return { bg: 'rgba(255, 71, 87, 0.08)', fg: '#ff4757', icon: 'fa-exclamation-triangle' };
+    }
+    if (entry.is_manglik_raw) {
+      return { bg: 'rgba(255, 165, 2, 0.10)', fg: '#ffa502', icon: 'fa-shield-heart' };
+    }
+    return { bg: 'rgba(46, 213, 115, 0.08)', fg: '#2ed573', icon: 'fa-check-circle' };
+  };
+
   let matchColor = '#ff4757';
   let matchLabel = 'Challenging Match';
   if (percentage >= 70) { matchColor = '#2ed573'; matchLabel = 'Excellent Compatibility'; }
@@ -469,32 +485,52 @@ export default function CompatibilityPage() {
                         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
                           {manglikGroom && (
                             <div style={{
-                              background: manglikGroom.is_manglik ? 'rgba(255, 71, 87, 0.08)' : 'rgba(46, 213, 115, 0.08)',
+                              background: getManglikTone(manglikGroom).bg,
                               padding: 12, borderRadius: 8,
                             }}>
                               <p style={{ color: '#c7cfdd', fontSize: '0.9375rem', marginBottom: 6, fontWeight: 500 }}>{groomName || 'Groom'}</p>
                               <p style={{
-                                color: manglikGroom.is_manglik ? '#ff4757' : '#2ed573',
+                                color: getManglikTone(manglikGroom).fg,
                                 fontWeight: 600, fontSize: '1rem',
                               }}>
-                                <i className={`fas ${manglikGroom.is_manglik ? 'fa-exclamation-triangle' : 'fa-check-circle'}`} style={{ marginRight: 6 }}></i>
-                                {manglikGroom.is_manglik ? 'Manglik' : 'Non-Manglik'}
+                                <i className={`fas ${getManglikTone(manglikGroom).icon}`} style={{ marginRight: 6 }}></i>
+                                {getManglikLabel(manglikGroom)}
                               </p>
+                              {Array.isArray(manglikGroom.reference_points_triggered) && manglikGroom.reference_points_triggered.length > 0 && (
+                                <p style={{ color: '#aeb7c8', fontSize: '0.8125rem', marginTop: 6 }}>
+                                  Triggered from {manglikGroom.reference_points_triggered.join(', ')}
+                                </p>
+                              )}
+                              {Array.isArray(manglikGroom.cancellations) && manglikGroom.cancellations.length > 0 && (
+                                <p style={{ color: '#aeb7c8', fontSize: '0.8125rem', marginTop: 6 }}>
+                                  {manglikGroom.cancellations[0]}
+                                </p>
+                              )}
                             </div>
                           )}
                           {manglikBride && (
                             <div style={{
-                              background: manglikBride.is_manglik ? 'rgba(255, 71, 87, 0.08)' : 'rgba(46, 213, 115, 0.08)',
+                              background: getManglikTone(manglikBride).bg,
                               padding: 12, borderRadius: 8,
                             }}>
                               <p style={{ color: '#c7cfdd', fontSize: '0.9375rem', marginBottom: 6, fontWeight: 500 }}>{brideName || 'Bride'}</p>
                               <p style={{
-                                color: manglikBride.is_manglik ? '#ff4757' : '#2ed573',
+                                color: getManglikTone(manglikBride).fg,
                                 fontWeight: 600, fontSize: '1rem',
                               }}>
-                                <i className={`fas ${manglikBride.is_manglik ? 'fa-exclamation-triangle' : 'fa-check-circle'}`} style={{ marginRight: 6 }}></i>
-                                {manglikBride.is_manglik ? 'Manglik' : 'Non-Manglik'}
+                                <i className={`fas ${getManglikTone(manglikBride).icon}`} style={{ marginRight: 6 }}></i>
+                                {getManglikLabel(manglikBride)}
                               </p>
+                              {Array.isArray(manglikBride.reference_points_triggered) && manglikBride.reference_points_triggered.length > 0 && (
+                                <p style={{ color: '#aeb7c8', fontSize: '0.8125rem', marginTop: 6 }}>
+                                  Triggered from {manglikBride.reference_points_triggered.join(', ')}
+                                </p>
+                              )}
+                              {Array.isArray(manglikBride.cancellations) && manglikBride.cancellations.length > 0 && (
+                                <p style={{ color: '#aeb7c8', fontSize: '0.8125rem', marginTop: 6 }}>
+                                  {manglikBride.cancellations[0]}
+                                </p>
+                              )}
                             </div>
                           )}
                         </div>

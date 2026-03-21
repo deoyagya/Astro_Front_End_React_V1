@@ -3,7 +3,7 @@
  * payment status, amount, and invoice download option.
  */
 
-import { useState, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import PageShell from '../components/PageShell';
 import { api } from '../api/client';
 import '../styles/my-orders.css';
@@ -43,54 +43,75 @@ export default function MyOrdersPage() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [notice, setNotice] = useState('');
   const [filter, setFilter] = useState('all'); // all | paid | pending | failed
   const [expandedId, setExpandedId] = useState(null);
   const [questionResults, setQuestionResults] = useState({});
+  const [recheckingId, setRecheckingId] = useState(null);
+
+  const loadOrders = useCallback(async () => {
+    try {
+      const [reportOrders, questionOrders] = await Promise.all([
+        api.get('/v1/payment/orders?limit=100'),
+        api.get('/v1/questions/my-orders?limit=100').catch(() => ({ orders: [] })),
+      ]);
+
+      const merged = new Map();
+      for (const o of reportOrders) {
+        merged.set(o.id, { ...o, _source: 'payment' });
+      }
+      for (const o of (questionOrders.orders || [])) {
+        if (!merged.has(o.order_id)) {
+          merged.set(o.order_id, {
+            id: o.order_id,
+            receipt: o.receipt,
+            status: o.status,
+            amount: o.total_cents,
+            currency: o.currency || 'USD',
+            order_type: 'question',
+            items: [],
+            created_at: o.created_at,
+            question_count: o.question_count,
+            completed_count: o.completed_count,
+            _source: 'question',
+          });
+        }
+      }
+
+      const sorted = [...merged.values()].sort(
+        (a, b) => new Date(b.created_at) - new Date(a.created_at)
+      );
+      setOrders(sorted);
+    } catch (err) {
+      setError(err.message || 'Failed to load orders');
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
-    async function load() {
-      try {
-        const [reportOrders, questionOrders] = await Promise.all([
-          api.get('/v1/payment/orders?limit=100'),
-          api.get('/v1/questions/my-orders?limit=100').catch(() => ({ orders: [] })),
-        ]);
+    loadOrders();
+  }, [loadOrders]);
 
-        // Merge & deduplicate by order_id
-        const merged = new Map();
-        for (const o of reportOrders) {
-          merged.set(o.id, { ...o, _source: 'payment' });
-        }
-        for (const o of (questionOrders.orders || [])) {
-          if (!merged.has(o.order_id)) {
-            merged.set(o.order_id, {
-              id: o.order_id,
-              receipt: o.receipt,
-              status: o.status,
-              amount: o.total_cents,
-              currency: o.currency || 'USD',
-              order_type: 'question',
-              items: [],
-              created_at: o.created_at,
-              question_count: o.question_count,
-              completed_count: o.completed_count,
-              _source: 'question',
-            });
-          }
-        }
-
-        // Sort newest first
-        const sorted = [...merged.values()].sort(
-          (a, b) => new Date(b.created_at) - new Date(a.created_at)
-        );
-        setOrders(sorted);
-      } catch (err) {
-        setError(err.message || 'Failed to load orders');
-      } finally {
-        setLoading(false);
+  const handleRecheckPayment = useCallback(async (order) => {
+    if (!order?.gateway_order_id) return;
+    setRecheckingId(order.id);
+    setError('');
+    setNotice('');
+    try {
+      const data = await api.get(`/v1/payment/session-status?session_id=${order.gateway_order_id}`);
+      await loadOrders();
+      if (data?.payment_status === 'paid' || data?.status === 'complete') {
+        setNotice('Payment confirmed. Report generation has started. Check My Reports shortly.');
+      } else {
+        setNotice('Payment is still pending with the gateway.');
       }
+    } catch (err) {
+      setError(err.message || 'Unable to recheck this payment right now.');
+    } finally {
+      setRecheckingId(null);
     }
-    load();
-  }, []);
+  }, [loadOrders]);
 
   // Filter
   const filtered = filter === 'all'
@@ -183,6 +204,12 @@ export default function MyOrdersPage() {
         {error && (
           <div className="mo-error">
             <i className="fas fa-exclamation-circle"></i> {error}
+          </div>
+        )}
+
+        {notice && (
+          <div className="mo-error" style={{ background: 'rgba(72, 199, 142, 0.12)', borderColor: 'rgba(72, 199, 142, 0.35)', color: '#9ff0c2' }}>
+            <i className="fas fa-info-circle"></i> {notice}
           </div>
         )}
 
@@ -349,6 +376,16 @@ export default function MyOrdersPage() {
                         {order.status === 'paid' && (
                           <button className="mo-action-btn" onClick={() => downloadInvoice(order)}>
                             <i className="fas fa-download"></i> Download Invoice
+                          </button>
+                        )}
+                        {order.status === 'pending' && order.payment_provider === 'stripe' && order.gateway_order_id && (
+                          <button
+                            className="mo-action-btn"
+                            onClick={() => handleRecheckPayment(order)}
+                            disabled={recheckingId === order.id}
+                          >
+                            <i className={`fas ${recheckingId === order.id ? 'fa-spinner fa-spin' : 'fa-rotate-right'}`}></i>{' '}
+                            {recheckingId === order.id ? 'Rechecking...' : 'Recheck Payment'}
                           </button>
                         )}
                       </div>
