@@ -11,6 +11,7 @@ import CompatibilityPage from './pages/CompatibilityPage';
 import HoroscopePage from './pages/HoroscopePage';
 import CareerReportPage from './pages/CareerReportPage';
 import LoveMarriageReportPage from './pages/LoveMarriageReportPage';
+import MarriageReportPage from './pages/MarriageReportPage';
 import EducationReportPage from './pages/EducationReportPage';
 import HealthReportPage from './pages/HealthReportPage';
 import SpiritualReportPage from './pages/SpiritualReportPage';
@@ -104,6 +105,7 @@ export default function App() {
         <Route path="/chart-wizard" element={<ProtectedRoute><ChartWizardPage /></ProtectedRoute>} />
         <Route path="/career-report" element={<CareerReportPage />} />
         <Route path="/love-marriage-report" element={<LoveMarriageReportPage />} />
+        <Route path="/marriage-report" element={<MarriageReportPage />} />
         <Route path="/education-report" element={<EducationReportPage />} />
         <Route path="/health-report" element={<HealthReportPage />} />
         <Route path="/spiritual-report" element={<SpiritualReportPage />} />

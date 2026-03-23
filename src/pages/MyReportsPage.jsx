@@ -12,6 +12,7 @@ const REPORT_TYPE_MAP = {
   life_reading: { icon: 'fa-scroll', label: 'Life Reading Report' },
   career: { icon: 'fa-briefcase', label: 'Career & Finance Report' },
   love: { icon: 'fa-heart', label: 'Love & Marriage Report' },
+  marriage: { icon: 'fa-ring', label: 'Marriage / Partnership / Married Life Report' },
   manglik: { icon: 'fa-fire', label: 'Manglik Dosha Analysis & Remedies' },
   'birth-chart-analysis': { icon: 'fa-chart-pie', label: 'Complete Birth Chart Analysis' },
   'sade-sati': { icon: 'fa-moon', label: 'Shani Sade Sati Report' },

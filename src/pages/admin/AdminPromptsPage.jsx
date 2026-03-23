@@ -36,6 +36,11 @@ const TYPE_ICONS = {
   health_report_generation: 'fa-notes-medical',
   health_report_review: 'fa-file-medical',
   health_report_revision: 'fa-stethoscope',
+  marriage_report_generator_system: 'fa-ring',
+  marriage_report_reviewer_system: 'fa-shield-heart',
+  marriage_report_generation: 'fa-file-signature',
+  marriage_report_review: 'fa-clipboard-question',
+  marriage_report_revision: 'fa-pen-fancy',
 };
 
 export default function AdminPromptsPage() {
