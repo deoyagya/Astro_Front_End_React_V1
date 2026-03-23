@@ -48,10 +48,17 @@ export default function LoginPage() {
 
   // ---- Social login handler (shared) ----
   const handleSocialLogin = useCallback(async (provider, tokenPayload) => {
+    if (!termsAccepted) {
+      setError('Please accept the Terms of Use and Privacy Policy before continuing.');
+      return;
+    }
     setLoading(true);
     setError('');
     try {
-      const result = await api.post(`/v1/auth/social/${provider}`, tokenPayload);
+      const result = await api.post(`/v1/auth/social/${provider}`, {
+        ...tokenPayload,
+        terms_accepted: true,
+      });
       await login({
         access_token: result.access_token,
         refresh_token: result.refresh_token,
@@ -63,11 +70,14 @@ export default function LoginPage() {
     } finally {
       setLoading(false);
     }
-  }, [login, navigate, from]);
+  }, [login, navigate, from, termsAccepted]);
 
   // ---- Initialize Google GSI ----
   useEffect(() => {
-    if (!GOOGLE_CLIENT_ID) return;
+    if (!GOOGLE_CLIENT_ID || !termsAccepted) {
+      if (googleBtnRef.current) googleBtnRef.current.innerHTML = '';
+      return;
+    }
 
     const initGoogle = () => {
       if (!window.google?.accounts?.id) return;
@@ -100,7 +110,7 @@ export default function LoginPage() {
       }, 200);
       return () => clearInterval(interval);
     }
-  }, [handleSocialLogin]);
+  }, [handleSocialLogin, termsAccepted]);
 
   // ---- Initialize Facebook SDK ----
   useEffect(() => {
@@ -133,6 +143,10 @@ export default function LoginPage() {
   }, []);
 
   const handleFacebookLogin = async () => {
+    if (!termsAccepted) {
+      setError('Please accept the Terms of Use and Privacy Policy before continuing.');
+      return;
+    }
     if (!window.FB) {
       setError('Facebook SDK not loaded. Please refresh and try again.');
       return;
@@ -204,11 +218,16 @@ export default function LoginPage() {
       setError('Please enter a valid email address or phone number');
       return;
     }
+    if (!termsAccepted) {
+      setError('Please accept the Terms of Use and Privacy Policy before continuing.');
+      return;
+    }
 
     setLoading(true);
     try {
       const result = await api.post('/v1/auth/otp/send', {
         identifier: getFullIdentifier(),
+        terms_accepted: true,
       });
       setMaskedId(result.masked);
       // Pre-fill name for returning users
@@ -381,14 +400,14 @@ export default function LoginPage() {
                           type="button"
                           className="btn-social btn-facebook"
                           onClick={handleFacebookLogin}
-                          disabled={loading}
+                          disabled={loading || !termsAccepted}
                         >
                           <i className="fab fa-facebook-f"></i> Continue with Facebook
                         </button>
                       )}
                     </div>
                     <div className="social-login-divider">
-                      <span>or continue with email / phone</span>
+                      <span>{termsAccepted ? 'or continue with email / phone' : 'accept terms to continue with social login'}</span>
                     </div>
                   </>
                 )}
