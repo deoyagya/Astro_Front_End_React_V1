@@ -26,6 +26,16 @@ const TYPE_ICONS = {
   sade_sati_generation: 'fa-scroll',
   sade_sati_review: 'fa-list-check',
   sade_sati_revision: 'fa-pen-ruler',
+  education_report_generator_system: 'fa-graduation-cap',
+  education_report_reviewer_system: 'fa-school-circle-check',
+  education_report_generation: 'fa-book-open-reader',
+  education_report_review: 'fa-square-poll-vertical',
+  education_report_revision: 'fa-pencil',
+  health_report_generator_system: 'fa-heart-pulse',
+  health_report_reviewer_system: 'fa-user-doctor',
+  health_report_generation: 'fa-notes-medical',
+  health_report_review: 'fa-file-medical',
+  health_report_revision: 'fa-stethoscope',
 };
 
 export default function AdminPromptsPage() {

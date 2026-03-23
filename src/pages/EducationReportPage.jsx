@@ -1,11 +1,5 @@
-import PageShell from '../components/PageShell';
-import ReportLandingPage from '../components/ReportLandingPage';
-import { educationConfig } from '../data/reportLandingConfigs';
+import ProductReportLandingPage from './ProductReportLandingPage';
 
 export default function EducationReportPage() {
-  return (
-    <PageShell activeNav="reports">
-      <ReportLandingPage config={educationConfig} />
-    </PageShell>
-  );
+  return <ProductReportLandingPage slug="education" defaultActiveNav="reports" />;
 }
