@@ -32,6 +32,9 @@ vi.mock('./pages/TemporalForecastLandingPage', () => ({
 vi.mock('./pages/MuhurtaLandingPage', () => ({
   default: () => <div>Muhurta Landing</div>,
 }));
+vi.mock('./pages/LalKitabKundliPage', () => ({
+  default: () => <div>Lal Kitab Kundli</div>,
+}));
 vi.mock('./pages/SadeSatiReportPage', () => ({
   default: () => <div>Sade Sati Report Landing</div>,
 }));
@@ -149,6 +152,16 @@ describe('Temporal forecast routing', () => {
     );
 
     expect(screen.getByText('Muhurta Landing')).toBeInTheDocument();
+  });
+
+  it('renders the Lal Kitab Kundli page on /lal-kitab-kundli', () => {
+    render(
+      <MemoryRouter initialEntries={['/lal-kitab-kundli']}>
+        <App />
+      </MemoryRouter>,
+    );
+
+    expect(screen.getByText('Lal Kitab Kundli')).toBeInTheDocument();
   });
 
   it('renders the public sade sati report page on /sade-sati-report', () => {

@@ -86,6 +86,7 @@ export default function NorthIndianChart({
   onHouseClick,
   selectedHouse,
   d9Vargas = null,
+  showAscMarker = true,
 }) {
   const [hoveredHouse, setHoveredHouse] = useState(null);
 
@@ -182,11 +183,13 @@ export default function NorthIndianChart({
         })}
 
         {/* ASC marker */}
-        <text x={M} y={88} textAnchor="middle" fill={ACCENT}
-          fontSize={ASC_FONT} fontWeight="800" fontFamily={FONT}
-          style={{ pointerEvents: 'none' }}>
-          ASC
-        </text>
+        {showAscMarker && (
+          <text x={M} y={88} textAnchor="middle" fill={ACCENT}
+            fontSize={ASC_FONT} fontWeight="800" fontFamily={FONT}
+            style={{ pointerEvents: 'none' }}>
+            ASC
+          </text>
+        )}
 
         {/* Center label */}
         <text x={M} y={M - 10} textAnchor="middle" fill={ACCENT}

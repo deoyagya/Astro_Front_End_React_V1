@@ -51,6 +51,7 @@ import AdminUserManagementPage from './pages/admin/AdminUserManagementPage';
 import PublicSurveyPage from './pages/PublicSurveyPage';
 import MuhurtaFinderPage from './pages/MuhurtaFinderPage';
 import MuhurtaLandingPage from './pages/MuhurtaLandingPage';
+import LalKitabKundliPage from './pages/LalKitabKundliPage';
 import ChartWizardPage from './pages/ChartWizardPage';
 import PricingPage from './pages/PricingPage';
 import MyOrdersPage from './pages/MyOrdersPage';
@@ -82,6 +83,7 @@ export default function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/pricing" element={<PricingPage />} />
         <Route path="/muhurta-finder" element={<MuhurtaLandingPage />} />
+        <Route path="/lal-kitab-kundli" element={<LalKitabKundliPage />} />
         <Route path="/temporal-forecast" element={<TemporalForecastLandingPage />} />
         <Route path="/threat-opportunity" element={<ProtectedRoute><ThreatOpportunityPage /></ProtectedRoute>} />
         <Route path="/survey/:slug" element={<PublicSurveyPage />} />

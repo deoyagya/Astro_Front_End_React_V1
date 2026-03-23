@@ -224,6 +224,7 @@ export default function SiteHeader({ active = 'home' }) {
                       <li><a href="/birth-chart" onClick={(e) => handleSubmenuLinkClick(e, '/birth-chart')}><i className="fas fa-chart-pie"></i> Free Kundli Generation</a></li>
                       <li><a href="/compatibility" onClick={(e) => handleSubmenuLinkClick(e, '/compatibility')}><i className="fas fa-ring"></i> Kundli Matching</a></li>
                       <li><a href="/muhurta-finder" onClick={(e) => handleSubmenuLinkClick(e, '/muhurta-finder')}><i className="fas fa-clock"></i> Muhurta Finder</a></li>
+                      <li><a href="/lal-kitab-kundli" onClick={(e) => handleSubmenuLinkClick(e, '/lal-kitab-kundli')}><i className="fas fa-book-open"></i> Lal Kitab Kundali</a></li>
                       <li><a href="/temporal-forecast" onClick={(e) => handleSubmenuLinkClick(e, '/temporal-forecast')}><i className="fas fa-hourglass-half"></i> Threat and Opportunity</a></li>
                       <li><a href="/sade-sati-report" onClick={(e) => handleSubmenuLinkClick(e, '/sade-sati-report')}><i className="fas fa-moon"></i> Sade Sati Report</a></li>
                       <li><a href="/manglik-dosha" onClick={(e) => handleSubmenuLinkClick(e, '/manglik-dosha')}><i className="fas fa-exclamation-triangle"></i> Manglik Dosha Remedies</a></li>
