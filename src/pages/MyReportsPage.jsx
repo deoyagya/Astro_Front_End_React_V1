@@ -21,6 +21,7 @@ const REPORT_TYPE_MAP = {
   health: { icon: 'fa-spa', label: 'Health & Wellness Report' },
   spiritual: { icon: 'fa-om', label: 'Spiritual Growth Report' },
   family: { icon: 'fa-home', label: 'Family & Children Report' },
+  foreign: { icon: 'fa-plane-departure', label: 'Foreign Travel / Settlement Report' },
 };
 
 function formatFileSize(bytes) {
