@@ -1,11 +1,5 @@
-import PageShell from '../components/PageShell';
-import ReportLandingPage from '../components/ReportLandingPage';
-import { familyConfig } from '../data/reportLandingConfigs';
+import ProductReportLandingPage from './ProductReportLandingPage';
 
 export default function FamilyReportPage() {
-  return (
-    <PageShell activeNav="reports">
-      <ReportLandingPage config={familyConfig} />
-    </PageShell>
-  );
+  return <ProductReportLandingPage slug="family" defaultActiveNav="reports" />;
 }
