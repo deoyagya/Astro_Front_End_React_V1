@@ -204,6 +204,26 @@ function getWindowApproach(windowType) {
   return 'Stay selective. This is a transitional period with both openings and pressure points.';
 }
 
+function buildDominanceReading(opportunityScore = 0, threatScore = 0) {
+  const opp = Number(opportunityScore) || 0;
+  const thr = Number(threatScore) || 0;
+
+  if (opp <= 0 && thr <= 0) {
+    return 'No side is clearly active here yet, so wait for a stronger signal before making a big move.';
+  }
+  if (opp > thr * 1.5) {
+    return 'Opportunity dominates here. The green score is materially stronger than the red score, so this is better treated as a supportive phase.';
+  }
+  if (thr > opp * 1.5) {
+    return 'Threat dominates here. The red score is materially stronger than the green score, so this is better treated as a caution phase.';
+  }
+  return 'Both are active here. Neither side dominates enough, so treat this as mixed and act selectively rather than fully committing.';
+}
+
+function buildTimelineReadingRule() {
+  return 'Reading rule: treat a point as Opportunity only when green clearly dominates red, as Threat when red clearly dominates green, and as Mixed when both stay close enough to coexist.';
+}
+
 function clamp(value, min, max) {
   return Math.min(max, Math.max(min, value));
 }
@@ -715,6 +735,9 @@ export default function TemporalForecastPage({ viewMode = 'simple', selectedChar
                   <span className="tf-score-total">{f.score.toFixed(1)}</span>
                   <span style={{ color: '#ff4757' }}>{f.threat_score.toFixed(0)}% thr</span>
                 </div>
+                <p className="tf-score-reading">
+                  {buildDominanceReading(f.opportunity_score, f.threat_score)}
+                </p>
               </div>
 
               {/* Summary */}
@@ -984,6 +1007,7 @@ export default function TemporalForecastPage({ viewMode = 'simple', selectedChar
                             <span><i className="fas fa-arrows-alt-h" style={{color:'#ffa502'}}></i> {tl.mixed_count} mixed</span>
                             <span className="tf-timeline-interval">Every {tl.interval_days} days</span>
                           </div>
+                          <p className="tf-timeline-reading">{buildTimelineReadingRule()}</p>
 
                           {viewMode === 'simple' && (
                             <div className="tf-simple-timeline">

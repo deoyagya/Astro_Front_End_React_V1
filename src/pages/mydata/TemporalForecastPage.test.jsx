@@ -186,6 +186,8 @@ describe('TemporalForecastPage', () => {
       expect(screen.getByText('Wealth Forecast')).toBeInTheDocument();
     });
 
+    expect(screen.getByText(/Opportunity dominates here\./i)).toBeInTheDocument();
+
     fireEvent.click(screen.getByRole('button', { name: /^Expand Wealth Forecast$/ }));
 
     await waitFor(() => {
@@ -194,6 +196,7 @@ describe('TemporalForecastPage', () => {
 
     expect(screen.getByText(/Simple view uses the same reviewed forecast as Advanced mode/i)).toBeInTheDocument();
     expect(screen.getByText(/Why we are saying this/i)).toBeInTheDocument();
+    expect(screen.getByText(/Reading rule: treat a point as Opportunity only when green clearly dominates red/i)).toBeInTheDocument();
 
     rerender(
       <MemoryRouter>

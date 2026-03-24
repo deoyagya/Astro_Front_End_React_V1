@@ -314,6 +314,13 @@
   color: var(--text-muted, #a0a8b8);
 }
 
+.tf-score-reading {
+  margin: 10px 0 0 0;
+  font-size: 0.875rem;
+  color: var(--text-muted, #a0a8b8);
+  line-height: 1.6;
+}
+
 .tf-score-total {
   font-weight: 700;
   color: var(--text-primary, #e8eaf0);
@@ -1089,6 +1096,13 @@
   margin-left: auto;
   color: var(--text-muted, #a0a8b8);
   font-style: italic;
+}
+
+.tf-timeline-reading {
+  margin: 0 0 12px 0;
+  font-size: 0.875rem;
+  color: var(--text-muted, #a0a8b8);
+  line-height: 1.6;
 }
 
 /* ── Tooltip ── */
