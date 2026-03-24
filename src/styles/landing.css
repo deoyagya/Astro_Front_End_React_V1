@@ -467,8 +467,9 @@
 
 .areas-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 20px;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 24px;
+    align-items: stretch;
 }
 
 .area-card {
@@ -905,6 +906,10 @@
     .hero-grid {
         gap: 40px;
     }
+
+    .areas-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
     
     .cosmic-circle {
         width: 450px;
@@ -926,6 +931,11 @@
     .hero-grid {
         grid-template-columns: 1fr;
         text-align: center;
+    }
+
+    .areas-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
     }
     
     .hero-content h1 {
