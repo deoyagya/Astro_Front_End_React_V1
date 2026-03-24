@@ -1098,6 +1098,13 @@
   font-style: italic;
 }
 
+.tf-reading-guide {
+  margin: 12px 0 18px 0;
+  color: var(--text-muted, #a0a8b8);
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
 .tf-timeline-reading {
   margin: 0 0 12px 0;
   font-size: 0.875rem;

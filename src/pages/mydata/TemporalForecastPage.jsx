@@ -224,6 +224,10 @@ function buildTimelineReadingRule() {
   return 'Reading rule: treat a point as Opportunity only when green clearly dominates red, as Threat when red clearly dominates green, and as Mixed when both stay close enough to coexist.';
 }
 
+function buildPageReadingGuide() {
+  return 'How to read this: green shows support and openings, red shows pressure and risk, and the final label follows the side that clearly dominates. If both stay close, treat the period as mixed.';
+}
+
 function clamp(value, min, max) {
   return Math.min(max, Math.max(min, value));
 }
@@ -660,6 +664,7 @@ export default function TemporalForecastPage({ viewMode = 'simple', selectedChar
           <span>{mixed_count} Mixed</span>
         </div>
       </div>
+      <p className="tf-reading-guide">{buildPageReadingGuide()}</p>
 
       {/* ── Filter Tabs ── */}
       <div className="tf-filters">

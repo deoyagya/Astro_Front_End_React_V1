@@ -186,6 +186,7 @@ describe('TemporalForecastPage', () => {
       expect(screen.getByText('Wealth Forecast')).toBeInTheDocument();
     });
 
+    expect(screen.getByText(/How to read this: green shows support and openings, red shows pressure and risk/i)).toBeInTheDocument();
     expect(screen.getByText(/Opportunity dominates here\./i)).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole('button', { name: /^Expand Wealth Forecast$/ }));
