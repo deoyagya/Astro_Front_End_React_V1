@@ -3,6 +3,73 @@ import { useSharedEffects } from '../hooks/useSharedEffects';
 import { useAuth } from '../context/AuthContext';
 import { useStyles } from '../context/StyleContext';
 
+const LIFE_AREA_CARDS = [
+  {
+    href: '/career-report',
+    icon: 'fa-briefcase',
+    title: 'Career & Finance',
+    summary: '10th house analysis, professional timing',
+    impact: 'See whether your current career phase is building toward recognition, role change, promotion, or avoidable stagnation before the next major decision locks in.',
+    accent: '#b794ff',
+  },
+  {
+    href: '/love-marriage-report',
+    icon: 'fa-heart',
+    title: 'Love & Marriage',
+    summary: '7th house, Venus, relationship timing',
+    impact: 'Understand whether a relationship is moving toward commitment, karmic friction, or a make-or-break phase so you stop guessing with your heart.',
+    accent: '#ff6b81',
+  },
+  {
+    href: '/education-report',
+    icon: 'fa-brain',
+    title: 'Education & Intelligence',
+    summary: '5th house, Mercury, Jupiter influences',
+    impact: 'Identify the periods that truly support focus, exams, higher study, and mental clarity before lost momentum turns into a long academic delay.',
+    accent: '#a29bfe',
+  },
+  {
+    href: '/health-report',
+    icon: 'fa-heartbeat',
+    title: 'Health & Wellness',
+    summary: '6th house, lagna, planetary afflictions',
+    impact: 'Spot where stress, vulnerability, and recovery cycles are intensifying so you can act early instead of waiting for the body to force the issue.',
+    accent: '#7bed9f',
+  },
+  {
+    href: '/money-report',
+    icon: 'fa-sack-dollar',
+    title: 'Money / Finance / Wealth',
+    summary: '2nd house, 11th house, D2 Hora support',
+    impact: 'Know whether this is a window for accumulation, liquidity, and gains or a cycle where poor timing can quietly erode wealth.',
+    accent: '#f6b93b',
+  },
+  {
+    href: '/property-report',
+    icon: 'fa-house-chimney',
+    title: 'Property / Vehicles / Assets',
+    summary: '4th house, D4, acquisition and stability',
+    impact: 'Find out whether a purchase, vehicle decision, or asset move is supported now or likely to become an emotional and financial drain later.',
+    accent: '#70a1ff',
+  },
+  {
+    href: '/spiritual-report',
+    icon: 'fa-om',
+    title: 'Spiritual Growth',
+    summary: '12th house, Ketu, spiritual inclinations',
+    impact: 'See when detachment, inner growth, and karmic closure are genuinely active instead of mistaking confusion or escapism for spiritual progress.',
+    accent: '#f7d56b',
+  },
+  {
+    href: '/family-report',
+    icon: 'fa-home',
+    title: 'Family & Children',
+    summary: '4th house, 5th house, benefics',
+    impact: 'Understand whether home peace, family obligations, and children-related timing are stabilising or heading toward pressure that needs handling now.',
+    accent: '#9d7bff',
+  },
+];
+
 export default function HomePage() {
   useSharedEffects();
   const { isAuthenticated, user } = useAuth();
@@ -142,46 +209,29 @@ export default function HomePage() {
                         </div>
       
                         <div className="areas-grid">
-                            <a href="/career-report" className="area-card">
-                                <i className="fas fa-briefcase"></i>
-                                <h4>Career & Finance</h4>
-                                <p>10th house analysis, professional timing</p>
-                            </a>
-                            <a href="/love-marriage-report" className="area-card">
-                                <i className="fas fa-heart"></i>
-                                <h4>Love & Marriage</h4>
-                                <p>7th house, Venus, relationship timing</p>
-                            </a>
-                            <a href="/education-report" className="area-card">
-                                <i className="fas fa-brain"></i>
-                                <h4>Education & Intelligence</h4>
-                                <p>5th house, Mercury, Jupiter influences</p>
-                            </a>
-                            <a href="/health-report" className="area-card">
-                                <i className="fas fa-heartbeat"></i>
-                                <h4>Health & Wellness</h4>
-                                <p>6th house, lagna, planetary afflictions</p>
-                            </a>
-                            <a href="/money-report" className="area-card">
-                                <i className="fas fa-sack-dollar"></i>
-                                <h4>Money / Finance / Wealth</h4>
-                                <p>2nd house, 11th house, D2 Hora support</p>
-                            </a>
-                            <a href="/property-report" className="area-card">
-                                <i className="fas fa-house-chimney"></i>
-                                <h4>Property / Vehicles / Assets</h4>
-                                <p>4th house, D4, acquisition and stability</p>
-                            </a>
-                            <a href="/spiritual-report" className="area-card">
-                                <i className="fas fa-om"></i>
-                                <h4>Spiritual Growth</h4>
-                                <p>12th house, Ketu, spiritual inclinations</p>
-                            </a>
-                            <a href="/family-report" className="area-card">
-                                <i className="fas fa-home"></i>
-                                <h4>Family & Children</h4>
-                                <p>4th house, 5th house, benefics</p>
-                            </a>
+                            {LIFE_AREA_CARDS.map((card) => (
+                                <a
+                                  key={card.href}
+                                  href={card.href}
+                                  className="area-card"
+                                  style={{ '--area-accent': card.accent }}
+                                  aria-label={`${card.title} report`}
+                                >
+                                    <div className="area-card-face area-card-front">
+                                        <i className={`fas ${card.icon}`}></i>
+                                        <h4>{card.title}</h4>
+                                        <p>{card.summary}</p>
+                                        <span className="area-card-hint">Hover to see why this report matters</span>
+                                    </div>
+                                    <div className="area-card-face area-card-back">
+                                        <div className="area-card-back-copy">
+                                            <span className="area-card-kicker">Why order this report</span>
+                                            <p>{card.impact}</p>
+                                        </div>
+                                        <span className="area-card-cta">Explore report <i className="fas fa-arrow-right"></i></span>
+                                    </div>
+                                </a>
+                            ))}
                         </div>
                     </div>
                 </section>

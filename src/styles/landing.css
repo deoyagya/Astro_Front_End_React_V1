@@ -475,21 +475,62 @@
     background: rgba(30, 33, 48, 0.8);
     border: 1px solid #2a2f3e;
     border-radius: 12px;
-    padding: 25px 20px;
-    text-align: center;
     text-decoration: none;
-    transition: all 0.3s;
+    transition: transform 0.3s ease, border-color 0.3s ease;
+    position: relative;
+    min-height: 320px;
+    display: block;
+    perspective: 1200px;
+    transform-style: preserve-3d;
+    overflow: hidden;
 }
 
-.area-card:hover {
+.area-card:hover,
+.area-card:focus-visible {
     transform: translateY(-5px);
-    border-color: #7b5bff;
-    background: rgba(123, 91, 255, 0.1);
+    border-color: var(--area-accent, #7b5bff);
+}
+
+.area-card-face {
+    position: absolute;
+    inset: 0;
+    padding: 25px 20px;
+    text-align: center;
+    backface-visibility: hidden;
+    transition: transform 0.6s ease, border-color 0.3s ease, background 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.area-card-front {
+    background: rgba(30, 33, 48, 0.88);
+    border: 1px solid transparent;
+}
+
+.area-card:hover .area-card-front,
+.area-card:focus-visible .area-card-front {
+    border-color: color-mix(in srgb, var(--area-accent, #7b5bff) 55%, transparent);
+    transform: rotateY(180deg);
+}
+
+.area-card-back {
+    background: linear-gradient(180deg, rgba(123, 91, 255, 0.18) 0%, rgba(20, 23, 36, 0.96) 100%);
+    border: 1px solid color-mix(in srgb, var(--area-accent, #7b5bff) 45%, transparent);
+    transform: rotateY(180deg);
+    justify-content: space-between;
+    gap: 18px;
+}
+
+.area-card:hover .area-card-back,
+.area-card:focus-visible .area-card-back {
+    transform: rotateY(0deg);
 }
 
 .area-card i {
     font-size: 2rem;
-    color: var(--accent, #b794ff);
+    color: var(--area-accent, var(--accent, #b794ff));
     margin-bottom: 15px;
 }
 
@@ -502,6 +543,40 @@
 .area-card p {
     color: var(--text-secondary, #c7cfdd);
     font-size: 1rem;
+}
+
+.area-card-hint {
+    margin-top: 14px;
+    color: #8f97ac;
+    font-size: 0.78rem;
+    font-style: italic;
+}
+
+.area-card-back-copy {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.area-card-kicker {
+    color: var(--area-accent, #b794ff);
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.area-card-back p {
+    margin: 0;
+    color: #eef1f7;
+    line-height: 1.7;
+    font-size: 0.95rem;
+}
+
+.area-card-cta {
+    color: var(--area-accent, #b794ff);
+    font-weight: 700;
+    font-size: 0.9rem;
 }
 
 /* ===== TESTIMONIALS SECTION ===== */
