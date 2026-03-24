@@ -162,6 +162,11 @@ export default function HomePage() {
                                 <h4>Health & Wellness</h4>
                                 <p>6th house, lagna, planetary afflictions</p>
                             </a>
+                            <a href="/money-report" className="area-card">
+                                <i className="fas fa-sack-dollar"></i>
+                                <h4>Money / Finance / Wealth</h4>
+                                <p>2nd house, 11th house, D2 Hora support</p>
+                            </a>
                             <a href="/spiritual-report" className="area-card">
                                 <i className="fas fa-om"></i>
                                 <h4>Spiritual Growth</h4>

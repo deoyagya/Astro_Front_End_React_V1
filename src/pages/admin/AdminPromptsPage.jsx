@@ -51,6 +51,11 @@ const TYPE_ICONS = {
   marriage_report_generation: 'fa-file-signature',
   marriage_report_review: 'fa-clipboard-question',
   marriage_report_revision: 'fa-pen-fancy',
+  money_report_generator_system: 'fa-sack-dollar',
+  money_report_reviewer_system: 'fa-shield-dollar',
+  money_report_generation: 'fa-money-bill-trend-up',
+  money_report_review: 'fa-scale-balanced',
+  money_report_revision: 'fa-wallet',
 };
 
 export default function AdminPromptsPage() {
