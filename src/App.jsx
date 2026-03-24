@@ -13,6 +13,7 @@ import CareerReportPage from './pages/CareerReportPage';
 import LoveMarriageReportPage from './pages/LoveMarriageReportPage';
 import MarriageReportPage from './pages/MarriageReportPage';
 import MoneyReportPage from './pages/MoneyReportPage';
+import PropertyReportPage from './pages/PropertyReportPage';
 import EducationReportPage from './pages/EducationReportPage';
 import HealthReportPage from './pages/HealthReportPage';
 import SpiritualReportPage from './pages/SpiritualReportPage';
@@ -109,6 +110,7 @@ export default function App() {
         <Route path="/love-marriage-report" element={<LoveMarriageReportPage />} />
         <Route path="/marriage-report" element={<MarriageReportPage />} />
         <Route path="/money-report" element={<MoneyReportPage />} />
+        <Route path="/property-report" element={<PropertyReportPage />} />
         <Route path="/education-report" element={<EducationReportPage />} />
         <Route path="/health-report" element={<HealthReportPage />} />
         <Route path="/spiritual-report" element={<SpiritualReportPage />} />

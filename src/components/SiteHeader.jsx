@@ -228,6 +228,7 @@ export default function SiteHeader({ active = 'home' }) {
                       <li><a href="/temporal-forecast" onClick={(e) => handleSubmenuLinkClick(e, '/temporal-forecast')}><i className="fas fa-hourglass-half"></i> Threat and Opportunity</a></li>
                       <li><a href="/sade-sati-report" onClick={(e) => handleSubmenuLinkClick(e, '/sade-sati-report')}><i className="fas fa-moon"></i> Sade Sati Report</a></li>
                       <li><a href="/money-report" onClick={(e) => handleSubmenuLinkClick(e, '/money-report')}><i className="fas fa-sack-dollar"></i> Money Report</a></li>
+                      <li><a href="/property-report" onClick={(e) => handleSubmenuLinkClick(e, '/property-report')}><i className="fas fa-house-chimney"></i> Property Report</a></li>
                       <li><a href="/foreign-travel-report" onClick={(e) => handleSubmenuLinkClick(e, '/foreign-travel-report')}><i className="fas fa-plane-departure"></i> Foreign Travel Report</a></li>
                       <li><a href="/manglik-dosha" onClick={(e) => handleSubmenuLinkClick(e, '/manglik-dosha')}><i className="fas fa-exclamation-triangle"></i> Manglik Dosha Remedies</a></li>
                       <li><a href="/birth-chart-analysis" onClick={(e) => handleSubmenuLinkClick(e, '/birth-chart-analysis')}><i className="fas fa-file-pdf"></i> Birth Chart Analysis (Premium)</a></li>

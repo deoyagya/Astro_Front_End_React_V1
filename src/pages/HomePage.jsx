@@ -167,6 +167,11 @@ export default function HomePage() {
                                 <h4>Money / Finance / Wealth</h4>
                                 <p>2nd house, 11th house, D2 Hora support</p>
                             </a>
+                            <a href="/property-report" className="area-card">
+                                <i className="fas fa-house-chimney"></i>
+                                <h4>Property / Vehicles / Assets</h4>
+                                <p>4th house, D4, acquisition and stability</p>
+                            </a>
                             <a href="/spiritual-report" className="area-card">
                                 <i className="fas fa-om"></i>
                                 <h4>Spiritual Growth</h4>

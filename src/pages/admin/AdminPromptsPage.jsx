@@ -56,6 +56,11 @@ const TYPE_ICONS = {
   money_report_generation: 'fa-money-bill-trend-up',
   money_report_review: 'fa-scale-balanced',
   money_report_revision: 'fa-wallet',
+  property_report_generator_system: 'fa-house-chimney',
+  property_report_reviewer_system: 'fa-house-circle-check',
+  property_report_generation: 'fa-building-shield',
+  property_report_review: 'fa-file-circle-check',
+  property_report_revision: 'fa-hammer',
 };
 
 export default function AdminPromptsPage() {
