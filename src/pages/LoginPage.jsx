@@ -288,7 +288,7 @@ export default function LoginPage() {
     // Submit on Enter when all digits filled
     if (e.key === 'Enter') {
       const code = otp.join('');
-      if (code.length === OTP_LENGTH) handleVerify();
+      if (code.length === OTP_LENGTH && timer > 0) handleVerify();
     }
   };
 
@@ -306,6 +306,10 @@ export default function LoginPage() {
     const code = otp.join('');
     if (code.length !== OTP_LENGTH) {
       setError('Please enter the complete 6-digit code');
+      return;
+    }
+    if (timer <= 0) {
+      setError('This code has expired. Please request a new one.');
       return;
     }
     if (!fullName.trim()) {
@@ -504,7 +508,7 @@ export default function LoginPage() {
                     placeholder="Your full name"
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
-                    onKeyDown={(e) => e.key === 'Enter' && otp.join('').length === OTP_LENGTH && handleVerify()}
+                    onKeyDown={(e) => e.key === 'Enter' && otp.join('').length === OTP_LENGTH && timer > 0 && handleVerify()}
                     required
                   />
                   <label className="consent-checkbox">
@@ -521,7 +525,7 @@ export default function LoginPage() {
                   type="button"
                   className="btn-verify"
                   onClick={handleVerify}
-                  disabled={loading || otp.join('').length !== OTP_LENGTH}
+                  disabled={loading || otp.join('').length !== OTP_LENGTH || timer <= 0}
                 >
                   {loading ? (
                     <><i className="fas fa-spinner fa-spin"></i> Verifying...</>

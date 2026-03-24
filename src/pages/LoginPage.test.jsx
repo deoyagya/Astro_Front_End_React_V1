@@ -61,6 +61,7 @@ import LoginPage from './LoginPage';
 
 describe('LoginPage', () => {
   beforeEach(() => {
+    vi.useRealTimers();
     mockPost.mockReset();
     mockPostLong.mockReset();
     mockLogin.mockReset();
