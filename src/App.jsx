@@ -86,18 +86,18 @@ export default function App() {
         <Route path="/" element={<HomePage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/pricing" element={<PricingPage />} />
-        <Route path="/muhurta-finder" element={<MuhurtaLandingPage />} />
-        <Route path="/lal-kitab-kundli" element={<LalKitabKundliPage />} />
-        <Route path="/temporal-forecast" element={<TemporalForecastLandingPage />} />
+        <Route path="/muhurta-finder" element={<ProtectedRoute><MuhurtaLandingPage /></ProtectedRoute>} />
+        <Route path="/lal-kitab-kundli" element={<ProtectedRoute><LalKitabKundliPage /></ProtectedRoute>} />
+        <Route path="/temporal-forecast" element={<ProtectedRoute><TemporalForecastLandingPage /></ProtectedRoute>} />
         <Route path="/threat-opportunity" element={<ProtectedRoute><ThreatOpportunityPage /></ProtectedRoute>} />
         <Route path="/survey/:slug" element={<PublicSurveyPage />} />
 
-        {/* Free tools — no login required */}
-        <Route path="/birth-chart" element={<BirthChartPage />} />
-        <Route path="/birth-chart/house/:houseNum" element={<HouseExplorePage />} />
-        <Route path="/dasha" element={<DashaPage />} />
-        <Route path="/compatibility" element={<CompatibilityPage />} />
-        <Route path="/horoscope" element={<HoroscopePage />} />
+        {/* Authenticated tools */}
+        <Route path="/birth-chart" element={<ProtectedRoute><BirthChartPage /></ProtectedRoute>} />
+        <Route path="/birth-chart/house/:houseNum" element={<ProtectedRoute><HouseExplorePage /></ProtectedRoute>} />
+        <Route path="/dasha" element={<ProtectedRoute><DashaPage /></ProtectedRoute>} />
+        <Route path="/compatibility" element={<ProtectedRoute><CompatibilityPage /></ProtectedRoute>} />
+        <Route path="/horoscope" element={<ProtectedRoute><HoroscopePage /></ProtectedRoute>} />
 
         {/* Ask a Question — public browse, auth for ordering */}
         <Route path="/ask-question" element={<AskQuestionPage />} />
@@ -106,19 +106,19 @@ export default function App() {
         <Route path="/reports" element={<ProtectedRoute><ReportsPage /></ProtectedRoute>} />
         <Route path="/muhurta" element={<ProtectedRoute><MuhurtaFinderPage /></ProtectedRoute>} />
         <Route path="/chart-wizard" element={<ProtectedRoute><ChartWizardPage /></ProtectedRoute>} />
-        <Route path="/career-report" element={<CareerReportPage />} />
-        <Route path="/love-marriage-report" element={<LoveMarriageReportPage />} />
-        <Route path="/marriage-report" element={<MarriageReportPage />} />
-        <Route path="/money-report" element={<MoneyReportPage />} />
-        <Route path="/property-report" element={<PropertyReportPage />} />
-        <Route path="/education-report" element={<EducationReportPage />} />
-        <Route path="/health-report" element={<HealthReportPage />} />
-        <Route path="/spiritual-report" element={<SpiritualReportPage />} />
-        <Route path="/family-report" element={<FamilyReportPage />} />
-        <Route path="/foreign-travel-report" element={<ForeignTravelReportPage />} />
-        <Route path="/manglik-dosha" element={<ManglikDoshaPage />} />
-        <Route path="/sade-sati-report" element={<SadeSatiReportPage />} />
-        <Route path="/birth-chart-analysis" element={<BirthChartAnalysisPage />} />
+        <Route path="/career-report" element={<ProtectedRoute><CareerReportPage /></ProtectedRoute>} />
+        <Route path="/love-marriage-report" element={<ProtectedRoute><LoveMarriageReportPage /></ProtectedRoute>} />
+        <Route path="/marriage-report" element={<ProtectedRoute><MarriageReportPage /></ProtectedRoute>} />
+        <Route path="/money-report" element={<ProtectedRoute><MoneyReportPage /></ProtectedRoute>} />
+        <Route path="/property-report" element={<ProtectedRoute><PropertyReportPage /></ProtectedRoute>} />
+        <Route path="/education-report" element={<ProtectedRoute><EducationReportPage /></ProtectedRoute>} />
+        <Route path="/health-report" element={<ProtectedRoute><HealthReportPage /></ProtectedRoute>} />
+        <Route path="/spiritual-report" element={<ProtectedRoute><SpiritualReportPage /></ProtectedRoute>} />
+        <Route path="/family-report" element={<ProtectedRoute><FamilyReportPage /></ProtectedRoute>} />
+        <Route path="/foreign-travel-report" element={<ProtectedRoute><ForeignTravelReportPage /></ProtectedRoute>} />
+        <Route path="/manglik-dosha" element={<ProtectedRoute><ManglikDoshaPage /></ProtectedRoute>} />
+        <Route path="/sade-sati-report" element={<ProtectedRoute><SadeSatiReportPage /></ProtectedRoute>} />
+        <Route path="/birth-chart-analysis" element={<ProtectedRoute><BirthChartAnalysisPage /></ProtectedRoute>} />
         <Route path="/my-reports" element={<ProtectedRoute><MyReportsPage /></ProtectedRoute>} />
         <Route path="/order" element={<ProtectedRoute><OrderPage /></ProtectedRoute>} />
         <Route path="/my-orders" element={<ProtectedRoute><MyOrdersPage /></ProtectedRoute>} />

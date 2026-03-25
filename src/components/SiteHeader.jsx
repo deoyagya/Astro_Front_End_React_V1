@@ -54,6 +54,7 @@ export default function SiteHeader({ active = 'home' }) {
   const isAdmin = user?.role === 'admin';
   const isPremium = user?.role === 'premium' || isAdmin;
   const displayName = user?.full_name || user?.email?.split('@')[0] || user?.phone || 'Account';
+  const canAccessProtectedMenus = isAuthenticated;
 
   // Dropdown states
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -187,7 +188,7 @@ export default function SiteHeader({ active = 'home' }) {
                   </li>
                   <li
                     className={openNavMenu === 'tools' ? 'nav-open' : ''}
-                    onMouseEnter={() => isAuthenticated && setOpenNavMenu('tools')}
+                    onMouseEnter={() => canAccessProtectedMenus && setOpenNavMenu('tools')}
                     onMouseLeave={() => setOpenNavMenu((current) => (current === 'tools' ? null : current))}
                   >
                     <a
@@ -199,16 +200,18 @@ export default function SiteHeader({ active = 'home' }) {
                     >
                       <i className="fas fa-tools"></i> Free Tools
                     </a>
-                    <ul className="nav-submenu">
-                      <li><a href="/birth-chart" onClick={(e) => handleSubmenuLinkClick(e, '/birth-chart')}><i className="fas fa-chart-pie"></i> Birth Chart (Kundli)</a></li>
-                      <li><a href="/dasha" onClick={(e) => handleSubmenuLinkClick(e, '/dasha')}><i className="fas fa-clock"></i> Dasha Calculator</a></li>
-                      <li><a href="/compatibility" onClick={(e) => handleSubmenuLinkClick(e, '/compatibility')}><i className="fas fa-heart"></i> Compatibility</a></li>
-                      <li><a href="/horoscope" onClick={(e) => handleSubmenuLinkClick(e, '/horoscope')}><i className="fas fa-sun"></i> Daily Horoscope</a></li>
-                    </ul>
+                    {canAccessProtectedMenus && (
+                      <ul className="nav-submenu">
+                        <li><a href="/birth-chart" onClick={(e) => handleSubmenuLinkClick(e, '/birth-chart')}><i className="fas fa-chart-pie"></i> Birth Chart (Kundli)</a></li>
+                        <li><a href="/dasha" onClick={(e) => handleSubmenuLinkClick(e, '/dasha')}><i className="fas fa-clock"></i> Dasha Calculator</a></li>
+                        <li><a href="/compatibility" onClick={(e) => handleSubmenuLinkClick(e, '/compatibility')}><i className="fas fa-heart"></i> Compatibility</a></li>
+                        <li><a href="/horoscope" onClick={(e) => handleSubmenuLinkClick(e, '/horoscope')}><i className="fas fa-sun"></i> Daily Horoscope</a></li>
+                      </ul>
+                    )}
                   </li>
                   <li
                     className={openNavMenu === 'kundli' ? 'nav-open' : ''}
-                    onMouseEnter={() => isAuthenticated && setOpenNavMenu('kundli')}
+                    onMouseEnter={() => canAccessProtectedMenus && setOpenNavMenu('kundli')}
                     onMouseLeave={() => setOpenNavMenu((current) => (current === 'kundli' ? null : current))}
                   >
                     <a
@@ -220,23 +223,25 @@ export default function SiteHeader({ active = 'home' }) {
                     >
                       <i className="fas fa-scroll"></i> Kundli
                     </a>
-                    <ul className="nav-submenu">
-                      <li><a href="/birth-chart" onClick={(e) => handleSubmenuLinkClick(e, '/birth-chart')}><i className="fas fa-chart-pie"></i> Free Kundli Generation</a></li>
-                      <li><a href="/compatibility" onClick={(e) => handleSubmenuLinkClick(e, '/compatibility')}><i className="fas fa-ring"></i> Kundli Matching</a></li>
-                      <li><a href="/muhurta-finder" onClick={(e) => handleSubmenuLinkClick(e, '/muhurta-finder')}><i className="fas fa-clock"></i> Muhurta Finder</a></li>
-                      <li><a href="/lal-kitab-kundli" onClick={(e) => handleSubmenuLinkClick(e, '/lal-kitab-kundli')}><i className="fas fa-book-open"></i> Lal Kitab Kundali</a></li>
-                      <li><a href="/temporal-forecast" onClick={(e) => handleSubmenuLinkClick(e, '/temporal-forecast')}><i className="fas fa-hourglass-half"></i> Threat and Opportunity</a></li>
-                      <li><a href="/sade-sati-report" onClick={(e) => handleSubmenuLinkClick(e, '/sade-sati-report')}><i className="fas fa-moon"></i> Sade Sati Report</a></li>
-                      <li><a href="/money-report" onClick={(e) => handleSubmenuLinkClick(e, '/money-report')}><i className="fas fa-sack-dollar"></i> Money Report</a></li>
-                      <li><a href="/property-report" onClick={(e) => handleSubmenuLinkClick(e, '/property-report')}><i className="fas fa-house-chimney"></i> Property Report</a></li>
-                      <li><a href="/foreign-travel-report" onClick={(e) => handleSubmenuLinkClick(e, '/foreign-travel-report')}><i className="fas fa-plane-departure"></i> Foreign Travel Report</a></li>
-                      <li><a href="/manglik-dosha" onClick={(e) => handleSubmenuLinkClick(e, '/manglik-dosha')}><i className="fas fa-exclamation-triangle"></i> Manglik Dosha Remedies</a></li>
-                      <li><a href="/birth-chart-analysis" onClick={(e) => handleSubmenuLinkClick(e, '/birth-chart-analysis')}><i className="fas fa-file-pdf"></i> Birth Chart Analysis (Premium)</a></li>
-                    </ul>
+                    {canAccessProtectedMenus && (
+                      <ul className="nav-submenu">
+                        <li><a href="/birth-chart" onClick={(e) => handleSubmenuLinkClick(e, '/birth-chart')}><i className="fas fa-chart-pie"></i> Free Kundli Generation</a></li>
+                        <li><a href="/compatibility" onClick={(e) => handleSubmenuLinkClick(e, '/compatibility')}><i className="fas fa-ring"></i> Kundli Matching</a></li>
+                        <li><a href="/muhurta-finder" onClick={(e) => handleSubmenuLinkClick(e, '/muhurta-finder')}><i className="fas fa-clock"></i> Muhurta Finder</a></li>
+                        <li><a href="/lal-kitab-kundli" onClick={(e) => handleSubmenuLinkClick(e, '/lal-kitab-kundli')}><i className="fas fa-book-open"></i> Lal Kitab Kundali</a></li>
+                        <li><a href="/temporal-forecast" onClick={(e) => handleSubmenuLinkClick(e, '/temporal-forecast')}><i className="fas fa-hourglass-half"></i> Threat and Opportunity</a></li>
+                        <li><a href="/sade-sati-report" onClick={(e) => handleSubmenuLinkClick(e, '/sade-sati-report')}><i className="fas fa-moon"></i> Sade Sati Report</a></li>
+                        <li><a href="/money-report" onClick={(e) => handleSubmenuLinkClick(e, '/money-report')}><i className="fas fa-sack-dollar"></i> Money Report</a></li>
+                        <li><a href="/property-report" onClick={(e) => handleSubmenuLinkClick(e, '/property-report')}><i className="fas fa-house-chimney"></i> Property Report</a></li>
+                        <li><a href="/foreign-travel-report" onClick={(e) => handleSubmenuLinkClick(e, '/foreign-travel-report')}><i className="fas fa-plane-departure"></i> Foreign Travel Report</a></li>
+                        <li><a href="/manglik-dosha" onClick={(e) => handleSubmenuLinkClick(e, '/manglik-dosha')}><i className="fas fa-exclamation-triangle"></i> Manglik Dosha Remedies</a></li>
+                        <li><a href="/birth-chart-analysis" onClick={(e) => handleSubmenuLinkClick(e, '/birth-chart-analysis')}><i className="fas fa-file-pdf"></i> Birth Chart Analysis (Premium)</a></li>
+                      </ul>
+                    )}
                   </li>
                   <li
                     className={openNavMenu === 'consult' ? 'nav-open' : ''}
-                    onMouseEnter={() => isAuthenticated && setOpenNavMenu('consult')}
+                    onMouseEnter={() => canAccessProtectedMenus && setOpenNavMenu('consult')}
                     onMouseLeave={() => setOpenNavMenu((current) => (current === 'consult' ? null : current))}
                   >
                     <a
@@ -248,10 +253,12 @@ export default function SiteHeader({ active = 'home' }) {
                     >
                       <i className="fas fa-headset"></i> Consult
                     </a>
-                    <ul className="nav-submenu">
-                      <li><a href="/chat" onClick={(e) => handleSubmenuLinkClick(e, '/chat')}><i className="fas fa-comments"></i> Live Chat with Astrologer</a></li>
-                      <li><a href="/ask-question" onClick={(e) => handleSubmenuLinkClick(e, '/ask-question')}><i className="fas fa-question-circle"></i> Ask a Question</a></li>
-                    </ul>
+                    {canAccessProtectedMenus && (
+                      <ul className="nav-submenu">
+                        <li><a href="/chat" onClick={(e) => handleSubmenuLinkClick(e, '/chat')}><i className="fas fa-comments"></i> Live Chat with Astrologer</a></li>
+                        <li><a href="/ask-question" onClick={(e) => handleSubmenuLinkClick(e, '/ask-question')}><i className="fas fa-question-circle"></i> Ask a Question</a></li>
+                      </ul>
+                    )}
                   </li>
                   <li>
                     <a href="/pricing" className={active === 'pricing' ? 'active' : ''}>

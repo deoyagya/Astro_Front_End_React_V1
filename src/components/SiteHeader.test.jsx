@@ -44,6 +44,20 @@ describe('SiteHeader', () => {
     expect(screen.getByText('Login Screen')).toBeInTheDocument();
   });
 
+  it('does not render protected submenu items for unauthenticated users', () => {
+    render(
+      <MemoryRouter initialEntries={['/']}>
+        <Routes>
+          <Route path="/" element={<SiteHeader active="home" />} />
+        </Routes>
+      </MemoryRouter>,
+    );
+
+    expect(screen.queryByRole('link', { name: /Birth Chart \(Kundli\)/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole('link', { name: /Compatibility/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole('link', { name: /Threat and Opportunity/i })).not.toBeInTheDocument();
+  });
+
   it('allows authenticated users to stay on the page when clicking protected nav items', () => {
     authState.value = {
       isAuthenticated: true,
