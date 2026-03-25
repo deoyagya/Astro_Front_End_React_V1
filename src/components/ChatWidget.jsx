@@ -19,6 +19,7 @@ import { useStyles } from '../context/StyleContext';
 // ────────────────────────────── localStorage keys
 const LS_OPEN = 'cw_is_open';
 const LS_STATE = 'cw_session_state';
+const EXCLUDED_CHAT_AREA_KEYS = new Set(['701', '1001']);
 
 // ────────────────────────────── Inline sub-components
 
@@ -175,6 +176,10 @@ export default function ChatWidget() {
       const raw = localStorage.getItem(LS_STATE);
       if (!raw) return false;
       const s = JSON.parse(raw);
+      if (s.selectedArea?.key && EXCLUDED_CHAT_AREA_KEYS.has(String(s.selectedArea.key))) {
+        localStorage.removeItem(LS_STATE);
+        return false;
+      }
       if (s.sessionId) {
         setPhase(s.phase || 'welcome');
         setSelectedArea(s.selectedArea || null);
@@ -237,7 +242,9 @@ export default function ChatWidget() {
 
         if (cancelled) return;
 
-        setLifeAreas(areasRes.life_areas || []);
+        setLifeAreas((areasRes.life_areas || []).filter(
+          (area) => !EXCLUDED_CHAT_AREA_KEYS.has(String(area.key)),
+        ));
 
         const charts = chartsRes.charts || [];
         if (charts.length === 0) {
@@ -582,7 +589,9 @@ export default function ChatWidget() {
         api.get('/v1/chat/life-areas'),
         api.get('/v1/charts/saved?limit=1'),
       ]);
-      setLifeAreas(areasRes.life_areas || []);
+      setLifeAreas((areasRes.life_areas || []).filter(
+        (area) => !EXCLUDED_CHAT_AREA_KEYS.has(String(area.key)),
+      ));
       const charts = chartsRes.charts || [];
       if (charts.length === 0) {
         setNoChart(true);

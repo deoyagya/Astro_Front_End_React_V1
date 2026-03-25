@@ -20,6 +20,8 @@ import SiteHeader from '../components/SiteHeader';
 import '../styles/chat.css';
 import { useStyles } from '../context/StyleContext';
 
+const EXCLUDED_CHAT_AREA_KEYS = new Set(['701', '1001']);
+
 // ─── Life Area FA icon mapping ───
 const LIFE_AREA_ICONS = {
   401: 'fa-heartbeat',
@@ -309,7 +311,9 @@ export default function ChatPage() {
     api.get('/v1/chat/life-areas')
       .then((res) => {
         if (!cancelled) {
-          setLifeAreas(res.life_areas || []);
+          setLifeAreas((res.life_areas || []).filter(
+            (area) => !EXCLUDED_CHAT_AREA_KEYS.has(String(area.key)),
+          ));
           setLifeAreasLoading(false);
         }
       })
