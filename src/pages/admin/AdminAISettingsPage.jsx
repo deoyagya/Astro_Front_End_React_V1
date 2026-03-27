@@ -178,6 +178,13 @@ export default function AdminAISettingsPage() {
                 environment fallback until the migration is applied.
               </div>
             )}
+            {payload?.storage_policy && !payload.storage_policy.dedicated_ai_encryption_configured && (
+              <div style={{ marginTop: 10, color: '#f59e0b' }}>
+                Stronger dedicated encryption for DB-stored LLM keys is not configured yet in this environment.
+                The app is safely falling back to the main backend secret, but production should set a separate
+                AI settings encryption secret.
+              </div>
+            )}
           </div>
         </div>
 
