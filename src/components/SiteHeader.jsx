@@ -13,6 +13,7 @@ const ADMIN_MENU_ITEMS = [
   { label: 'Reports',      icon: 'fa-file-invoice',     href: '/admin/reports' },
   { label: 'Prompts',      icon: 'fa-robot',            href: '/admin/prompts' },
   { label: 'AI Settings',  icon: 'fa-key',              href: '/admin/ai-settings' },
+  { label: 'AI Audit Log', icon: 'fa-shield-alt',       href: '/admin/ai-settings/audit-log' },
   { label: 'Muhurta',      icon: 'fa-clock',            href: '/admin/muhurta' },
   { label: 'Rule CV Wizard', icon: 'fa-balance-scale',  href: '/admin/rule-cv-wizard' },
   { label: 'Rule Builder',  icon: 'fa-project-diagram', href: '/admin/rule-builder' },

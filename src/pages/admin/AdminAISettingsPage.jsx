@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import '../../styles/admin.css';
 import PageShell from '../../components/PageShell';
 import { api } from '../../api/client';
@@ -147,6 +148,9 @@ export default function AdminAISettingsPage() {
             </p>
           </div>
           <div style={{ display: 'flex', gap: 12, alignItems: 'flex-start', flexWrap: 'wrap' }}>
+            <Link className="btn-admin-add" to="/admin/ai-settings/audit-log">
+              <i className="fas fa-shield-alt"></i> View Audit Log
+            </Link>
             <button className="btn-admin-add" type="button" onClick={fetchSettings} disabled={loading || saving}>
               <i className="fas fa-rotate"></i> Refresh
             </button>
@@ -172,13 +176,30 @@ export default function AdminAISettingsPage() {
           <div style={{ marginTop: 12, color: '#a9b3c7' }}>
             Only LLM runtime slots are stored in <code style={{ color: '#f472b6' }}>ai_settings</code>. Payment,
             auth, infrastructure, and other high-sensitivity secrets stay environment-managed for deployment safety.
+            {payload?.storage_policy?.encryption_backend && (
+              <div style={{ marginTop: 10 }}>
+                Encryption backend:
+                <strong style={{ marginLeft: 8, color: '#fff' }}>{payload.storage_policy.encryption_backend}</strong>
+                {payload.storage_policy.encryption_key_reference && (
+                  <span style={{ marginLeft: 12 }}>
+                    Ref: <code style={{ color: '#f472b6' }}>{payload.storage_policy.encryption_key_reference}</code>
+                  </span>
+                )}
+              </div>
+            )}
             {!payload?.db_storage_ready && (
               <div style={{ marginTop: 10, color: '#fbbf24' }}>
                 Database-backed AI settings are not ready in this environment yet. The app is currently using
                 environment fallback until the migration is applied.
               </div>
             )}
-            {payload?.storage_policy && !payload.storage_policy.dedicated_ai_encryption_configured && (
+            {payload?.storage_policy && !payload.storage_policy.encryption_ready && (
+              <div style={{ marginTop: 10, color: '#ff6b6b' }}>
+                AI settings encryption is not fully ready for this environment.
+                {payload.storage_policy.encryption_detail ? ` ${payload.storage_policy.encryption_detail}` : ''}
+              </div>
+            )}
+            {payload?.storage_policy && payload.storage_policy.encryption_ready && !payload.storage_policy.dedicated_ai_encryption_configured && (
               <div style={{ marginTop: 10, color: '#f59e0b' }}>
                 Stronger dedicated encryption for DB-stored LLM keys is not configured yet in this environment.
                 The app is safely falling back to the main backend secret, but production should set a separate
