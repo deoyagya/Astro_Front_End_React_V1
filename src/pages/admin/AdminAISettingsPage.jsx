@@ -169,6 +169,16 @@ export default function AdminAISettingsPage() {
           API keys are never shown in full. Enter a new key only when you want to replace the stored one; leave the
           field blank to keep the current key. Use the per-slot connection test to verify the selected provider, model,
           and key before or after saving.
+          <div style={{ marginTop: 12, color: '#a9b3c7' }}>
+            Only LLM runtime slots are stored in <code style={{ color: '#f472b6' }}>ai_settings</code>. Payment,
+            auth, infrastructure, and other high-sensitivity secrets stay environment-managed for deployment safety.
+            {!payload?.db_storage_ready && (
+              <div style={{ marginTop: 10, color: '#fbbf24' }}>
+                Database-backed AI settings are not ready in this environment yet. The app is currently using
+                environment fallback until the migration is applied.
+              </div>
+            )}
+          </div>
         </div>
 
         {success && (
