@@ -52,6 +52,7 @@ import AdminSurveyListPage from './pages/admin/AdminSurveyListPage';
 import AdminSurveyBuilderPage from './pages/admin/AdminSurveyBuilderPage';
 import AdminGatewayConfigPage from './pages/admin/AdminGatewayConfigPage';
 import AdminUserManagementPage from './pages/admin/AdminUserManagementPage';
+import AdminAISettingsPage from './pages/admin/AdminAISettingsPage';
 import PublicSurveyPage from './pages/PublicSurveyPage';
 import MuhurtaFinderPage from './pages/MuhurtaFinderPage';
 import MuhurtaLandingPage from './pages/MuhurtaLandingPage';
@@ -163,6 +164,7 @@ export default function App() {
         <Route path="/admin/subscriptions" element={<AdminProtectedRoute><AdminSubscriptionPage /></AdminProtectedRoute>} />
         <Route path="/admin/orders" element={<AdminProtectedRoute><AdminOrderManagementPage /></AdminProtectedRoute>} />
         <Route path="/admin/gateway-config" element={<AdminProtectedRoute><AdminGatewayConfigPage /></AdminProtectedRoute>} />
+        <Route path="/admin/ai-settings" element={<AdminProtectedRoute><AdminAISettingsPage /></AdminProtectedRoute>} />
         <Route path="/admin/users" element={<AdminProtectedRoute><AdminUserManagementPage /></AdminProtectedRoute>} />
         <Route path="/admin/style-manager" element={<AdminProtectedRoute><AdminStyleManagerPage /></AdminProtectedRoute>} />
         <Route path="/admin/surveys" element={<AdminProtectedRoute><AdminSurveyListPage /></AdminProtectedRoute>} />

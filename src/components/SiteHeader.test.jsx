@@ -209,6 +209,7 @@ describe('SiteHeader', () => {
 
     fireEvent.click(screen.getByRole('button', { name: /Manage Data/i }));
 
+    expect(screen.getByRole('link', { name: /AI Settings/i })).toHaveAttribute('href', '/admin/ai-settings');
     expect(screen.getByRole('link', { name: /Users/i })).toHaveAttribute('href', '/admin/users');
     expect(screen.getByRole('link', { name: /Orders/i })).toHaveAttribute('href', '/admin/orders');
     expect(screen.queryByRole('link', { name: /^Users$/i })).toBeInTheDocument();

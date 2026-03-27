@@ -843,6 +843,24 @@ export const SCREEN_STYLE_REGISTRY = {
     ],
   },
 
+  'admin-ai-settings': {
+    label: 'AI Settings', icon: 'fa-key', group: 'Admin',
+    categories: [
+      { name: 'Typography', elements: [PAGE_TITLE] },
+      { name: 'Form', elements: [...ADMIN_FORM] },
+      { name: 'Actions', elements: [...ADMIN_ACTIONS] },
+      {
+        name: 'Cards',
+        elements: [
+          { key: 'slotCard', label: 'Slot Card', defaults: { backgroundColor: 'rgba(26,31,46,0.92)', color: '#e8eaf0', padding: '24px', fontSize: '0.95rem', fontWeight: 400, borderRadius: '18px' } },
+          { key: 'statusBadge_database', label: 'Status — Database', defaults: _badge('#22c55e') },
+          { key: 'statusBadge_environment', label: 'Status — Environment', defaults: _badge('#f59e0b', '#111827') },
+          { key: 'statusBadge_none', label: 'Status — None', defaults: _badge('#64748b') },
+        ],
+      },
+    ],
+  },
+
   'admin-pipeline': {
     label: 'Pipeline Wizard', icon: 'fa-flask', group: 'Admin',
     categories: [

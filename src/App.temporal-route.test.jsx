@@ -88,6 +88,7 @@ vi.mock('./pages/admin/AdminStyleManagerPage', () => ({ default: () => <div>Admi
 vi.mock('./pages/admin/AdminSurveyListPage', () => ({ default: () => <div>Admin Survey List</div> }));
 vi.mock('./pages/admin/AdminSurveyBuilderPage', () => ({ default: () => <div>Admin Survey Builder</div> }));
 vi.mock('./pages/admin/AdminGatewayConfigPage', () => ({ default: () => <div>Admin Gateway</div> }));
+vi.mock('./pages/admin/AdminAISettingsPage', () => ({ default: () => <div>Admin AI Settings</div> }));
 vi.mock('./pages/admin/AdminUserManagementPage', () => ({ default: () => <div>Admin Users</div> }));
 vi.mock('./pages/mydata/MyDataLayout', async () => {
   const { Outlet } = await import('react-router-dom');

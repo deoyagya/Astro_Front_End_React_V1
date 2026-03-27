@@ -12,6 +12,7 @@ const ADMIN_MENU_ITEMS = [
   { label: 'Add Question', icon: 'fa-plus-circle',      href: '/admin/questions/add' },
   { label: 'Reports',      icon: 'fa-file-invoice',     href: '/admin/reports' },
   { label: 'Prompts',      icon: 'fa-robot',            href: '/admin/prompts' },
+  { label: 'AI Settings',  icon: 'fa-key',              href: '/admin/ai-settings' },
   { label: 'Muhurta',      icon: 'fa-clock',            href: '/admin/muhurta' },
   { label: 'Rule CV Wizard', icon: 'fa-balance-scale',  href: '/admin/rule-cv-wizard' },
   { label: 'Rule Builder',  icon: 'fa-project-diagram', href: '/admin/rule-builder' },
