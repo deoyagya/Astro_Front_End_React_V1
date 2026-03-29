@@ -3,7 +3,7 @@
  *
  * Stripe redirects here after payment with ?session_id={CHECKOUT_SESSION_ID}.
  * Checks session status via backend and shows success/pending/error state.
- * Detects order type (report, question, subscription) and redirects accordingly.
+ * Detects order type (report, question, subscription, credit pack) and redirects accordingly.
  */
 
 import { useEffect, useState } from 'react';
@@ -20,7 +20,7 @@ export default function CheckoutReturnPage() {
   const [status, setStatus] = useState('loading'); // loading | complete | pending | error
   const [email, setEmail] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
-  const [orderType, setOrderType] = useState('report'); // report | question | muhurta
+  const [orderType, setOrderType] = useState('report'); // report | question | muhurta | credit_pack
   const [orderId, setOrderId] = useState('');
 
   useEffect(() => {
@@ -40,7 +40,9 @@ export default function CheckoutReturnPage() {
       if (refreshUser) refreshUser();
       const redirectPath = typeParam === 'question' && razorpayOrderId
         ? `/my-reports?tab=questions&order=${encodeURIComponent(razorpayOrderId)}`
-        : '/my-reports';
+        : typeParam === 'credit_pack'
+          ? '/my-data/subscription'
+          : '/my-reports';
       setTimeout(() => navigate(redirectPath, { replace: true }), 3000);
       return;
     }
@@ -83,6 +85,8 @@ export default function CheckoutReturnPage() {
           setTimeout(() => {
             if (detectedType === 'question' && data.order_id) {
               navigate(`/my-reports?tab=questions&order=${data.order_id}`, { replace: true });
+            } else if (detectedType === 'credit_pack') {
+              navigate('/my-data/subscription', { replace: true });
             } else {
               navigate('/my-reports', { replace: true });
             }
@@ -108,6 +112,7 @@ export default function CheckoutReturnPage() {
 
   const isQuestionOrder = orderType === 'question';
   const isReportOrder = orderType === 'report';
+  const isCreditPackOrder = orderType === 'credit_pack';
 
   return (
     <PageShell activeNav="">
@@ -154,6 +159,12 @@ export default function CheckoutReturnPage() {
                   Your questions are being analyzed by our Vedic astrology AI. Answers will appear on your reports page shortly.
                 </p>
               )}
+              {isCreditPackOrder && (
+                <p style={{ color: '#7b5bff', fontSize: '14px', marginTop: '12px' }}>
+                  <i className="fas fa-coins" style={{ marginRight: '6px' }}></i>
+                  Your AI chat credits have been added to your account and are ready in your subscription area.
+                </p>
+              )}
               <p style={{ color: '#484f58', fontSize: '13px', marginTop: '16px' }}>
                 Redirecting you shortly...
               </p>
@@ -167,10 +178,12 @@ export default function CheckoutReturnPage() {
               <p style={{ color: '#8b949e' }}>
                 {isQuestionOrder
                   ? 'Your payment is being processed. Your question answers will be generated once payment confirms.'
-                  : 'Your payment is still being processed. Your PDF report will be emailed and stored in My Reports once complete.'}
+                  : isCreditPackOrder
+                    ? 'Your payment is being processed. Your credits will appear in your subscription area once payment confirms.'
+                    : 'Your payment is still being processed. Your PDF report will be emailed and stored in My Reports once complete.'}
               </p>
               <button
-                onClick={() => navigate('/my-reports', { replace: true })}
+                onClick={() => navigate(isCreditPackOrder ? '/my-data/subscription' : '/my-reports', { replace: true })}
                 style={{
                   marginTop: '20px',
                   padding: '10px 24px',
@@ -182,7 +195,7 @@ export default function CheckoutReturnPage() {
                   fontSize: '14px',
                 }}
               >
-                Go to My Reports
+                {isCreditPackOrder ? 'Go to Subscription' : 'Go to My Reports'}
               </button>
             </>
           )}
@@ -194,7 +207,7 @@ export default function CheckoutReturnPage() {
               <p style={{ color: '#8b949e' }}>{errorMsg || 'Unable to verify your payment. Please contact support.'}</p>
               <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', marginTop: '20px' }}>
                 <button
-                  onClick={() => navigate(isQuestionOrder ? '/ask-question' : '/order', { replace: true })}
+                  onClick={() => navigate(isQuestionOrder ? '/ask-question' : isCreditPackOrder ? '/pricing' : '/order', { replace: true })}
                   style={{
                     padding: '10px 24px',
                     background: '#21262d',
@@ -205,10 +218,10 @@ export default function CheckoutReturnPage() {
                     fontSize: '14px',
                   }}
                 >
-                  {isQuestionOrder ? 'Back to Questions' : 'Return to Cart'}
+                  {isQuestionOrder ? 'Back to Questions' : isCreditPackOrder ? 'Back to Pricing' : 'Return to Cart'}
                 </button>
                 <button
-                  onClick={() => navigate('/my-reports', { replace: true })}
+                  onClick={() => navigate(isCreditPackOrder ? '/my-data/subscription' : '/my-reports', { replace: true })}
                   style={{
                     padding: '10px 24px',
                     background: '#7b5bff',
@@ -219,7 +232,7 @@ export default function CheckoutReturnPage() {
                     fontSize: '14px',
                   }}
                 >
-                  My Reports
+                  {isCreditPackOrder ? 'My Subscription' : 'My Reports'}
                 </button>
               </div>
             </>

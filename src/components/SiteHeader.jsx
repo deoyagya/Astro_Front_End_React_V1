@@ -12,6 +12,8 @@ const ADMIN_MENU_ITEMS = [
   { label: 'Add Question', icon: 'fa-plus-circle',      href: '/admin/questions/add' },
   { label: 'Reports',      icon: 'fa-file-invoice',     href: '/admin/reports' },
   { label: 'Prompts',      icon: 'fa-robot',            href: '/admin/prompts' },
+  { label: 'Legal Policies', icon: 'fa-balance-scale',  href: '/admin/legal-policies' },
+  { label: 'Announcements', icon: 'fa-bullhorn',        href: '/admin/announcements' },
   { label: 'AI Settings',  icon: 'fa-key',              href: '/admin/ai-settings' },
   { label: 'AI Audit Log', icon: 'fa-shield-alt',       href: '/admin/ai-settings/audit-log' },
   { label: 'Muhurta',      icon: 'fa-clock',            href: '/admin/muhurta' },
@@ -295,6 +297,9 @@ export default function SiteHeader({ active = 'home' }) {
                         <>
                           <a href="/my-reports" className="dropdown-item" onClick={() => setDropdownOpen(false)}>
                             <i className="fas fa-download"></i> My Reports
+                          </a>
+                          <a href="/my-reports?tab=forecast" className="dropdown-item" onClick={() => setDropdownOpen(false)}>
+                            <i className="fas fa-calendar-days"></i> Forecast Library
                           </a>
 
                           {/* My Astro — trigger button */}

@@ -24,26 +24,6 @@ import { formatDiscountValue, formatLocalCurrency, formatUsdCentsForUser } from 
 import '../styles/pricing.css';
 import { useStyles } from '../context/StyleContext';
 
-/* ---- Icon map for plan tiers ---- */
-const PLAN_ICONS = {
-  free: '✨',
-  basic: '🔮',
-  premium: '💎',
-  elite: '👑',
-};
-
-/* ---- Feature comparison rows ---- */
-const COMPARISON_FEATURES = [
-  { label: 'AI Chat Questions / month', key: 'ai_chat' },
-  { label: 'PDF Detailed Reports', key: 'pdf_report' },
-  { label: 'Temporal Forecast (Life Areas)', key: 'temporal_forecast' },
-  { label: 'Full Compatibility Analysis', key: 'compatibility_full' },
-  { label: 'Premium Muhurta', key: 'muhurta_premium' },
-  { label: 'Chart Wizard Consultations', key: 'chart_wizard' },
-  { label: 'Cross-Validation Pipeline', key: 'cross_validation' },
-  { label: 'Personalized Remedies', key: 'remedies' },
-];
-
 export default function PricingPage() {
   const { getOverride } = useStyles('pricing');
   const navigate = useNavigate();
@@ -53,6 +33,7 @@ export default function PricingPage() {
   const gw = usePaymentGateway();
 
   const [plans, setPlans] = useState([]);
+  const [comparisonFeatures, setComparisonFeatures] = useState([]);
   const [creditPacks, setCreditPacks] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -83,6 +64,7 @@ export default function PricingPage() {
         ]);
 
         setPlans(plansRes.plans || []);
+        setComparisonFeatures(plansRes.comparison_features || []);
         setCreditPacks(packsRes.packs || []);
       } catch (err) {
         toast(err.message || 'Failed to load pricing data', 'error');
@@ -188,6 +170,48 @@ export default function PricingPage() {
       setCheckoutLoading(null);
     }
   }, [isAuthenticated, navigate, yearly, couponResult, couponCode, gw.gateway, gw.currency]);
+
+  const handlePurchasePack = useCallback(async (pack) => {
+    if (!isAuthenticated) {
+      navigate('/login');
+      return;
+    }
+
+    const loadingKey = `credit-pack:${pack.id}`;
+    setCheckoutLoading(loadingKey);
+
+    try {
+      const res = await api.post('/v1/subscription/purchase-credits', {
+        pack_id: pack.id,
+        gateway: gw.gateway || 'stripe',
+      });
+
+      if (res.gateway === 'razorpay' && res.order_id) {
+        setRazorpayCheckout({
+          orderId: res.order_id,
+          amount: res.amount,
+          currency: res.currency || 'INR',
+          razorpayKeyId: res.razorpay_key_id,
+          mode: 'payment',
+          verifyUrl: '/v1/subscription/verify-razorpay-credit-pack',
+        });
+        setCheckoutLoading(null);
+        return;
+      }
+
+      if (res.client_secret) {
+        setClientSecret(res.client_secret);
+        setCheckoutLoading(null);
+        return;
+      }
+
+      toast('Unable to start checkout. Please try again.', 'error');
+      setCheckoutLoading(null);
+    } catch (err) {
+      toast(err.message || 'Checkout failed. Please try again.', 'error');
+      setCheckoutLoading(null);
+    }
+  }, [gw.gateway, isAuthenticated, navigate, toast]);
 
   /* ---- Price formatting (localized display / USD source of truth) ---- */
   const formatPrice = (plan) => {
@@ -363,6 +387,7 @@ export default function PricingPage() {
           currency={razorpayCheckout.currency}
           razorpayKeyId={razorpayCheckout.razorpayKeyId}
           mode={razorpayCheckout.mode}
+          verifyUrl={razorpayCheckout.verifyUrl}
           prefill={{ email: user?.email || '' }}
           onSuccess={async (result) => {
             setRazorpayCheckout(null);
@@ -443,7 +468,7 @@ export default function PricingPage() {
                   {isPopular && !isCurrent && <div className="popular-badge">Most Popular</div>}
                   {isCurrent && <div className="current-badge">Your Plan</div>}
 
-                  <span className="plan-icon">{PLAN_ICONS[plan.slug] || '⭐'}</span>
+                  <span className="plan-icon">{plan.icon || '⭐'}</span>
                   <h3 className="plan-name">{plan.name}</h3>
                   <p className="plan-desc">{plan.description}</p>
 
@@ -467,7 +492,9 @@ export default function PricingPage() {
                   </div>
 
                   <ul className="plan-features">
-                    {(plan.features_json || []).map((feat, i) => (
+                    {((plan.display_features && plan.display_features.length > 0)
+                      ? plan.display_features
+                      : (plan.features_json || [])).map((feat, i) => (
                       <li key={i} className={feat.startsWith('✗') ? 'disabled' : ''}>
                         <i className={`fas ${feat.startsWith('✗') ? 'fa-times' : 'fa-check'}`}></i>
                         {feat.replace(/^[✓✗]\s*/, '')}
@@ -530,7 +557,7 @@ export default function PricingPage() {
           </div>
 
           {/* Feature comparison table */}
-          {sortedPlans.length > 0 && (
+          {sortedPlans.length > 0 && comparisonFeatures.length > 0 && (
             <div className="feature-comparison">
               <h2>Feature Comparison</h2>
               <div className="feature-table-wrap">
@@ -544,7 +571,7 @@ export default function PricingPage() {
                     </tr>
                   </thead>
                   <tbody>
-                    {COMPARISON_FEATURES.map((feat) => (
+                    {comparisonFeatures.map((feat) => (
                       <tr key={feat.key}>
                         <td>{feat.label}</td>
                         {sortedPlans.map((plan) => {
@@ -579,25 +606,33 @@ export default function PricingPage() {
                 Top up your AI chat credits with affordable packs — no subscription change needed.
               </p>
               <div className="credit-packs-grid">
-                {creditPacks.map((pack) => (
-                  <div key={pack.id} className="credit-pack-card">
-                    <div className="pack-credits">{pack.credit_amount}</div>
-                    <div className="pack-name">{pack.name}</div>
-                    <div className="pack-price">{formatCreditPrice(pack.price_cents)}</div>
-                    <div className="pack-unit">
-                      {formatUsdCentsForUser(Math.round(pack.price_cents / pack.credit_amount), paymentContext)} per question
+                {creditPacks.map((pack) => {
+                  const packLoadingKey = `credit-pack:${pack.id}`;
+                  return (
+                    <div key={pack.id} className="credit-pack-card">
+                      <div className="pack-credits">{pack.credit_amount}</div>
+                      <div className="pack-name">{pack.name}</div>
+                      <div className="pack-price">{formatCreditPrice(pack.price_cents)}</div>
+                      <div className="pack-unit">
+                        {formatUsdCentsForUser(Math.round(pack.price_cents / pack.credit_amount), paymentContext)} per question
+                      </div>
+                      <button
+                        className="pack-buy-btn"
+                        onClick={() => handlePurchasePack(pack)}
+                        disabled={checkoutLoading === packLoadingKey}
+                      >
+                        {checkoutLoading === packLoadingKey ? (
+                          <>
+                            <i className="fas fa-spinner fa-spin" style={{ marginRight: 8 }}></i>
+                            Processing...
+                          </>
+                        ) : (
+                          'Buy Now'
+                        )}
+                      </button>
                     </div>
-                    <button
-                      className="pack-buy-btn"
-                      onClick={() => {
-                        if (!isAuthenticated) { navigate('/login'); return; }
-                        navigate('/my-data/subscription');
-                      }}
-                    >
-                      Buy Now
-                    </button>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
           )}

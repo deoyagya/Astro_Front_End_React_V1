@@ -209,6 +209,7 @@ describe('SiteHeader', () => {
 
     fireEvent.click(screen.getByRole('button', { name: /Manage Data/i }));
 
+    expect(screen.getByRole('link', { name: /Legal Policies/i })).toHaveAttribute('href', '/admin/legal-policies');
     expect(screen.getByRole('link', { name: /AI Settings/i })).toHaveAttribute('href', '/admin/ai-settings');
     expect(screen.getByRole('link', { name: /AI Audit Log/i })).toHaveAttribute('href', '/admin/ai-settings/audit-log');
     expect(screen.getByRole('link', { name: /Users/i })).toHaveAttribute('href', '/admin/users');

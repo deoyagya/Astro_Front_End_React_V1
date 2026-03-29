@@ -14,7 +14,11 @@ const KNOWN_FEATURE_KEYS = [
   'muhurta_premium',
   'chart_storage',
   'cross_validation',
+  'remedies',
   'wizard_advanced',
+  'yearly_prediction_report',
+  'monthly_prediction_report',
+  'daily_prediction_report',
 ];
 
 const PLAN_SLUGS = ['free', 'basic', 'premium', 'elite'];

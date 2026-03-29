@@ -5,6 +5,7 @@ const mocks = vi.hoisted(() => ({
   navigateMock: vi.fn(),
   refreshUserMock: vi.fn(),
   apiGetMock: vi.fn(),
+  apiPostMock: vi.fn(),
   currentSearchParams: new URLSearchParams(),
 }));
 
@@ -24,7 +25,7 @@ vi.mock('../components/PageShell', () => ({
 vi.mock('../api/client', () => ({
   api: {
     get: (...args) => mocks.apiGetMock(...args),
-    post: vi.fn(),
+    post: (...args) => mocks.apiPostMock(...args),
   },
 }));
 
@@ -39,6 +40,7 @@ describe('CheckoutReturnPage', () => {
     vi.clearAllMocks();
     localStorage.clear();
     mocks.currentSearchParams = new URLSearchParams();
+    mocks.apiPostMock.mockResolvedValue({});
     vi.spyOn(globalThis, 'setTimeout').mockImplementation((fn) => {
       if (typeof fn === 'function') fn();
       return 0;
@@ -128,5 +130,25 @@ describe('CheckoutReturnPage', () => {
     expect(screen.getByText(/Payment Successful/i)).toBeInTheDocument();
     expect(screen.getByText(/Your PDF report is being prepared, emailed to you, and saved in My Reports/i)).toBeInTheDocument();
     expect(mocks.navigateMock).toHaveBeenCalledWith('/my-reports', { replace: true });
+  });
+
+  it('redirects completed credit-pack purchases to subscription management', async () => {
+    mocks.currentSearchParams = new URLSearchParams('session_id=cs_credit_pack&type=credit_pack');
+    mocks.apiGetMock.mockResolvedValue({
+      status: 'complete',
+      payment_status: 'paid',
+      order_type: 'credit_pack',
+      order_id: 'order-credit-pack-1',
+    });
+
+    render(<CheckoutReturnPage />);
+
+    await act(async () => {
+      await Promise.resolve();
+      await Promise.resolve();
+    });
+
+    expect(screen.getByText(/AI chat credits have been added/i)).toBeInTheDocument();
+    expect(mocks.navigateMock).toHaveBeenCalledWith('/my-data/subscription', { replace: true });
   });
 });

@@ -1,49 +1,89 @@
+import { useEffect, useMemo, useState } from 'react';
+import DOMPurify from 'dompurify';
 import { useLegalModal } from '../context/LegalModalContext';
+import { api } from '../api/client';
+import { LEGAL_POLICY_META, formatPolicyDate } from '../lib/legalPolicies';
+
+function PolicyModal({ isOpen, onClose, meta, payload, loading, error }) {
+  const version = payload?.latest_version;
+  const sanitizedHtml = useMemo(
+    () => DOMPurify.sanitize(version?.html_content || ''),
+    [version?.html_content],
+  );
+
+  return (
+    <div className={`modal${isOpen ? ' show' : ''}`} onClick={(e) => e.target === e.currentTarget && onClose()}>
+      <div className="modal-content" style={{ maxWidth: 900 }}>
+        <button type="button" className="modal-close" onClick={onClose}><i className="fas fa-times"></i></button>
+        <h2>{meta.label}</h2>
+        <div className="modal-body">
+          {loading ? (
+            <p>Loading latest {meta.shortLabel.toLowerCase()} policy...</p>
+          ) : error ? (
+            <p>{error}</p>
+          ) : !payload?.available ? (
+            <p>No published version is available yet.</p>
+          ) : (
+            <>
+              <p style={{ color: '#94a3b8' }}>
+                Version {version.version_label} | Initial creation {formatPolicyDate(version.initial_created_at)} | Last updated {formatPolicyDate(version.modified_at)}
+              </p>
+              <div className="legal-policy-render" dangerouslySetInnerHTML={{ __html: sanitizedHtml }} />
+              <p style={{ marginTop: 18 }}>
+                <a href={meta.publicPath} style={{ color: '#7b5bff' }}>Open the full policy page</a>
+              </p>
+            </>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export default function LegalModals() {
   const { activeModal, closeModal } = useLegalModal();
+  const [bundle, setBundle] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    if (!activeModal) return;
+    let cancelled = false;
+    setLoading(true);
+    setError('');
+    api.get('/v1/legal-policies/bundle')
+      .then((data) => {
+        if (!cancelled) setBundle(data);
+      })
+      .catch((err) => {
+        if (!cancelled) setError(err.message || 'Failed to load legal policies.');
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [activeModal]);
 
   return (
     <>
-      <div className={`modal${activeModal === 'terms' ? ' show' : ''}`} onClick={(e) => e.target === e.currentTarget && closeModal()}>
-        <div className="modal-content">
-          <button type="button" className="modal-close" onClick={closeModal}><i className="fas fa-times"></i></button>
-          <h2>Terms of Use</h2>
-          <div className="modal-body">
-            <p>Last updated: February 2025</p>
-            <h3>1. Acceptance of Terms</h3>
-            <p>By accessing and using Astro Yagya services, you agree to be bound by these Terms of Use.</p>
-            <h3>2. Service Description</h3>
-            <p>Astro Yagya provides astrological calculations, interpretations, and guidance based on Vedic astrology principles. All services are for entertainment and guidance purposes only.</p>
-            <h3>3. User Responsibilities</h3>
-            <p>You agree to provide accurate birth information and use the services responsibly.</p>
-            <h3>4. Privacy</h3>
-            <p>Your data is protected as described in our Privacy Policy.</p>
-            <h3>5. Limitation of Liability</h3>
-            <p>Astro Yagya is not liable for any decisions made based on astrological guidance.</p>
-          </div>
-        </div>
-      </div>
-
-      <div className={`modal${activeModal === 'privacy' ? ' show' : ''}`} onClick={(e) => e.target === e.currentTarget && closeModal()}>
-        <div className="modal-content">
-          <button type="button" className="modal-close" onClick={closeModal}><i className="fas fa-times"></i></button>
-          <h2>Privacy Policy</h2>
-          <div className="modal-body">
-            <p>Last updated: February 2025</p>
-            <h3>1. Information We Collect</h3>
-            <p>We collect birth details (date, time, place), email address, and usage data to provide astrological services.</p>
-            <h3>2. How We Use Information</h3>
-            <p>To generate birth charts, provide predictions, and improve our services.</p>
-            <h3>3. Data Security</h3>
-            <p>We implement security measures to protect your personal information.</p>
-            <h3>4. Third Party Disclosure</h3>
-            <p>We do not sell or share your data with third parties.</p>
-            <h3>5. Your Rights</h3>
-            <p>You may request deletion of your data at any time.</p>
-          </div>
-        </div>
-      </div>
+      <PolicyModal
+        isOpen={activeModal === 'terms'}
+        onClose={closeModal}
+        meta={LEGAL_POLICY_META.terms_of_use}
+        payload={bundle?.terms_of_use}
+        loading={loading}
+        error={error}
+      />
+      <PolicyModal
+        isOpen={activeModal === 'privacy'}
+        onClose={closeModal}
+        meta={LEGAL_POLICY_META.privacy_policy}
+        payload={bundle?.privacy_policy}
+        loading={loading}
+        error={error}
+      />
     </>
   );
 }

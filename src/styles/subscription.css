@@ -405,6 +405,92 @@
   margin-bottom: 16px;
 }
 
+/* ---- Forecast access ---- */
+.subscription-forecast-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px;
+}
+.subscription-forecast-card {
+  border-radius: 14px;
+  border: 1px solid #2a2f3e;
+  background: rgba(40, 44, 60, 0.55);
+  padding: 20px;
+}
+.subscription-forecast-card.enabled {
+  border-color: rgba(123, 91, 255, 0.45);
+  box-shadow: inset 0 0 0 1px rgba(123, 91, 255, 0.08);
+}
+.subscription-forecast-card.locked {
+  opacity: 0.92;
+}
+.subscription-forecast-card-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  margin-bottom: 12px;
+}
+.subscription-forecast-card-head h3 {
+  color: #fff;
+  margin: 0 0 6px;
+  font-size: 1.05rem;
+}
+.subscription-forecast-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background: rgba(123, 91, 255, 0.14);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #b794ff;
+  flex-shrink: 0;
+}
+.subscription-forecast-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+.subscription-forecast-badge.enabled {
+  background: rgba(46, 213, 115, 0.12);
+  color: #7ff0ab;
+  border: 1px solid rgba(46, 213, 115, 0.25);
+}
+.subscription-forecast-badge.locked {
+  background: rgba(255, 165, 2, 0.12);
+  color: #ffd27a;
+  border: 1px solid rgba(255, 165, 2, 0.25);
+}
+.subscription-forecast-card p {
+  color: #c0c7d3;
+  font-size: 0.95rem;
+  margin-bottom: 16px;
+}
+.subscription-forecast-actions {
+  display: flex;
+  gap: 10px;
+}
+.subscription-forecast-note {
+  margin-top: 14px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: rgba(123, 91, 255, 0.08);
+  border: 1px solid rgba(123, 91, 255, 0.16);
+  color: #c7cfdd;
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  font-size: 0.93rem;
+}
+.subscription-forecast-note i {
+  color: #b794ff;
+  margin-top: 2px;
+}
+
 /* ---- Responsive ---- */
 @media (max-width: 768px) {
   .current-plan-card {
@@ -424,6 +510,9 @@
     grid-template-columns: 1fr;
   }
   .credit-packs-inline {
+    grid-template-columns: 1fr;
+  }
+  .subscription-forecast-grid {
     grid-template-columns: 1fr;
   }
 }

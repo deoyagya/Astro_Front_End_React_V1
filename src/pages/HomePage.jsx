@@ -1,9 +1,11 @@
+import { useEffect, useState } from 'react';
 import PageShell from '../components/PageShell';
+import { api } from '../api/client';
 import { useSharedEffects } from '../hooks/useSharedEffects';
 import { useAuth } from '../context/AuthContext';
 import { useStyles } from '../context/StyleContext';
 
-const LIFE_AREA_CARDS = [
+const FALLBACK_LIFE_AREA_CARDS = [
   {
     href: '/career-report',
     icon: 'fa-briefcase',
@@ -70,11 +72,43 @@ const LIFE_AREA_CARDS = [
   },
 ];
 
+function buildLifeAreaCards(reports = []) {
+  return reports.map((report) => ({
+    href: report.route || `/${report.id}-report`,
+    icon: report.icon,
+    title: report.title,
+    summary: report.desc || `${report.pages || 'Detailed'} personalised Vedic astrology report`,
+    impact: report.footerNote || report.highlights?.[0] || report.desc || 'Detailed Vedic astrology analysis tailored to your chart.',
+    accent: '#9d7bff',
+  }));
+}
+
 export default function HomePage() {
   useSharedEffects();
   const { isAuthenticated, user } = useAuth();
   const { getOverride } = useStyles('home');
   const isPremium = user?.role === 'premium' || user?.role === 'admin';
+  const [lifeAreaCards, setLifeAreaCards] = useState(FALLBACK_LIFE_AREA_CARDS);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    api.get('/v1/reports/catalog')
+      .then((data) => {
+        if (cancelled) return;
+        const dynamicCards = buildLifeAreaCards(data.reports || []);
+        if (dynamicCards.length > 0) {
+          setLifeAreaCards(dynamicCards);
+        }
+      })
+      .catch(() => {
+        // Keep the fallback cards instead of breaking the home experience.
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   return (
     <PageShell activeNav="home">
@@ -209,7 +243,7 @@ export default function HomePage() {
                         </div>
       
                         <div className="areas-grid">
-                            {LIFE_AREA_CARDS.map((card) => (
+                            {lifeAreaCards.map((card) => (
                                 <a
                                   key={card.href}
                                   href={card.href}

@@ -54,6 +54,11 @@ import AdminGatewayConfigPage from './pages/admin/AdminGatewayConfigPage';
 import AdminUserManagementPage from './pages/admin/AdminUserManagementPage';
 import AdminAISettingsPage from './pages/admin/AdminAISettingsPage';
 import AdminAISettingsAuditPage from './pages/admin/AdminAISettingsAuditPage';
+import AdminLegalPoliciesPage from './pages/admin/AdminLegalPoliciesPage';
+import AdminLegalPolicyEditorPage from './pages/admin/AdminLegalPolicyEditorPage';
+import AdminLegalPolicyHistoryPage from './pages/admin/AdminLegalPolicyHistoryPage';
+import AdminLegalPolicyVersionViewPage from './pages/admin/AdminLegalPolicyVersionViewPage';
+import AdminAnnouncementsPage from './pages/admin/AdminAnnouncementsPage';
 import PublicSurveyPage from './pages/PublicSurveyPage';
 import MuhurtaFinderPage from './pages/MuhurtaFinderPage';
 import MuhurtaLandingPage from './pages/MuhurtaLandingPage';
@@ -63,6 +68,7 @@ import PricingPage from './pages/PricingPage';
 import MyOrdersPage from './pages/MyOrdersPage';
 import ThreatOpportunityPage from './pages/ThreatOpportunityPage';
 import TemporalForecastLandingPage from './pages/TemporalForecastLandingPage';
+import LegalPolicyPage from './pages/LegalPolicyPage';
 import ChatWidget from './components/ChatWidget';
 import SiteGate from './components/SiteGate';
 import { LegalModalProvider } from './context/LegalModalContext';
@@ -93,6 +99,7 @@ export default function App() {
         <Route path="/temporal-forecast" element={<ProtectedRoute><TemporalForecastLandingPage /></ProtectedRoute>} />
         <Route path="/threat-opportunity" element={<ProtectedRoute><ThreatOpportunityPage /></ProtectedRoute>} />
         <Route path="/survey/:slug" element={<PublicSurveyPage />} />
+        <Route path="/legal/:slug" element={<LegalPolicyPage />} />
 
         {/* Authenticated tools */}
         <Route path="/birth-chart" element={<ProtectedRoute><BirthChartPage /></ProtectedRoute>} />
@@ -167,6 +174,11 @@ export default function App() {
         <Route path="/admin/gateway-config" element={<AdminProtectedRoute><AdminGatewayConfigPage /></AdminProtectedRoute>} />
         <Route path="/admin/ai-settings" element={<AdminProtectedRoute><AdminAISettingsPage /></AdminProtectedRoute>} />
         <Route path="/admin/ai-settings/audit-log" element={<AdminProtectedRoute><AdminAISettingsAuditPage /></AdminProtectedRoute>} />
+        <Route path="/admin/announcements" element={<AdminProtectedRoute><AdminAnnouncementsPage /></AdminProtectedRoute>} />
+        <Route path="/admin/legal-policies" element={<AdminProtectedRoute><AdminLegalPoliciesPage /></AdminProtectedRoute>} />
+        <Route path="/admin/legal-policies/:policyType" element={<AdminProtectedRoute><AdminLegalPolicyEditorPage /></AdminProtectedRoute>} />
+        <Route path="/admin/legal-policies/:policyType/history" element={<AdminProtectedRoute><AdminLegalPolicyHistoryPage /></AdminProtectedRoute>} />
+        <Route path="/admin/legal-policies/:policyType/history/:versionId" element={<AdminProtectedRoute><AdminLegalPolicyVersionViewPage /></AdminProtectedRoute>} />
         <Route path="/admin/users" element={<AdminProtectedRoute><AdminUserManagementPage /></AdminProtectedRoute>} />
         <Route path="/admin/style-manager" element={<AdminProtectedRoute><AdminStyleManagerPage /></AdminProtectedRoute>} />
         <Route path="/admin/surveys" element={<AdminProtectedRoute><AdminSurveyListPage /></AdminProtectedRoute>} />

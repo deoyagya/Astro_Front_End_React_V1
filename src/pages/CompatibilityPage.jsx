@@ -166,9 +166,6 @@ export default function CompatibilityPage() {
     if (entry.is_manglik) {
       return { bg: 'rgba(255, 71, 87, 0.08)', fg: '#ff4757', icon: 'fa-exclamation-triangle' };
     }
-    if (entry.is_manglik_raw) {
-      return { bg: 'rgba(255, 165, 2, 0.10)', fg: '#ffa502', icon: 'fa-shield-heart' };
-    }
     return { bg: 'rgba(46, 213, 115, 0.08)', fg: '#2ed573', icon: 'fa-check-circle' };
   };
 
@@ -503,7 +500,14 @@ export default function CompatibilityPage() {
                               )}
                               {Array.isArray(manglikGroom.cancellations) && manglikGroom.cancellations.length > 0 && (
                                 <p style={{ color: '#aeb7c8', fontSize: '0.8125rem', marginTop: 6 }}>
+                                  {manglikGroom.has_cancellation ? 'Cancellation conditions present: ' : ''}
                                   {manglikGroom.cancellations[0]}
+                                </p>
+                              )}
+                              {Array.isArray(manglikGroom.mitigations) && manglikGroom.mitigations.length > 0 && (
+                                <p style={{ color: '#aeb7c8', fontSize: '0.8125rem', marginTop: 6 }}>
+                                  {manglikGroom.has_mitigation ? 'Mitigating conditions present: ' : ''}
+                                  {manglikGroom.mitigations[0]}
                                 </p>
                               )}
                             </div>
@@ -528,7 +532,14 @@ export default function CompatibilityPage() {
                               )}
                               {Array.isArray(manglikBride.cancellations) && manglikBride.cancellations.length > 0 && (
                                 <p style={{ color: '#aeb7c8', fontSize: '0.8125rem', marginTop: 6 }}>
+                                  {manglikBride.has_cancellation ? 'Cancellation conditions present: ' : ''}
                                   {manglikBride.cancellations[0]}
+                                </p>
+                              )}
+                              {Array.isArray(manglikBride.mitigations) && manglikBride.mitigations.length > 0 && (
+                                <p style={{ color: '#aeb7c8', fontSize: '0.8125rem', marginTop: 6 }}>
+                                  {manglikBride.has_mitigation ? 'Mitigating conditions present: ' : ''}
+                                  {manglikBride.mitigations[0]}
                                 </p>
                               )}
                             </div>

@@ -15,7 +15,6 @@ import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { api } from '../../api/client';
 import { useAuth } from '../../context/AuthContext';
-import { useStyles } from '../../context/StyleContext';
 import EmbeddedCheckoutModal from '../../components/EmbeddedCheckoutModal';
 import RazorpayCheckoutModal from '../../components/RazorpayCheckoutModal';
 import usePaymentGateway from '../../hooks/usePaymentGateway';
@@ -29,6 +28,38 @@ const PLAN_ICONS = {
   premium: '💎',
   elite: '👑',
 };
+
+const FORECAST_FEATURES = [
+  {
+    featureKey: 'monthly_prediction_report',
+    title: 'Monthly Prediction Reports',
+    icon: 'fa-calendar-alt',
+    description: 'A fresh month-ahead forecast is generated on the last day of the month and stored in your report library.',
+    tab: 'monthly',
+  },
+  {
+    featureKey: 'daily_prediction_report',
+    title: 'Daily Prediction Reports',
+    icon: 'fa-sun',
+    description: 'Your daily all-life-area forecast is generated each day and appears in your report library automatically.',
+    tab: 'daily',
+  },
+];
+
+function normalizePlanFeatures(features) {
+  if (Array.isArray(features)) {
+    return features;
+  }
+  if (features && typeof features === 'object') {
+    return Object.entries(features).map(([featureKey, value]) => ({
+      feature_key: featureKey,
+      enabled: !!value?.enabled,
+      limit_value: value?.limit ?? value?.limit_value ?? null,
+      limit_period: value?.period ?? value?.limit_period ?? null,
+    }));
+  }
+  return [];
+}
 
 export default function SubscriptionPage() {
   const navigate = useNavigate();
@@ -64,8 +95,8 @@ export default function SubscriptionPage() {
         api.get('/v1/subscription/credit-packs').catch(() => ({ packs: [] })),
       ]);
       setSubData(subRes);
-      setCreditBalance(balanceRes?.balances || {});
-      setCreditPacks(packsRes?.packs || []);
+      setCreditBalance(balanceRes?.balances || subRes?.credits || {});
+      setCreditPacks(Array.isArray(packsRes?.packs) ? packsRes.packs : []);
     } catch (err) {
       setError(err.message || 'Failed to load subscription data');
     } finally {
@@ -76,10 +107,27 @@ export default function SubscriptionPage() {
   useEffect(() => { fetchData(); }, [fetchData]);
 
   /* ---- Helpers ---- */
-  const planSlug = subData?.plan?.slug || user?.role || 'free';
+  const normalizedPlan = subData?.plan || {
+    slug: subData?.plan_slug,
+    name: subData?.plan_name,
+  };
+  const normalizedSubscription = subData?.subscription || {
+    status: subData?.status,
+    billing_cycle: subData?.billing_cycle,
+    current_period_start: subData?.current_period_start,
+    current_period_end: subData?.current_period_end,
+    cancelled_at: subData?.cancelled_at,
+  };
+  const planFeatures = normalizePlanFeatures(subData?.features);
+  const usageMap = subData?.usage && typeof subData.usage === 'object' ? subData.usage : {};
+  const planSlug = normalizedPlan?.slug || user?.role || 'free';
   const isPaid = planSlug !== 'free';
-  const subscription = subData?.subscription;
-  const planFeatures = subData?.features || [];
+  const subscription = normalizedSubscription;
+  const forecastEntitlements = FORECAST_FEATURES.map((feature) => {
+    const match = planFeatures.find((item) => item.feature_key === feature.featureKey);
+    return { ...feature, enabled: !!match?.enabled };
+  });
+  const hasAnyForecastEntitlement = forecastEntitlements.some((feature) => feature.enabled);
 
   const formatDate = (dateStr) => {
     if (!dateStr) return '—';
@@ -205,6 +253,7 @@ export default function SubscriptionPage() {
           amount={razorpayOrder.amount}
           currency={razorpayOrder.currency}
           razorpayKeyId={razorpayOrder.razorpayKeyId}
+          verifyUrl="/v1/subscription/verify-razorpay-credit-pack"
           prefill={{ name: user?.full_name || '', email: user?.email || '' }}
           onSuccess={handleRazorpaySuccess}
           onClose={handleRazorpayClose}
@@ -240,7 +289,7 @@ export default function SubscriptionPage() {
           <span className="current-plan-icon">{PLAN_ICONS[planSlug] || '⭐'}</span>
           <div className="current-plan-info">
             <div className="plan-name-row">
-              <h3>{subData?.plan?.name || planSlug.charAt(0).toUpperCase() + planSlug.slice(1)}</h3>
+              <h3>{normalizedPlan?.name || planSlug.charAt(0).toUpperCase() + planSlug.slice(1)}</h3>
               <span className={getStatusBadgeClass(subscription?.status || (isPaid ? 'active' : 'free'))}>
                 {subscription?.status || (isPaid ? 'Active' : 'Free')}
               </span>
@@ -308,11 +357,52 @@ export default function SubscriptionPage() {
         </div>
       )}
 
+      <div className="sub-section">
+        <h2><i className="fas fa-calendar-days"></i> Forecast Access</h2>
+        <div className="subscription-forecast-grid">
+          {forecastEntitlements.map((feature) => (
+            <div key={feature.featureKey} className={`subscription-forecast-card ${feature.enabled ? 'enabled' : 'locked'}`}>
+              <div className="subscription-forecast-card-head">
+                <div className="subscription-forecast-icon">
+                  <i className={`fas ${feature.icon}`}></i>
+                </div>
+                <div>
+                  <h3>{feature.title}</h3>
+                  <span className={`subscription-forecast-badge ${feature.enabled ? 'enabled' : 'locked'}`}>
+                    {feature.enabled ? 'Included in your plan' : 'Upgrade required'}
+                  </span>
+                </div>
+              </div>
+              <p>{feature.description}</p>
+              <div className="subscription-forecast-actions">
+                {feature.enabled ? (
+                  <button className="sub-btn outline" onClick={() => navigate(`/my-reports?tab=${feature.tab}`)}>
+                    <i className="fas fa-folder-open" style={{ marginRight: 6 }}></i>Open Library
+                  </button>
+                ) : (
+                  <button className="sub-btn primary" onClick={() => navigate('/pricing')}>
+                    <i className="fas fa-arrow-up" style={{ marginRight: 6 }}></i>Upgrade
+                  </button>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+        <div className="subscription-forecast-note">
+          <i className="fas fa-circle-info"></i>
+          <span>
+            {hasAnyForecastEntitlement
+              ? 'Recurring forecasts are stored in My Reports with yearly, monthly, and daily filters so you can find each period quickly.'
+              : 'Forecast entitlements are controlled by your subscription plan. Upgrade to unlock recurring monthly and daily predictions.'}
+          </span>
+        </div>
+      </div>
+
       {/* Usage Summary (if we have subscription data with usage) */}
-      {subData?.usage && Object.keys(subData.usage).length > 0 && (
+      {Object.keys(usageMap).length > 0 && (
         <div className="sub-section">
           <h2><i className="fas fa-chart-bar"></i> Monthly Usage</h2>
-          {Object.entries(subData.usage).map(([endpoint, data]) => {
+          {Object.entries(usageMap).map(([endpoint, data]) => {
             const used = data.used || 0;
             const limit = data.limit || 0;
             const pct = limit > 0 ? Math.min(100, Math.round((used / limit) * 100)) : 0;
