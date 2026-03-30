@@ -192,6 +192,43 @@ describe('SiteHeader', () => {
     expect(screen.getByText('Sade Sati Report Landing')).toBeInTheDocument();
   });
 
+  it('does not show the credit wallet gauge for authenticated end users in the plan-first shell', () => {
+    authState.value = {
+      isAuthenticated: true,
+      user: { email: 'ria@example.com', role: 'premium' },
+      logout: vi.fn(),
+    };
+
+    render(
+      <MemoryRouter initialEntries={['/']}>
+        <Routes>
+          <Route path="/" element={<SiteHeader active="home" />} />
+        </Routes>
+      </MemoryRouter>,
+    );
+
+    expect(screen.queryByRole('button', { name: /Credit balance 27/i })).not.toBeInTheDocument();
+    expect(screen.queryByText('Credits')).not.toBeInTheDocument();
+  });
+
+  it('does not show the credit wallet gauge for admins', () => {
+    authState.value = {
+      isAuthenticated: true,
+      user: { email: 'admin@example.com', role: 'admin' },
+      logout: vi.fn(),
+    };
+
+    render(
+      <MemoryRouter initialEntries={['/admin/observability']}>
+        <Routes>
+          <Route path="/admin/observability" element={<SiteHeader active="home" />} />
+        </Routes>
+      </MemoryRouter>,
+    );
+
+    expect(screen.queryByText('Credits')).not.toBeInTheDocument();
+  });
+
   it('surfaces admin users and orders inside the Manage Data menu', () => {
     authState.value = {
       isAuthenticated: true,

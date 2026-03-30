@@ -1,6 +1,7 @@
 import '../styles/muhurta.css';
 import PageShell from '../components/PageShell';
 import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import PlaceAutocomplete from '../components/PlaceAutocomplete';
 import { api } from '../api/client';
 import { sanitizeGeo } from '../hooks/useBirthData';
@@ -113,6 +114,7 @@ function computeFavourableRanges(w) {
 }
 
 export default function MuhurtaFinderPage() {
+  const navigate = useNavigate();
   const { isAuthenticated, user } = useAuth();
   const { gateway, currency: gwCurrency, razorpayKeyId, loading: gwLoading } = usePaymentGateway();
 
@@ -255,6 +257,11 @@ export default function MuhurtaFinderPage() {
     setReportStatus('');
     setWindowPage(0);
 
+    if (!isAuthenticated) {
+      navigate('/login');
+      return;
+    }
+
     if (!selectedEvent) { setError('Please select an event type.'); return; }
     if (!place) { setError('Please select a location.'); return; }
 
@@ -290,9 +297,13 @@ export default function MuhurtaFinderPage() {
     } finally {
       setLoading(false);
     }
-  }, [selectedEvent, place, startDate, endDate, getBirthData]);
+  }, [isAuthenticated, navigate, selectedEvent, place, startDate, endDate, getBirthData]);
 
   const handleEmailReport = useCallback(async () => {
+    if (!isAuthenticated) {
+      navigate('/login');
+      return;
+    }
     if (!reportEmail || !place) return;
     setReportSending(true);
     setReportStatus('');
@@ -322,12 +333,16 @@ export default function MuhurtaFinderPage() {
     } finally {
       setReportSending(false);
     }
-  }, [selectedEvent, startDate, endDate, place, reportEmail, getBirthData]);
+  }, [isAuthenticated, navigate, selectedEvent, startDate, endDate, place, reportEmail, getBirthData]);
 
   const eventLabel = eventTypes.find(e => e.value === selectedEvent)?.label || '';
 
   // --- Unlock payment handler (Stripe or Razorpay) ---
   const handleUnlockPayment = useCallback(async () => {
+    if (!isAuthenticated) {
+      navigate('/login');
+      return;
+    }
     if (!pricing || paymentProcessing) return;
     setPaymentProcessing(true);
     try {
@@ -361,7 +376,7 @@ export default function MuhurtaFinderPage() {
       setError(err.message || 'Failed to initiate payment.');
       setPaymentProcessing(false);
     }
-  }, [pricing, paymentProcessing, selectedEvent, gateway, razorpayKeyId]);
+  }, [isAuthenticated, navigate, pricing, paymentProcessing, selectedEvent, gateway, razorpayKeyId]);
 
   // --- Razorpay payment success handler ---
   const handleRazorpaySuccess = useCallback((result) => {

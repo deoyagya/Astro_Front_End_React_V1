@@ -5,6 +5,7 @@ import DateInput from '../components/form/DateInput';
 import TimeSelectGroup from '../components/form/TimeSelectGroup';
 import PlaceAutocomplete from '../components/PlaceAutocomplete';
 import { api } from '../api/client';
+import { useAuth } from '../context/AuthContext';
 import { useBirthData, to24Hour, sanitizeGeo } from '../hooks/useBirthData';
 import '../styles/rule-cv-wizard.css';
 import { useStyles } from '../context/StyleContext';
@@ -18,6 +19,7 @@ const STEPS = [
 export default function CompatibilityPage() {
   const { getOverride } = useStyles('compatibility');
   const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
 
   // Wizard step (1-indexed)
   const [step, setStep] = useState(1);
@@ -78,9 +80,13 @@ export default function CompatibilityPage() {
     } else if (step === 2) {
       const err = validateStepB();
       if (err) { setError(err); return; }
+      if (!isAuthenticated) {
+        navigate('/login');
+        return;
+      }
       setStep(3);
     }
-  }, [step, validateStepA, validateStepB]);
+  }, [isAuthenticated, navigate, step, validateStepA, validateStepB]);
 
   const handleBack = useCallback(() => {
     setError('');
@@ -99,6 +105,11 @@ export default function CompatibilityPage() {
 
   // ─── API call — triggered when entering Step 3 ──────────────
   const fetchCompatibility = useCallback(async () => {
+    if (!isAuthenticated) {
+      navigate('/login');
+      return;
+    }
+
     const personA = {
       name: nameA.trim(),
       gender: genderA,
@@ -137,7 +148,7 @@ export default function CompatibilityPage() {
     } finally {
       setLoading(false);
     }
-  }, [nameA, genderA, dobA, hourA, minuteA, ampmA, placeA, nameB, genderB, dobB, hourB, minuteB, ampmB, placeB, saveBirthData]);
+  }, [isAuthenticated, navigate, nameA, genderA, dobA, hourA, minuteA, ampmA, placeA, nameB, genderB, dobB, hourB, minuteB, ampmB, placeB, saveBirthData]);
 
   // Auto-fetch when step transitions to 3
   useEffect(() => {

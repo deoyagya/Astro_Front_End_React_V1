@@ -28,7 +28,7 @@ const chartOptions = CHART_OPTIONS.map(o => ({
 export default function BirthChartPage() {
   const { getOverride } = useStyles('birth-chart');
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, isAuthenticated } = useAuth();
 
   const {
     fullName, setFullName,
@@ -59,6 +59,11 @@ export default function BirthChartPage() {
     setError('');
     setSelectedHouse(null);
 
+    if (!isAuthenticated) {
+      navigate('/login');
+      return;
+    }
+
     const err = validate();
     if (err) { setError(err); return; }
 
@@ -75,7 +80,7 @@ export default function BirthChartPage() {
     } finally {
       setLoading(false);
     }
-  }, [validate, buildPayload, saveBirthData]);
+  }, [isAuthenticated, navigate, validate, buildPayload, saveBirthData]);
 
   /* Extract data from bundle */
   const bundle = chartBundle?.bundle || {};

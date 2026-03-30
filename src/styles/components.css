@@ -134,6 +134,103 @@
     position: relative;
 }
 
+.nav-credit-balance {
+    display: flex;
+    align-items: center;
+}
+
+.nav-credit-pill {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 152px;
+    padding: 8px 12px;
+    border-radius: 16px;
+    border: 1px solid rgba(123, 91, 255, 0.28);
+    background: linear-gradient(135deg, rgba(58, 44, 96, 0.88), rgba(24, 25, 41, 0.92));
+    color: #fff;
+    cursor: pointer;
+    transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.nav-credit-pill:hover {
+    transform: translateY(-1px);
+    border-color: rgba(183, 148, 255, 0.5);
+    box-shadow: 0 8px 22px rgba(20, 18, 40, 0.32);
+}
+
+.nav-credit-pill--empty {
+    border-color: rgba(255, 107, 129, 0.35);
+    background: linear-gradient(135deg, rgba(76, 28, 44, 0.88), rgba(27, 21, 32, 0.92));
+}
+
+.nav-credit-pill--low {
+    border-color: rgba(255, 159, 67, 0.42);
+    background: linear-gradient(135deg, rgba(88, 54, 24, 0.9), rgba(27, 22, 18, 0.94));
+}
+
+.nav-credit-pill--medium {
+    border-color: rgba(123, 91, 255, 0.4);
+}
+
+.nav-credit-pill--high {
+    border-color: rgba(46, 213, 115, 0.38);
+    background: linear-gradient(135deg, rgba(24, 59, 56, 0.92), rgba(20, 25, 34, 0.94));
+}
+
+.nav-credit-icon {
+    width: 30px;
+    height: 30px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: rgba(255, 214, 102, 0.16);
+    color: #ffd166;
+    flex-shrink: 0;
+}
+
+.nav-credit-copy {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+    min-width: 0;
+    flex: 1;
+}
+
+.nav-credit-label {
+    color: #cfd5e6;
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.nav-credit-value {
+    color: #fff;
+    font-size: 1rem;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.nav-credit-gauge {
+    position: relative;
+    width: 40px;
+    height: 7px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.12);
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.nav-credit-gauge-fill {
+    display: block;
+    height: 100%;
+    border-radius: 999px;
+    background: linear-gradient(90deg, #ffd166, #9d7bff);
+    transition: width 0.25s ease;
+}
+
 .nav-user-trigger {
     display: flex;
     align-items: center;
@@ -228,6 +325,62 @@
     height: 1px;
     background: #2a2f3e;
     margin: 4px 0;
+}
+
+.dropdown-credit-summary {
+    padding: 14px 18px 10px;
+}
+
+.dropdown-credit-summary-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    color: #fff;
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.dropdown-credit-lines {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.dropdown-credit-line {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    color: #c7cfdd;
+    font-size: 0.87rem;
+}
+
+.dropdown-credit-line strong {
+    color: #ffd166;
+    font-weight: 700;
+}
+
+.dropdown-credit-empty {
+    color: #a0a8b8;
+    font-size: 0.86rem;
+    line-height: 1.45;
+}
+
+.dropdown-credit-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 12px;
+    color: #b794ff;
+    text-decoration: none;
+    font-size: 0.88rem;
+    font-weight: 600;
+}
+
+.dropdown-credit-link:hover {
+    color: #d6c6ff;
 }
 
 .dropdown-item {
@@ -786,6 +939,11 @@
         padding: 6px 12px;
         font-size: 0.9375rem;
     }
+
+    .nav-credit-pill {
+        min-width: 140px;
+        padding: 7px 10px;
+    }
 }
 
 @media (max-width: 900px) {
@@ -817,6 +975,19 @@
     .nav-user-trigger {
         padding: 5px 10px;
         font-size: 0.92rem;
+    }
+
+    .nav-credit-pill {
+        min-width: 132px;
+        padding: 6px 10px;
+    }
+
+    .nav-credit-label {
+        font-size: 0.67rem;
+    }
+
+    .nav-credit-value {
+        font-size: 0.95rem;
     }
 
     .logo h1 {
@@ -851,6 +1022,14 @@
     .nav a {
         padding: 6px 10px;
         font-size: 0.875rem;
+    }
+
+    .nav-credit-balance {
+        order: 98;
+    }
+
+    .nav-credit-pill {
+        min-width: 122px;
     }
 }
 

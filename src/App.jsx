@@ -46,6 +46,7 @@ import AdminRuleCVWizardPage from './pages/admin/AdminRuleCVWizardPage';
 import AdminRuleBuilderPage from './pages/admin/AdminRuleBuilderPage';
 import AdminWizardContentPage from './pages/admin/AdminWizardContentPage';
 import AdminSubscriptionPage from './pages/admin/AdminSubscriptionPage';
+import AdminSubscriptionPlanEditorPage from './pages/admin/AdminSubscriptionPlanEditorPage';
 import AdminOrderManagementPage from './pages/admin/AdminOrderManagementPage';
 import AdminStyleManagerPage from './pages/admin/AdminStyleManagerPage';
 import AdminSurveyListPage from './pages/admin/AdminSurveyListPage';
@@ -170,6 +171,8 @@ export default function App() {
         <Route path="/admin/rule-builder" element={<AdminProtectedRoute><AdminRuleBuilderPage /></AdminProtectedRoute>} />
         <Route path="/admin/wizard-content" element={<AdminProtectedRoute><AdminWizardContentPage /></AdminProtectedRoute>} />
         <Route path="/admin/subscriptions" element={<AdminProtectedRoute><AdminSubscriptionPage /></AdminProtectedRoute>} />
+        <Route path="/admin/subscriptions/plan/new" element={<AdminProtectedRoute><AdminSubscriptionPlanEditorPage /></AdminProtectedRoute>} />
+        <Route path="/admin/subscriptions/plan/:planId" element={<AdminProtectedRoute><AdminSubscriptionPlanEditorPage /></AdminProtectedRoute>} />
         <Route path="/admin/orders" element={<AdminProtectedRoute><AdminOrderManagementPage /></AdminProtectedRoute>} />
         <Route path="/admin/gateway-config" element={<AdminProtectedRoute><AdminGatewayConfigPage /></AdminProtectedRoute>} />
         <Route path="/admin/ai-settings" element={<AdminProtectedRoute><AdminAISettingsPage /></AdminProtectedRoute>} />

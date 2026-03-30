@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import PricingPage from './PricingPage';
 
 const mocks = vi.hoisted(() => ({
@@ -70,60 +70,27 @@ describe('PricingPage', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mocks.searchParams = new URLSearchParams();
-    mocks.apiGet
-      .mockResolvedValueOnce({
-        plans: [
-          {
-            slug: 'free',
-            name: 'Free',
-            description: 'Starter plan',
-            icon: '✨',
-            price_monthly_cents: 0,
-            price_yearly_cents: 0,
-            features_json: [],
-            display_features: ['3 AI Questions/month', 'Basic Chart'],
-            features: {},
-            display_order: 0,
+    mocks.apiGet.mockResolvedValue({
+      plans: [
+        {
+          slug: 'free',
+          name: 'Free',
+          description: 'Starter plan',
+          icon: '✨',
+          price_monthly_cents: 0,
+          price_yearly_cents: 0,
+          features_json: [],
+          display_features: ['3 AI Questions/month', 'Basic Chart'],
+          features: {
+            ai_chat: { enabled: true, limit: 3, period: 'monthly' },
           },
-        ],
-        comparison_features: [
-          { key: 'ai_chat', label: 'AI Chat Questions' },
-        ],
-      })
-      .mockResolvedValueOnce({
-        packs: [
-          {
-            id: 'pack_1',
-            name: '10 AI Questions',
-            credit_amount: 10,
-            price_cents: 99,
-          },
-        ],
-      });
-  });
-
-  it('starts credit-pack checkout directly from the pricing page', async () => {
-    mocks.apiPost.mockResolvedValue({
-      gateway: 'stripe',
-      client_secret: 'cs_test_secret',
+          display_order: 0,
+        },
+      ],
+      comparison_features: [
+        { key: 'ai_chat', label: 'AI Chat Questions' },
+      ],
     });
-
-    render(<PricingPage />);
-
-    await waitFor(() => {
-      expect(screen.getByText(/10 AI Questions/i)).toBeInTheDocument();
-    });
-
-    fireEvent.click(screen.getByRole('button', { name: /Buy Now/i }));
-
-    await waitFor(() => {
-      expect(mocks.apiPost).toHaveBeenCalledWith('/v1/subscription/purchase-credits', {
-        pack_id: 'pack_1',
-        gateway: 'stripe',
-      });
-    });
-
-    expect(screen.getByText(/Stripe Checkout cs_test_secret/i)).toBeInTheDocument();
   });
 
   it('renders backend-driven plan display features and comparison rows', async () => {
@@ -135,5 +102,16 @@ describe('PricingPage', () => {
 
     expect(screen.getByText('Basic Chart')).toBeInTheDocument();
     expect(screen.getByText('AI Chat Questions')).toBeInTheDocument();
+  });
+
+  it('does not render the old credit-pack upsell section', async () => {
+    render(<PricingPage />);
+
+    await waitFor(() => {
+      expect(screen.getByText(/Choose Your Plan/i)).toBeInTheDocument();
+    });
+
+    expect(screen.queryByText(/Need More AI Questions/i)).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /Buy Now/i })).not.toBeInTheDocument();
   });
 });

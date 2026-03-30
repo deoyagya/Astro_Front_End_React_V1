@@ -1,9 +1,11 @@
 import PageShell from '../components/PageShell';
 import { useState, useCallback, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import DateInput from '../components/form/DateInput';
 import TimeSelectGroup from '../components/form/TimeSelectGroup';
 import PlaceAutocomplete from '../components/PlaceAutocomplete';
 import { api } from '../api/client';
+import { useAuth } from '../context/AuthContext';
 import { useBirthData, to24Hour } from '../hooks/useBirthData';
 
 // ---------------------------------------------------------------------------
@@ -279,6 +281,8 @@ export function DashaDrillDown({ dashaTree }) {
 // ---------------------------------------------------------------------------
 
 export default function DashaPage() {
+  const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
   const {
     fullName, setFullName,
     birthDate, setBirthDate,
@@ -297,6 +301,11 @@ export default function DashaPage() {
 
   const handleGenerate = useCallback(async () => {
     setError('');
+
+    if (!isAuthenticated) {
+      navigate('/login');
+      return;
+    }
 
     const err = validate();
     if (err) { setError(err); return; }
@@ -319,7 +328,7 @@ export default function DashaPage() {
     } finally {
       setLoading(false);
     }
-  }, [validate, buildPayload, saveBirthData]);
+  }, [isAuthenticated, navigate, validate, buildPayload, saveBirthData]);
 
   const dashaTree = dashaData?.bundle?.dasha_tree || [];
 

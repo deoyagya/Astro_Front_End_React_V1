@@ -12,6 +12,24 @@ const TIMER_SECONDS = 120;
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || '';
 const FACEBOOK_APP_ID = import.meta.env.VITE_FACEBOOK_APP_ID || '';
 
+const getExpiryDeadlineMs = (response) => {
+  if (response?.expires_at) {
+    const parsed = Date.parse(response.expires_at);
+    if (!Number.isNaN(parsed)) {
+      return parsed;
+    }
+  }
+  if (typeof response?.expires_in_seconds === 'number' && response.expires_in_seconds > 0) {
+    return Date.now() + (response.expires_in_seconds * 1000);
+  }
+  return Date.now() + (TIMER_SECONDS * 1000);
+};
+
+const getSecondsRemaining = (deadlineMs) => {
+  if (!deadlineMs) return 0;
+  return Math.max(0, Math.ceil((deadlineMs - Date.now()) / 1000));
+};
+
 export default function LoginPage() {
   useSharedEffects();
   const { login, isAuthenticated } = useAuth();
@@ -35,6 +53,7 @@ export default function LoginPage() {
   const [step, setStep] = useState('input'); // "input" | "otp"
   const [otp, setOtp] = useState(Array(OTP_LENGTH).fill(''));
   const [timer, setTimer] = useState(0);
+  const [otpExpiresAtMs, setOtpExpiresAtMs] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [maskedId, setMaskedId] = useState('');
@@ -42,7 +61,6 @@ export default function LoginPage() {
   const [marketingConsent, setMarketingConsent] = useState(false);
 
   const otpRefs = useRef([]);
-  const timerRef = useRef(null);
   const googleBtnRef = useRef(null);
   const fbInitialized = useRef(false);
 
@@ -192,11 +210,29 @@ export default function LoginPage() {
 
   // ---- Timer countdown ----
   useEffect(() => {
-    if (timer > 0) {
-      timerRef.current = setTimeout(() => setTimer(timer - 1), 1000);
-      return () => clearTimeout(timerRef.current);
+    if (step !== 'otp' || !otpExpiresAtMs) {
+      setTimer(0);
+      return undefined;
     }
-  }, [timer]);
+
+    const syncTimer = () => {
+      const remaining = getSecondsRemaining(otpExpiresAtMs);
+      setTimer(remaining);
+    };
+
+    syncTimer();
+    const intervalId = window.setInterval(syncTimer, 1000);
+    const handleVisibilityOrFocus = () => syncTimer();
+
+    document.addEventListener('visibilitychange', handleVisibilityOrFocus);
+    window.addEventListener('focus', handleVisibilityOrFocus);
+
+    return () => {
+      window.clearInterval(intervalId);
+      document.removeEventListener('visibilitychange', handleVisibilityOrFocus);
+      window.removeEventListener('focus', handleVisibilityOrFocus);
+    };
+  }, [step, otpExpiresAtMs]);
 
   // ---- Build full identifier ----
   const getFullIdentifier = useCallback(() => {
@@ -235,7 +271,9 @@ export default function LoginPage() {
         setFullName(result.full_name);
       }
       setStep('otp');
-      setTimer(TIMER_SECONDS);
+      const deadlineMs = getExpiryDeadlineMs(result);
+      setOtpExpiresAtMs(deadlineMs);
+      setTimer(getSecondsRemaining(deadlineMs));
       setOtp(Array(OTP_LENGTH).fill(''));
       // Auto-focus first OTP box
       setTimeout(() => otpRefs.current[0]?.focus(), 100);
@@ -258,7 +296,9 @@ export default function LoginPage() {
       if (result.full_name) {
         setFullName(result.full_name);
       }
-      setTimer(TIMER_SECONDS);
+      const deadlineMs = getExpiryDeadlineMs(result);
+      setOtpExpiresAtMs(deadlineMs);
+      setTimer(getSecondsRemaining(deadlineMs));
       setOtp(Array(OTP_LENGTH).fill(''));
       setTimeout(() => otpRefs.current[0]?.focus(), 100);
     } catch (err) {
@@ -345,6 +385,10 @@ export default function LoginPage() {
         // Keep OTP digits so user can retry without re-entering
         setError('Could not reach the server. Please check your connection and try again.');
       } else {
+        if (msg.includes('OTP expired or not found')) {
+          setOtpExpiresAtMs(Date.now());
+          setTimer(0);
+        }
         // Invalid OTP or similar — clear and re-enter
         setError(msg || 'Invalid code. Please try again.');
         setOtp(Array(OTP_LENGTH).fill(''));
@@ -361,6 +405,7 @@ export default function LoginPage() {
     setOtp(Array(OTP_LENGTH).fill(''));
     setError('');
     setTimer(0);
+    setOtpExpiresAtMs(null);
   };
 
   // ---- Format timer ----

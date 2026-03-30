@@ -1,21 +1,25 @@
 import '../../styles/admin.css';
 import PageShell from '../../components/PageShell';
 import { useState, useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { api } from '../../api/client';
 import { useStyles } from '../../context/StyleContext';
+import AdminPlanEntitlementsPanel from './AdminPlanEntitlementsPanel';
+import AdminActivityInventoryPanel from './AdminActivityInventoryPanel';
 
 // ---------- Constants ----------
 
-const KNOWN_FEATURE_KEYS = [
+const DEFAULT_FEATURE_KEYS = [
+  'birth_chart_generation',
+  'division_charts',
+  'compatibility_match',
+  'dasha_mahadasha',
+  'ask_question',
   'ai_chat',
+  'muhurta_finder',
   'pdf_report',
-  'temporal_forecast',
-  'compatibility_full',
-  'muhurta_premium',
+  'family_members_per_report',
   'chart_storage',
-  'cross_validation',
-  'remedies',
-  'wizard_advanced',
   'yearly_prediction_report',
   'monthly_prediction_report',
   'daily_prediction_report',
@@ -28,6 +32,9 @@ const LIMIT_PERIODS = [
   { value: 'daily', label: 'Daily' },
   { value: 'monthly', label: 'Monthly' },
   { value: 'yearly', label: 'Yearly' },
+  { value: 'total_saved', label: 'Total Saved' },
+  { value: 'per_deliverable', label: 'Per Deliverable' },
+  { value: 'per_match', label: 'Per Match' },
 ];
 
 const DISCOUNT_TYPES = [
@@ -37,8 +44,9 @@ const DISCOUNT_TYPES = [
 
 const TABS = [
   { key: 'plans', label: 'Plans', icon: 'fa-layer-group' },
+  { key: 'entitlements', label: 'Entitlements', icon: 'fa-table-cells-large' },
+  { key: 'activity_inventory', label: 'Activity Inventory', icon: 'fa-list-check' },
   { key: 'coupons', label: 'Coupons', icon: 'fa-ticket-alt' },
-  { key: 'packs', label: 'Credit Packs', icon: 'fa-coins' },
   { key: 'stats', label: 'Stats', icon: 'fa-chart-bar' },
 ];
 
@@ -68,9 +76,11 @@ const formatDate = (iso) => {
 // ---------- Component ----------
 
 export default function AdminSubscriptionPage() {
+  const navigate = useNavigate();
   const { getStyle, getOverride } = useStyles('admin-subscriptions');
-  const [activeTab, setActiveTab] = useState('plans');
+  const [activeTab, setActiveTab] = useState('entitlements');
   const [toast, setToast] = useState(null);
+  const [featureOptions, setFeatureOptions] = useState(DEFAULT_FEATURE_KEYS);
 
   // Plans state
   const [plans, setPlans] = useState([]);
@@ -126,6 +136,25 @@ export default function AdminSubscriptionPage() {
     }
   }, []);
 
+  const loadFeatureOptions = useCallback(async () => {
+    try {
+      const data = await api.get('/v1/admin/subscription/entitlements/matrix');
+      const options = Array.isArray(data?.rows)
+        ? data.rows
+            .filter((item) => item.is_active !== false)
+            .sort((a, b) => (a.display_order || 0) - (b.display_order || 0))
+            .map((item) => item.feature_key)
+        : [];
+      setFeatureOptions(options.length ? options : DEFAULT_FEATURE_KEYS);
+    } catch {
+      setFeatureOptions(DEFAULT_FEATURE_KEYS);
+    }
+  }, []);
+
+  useEffect(() => {
+    loadFeatureOptions();
+  }, [loadFeatureOptions]);
+
   const handleTogglePlan = async (plan) => {
     try {
       const newState = !plan.is_active;
@@ -138,44 +167,11 @@ export default function AdminSubscriptionPage() {
   };
 
   const handleNewPlan = () => {
-    setPlanModal({
-      mode: 'create',
-      data: {
-        slug: '',
-        name: '',
-        description: '',
-        icon: '',
-        color: '#9d7bff',
-        price_monthly_cents: 0,
-        price_yearly_cents: 0,
-        stripe_price_id_monthly: '',
-        stripe_price_id_yearly: '',
-        trial_days: 0,
-        features_json: [],
-        display_order: 100,
-      },
-    });
+    navigate('/admin/subscriptions/plan/new');
   };
 
   const handleEditPlan = (plan) => {
-    setPlanModal({
-      mode: 'edit',
-      data: {
-        id: plan.id,
-        slug: plan.slug,
-        name: plan.name,
-        description: plan.description || '',
-        icon: plan.icon || '',
-        color: plan.color || '#9d7bff',
-        price_monthly_cents: plan.price_monthly_cents || 0,
-        price_yearly_cents: plan.price_yearly_cents || 0,
-        stripe_price_id_monthly: plan.stripe_price_id_monthly || '',
-        stripe_price_id_yearly: plan.stripe_price_id_yearly || '',
-        trial_days: plan.trial_days || 0,
-        features_json: plan.features_json || [],
-        display_order: plan.display_order || 0,
-      },
-    });
+    navigate(`/admin/subscriptions/plan/${plan.id}`);
   };
 
   const handleSavePlan = async () => {
@@ -301,7 +297,7 @@ export default function AdminSubscriptionPage() {
   const handleAddFeatureRow = () => {
     setFeaturesData((prev) => [
       ...prev,
-      { feature_key: KNOWN_FEATURE_KEYS[0], enabled: true, limit_value: '', limit_period: '' },
+      { feature_key: featureOptions[0] || DEFAULT_FEATURE_KEYS[0], enabled: true, limit_value: '', limit_period: '' },
     ]);
   };
 
@@ -466,7 +462,7 @@ export default function AdminSubscriptionPage() {
         name: '',
         credit_amount: 10,
         price_cents: 0,
-        feature_key: KNOWN_FEATURE_KEYS[0],
+        feature_key: featureOptions[0] || DEFAULT_FEATURE_KEYS[0],
         validity_days: 30,
         is_active: true,
         display_order: 100,
@@ -1086,7 +1082,7 @@ export default function AdminSubscriptionPage() {
               Subscription Management
             </h1>
             <p className="admin-subtitle">
-              Manage plans, coupons, credit packs, and view subscription analytics.
+              Manage plans, feature access, numeric entitlements, writable activity inventory, coupons, and subscription analytics.
             </p>
           </div>
 
@@ -1127,8 +1123,9 @@ export default function AdminSubscriptionPage() {
 
           {/* Tab Content */}
           {activeTab === 'plans' && renderPlansTab()}
+          {activeTab === 'entitlements' && <AdminPlanEntitlementsPanel />}
+          {activeTab === 'activity_inventory' && <AdminActivityInventoryPanel />}
           {activeTab === 'coupons' && renderCouponsTab()}
-          {activeTab === 'packs' && renderPacksTab()}
           {activeTab === 'stats' && renderStatsTab()}
         </div>
       </section>
@@ -1448,7 +1445,7 @@ export default function AdminSubscriptionPage() {
                           onChange={(e) => handleUpdateFeatureRow(idx, 'feature_key', e.target.value)}
                           style={{ fontSize: 13 }}
                         >
-                          {KNOWN_FEATURE_KEYS.map((k) => (
+                          {featureOptions.map((k) => (
                             <option key={k} value={k}>
                               {k}
                             </option>
@@ -1818,7 +1815,7 @@ export default function AdminSubscriptionPage() {
                 value={packModal.data.feature_key}
                 onChange={(e) => updatePackField('feature_key', e.target.value)}
               >
-                {KNOWN_FEATURE_KEYS.map((k) => (
+                {featureOptions.map((k) => (
                   <option key={k} value={k}>
                     {k}
                   </option>

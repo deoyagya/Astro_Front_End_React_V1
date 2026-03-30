@@ -7,7 +7,6 @@
  *   - Feature comparison table
  *   - Coupon code validation
  *   - Stripe Checkout redirect (sole payment provider)
- *   - Credit pack add-ons section
  *   - Responsive: 4-col → 2-col → 1-col
  */
 
@@ -34,7 +33,6 @@ export default function PricingPage() {
 
   const [plans, setPlans] = useState([]);
   const [comparisonFeatures, setComparisonFeatures] = useState([]);
-  const [creditPacks, setCreditPacks] = useState([]);
   const [loading, setLoading] = useState(true);
 
   // Billing cycle toggle
@@ -54,18 +52,14 @@ export default function PricingPage() {
     exchangeRate: gw.exchangeRate || 1,
   };
 
-  /* ---- Fetch plans + credit packs ---- */
+  /* ---- Fetch plans ---- */
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [plansRes, packsRes] = await Promise.all([
-          api.get(`/v1/subscription/plans?currency=${encodeURIComponent(gw.currency || 'USD')}`),
-          api.get('/v1/subscription/credit-packs'),
-        ]);
+        const plansRes = await api.get(`/v1/subscription/plans?currency=${encodeURIComponent(gw.currency || 'USD')}`);
 
         setPlans(plansRes.plans || []);
         setComparisonFeatures(plansRes.comparison_features || []);
-        setCreditPacks(packsRes.packs || []);
       } catch (err) {
         toast(err.message || 'Failed to load pricing data', 'error');
       } finally {
@@ -171,48 +165,6 @@ export default function PricingPage() {
     }
   }, [isAuthenticated, navigate, yearly, couponResult, couponCode, gw.gateway, gw.currency]);
 
-  const handlePurchasePack = useCallback(async (pack) => {
-    if (!isAuthenticated) {
-      navigate('/login');
-      return;
-    }
-
-    const loadingKey = `credit-pack:${pack.id}`;
-    setCheckoutLoading(loadingKey);
-
-    try {
-      const res = await api.post('/v1/subscription/purchase-credits', {
-        pack_id: pack.id,
-        gateway: gw.gateway || 'stripe',
-      });
-
-      if (res.gateway === 'razorpay' && res.order_id) {
-        setRazorpayCheckout({
-          orderId: res.order_id,
-          amount: res.amount,
-          currency: res.currency || 'INR',
-          razorpayKeyId: res.razorpay_key_id,
-          mode: 'payment',
-          verifyUrl: '/v1/subscription/verify-razorpay-credit-pack',
-        });
-        setCheckoutLoading(null);
-        return;
-      }
-
-      if (res.client_secret) {
-        setClientSecret(res.client_secret);
-        setCheckoutLoading(null);
-        return;
-      }
-
-      toast('Unable to start checkout. Please try again.', 'error');
-      setCheckoutLoading(null);
-    } catch (err) {
-      toast(err.message || 'Checkout failed. Please try again.', 'error');
-      setCheckoutLoading(null);
-    }
-  }, [gw.gateway, isAuthenticated, navigate, toast]);
-
   /* ---- Price formatting (localized display / USD source of truth) ---- */
   const formatPrice = (plan) => {
     const localPrices = plan.local_prices;
@@ -240,11 +192,6 @@ export default function PricingPage() {
     const cents = plan.price_monthly_cents;
     if (!cents) return '';
     return `${formatUsdCentsForUser(cents, paymentContext)}/mo`;
-  };
-
-  const formatCreditPrice = (cents) => {
-    if (!cents || cents === 0) return 'Free';
-    return formatUsdCentsForUser(cents, paymentContext);
   };
 
   const getFeatureDisplay = (plan, featureKey) => {
@@ -492,9 +439,7 @@ export default function PricingPage() {
                   </div>
 
                   <ul className="plan-features">
-                    {((plan.display_features && plan.display_features.length > 0)
-                      ? plan.display_features
-                      : (plan.features_json || [])).map((feat, i) => (
+                    {(plan.display_features || []).map((feat, i) => (
                       <li key={i} className={feat.startsWith('✗') ? 'disabled' : ''}>
                         <i className={`fas ${feat.startsWith('✗') ? 'fa-times' : 'fa-check'}`}></i>
                         {feat.replace(/^[✓✗]\s*/, '')}
@@ -594,45 +539,6 @@ export default function PricingPage() {
                     ))}
                   </tbody>
                 </table>
-              </div>
-            </div>
-          )}
-
-          {/* Credit packs */}
-          {creditPacks.length > 0 && (
-            <div className="credit-packs-section">
-              <h2>Need More AI Questions?</h2>
-              <p className="section-subtitle">
-                Top up your AI chat credits with affordable packs — no subscription change needed.
-              </p>
-              <div className="credit-packs-grid">
-                {creditPacks.map((pack) => {
-                  const packLoadingKey = `credit-pack:${pack.id}`;
-                  return (
-                    <div key={pack.id} className="credit-pack-card">
-                      <div className="pack-credits">{pack.credit_amount}</div>
-                      <div className="pack-name">{pack.name}</div>
-                      <div className="pack-price">{formatCreditPrice(pack.price_cents)}</div>
-                      <div className="pack-unit">
-                        {formatUsdCentsForUser(Math.round(pack.price_cents / pack.credit_amount), paymentContext)} per question
-                      </div>
-                      <button
-                        className="pack-buy-btn"
-                        onClick={() => handlePurchasePack(pack)}
-                        disabled={checkoutLoading === packLoadingKey}
-                      >
-                        {checkoutLoading === packLoadingKey ? (
-                          <>
-                            <i className="fas fa-spinner fa-spin" style={{ marginRight: 8 }}></i>
-                            Processing...
-                          </>
-                        ) : (
-                          'Buy Now'
-                        )}
-                      </button>
-                    </div>
-                  );
-                })}
               </div>
             </div>
           )}

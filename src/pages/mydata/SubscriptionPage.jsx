@@ -5,8 +5,8 @@
  *   1. Current plan card with status badge
  *   2. Billing cycle info + next payment date
  *   3. Plan features list (from DB, not hardcoded)
- *   4. Credit balance display per feature
- *   5. Credit pack purchase section
+ *   4. Forecast access summary
+ *   5. Usage summary (when available)
  *   6. Cancel subscription with confirmation modal
  *   7. For free users: upgrade CTA linking to /pricing
  */
@@ -15,10 +15,6 @@ import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { api } from '../../api/client';
 import { useAuth } from '../../context/AuthContext';
-import EmbeddedCheckoutModal from '../../components/EmbeddedCheckoutModal';
-import RazorpayCheckoutModal from '../../components/RazorpayCheckoutModal';
-import usePaymentGateway from '../../hooks/usePaymentGateway';
-import { formatUsdCentsForUser } from '../../utils/localPricing';
 import '../../styles/subscription.css';
 
 /* ---- Icon map ---- */
@@ -61,18 +57,15 @@ function normalizePlanFeatures(features) {
   return [];
 }
 
+function normalizeFeatureRows(rows) {
+  return Array.isArray(rows) ? rows : [];
+}
+
 export default function SubscriptionPage() {
   const navigate = useNavigate();
   const { user, refreshUser } = useAuth();
-  const paymentContext = usePaymentGateway();
-  const { gateway, razorpayKeyId, loading: gwLoading } = paymentContext;
-
-  // Razorpay credit pack order
-  const [razorpayOrder, setRazorpayOrder] = useState(null);
 
   const [subData, setSubData] = useState(null);
-  const [creditBalance, setCreditBalance] = useState({});
-  const [creditPacks, setCreditPacks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
@@ -82,21 +75,11 @@ export default function SubscriptionPage() {
   const [cancelImmediate, setCancelImmediate] = useState(false);
   const [cancelling, setCancelling] = useState(false);
 
-  // Credit purchase
-  const [purchasingPack, setPurchasingPack] = useState(null);
-  const [clientSecret, setClientSecret] = useState('');
-
   /* ---- Fetch subscription data ---- */
   const fetchData = useCallback(async () => {
     try {
-      const [subRes, balanceRes, packsRes] = await Promise.all([
-        api.get('/v1/subscription/current').catch(() => null),
-        api.get('/v1/subscription/credit-balance').catch(() => ({ balances: {} })),
-        api.get('/v1/subscription/credit-packs').catch(() => ({ packs: [] })),
-      ]);
+      const subRes = await api.get('/v1/subscription/current').catch(() => null);
       setSubData(subRes);
-      setCreditBalance(balanceRes?.balances || subRes?.credits || {});
-      setCreditPacks(Array.isArray(packsRes?.packs) ? packsRes.packs : []);
     } catch (err) {
       setError(err.message || 'Failed to load subscription data');
     } finally {
@@ -118,8 +101,18 @@ export default function SubscriptionPage() {
     current_period_end: subData?.current_period_end,
     cancelled_at: subData?.cancelled_at,
   };
-  const planFeatures = normalizePlanFeatures(subData?.features);
-  const usageMap = subData?.usage && typeof subData.usage === 'object' ? subData.usage : {};
+  const featureRows = normalizeFeatureRows(subData?.feature_rows);
+  const planFeatures = featureRows.length > 0
+    ? featureRows.map((row) => ({
+        feature_key: row.feature_key,
+        enabled: !!row.enabled,
+        limit_value: row.limit_value ?? null,
+        limit_period: row.limit_period ?? null,
+      }))
+    : normalizePlanFeatures(subData?.features);
+  const usageEntries = subData?.usage && typeof subData.usage === 'object'
+    ? Object.entries(subData.usage)
+    : [];
   const planSlug = normalizedPlan?.slug || user?.role || 'free';
   const isPaid = planSlug !== 'free';
   const subscription = normalizedSubscription;
@@ -173,60 +166,6 @@ export default function SubscriptionPage() {
     }
   }, [cancelImmediate, fetchData, refreshUser]);
 
-  /* ---- Purchase credit pack (Stripe or Razorpay) ---- */
-  const handlePurchasePack = useCallback(async (pack) => {
-    setPurchasingPack(pack.id);
-    setError('');
-
-    try {
-      const res = await api.post('/v1/subscription/purchase-credits', {
-        pack_id: pack.id,
-        gateway: gateway || 'stripe',
-      });
-
-      // Razorpay flow — open popup
-      if (res.gateway === 'razorpay' && res.order_id) {
-        setRazorpayOrder({
-          orderId: res.order_id,
-          amount: res.amount,
-          currency: res.currency || 'INR',
-          razorpayKeyId: res.razorpay_key_id || razorpayKeyId,
-        });
-        setPurchasingPack(null);
-        return;
-      }
-
-      // Stripe flow — embedded checkout
-      if (res.client_secret) {
-        setClientSecret(res.client_secret);
-        setPurchasingPack(null);
-        return;
-      }
-
-      setError('Unable to start checkout. Please try again.');
-      setPurchasingPack(null);
-    } catch (err) {
-      setError(err.message || 'Failed to initiate credit purchase.');
-      setPurchasingPack(null);
-    }
-  }, [gateway, razorpayKeyId]);
-
-  /* ---- Razorpay credit pack success ---- */
-  const handleRazorpaySuccess = useCallback(async (result) => {
-    setRazorpayOrder(null);
-    if (result.verified) {
-      setSuccessMsg('Credit pack purchased successfully!');
-      if (refreshUser) await refreshUser();
-      await fetchData();
-    } else {
-      setError(result.error || 'Payment verification failed. Please contact support.');
-    }
-  }, [refreshUser, fetchData]);
-
-  const handleRazorpayClose = useCallback(() => {
-    setRazorpayOrder(null);
-  }, []);
-
   /* ---- Render ---- */
   if (loading) {
     return (
@@ -241,25 +180,6 @@ export default function SubscriptionPage() {
 
   return (
     <div className="subscription-page">
-      {clientSecret && (
-        <EmbeddedCheckoutModal
-          clientSecret={clientSecret}
-          onClose={() => setClientSecret('')}
-        />
-      )}
-      {razorpayOrder && (
-        <RazorpayCheckoutModal
-          orderId={razorpayOrder.orderId}
-          amount={razorpayOrder.amount}
-          currency={razorpayOrder.currency}
-          razorpayKeyId={razorpayOrder.razorpayKeyId}
-          verifyUrl="/v1/subscription/verify-razorpay-credit-pack"
-          prefill={{ name: user?.full_name || '', email: user?.email || '' }}
-          onSuccess={handleRazorpaySuccess}
-          onClose={handleRazorpayClose}
-          mode="payment"
-        />
-      )}
       {/* Success message */}
       {successMsg && (
         <div className="sub-success">
@@ -337,20 +257,29 @@ export default function SubscriptionPage() {
       </div>
 
       {/* Features Section */}
-      {planFeatures.length > 0 && (
+      {(featureRows.length > 0 || planFeatures.length > 0) && (
         <div className="sub-section">
           <h2><i className="fas fa-check-double"></i> Your Features</h2>
           <ul className="plan-features-list">
-            {planFeatures.map((f) => (
+            {(featureRows.length > 0 ? featureRows : planFeatures).map((f) => (
               <li key={f.feature_key}>
                 <i className={`fas ${f.enabled ? 'fa-check-circle' : 'fa-times-circle'}`}></i>
-                <span>{f.feature_key.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())}</span>
-                {f.enabled && f.limit_value && (
+                <span>{f.label || f.feature_key.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())}</span>
+                {f.enabled && (f.limit_display || f.limit_value) && (
                   <span className="feature-limit">
-                    {f.limit_value >= 999999 ? '∞' : f.limit_value}
-                    {f.limit_period ? `/${f.limit_period.slice(0, 2)}` : ''}
+                    {f.limit_display || (
+                      <>
+                        {f.limit_value >= 999999 ? '∞' : f.limit_value}
+                        {f.limit_period ? `/${f.limit_period.slice(0, 2)}` : ''}
+                      </>
+                    )}
                   </span>
                 )}
+                {f.description ? (
+                  <span className="feature-description" style={{ display: 'block', color: '#8b949e', fontSize: '0.85rem', marginTop: 4 }}>
+                    {f.description}
+                  </span>
+                ) : null}
               </li>
             ))}
           </ul>
@@ -399,78 +328,53 @@ export default function SubscriptionPage() {
       </div>
 
       {/* Usage Summary (if we have subscription data with usage) */}
-      {Object.keys(usageMap).length > 0 && (
+      {usageEntries.length > 0 && (
         <div className="sub-section">
-          <h2><i className="fas fa-chart-bar"></i> Monthly Usage</h2>
-          {Object.entries(usageMap).map(([endpoint, data]) => {
+          <h2><i className="fas fa-chart-bar"></i> Plan Usage &amp; Remaining</h2>
+          {usageEntries.map(([featureKey, data]) => {
             const used = data.used || 0;
             const limit = data.limit || 0;
+            const period = data.period || null;
             const pct = limit > 0 ? Math.min(100, Math.round((used / limit) * 100)) : 0;
+            const label = data.label || featureKey.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
+            const limitSuffix = period === 'monthly'
+              ? 'this month'
+              : period === 'yearly'
+                ? 'this year'
+                : period === 'daily'
+                  ? 'today'
+                  : period === 'total_saved'
+                    ? 'saved'
+                    : period === 'per_deliverable'
+                      ? 'per report'
+                      : period === 'per_match'
+                        ? 'per match'
+                        : '';
+            const secondaryText = period === 'per_deliverable' || period === 'per_match'
+              ? `Up to ${limit} ${limitSuffix}`
+              : data.remaining != null
+                ? `${data.remaining} remaining ${limitSuffix}`.trim()
+                : null;
             return (
-              <div key={endpoint} className="usage-bar-container">
+              <div key={featureKey} className="usage-bar-container">
                 <div className="usage-bar-label">
-                  <span>{endpoint.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())}</span>
+                  <span>{label}</span>
                   <span>{used} / {limit >= 999999 ? '∞' : limit}</span>
                 </div>
-                <div className="usage-bar-track">
-                  <div
-                    className={`usage-bar-fill ${getUsageBarColor(pct)}`}
-                    style={{ width: `${pct}%` }}
-                  ></div>
-                </div>
+                {period === 'monthly' || period === 'yearly' || period === 'daily' || period === 'total_saved' ? (
+                  <div className="usage-bar-track">
+                    <div
+                      className={`usage-bar-fill ${getUsageBarColor(pct)}`}
+                      style={{ width: `${pct}%` }}
+                    ></div>
+                  </div>
+                ) : null}
+                {secondaryText ? (
+                  <div style={{ marginTop: 6, color: '#b8bfd8', fontSize: '0.92rem' }}>{secondaryText}</div>
+                ) : null}
               </div>
             );
           })}
-        </div>
-      )}
-
-      {/* Credit Balance */}
-      <div className="sub-section">
-        <h2><i className="fas fa-coins"></i> Credit Balance</h2>
-        {Object.keys(creditBalance).length > 0 ? (
-          <div className="credit-balances">
-            {Object.entries(creditBalance).map(([key, amount]) => (
-              <div key={key} className="credit-balance-card">
-                <div className="balance-amount">{amount}</div>
-                <div className="balance-label">
-                  {key.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())} credits
-                </div>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <div className="no-credits">
-            <p>No credit packs purchased yet.</p>
-          </div>
-        )}
-      </div>
-
-      {/* Buy Credit Packs */}
-      {creditPacks.length > 0 && (
-        <div className="sub-section">
-          <h2><i className="fas fa-shopping-bag"></i> Buy Credit Packs</h2>
-          <div className="credit-packs-inline">
-            {creditPacks.map((pack) => (
-              <div key={pack.id} className="credit-pack-inline-card">
-                <div className="pack-credits-count">{pack.credit_amount}</div>
-                <div className="pack-label">{pack.name}</div>
-                <div className="pack-price-tag">{formatUsdCentsForUser(pack.price_cents, paymentContext)}</div>
-                <button
-                  type="button"
-                  className="pack-purchase-btn"
-                  onMouseDown={(e) => e.preventDefault()}
-                  onClick={() => handlePurchasePack(pack)}
-                  disabled={purchasingPack === pack.id || gwLoading}
-                >
-                  {purchasingPack === pack.id ? (
-                    <><i className="fas fa-spinner fa-spin"></i> Processing</>
-                  ) : (
-                    'Buy Now'
-                  )}
-                </button>
-              </div>
-            ))}
-          </div>
         </div>
       )}
 
