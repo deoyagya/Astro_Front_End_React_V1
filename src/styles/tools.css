@@ -289,8 +289,8 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
 
 /* Current Running Period Summary */
 .dasha-current-summary {
-    background: rgba(46, 213, 115, 0.08);
-    border: 1px solid rgba(46, 213, 115, 0.25);
+    background: rgba(30, 34, 48, 0.72);
+    border: 1px solid rgba(80, 91, 122, 0.35);
     border-radius: 10px;
     padding: 14px 18px;
     margin-bottom: 18px;
@@ -310,24 +310,96 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
 }
 
 .dasha-current-subtitle {
-    color: #9fb3a7;
+    color: #a9b0c1;
     font-size: 0.88rem;
     margin-bottom: 12px;
 }
 
-.dasha-current-path-list .dasha-drill-item {
-    background: rgba(19, 29, 28, 0.34);
-    border-color: rgba(46, 213, 115, 0.18);
+.dasha-current-path-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
 }
 
-.dasha-current-path-list .dasha-drill-item.clickable:hover {
-    background: rgba(46, 213, 115, 0.12);
-    border-color: rgba(46, 213, 115, 0.34);
+.dasha-current-row {
+    display: grid;
+    grid-template-columns: minmax(140px, 180px) minmax(0, 1fr) auto;
+    gap: 16px;
+    align-items: center;
+    padding: 14px 0;
+    border-bottom: 1px solid rgba(80, 91, 122, 0.28);
+    transition: color 0.15s ease, background 0.15s ease;
+}
+
+.dasha-current-row:last-child {
+    border-bottom: none;
+    padding-bottom: 2px;
+}
+
+.dasha-current-row:first-child {
+    padding-top: 4px;
+}
+
+.dasha-current-row.clickable {
+    cursor: pointer;
+}
+
+.dasha-current-row.clickable:hover {
+    color: #ffffff;
+}
+
+.dasha-current-row-planet {
+    border-left: 3px solid;
+    padding-left: 12px;
+}
+
+.dasha-current-row-planet .planet-name {
+    display: block;
+    font-size: 1.05rem;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+.dasha-current-row-planet .planet-level {
+    display: block;
+    margin-top: 4px;
+    color: #8f9ab1;
+    font-size: 0.76rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.dasha-current-row-body {
+    min-width: 0;
+}
+
+.dasha-current-row-dates {
+    color: #edf2ff;
+    font-size: 1.02rem;
+    font-weight: 600;
+    line-height: 1.35;
+}
+
+.dasha-current-row-duration {
+    margin-top: 5px;
+    color: #b8c0d4;
+    font-size: 0.84rem;
+}
+
+.dasha-current-row-duration i {
+    margin-right: 6px;
+    color: #8f9ab1;
+}
+
+.dasha-current-row-arrow {
+    color: #6f7893;
+    font-size: 0.95rem;
+    transition: color 0.15s ease, transform 0.15s ease;
+}
+
+.dasha-current-row.clickable:hover .dasha-current-row-arrow {
+    color: #c4b0ff;
     transform: translateX(3px);
-}
-
-.dasha-drill-item.current-path .dasha-drill-planet .planet-level {
-    color: #8da89a;
 }
 
 /* Breadcrumb Navigation */
@@ -515,24 +587,6 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
     flex-shrink: 0;
 }
 
-.dasha-current-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    background: rgba(46, 213, 115, 0.15);
-    color: #2ed573;
-    font-size: 0.75rem;
-    font-weight: 600;
-    padding: 3px 10px;
-    border-radius: 12px;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-}
-
-.dasha-current-badge i {
-    font-size: 0.45rem;
-}
-
 .dasha-drill-arrow {
     color: #555;
     font-size: 0.9rem;
@@ -561,6 +615,16 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
 
 /* Responsive */
 @media (max-width: 600px) {
+    .dasha-current-row {
+        grid-template-columns: 1fr;
+        gap: 8px;
+        padding: 12px 0;
+    }
+
+    .dasha-current-row-arrow {
+        display: none;
+    }
+
     .dasha-drill-item {
         flex-wrap: wrap;
         gap: 8px;
@@ -582,6 +646,10 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
 
     .dasha-current-summary {
         padding: 12px 14px;
+    }
+
+    .dasha-current-row-dates {
+        font-size: 0.92rem;
     }
 }
 

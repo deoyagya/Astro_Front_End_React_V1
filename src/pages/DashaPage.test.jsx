@@ -101,9 +101,11 @@ describe('DashaDrillDown', () => {
     render(<DashaDrillDown dashaTree={makeFiveLevelTree()} />);
 
     expect(screen.getByTestId('dasha-current-path')).toBeInTheDocument();
-    expect(screen.getAllByText('Active Level')).toHaveLength(5);
+    expect(screen.getByText('Currently Running Dasha Chain')).toBeInTheDocument();
+    expect(screen.getByText(/Showing the active flow across 5 levels/i)).toBeInTheDocument();
     expect(screen.getByTestId('dasha-path-item-0')).toBeInTheDocument();
     expect(screen.getByTestId('dasha-path-item-4')).toBeInTheDocument();
+    expect(screen.queryByText('Active Level')).not.toBeInTheDocument();
 
     fireEvent.click(screen.getByTestId('dasha-path-item-1'));
 

@@ -139,6 +139,44 @@ export function DashaDrillDown({ dashaTree }) {
     );
   }, [currentSummary]);
 
+  const renderCurrentPathRow = useCallback((period, idx) => {
+    const planetColor = PLANET_COLORS[period.planet] || '#c4b0ff';
+    const clickable = Boolean(period.sub_periods?.length) && period.pathDepth < maxDepth;
+
+    return (
+      <div
+        key={`current-path-${period.planet}-${period.start}-${idx}`}
+        className={`dasha-current-row ${clickable ? 'clickable' : ''}`}
+        onClick={() => {
+          if (clickable) {
+            jumpToPath(period.pathDepth);
+          }
+        }}
+        data-testid={`dasha-path-item-${period.pathDepth}`}
+      >
+        <div className="dasha-current-row-planet" style={{ borderColor: planetColor }}>
+          <div className="planet-name" style={{ color: planetColor }}>{period.planet}</div>
+          <div className="planet-level">{period.levelLabel}</div>
+        </div>
+
+        <div className="dasha-current-row-body">
+          <div className="dasha-current-row-dates">
+            {fmtDate(period.start)} — {fmtDate(period.end)}
+          </div>
+          <div className="dasha-current-row-duration">
+            <i className="fas fa-hourglass-half"></i> {durationLabel(period.start, period.end)}
+          </div>
+        </div>
+
+        {clickable && (
+          <span className="dasha-current-row-arrow">
+            <i className="fas fa-chevron-right"></i>
+          </span>
+        )}
+      </div>
+    );
+  }, [jumpToPath]);
+
   const renderPeriodCard = useCallback((period, idx, options = {}) => {
     const {
       levelName = levelLabel,
@@ -146,7 +184,6 @@ export function DashaDrillDown({ dashaTree }) {
       canDrill = Boolean(period.sub_periods?.length) && currentDepth < maxDepth,
       onClick,
       extraClassName = '',
-      activeLabel = 'Active',
       testId,
     } = options;
 
@@ -183,11 +220,6 @@ export function DashaDrillDown({ dashaTree }) {
         </div>
 
         <div className="dasha-drill-right">
-          {isCurrent && (
-            <span className="dasha-current-badge">
-              <i className="fas fa-circle"></i> {activeLabel}
-            </span>
-          )}
           {clickable && (
             <span className="dasha-drill-arrow">
               <i className="fas fa-chevron-right"></i>
@@ -204,23 +236,13 @@ export function DashaDrillDown({ dashaTree }) {
       {currentSummary.length > 0 && navStack.length === 0 && (
         <div className="dasha-current-summary" data-testid="dasha-current-path">
           <div className="dasha-current-label">
-            <i className="fas fa-clock"></i> Currently Running Across 5 Levels
+            <i className="fas fa-clock"></i> Currently Running Dasha Chain
           </div>
           <div className="dasha-current-subtitle">
-            Tap any active dasha level to jump straight into its child timeline.
+            Showing the active flow across {currentSummary.length} levels. Tap a row to jump into its child timeline.
           </div>
-          <div className="dasha-period-list dasha-current-path-list">
-            {currentSummary.map((item, i) => renderPeriodCard(item, i, {
-              levelName: item.levelLabel,
-              isCurrent: true,
-              canDrill: Boolean(item.sub_periods?.length) && item.pathDepth < maxDepth,
-              onClick: Boolean(item.sub_periods?.length) && item.pathDepth < maxDepth
-                ? () => jumpToPath(item.pathDepth)
-                : undefined,
-              extraClassName: 'current-path',
-              activeLabel: 'Active Level',
-              testId: `dasha-path-item-${item.pathDepth}`,
-            }))}
+          <div className="dasha-current-path-list">
+            {currentSummary.map((item, i) => renderCurrentPathRow(item, i))}
           </div>
         </div>
       )}
