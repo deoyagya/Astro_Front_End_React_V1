@@ -142,6 +142,14 @@ export default function SiteHeader({ active = 'home' }) {
     navigate(targetPath);
   };
 
+  const handleInternalAnchorClick = (e, targetPath) => {
+    e.preventDefault();
+    setOpenNavMenu(null);
+    setDropdownOpen(false);
+    setMyAstroExpanded(false);
+    navigate(targetPath);
+  };
+
   return (
     <>
     <header className="header">
@@ -172,7 +180,7 @@ export default function SiteHeader({ active = 'home' }) {
                           key={item.href}
                           href={item.href}
                           className={`manage-data-item ${isItemActive(item.href, pathname) ? 'active' : ''}`}
-                          onClick={() => setManageMenuOpen(false)}
+                          onClick={(e) => { e.preventDefault(); setManageMenuOpen(false); navigate(item.href); }}
                         >
                           <i className={`fas ${item.icon}`}></i>
                           {item.label}
@@ -186,7 +194,7 @@ export default function SiteHeader({ active = 'home' }) {
                 /* ---- Regular user navigation (NO "My Data" — moved to user dropdown) ---- */
                 <>
                   <li>
-                    <a href="/" className={active === 'home' ? 'active' : ''}>
+                    <a href="/" className={active === 'home' ? 'active' : ''} onClick={(e) => handleInternalAnchorClick(e, '/')}>
                       <i className="fas fa-home"></i> Home
                     </a>
                   </li>
@@ -265,7 +273,7 @@ export default function SiteHeader({ active = 'home' }) {
                     )}
                   </li>
                   <li>
-                    <a href="/pricing" className={active === 'pricing' ? 'active' : ''}>
+                    <a href="/pricing" className={active === 'pricing' ? 'active' : ''} onClick={(e) => handleInternalAnchorClick(e, '/pricing')}>
                       <i className="fas fa-crown"></i> Pricing
                     </a>
                   </li>
@@ -295,10 +303,10 @@ export default function SiteHeader({ active = 'home' }) {
                       <div className="dropdown-divider"></div>
                       {!isAdmin && (
                         <>
-                          <a href="/my-reports" className="dropdown-item" onClick={() => setDropdownOpen(false)}>
+                          <a href="/my-reports" className="dropdown-item" onClick={(e) => handleInternalAnchorClick(e, '/my-reports')}>
                             <i className="fas fa-download"></i> My Reports
                           </a>
-                          <a href="/my-reports?tab=forecast" className="dropdown-item" onClick={() => setDropdownOpen(false)}>
+                          <a href="/my-reports?tab=forecast" className="dropdown-item" onClick={(e) => handleInternalAnchorClick(e, '/my-reports?tab=forecast')}>
                             <i className="fas fa-calendar-days"></i> Forecast Library
                           </a>
 
@@ -312,7 +320,7 @@ export default function SiteHeader({ active = 'home' }) {
                             <i className={`fas fa-chevron-${myAstroExpanded ? 'up' : 'down'} submenu-chevron`}></i>
                           </button>
 
-                          <a href="/my-orders" className="dropdown-item" onClick={() => setDropdownOpen(false)}>
+                          <a href="/my-orders" className="dropdown-item" onClick={(e) => handleInternalAnchorClick(e, '/my-orders')}>
                             <i className="fas fa-shopping-cart"></i> My Orders
                           </a>
                           <div className="dropdown-divider"></div>
@@ -326,7 +334,7 @@ export default function SiteHeader({ active = 'home' }) {
                 </li>
               ) : (
                 <li>
-                  <a href="/login" className={active === 'login' ? 'active' : ''}>
+                  <a href="/login" className={active === 'login' ? 'active' : ''} onClick={(e) => handleInternalAnchorClick(e, '/login')}>
                     <i className="fas fa-sign-in-alt"></i> Login
                   </a>
                 </li>
@@ -357,7 +365,7 @@ export default function SiteHeader({ active = 'home' }) {
               key={item.href}
               href={item.href}
               className={`dropdown-submenu-item ${pathname.startsWith(item.href) ? 'active' : ''}`}
-              onClick={() => { setDropdownOpen(false); setMyAstroExpanded(false); }}
+              onClick={(e) => handleInternalAnchorClick(e, item.href)}
             >
               <i className={`fas ${item.icon}`}></i>
               {item.label}

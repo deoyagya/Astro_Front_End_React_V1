@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import PageShell from '../components/PageShell';
 import { api } from '../api/client';
 import { useSharedEffects } from '../hooks/useSharedEffects';
@@ -120,7 +121,7 @@ export default function HomePage() {
                             <p>Get personalized Vedic astrology insights based on your exact birth chart. Discover your life's path through ancient wisdom.</p>
                             <div className="hero-buttons">
                                 <a href="#free-tools" className="btn btn-primary"><i className="fas fa-crystal-ball"></i> Try Free Tools</a>
-                                <a href="/reports" className="btn btn-secondary"><i className="fas fa-scroll"></i> Explore Reports</a>
+                                <Link to="/reports" className="btn btn-secondary"><i className="fas fa-scroll"></i> Explore Reports</Link>
                             </div>
       
       
@@ -188,7 +189,7 @@ export default function HomePage() {
                                     <li><i className="fas fa-check"></i> House cusps</li>
                                     <li><i className="fas fa-check"></i> Ascendant sign</li>
                                 </ul>
-                                <a href="/birth-chart" className="tool-link">Generate Now <i className="fas fa-arrow-right"></i></a>
+                                <Link to="/birth-chart" className="tool-link">Generate Now <i className="fas fa-arrow-right"></i></Link>
                             </div>
       
       
@@ -202,7 +203,7 @@ export default function HomePage() {
                                     <li><i className="fas fa-check"></i> Antardasha</li>
                                     <li><i className="fas fa-check"></i> Pratyantar</li>
                                 </ul>
-                                <a href="/dasha" className="tool-link">Calculate Now <i className="fas fa-arrow-right"></i></a>
+                                <Link to="/dasha" className="tool-link">Calculate Now <i className="fas fa-arrow-right"></i></Link>
                             </div>
       
       
@@ -215,7 +216,7 @@ export default function HomePage() {
                                     <li><i className="fas fa-check"></i> Manglik analysis</li>
                                     <li><i className="fas fa-check"></i> Compatibility score</li>
                                 </ul>
-                                <a href="/compatibility" className="tool-link">Check Compatibility <i className="fas fa-arrow-right"></i></a>
+                                <Link to="/compatibility" className="tool-link">Check Compatibility <i className="fas fa-arrow-right"></i></Link>
                             </div>
       
       
@@ -228,7 +229,7 @@ export default function HomePage() {
                                     <li><i className="fas fa-check"></i> Love & Relationships</li>
                                     <li><i className="fas fa-check"></i> Finance</li>
                                 </ul>
-                                <a href="/horoscope" className="tool-link">Read Today <i className="fas fa-arrow-right"></i></a>
+                                <Link to="/horoscope" className="tool-link">Read Today <i className="fas fa-arrow-right"></i></Link>
                             </div>
                         </div>
                     </div>
@@ -244,9 +245,9 @@ export default function HomePage() {
       
                         <div className="areas-grid">
                             {lifeAreaCards.map((card) => (
-                                <a
+                                <Link
                                   key={card.href}
-                                  href={card.href}
+                                  to={card.href}
                                   className="area-card"
                                   style={{ '--area-accent': card.accent }}
                                   aria-label={`${card.title} report`}
@@ -264,7 +265,7 @@ export default function HomePage() {
                                         </div>
                                         <span className="area-card-cta">Explore report <i className="fas fa-arrow-right"></i></span>
                                     </div>
-                                </a>
+                                </Link>
                             ))}
                         </div>
                     </div>
@@ -319,13 +320,13 @@ export default function HomePage() {
                                 </div>
                             </div>
                             {isPremium ? (
-                                <a href="/temporal-forecast" className="btn btn-primary tf-showcase-cta">
+                                <Link to="/temporal-forecast" className="btn btn-primary tf-showcase-cta">
                                     <i className="fas fa-hourglass-half"></i> View My Forecast
-                                </a>
+                                </Link>
                             ) : (
-                                <a href={isAuthenticated ? '/reports' : '/login'} className="btn btn-primary tf-showcase-cta">
+                                <Link to={isAuthenticated ? '/reports' : '/login'} className="btn btn-primary tf-showcase-cta">
                                     <i className="fas fa-arrow-up"></i> {isAuthenticated ? 'Upgrade to Premium' : 'Get Started'}
-                                </a>
+                                </Link>
                             )}
                         </div>
                         <div className="tf-showcase-visual">
@@ -417,7 +418,7 @@ export default function HomePage() {
                         <p>Join 50,000+ seekers who have transformed their lives with Vedic wisdom.</p>
                         <div className="cta-buttons">
                             <a href="#free-tools" className="btn btn-primary"><i className="fas fa-crystal-ball"></i> Try Free Tools</a>
-                            <a href="/reports" className="btn btn-secondary"><i className="fas fa-scroll"></i> Order Your Report</a>
+                            <Link to="/reports" className="btn btn-secondary"><i className="fas fa-scroll"></i> Order Your Report</Link>
                         </div>
                     </div>
                 </section>

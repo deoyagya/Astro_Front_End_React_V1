@@ -1,10 +1,17 @@
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useLegalModal } from '../context/LegalModalContext';
 
 export default function SiteFooter() {
   const { user } = useAuth();
   const { openPrivacy, openTerms } = useLegalModal();
+  const navigate = useNavigate();
   const isAdmin = user?.role === 'admin';
+
+  const handleNavigate = (e, path) => {
+    e.preventDefault();
+    navigate(path);
+  };
 
   return (
     <footer className="footer">
@@ -19,29 +26,29 @@ export default function SiteFooter() {
             <div className="footer-links">
               <h4>Free Tools</h4>
               <ul>
-                <li><a href="/birth-chart"><i className="fas fa-chevron-right"></i> Birth Chart (Kundli)</a></li>
-                <li><a href="/dasha"><i className="fas fa-chevron-right"></i> Dasha Calculator</a></li>
-                <li><a href="/compatibility"><i className="fas fa-chevron-right"></i> Compatibility</a></li>
-                <li><a href="/horoscope"><i className="fas fa-chevron-right"></i> Daily Horoscope</a></li>
+                <li><a href="/birth-chart" onClick={(e) => handleNavigate(e, '/birth-chart')}><i className="fas fa-chevron-right"></i> Birth Chart (Kundli)</a></li>
+                <li><a href="/dasha" onClick={(e) => handleNavigate(e, '/dasha')}><i className="fas fa-chevron-right"></i> Dasha Calculator</a></li>
+                <li><a href="/compatibility" onClick={(e) => handleNavigate(e, '/compatibility')}><i className="fas fa-chevron-right"></i> Compatibility</a></li>
+                <li><a href="/horoscope" onClick={(e) => handleNavigate(e, '/horoscope')}><i className="fas fa-chevron-right"></i> Daily Horoscope</a></li>
               </ul>
             </div>
 
             <div className="footer-links">
               <h4>Kundli Reports</h4>
               <ul>
-                <li><a href="/birth-chart"><i className="fas fa-chevron-right"></i> Free Kundli Generation</a></li>
-                <li><a href="/compatibility"><i className="fas fa-chevron-right"></i> Kundli Matching</a></li>
-                <li><a href="/manglik-dosha"><i className="fas fa-chevron-right"></i> Manglik Dosha Remedies</a></li>
-                <li><a href="/birth-chart-analysis"><i className="fas fa-chevron-right"></i> Birth Chart Analysis (Premium)</a></li>
+                <li><a href="/birth-chart" onClick={(e) => handleNavigate(e, '/birth-chart')}><i className="fas fa-chevron-right"></i> Free Kundli Generation</a></li>
+                <li><a href="/compatibility" onClick={(e) => handleNavigate(e, '/compatibility')}><i className="fas fa-chevron-right"></i> Kundli Matching</a></li>
+                <li><a href="/manglik-dosha" onClick={(e) => handleNavigate(e, '/manglik-dosha')}><i className="fas fa-chevron-right"></i> Manglik Dosha Remedies</a></li>
+                <li><a href="/birth-chart-analysis" onClick={(e) => handleNavigate(e, '/birth-chart-analysis')}><i className="fas fa-chevron-right"></i> Birth Chart Analysis (Premium)</a></li>
               </ul>
             </div>
 
             <div className="footer-links">
               <h4>Consult Astrologer</h4>
               <ul>
-                <li><a href="/chat"><i className="fas fa-chevron-right"></i> Live Chat with Astrologer</a></li>
-                <li><a href="/ask-question"><i className="fas fa-chevron-right"></i> Ask a Question</a></li>
-                <li><a href="/pricing"><i className="fas fa-chevron-right"></i> Pricing Plans</a></li>
+                <li><a href="/chat" onClick={(e) => handleNavigate(e, '/chat')}><i className="fas fa-chevron-right"></i> Live Chat with Astrologer</a></li>
+                <li><a href="/ask-question" onClick={(e) => handleNavigate(e, '/ask-question')}><i className="fas fa-chevron-right"></i> Ask a Question</a></li>
+                <li><a href="/pricing" onClick={(e) => handleNavigate(e, '/pricing')}><i className="fas fa-chevron-right"></i> Pricing Plans</a></li>
               </ul>
             </div>
 
