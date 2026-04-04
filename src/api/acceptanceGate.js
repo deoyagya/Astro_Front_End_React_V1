@@ -1,7 +1,32 @@
-let acceptanceGateToken = '';
+const ACCEPTANCE_GATE_TOKEN_KEY = 'acceptance_gate_token';
+
+const readStoredGateToken = () => {
+  if (typeof window === 'undefined') return '';
+  try {
+    return window.sessionStorage.getItem(ACCEPTANCE_GATE_TOKEN_KEY) || '';
+  } catch {
+    return '';
+  }
+};
+
+const writeStoredGateToken = (token) => {
+  if (typeof window === 'undefined') return;
+  try {
+    if (token) {
+      window.sessionStorage.setItem(ACCEPTANCE_GATE_TOKEN_KEY, token);
+    } else {
+      window.sessionStorage.removeItem(ACCEPTANCE_GATE_TOKEN_KEY);
+    }
+  } catch {
+    // Ignore storage failures and keep the in-memory fallback.
+  }
+};
+
+let acceptanceGateToken = readStoredGateToken();
 
 export function setAcceptanceGateToken(token = '') {
   acceptanceGateToken = token || '';
+  writeStoredGateToken(acceptanceGateToken);
 }
 
 export function getAcceptanceGateToken() {
@@ -18,6 +43,7 @@ export function withAcceptanceGateHeaders(headers = {}) {
 
 export function clearAcceptanceGateToken() {
   acceptanceGateToken = '';
+  writeStoredGateToken('');
 }
 
 export function announceAcceptanceGateReset() {
@@ -26,4 +52,3 @@ export function announceAcceptanceGateReset() {
     window.dispatchEvent(new Event('acceptance-gate-reset'));
   }
 }
-

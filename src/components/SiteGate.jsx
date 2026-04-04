@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { api } from '../api/client';
 import {
   clearAcceptanceGateToken,
+  getAcceptanceGateToken,
   setAcceptanceGateToken,
 } from '../api/acceptanceGate';
 
@@ -25,7 +26,7 @@ const getSecondsRemaining = (deadlineMs) => {
 
 export default function SiteGate({ children }) {
   const [enabled, setEnabled] = useState(null);
-  const [verified, setVerified] = useState(false);
+  const [verified, setVerified] = useState(() => Boolean(getAcceptanceGateToken()));
   const [otp, setOtp] = useState(Array(OTP_LENGTH).fill(''));
   const [maskedEmail, setMaskedEmail] = useState('');
   const [otpExpiresAtMs, setOtpExpiresAtMs] = useState(null);
@@ -74,10 +75,15 @@ export default function SiteGate({ children }) {
   }, []);
 
   useEffect(() => {
+    if (verified) {
+      setEnabled(true);
+      setLoading(false);
+      return;
+    }
     if (requestedRef.current) return;
     requestedRef.current = true;
     requestCode();
-  }, [requestCode]);
+  }, [requestCode, verified]);
 
   useEffect(() => {
     syncTimers();
@@ -165,7 +171,7 @@ export default function SiteGate({ children }) {
           {' '}
           <strong>{maskedEmail || 'your approved email'}</strong>
           {' '}
-          each time the site is loaded.
+          the first time a new browser tab session is opened.
         </p>
 
         {loading ? (
