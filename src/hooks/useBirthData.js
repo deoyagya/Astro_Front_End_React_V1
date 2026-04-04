@@ -2,18 +2,16 @@
  * useBirthData — Centralized birth data persistence hook.
  *
  * Used by all tool/report pages to:
- * 1. Pre-fill form fields from saved data (backend for auth users, localStorage for anon)
+ * 1. Pre-fill form fields from saved data (backend only for authenticated users)
  * 2. Persist birth data after chart generation
  * 3. Pre-fill user name from AuthContext
  *
  * Phase 26: Chart Data Persistence & Birth Data Pre-population
  */
 
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { api } from '../api/client';
-
-const LS_KEY = 'saved_birth_data';
 
 // ---------------------------------------------------------------------------
 // Time conversion utilities (centralized — replaces duplicates across pages)
@@ -82,8 +80,6 @@ export function useBirthData(options = {}) {
   const [birthPlace, setBirthPlace] = useState(null);
   const [loaded, setLoaded] = useState(false);
 
-  const loadedRef = useRef(false);
-
   // Apply birth data from a saved record
   const applyBirthData = useCallback((bd) => {
     if (bd.name) setFullName(bd.name);
@@ -123,52 +119,46 @@ export function useBirthData(options = {}) {
     setBirthPlace(null);
   }, [user?.full_name]);
 
-  // Load saved birth data on mount
+  // Load saved birth data from the backend whenever auth scope changes.
   useEffect(() => {
-    if (skipAutoLoad || loadedRef.current) {
+    if (skipAutoLoad) {
       setLoaded(true);
       return;
     }
-    loadedRef.current = true;
+
+    let cancelled = false;
 
     async function loadSaved() {
-      // Priority 1: Backend (authenticated users)
+      setLoaded(false);
+
       if (isAuthenticated) {
         try {
           const data = await api.get('/v1/charts/saved?limit=1');
-          if (data.charts && data.charts.length > 0) {
+          if (cancelled) return;
+
+          if (data.charts && data.charts.length > 0 && data.charts[0]?.birth_data) {
             applyBirthData(data.charts[0].birth_data);
-            setLoaded(true);
-            return;
+          } else {
+            resetBirthData();
           }
         } catch {
-          // Fall through to localStorage
+          if (cancelled) return;
+          resetBirthData();
         }
+      } else {
+        resetBirthData();
       }
 
-      // Priority 2: localStorage
-      try {
-        const saved = localStorage.getItem(LS_KEY);
-        if (saved) {
-          const bd = JSON.parse(saved);
-          applyBirthData(bd);
-          setLoaded(true);
-          return;
-        }
-      } catch {
-        // ignore
+      if (!cancelled) {
+        setLoaded(true);
       }
-
-      // Priority 3: Pre-fill name from user profile
-      if (user?.full_name) {
-        setFullName(user.full_name);
-      }
-
-      setLoaded(true);
     }
 
     loadSaved();
-  }, [isAuthenticated, user, skipAutoLoad, applyBirthData]);
+    return () => {
+      cancelled = true;
+    };
+  }, [isAuthenticated, user?.id, user?.full_name, skipAutoLoad, applyBirthData, resetBirthData]);
 
   // Build API payload from current form state
   const buildPayload = useCallback(() => {
@@ -206,17 +196,7 @@ export function useBirthData(options = {}) {
   const saveBirthData = useCallback(async () => {
     const inputData = buildPayload();
 
-    // Always save to localStorage (instant pre-fill next time)
-    try {
-      localStorage.setItem(LS_KEY, JSON.stringify({
-        ...inputData,
-        saved_at: new Date().toISOString(),
-      }));
-    } catch {
-      // quota exceeded etc.
-    }
-
-    // If authenticated, also save to backend (fire-and-forget)
+    // Authenticated users persist birth data only to the backend.
     if (isAuthenticated) {
       try {
         api.post('/v1/charts/save', {

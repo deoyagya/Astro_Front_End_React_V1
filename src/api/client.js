@@ -77,7 +77,7 @@ function createTimeout(ms) {
 async function isServerReachable() {
   try {
     const { signal, clear } = createTimeout(HEALTH_CHECK_TIMEOUT_MS);
-    const resp = await fetch(`${API_BASE}/`, { method: 'GET', signal });
+    const resp = await fetch(`${API_BASE}/`, { method: 'GET', signal, cache: 'no-store' });
     clear();
     return resp.ok;
   } catch {
@@ -224,6 +224,7 @@ async function apiRequest(endpoint, options = {}) {
       ...options,
       headers,
       signal,
+      cache: options.cache || 'no-store',
     });
   } catch (err) {
     clear();

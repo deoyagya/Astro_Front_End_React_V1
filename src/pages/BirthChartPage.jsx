@@ -68,7 +68,12 @@ export default function BirthChartPage() {
     if (err) { setError(err); return; }
 
     const payload = buildPayload();
-    const params = new URLSearchParams({ include_vargas: 'true', include_dasha: 'false', include_ashtakavarga: 'false' });
+    const requiresDivisionalCharts = (selectedChartMeta?.key || 'D1') !== 'D1';
+    const params = new URLSearchParams({
+      include_vargas: requiresDivisionalCharts ? 'true' : 'false',
+      include_dasha: 'false',
+      include_ashtakavarga: 'false',
+    });
 
     setLoading(true);
     try {
@@ -80,7 +85,7 @@ export default function BirthChartPage() {
     } finally {
       setLoading(false);
     }
-  }, [isAuthenticated, navigate, validate, buildPayload, saveBirthData]);
+  }, [isAuthenticated, navigate, validate, buildPayload, saveBirthData, selectedChartMeta]);
 
   /* Extract data from bundle */
   const bundle = chartBundle?.bundle || {};
@@ -141,17 +146,17 @@ export default function BirthChartPage() {
     (houseNum) => {
       setSelectedHouse(houseNum);
       if ((selectedChartMeta?.key || 'D1') === 'D1') {
-        sessionStorage.setItem('chartBundle', JSON.stringify(chartBundle));
-        sessionStorage.setItem(
-          'chartBirthInfo',
-          JSON.stringify({
+        navigate(`/birth-chart/house/${houseNum}`, {
+          state: {
+            chartBundle,
+            birthInfo: {
             name: fullName,
             dob: birthDate,
             tob: to24Hour(hour, minute, ampm),
             place: birthPlace?.name,
-          })
-        );
-        navigate(`/birth-chart/house/${houseNum}`);
+            },
+          },
+        });
       }
     },
     [selectedChartMeta, chartBundle, fullName, birthDate, hour, minute, ampm, birthPlace, navigate]

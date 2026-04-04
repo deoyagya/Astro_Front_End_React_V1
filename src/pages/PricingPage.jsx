@@ -10,7 +10,7 @@
  *   - Responsive: 4-col → 2-col → 1-col
  */
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import PageShell from '../components/PageShell';
 import EmbeddedCheckoutModal from '../components/EmbeddedCheckoutModal';
@@ -30,6 +30,7 @@ export default function PricingPage() {
   const { user, isAuthenticated, refreshUser } = useAuth();
   const { toast } = useToast();
   const gw = usePaymentGateway();
+  const lastPricingErrorToastRef = useRef({ message: '', timestamp: 0 });
 
   const [plans, setPlans] = useState([]);
   const [comparisonFeatures, setComparisonFeatures] = useState([]);
@@ -61,7 +62,15 @@ export default function PricingPage() {
         setPlans(plansRes.plans || []);
         setComparisonFeatures(plansRes.comparison_features || []);
       } catch (err) {
-        toast(err.message || 'Failed to load pricing data', 'error');
+        const message = err.message || 'Failed to load pricing data';
+        const now = Date.now();
+        if (
+          lastPricingErrorToastRef.current.message !== message
+          || now - lastPricingErrorToastRef.current.timestamp > 2500
+        ) {
+          toast(message, 'error');
+          lastPricingErrorToastRef.current = { message, timestamp: now };
+        }
       } finally {
         setLoading(false);
       }
@@ -210,6 +219,16 @@ export default function PricingPage() {
 
   const PLAN_RANK = { free: 0, basic: 1, premium: 2, elite: 3, admin: 4 };
   const currentRank = PLAN_RANK[currentPlanSlug] ?? 0;
+  const resolvedCurrency = (gw.currency || 'USD').toUpperCase();
+
+  const renderPlanIcon = (iconValue) => {
+    const icon = String(iconValue || '').trim();
+    if (!icon) return '⭐';
+    if (icon.startsWith('fa-')) {
+      return <i className={`fas ${icon}`} aria-hidden="true"></i>;
+    }
+    return icon;
+  };
 
   const getCtaLabel = (plan) => {
     const rank = PLAN_RANK[plan.slug] ?? 0;
@@ -361,13 +380,13 @@ export default function PricingPage() {
               {gw.gateway === 'razorpay' ? (
                 <>
                   <i className="fas fa-rupee-sign"></i>{' '}
-                  Prices shown in INR{' '}
+                  Prices shown in {resolvedCurrency}{' '}
                   <span className="gateway-badge razorpay">Razorpay</span>
                 </>
               ) : (
                 <>
                   <i className="fas fa-cc-stripe"></i>{' '}
-                  Prices shown in USD{' '}
+                  Prices shown in {resolvedCurrency}{' '}
                   <span className="gateway-badge">Stripe</span>
                 </>
               )}
@@ -415,7 +434,7 @@ export default function PricingPage() {
                   {isPopular && !isCurrent && <div className="popular-badge">Most Popular</div>}
                   {isCurrent && <div className="current-badge">Your Plan</div>}
 
-                  <span className="plan-icon">{plan.icon || '⭐'}</span>
+                  <span className="plan-icon">{renderPlanIcon(plan.icon)}</span>
                   <h3 className="plan-name">{plan.name}</h3>
                   <p className="plan-desc">{plan.description}</p>
 

@@ -140,7 +140,7 @@ export default function AdminSubscriptionPlanEditorPage() {
   return (
     <PageShell activeNav="admin">
       <section className="admin-page">
-        <div className="container" style={{ maxWidth: 1080 }}>
+        <div className="container" style={{ maxWidth: 1440 }}>
           <div className="admin-breadcrumb">
             <a href="/admin/subscriptions" onClick={(e) => { e.preventDefault(); navigate('/admin/subscriptions'); }}>
               Subscriptions
@@ -182,6 +182,7 @@ export default function AdminSubscriptionPlanEditorPage() {
                 padding: 28,
                 display: 'grid',
                 gap: 18,
+                width: '100%',
               }}
             >
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
@@ -216,6 +217,19 @@ export default function AdminSubscriptionPlanEditorPage() {
                   placeholder="Plan description..."
                   value={data.description}
                   onChange={(e) => updateField('description', e.target.value)}
+                  style={{
+                    width: '100%',
+                    minHeight: 120,
+                    padding: '14px 16px',
+                    background: 'rgba(40, 44, 60, 0.8)',
+                    border: '1px solid #2a2f3e',
+                    borderRadius: 12,
+                    color: '#e8eaf0',
+                    resize: 'vertical',
+                    fontSize: '1rem',
+                    lineHeight: 1.6,
+                    fontFamily: 'inherit',
+                  }}
                 />
               </div>
 

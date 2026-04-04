@@ -11,6 +11,7 @@ import {
 describe('session helpers', () => {
   beforeEach(() => {
     localStorage.clear();
+    sessionStorage.clear();
     vi.restoreAllMocks();
   });
 
@@ -30,6 +31,24 @@ describe('session helpers', () => {
     expect(getAccessToken()).toBe('');
     expect(getRefreshToken()).toBe('');
     expect(getStoredUser()).toBeNull();
+  });
+
+  it('clears non-auth cached client data on logout', () => {
+    localStorage.setItem('saved_birth_data', '{"name":"Old User"}');
+    localStorage.setItem('cw_session_state', '{"sessionId":"abc"}');
+    localStorage.setItem('cart', '[{"id":"career"}]');
+    sessionStorage.setItem('chartBundle', '{"bundle":{}}');
+    sessionStorage.setItem('payment_gateway_config_v4:en-AU|Australia/Melbourne', '{"currency":"AUD"}');
+
+    clearSession();
+
+    expect(localStorage.getItem('saved_birth_data')).toBeNull();
+    expect(localStorage.getItem('cw_session_state')).toBeNull();
+    expect(localStorage.getItem('cart')).toBeNull();
+    expect(sessionStorage.getItem('chartBundle')).toBeNull();
+    expect(
+      sessionStorage.getItem('payment_gateway_config_v4:en-AU|Australia/Melbourne'),
+    ).toBeNull();
   });
 
   it('refreshes stored session and emits a refresh event marker', async () => {

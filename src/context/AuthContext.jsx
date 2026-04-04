@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
 import {
+  clearClientDataCaches,
   clearSession,
   getAccessToken,
   getRefreshToken,
@@ -89,6 +90,7 @@ export function AuthProvider({ children }) {
 
   /** Login — called after successful OTP verification. */
   const login = useCallback(async (tokenData) => {
+    clearClientDataCaches();
     persistSession({
       accessToken: tokenData.access_token,
       refreshToken: tokenData.refresh_token,

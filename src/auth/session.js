@@ -4,6 +4,20 @@ const USER_KEY = 'auth_user';
 const REFRESH_EVENT_KEY = 'session_refresh_event';
 const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
 const DEFAULT_REFRESH_TIMEOUT_MS = 15_000;
+const NON_AUTH_LOCAL_KEYS = [
+  'saved_birth_data',
+  'cw_is_open',
+  'cw_session_state',
+  'cart',
+  'cart_ids',
+];
+const NON_AUTH_SESSION_KEYS = [
+  'chartBundle',
+  'chartBirthInfo',
+];
+const NON_AUTH_SESSION_PREFIXES = [
+  'payment_gateway_config_v4:',
+];
 
 function getStorage() {
   if (typeof window === 'undefined') return null;
@@ -18,6 +32,24 @@ function writeStorage(key, value) {
     return;
   }
   storage.setItem(key, value);
+}
+
+function clearStorageKeys(storage, keys = [], prefixes = []) {
+  if (!storage) return;
+  keys.forEach((key) => storage.removeItem(key));
+  for (let i = storage.length - 1; i >= 0; i -= 1) {
+    const key = storage.key(i);
+    if (!key) continue;
+    if (prefixes.some((prefix) => key.startsWith(prefix))) {
+      storage.removeItem(key);
+    }
+  }
+}
+
+export function clearClientDataCaches() {
+  if (typeof window === 'undefined') return;
+  clearStorageKeys(window.localStorage, NON_AUTH_LOCAL_KEYS);
+  clearStorageKeys(window.sessionStorage, NON_AUTH_SESSION_KEYS, NON_AUTH_SESSION_PREFIXES);
 }
 
 export function getAccessToken() {
@@ -52,6 +84,7 @@ export function announceSessionRefresh() {
 }
 
 export function clearSession() {
+  clearClientDataCaches();
   writeStorage(ACCESS_TOKEN_KEY, null);
   writeStorage(REFRESH_TOKEN_KEY, null);
   writeStorage(USER_KEY, null);

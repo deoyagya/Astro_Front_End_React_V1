@@ -6,7 +6,8 @@
  *   templates — predefined question chips for chosen life area
  *   active    — conversational chat with follow-up chips + text input
  *
- * Persists open/closed state + session across minimise/re-open via localStorage.
+ * Session state is intentionally kept in memory only to avoid stale data leaks
+ * across users on shared browsers.
  */
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
@@ -16,9 +17,6 @@ import { useAuth } from '../context/AuthContext';
 import '../styles/chat-widget.css';
 import { useStyles } from '../context/StyleContext';
 
-// ────────────────────────────── localStorage keys
-const LS_OPEN = 'cw_is_open';
-const LS_STATE = 'cw_session_state';
 const EXCLUDED_CHAT_AREA_KEYS = new Set(['701', '1001']);
 
 // ────────────────────────────── Inline sub-components
@@ -80,9 +78,7 @@ export default function ChatWidget() {
   // Free users still see the upgrade CTA inside the panel.
 
   // ── Core state
-  const [isOpen, setIsOpen] = useState(
-    () => isAuthenticated && localStorage.getItem(LS_OPEN) === 'true',
-  );
+  const [isOpen, setIsOpen] = useState(false);
   const [phase, setPhase] = useState('welcome');
   const [lifeAreas, setLifeAreas] = useState([]);
   const [selectedArea, setSelectedArea] = useState(null);
@@ -120,12 +116,13 @@ export default function ChatWidget() {
   const bodyRef = useRef(null);
   const inputRef = useRef(null);
   const errorTimerRef = useRef(null);
-  const restoredRef = useRef(false);
+  const authScopeRef = useRef('');
   const lastAnswerRef = useRef(null);
 
   const isFreeUser = user?.role === 'free';
   const quotaExhausted =
     quota.maxQuestions > 0 && quota.questionCount >= quota.maxQuestions;
+  const authScope = isAuthenticated ? (user?.id || user?.email || 'authenticated') : 'anonymous';
 
   // ────────────────────────── Helpers
 
@@ -148,69 +145,7 @@ export default function ChatWidget() {
     errorTimerRef.current = setTimeout(() => setError(null), 5000);
   }, []);
 
-  /** Persist current session state to localStorage. */
-  const persistState = useCallback(() => {
-    try {
-      const snapshot = {
-        phase,
-        selectedArea,
-        sessionId,
-        messages,
-        templates,
-        followUps,
-        quota,
-        savedChart,
-        noChart,
-        showPartnerForm,
-        pendingArea,
-      };
-      localStorage.setItem(LS_STATE, JSON.stringify(snapshot));
-    } catch {
-      // localStorage full or unavailable — silently ignore
-    }
-  }, [phase, selectedArea, sessionId, messages, templates, followUps, quota, savedChart, noChart, showPartnerForm, pendingArea]);
-
-  /** Restore session state from localStorage. */
-  const restoreState = useCallback(() => {
-    try {
-      const raw = localStorage.getItem(LS_STATE);
-      if (!raw) return false;
-      const s = JSON.parse(raw);
-      if (s.selectedArea?.key && EXCLUDED_CHAT_AREA_KEYS.has(String(s.selectedArea.key))) {
-        localStorage.removeItem(LS_STATE);
-        return false;
-      }
-      if (s.sessionId) {
-        setPhase(s.phase || 'welcome');
-        setSelectedArea(s.selectedArea || null);
-        setSessionId(s.sessionId);
-        setMessages(s.messages || []);
-        setTemplates(s.templates || []);
-        setFollowUps(s.followUps || []);
-        setQuota(s.quota || { plan: '', questionCount: 0, maxQuestions: 10 });
-        setSavedChart(s.savedChart || null);
-        setNoChart(s.noChart || false);
-        return true;
-      }
-    } catch {
-      // Corrupt data — ignore
-    }
-    return false;
-  }, []);
-
   // ────────────────────────── Effects
-
-  /** Sync isOpen to localStorage. */
-  useEffect(() => {
-    localStorage.setItem(LS_OPEN, String(isOpen));
-  }, [isOpen]);
-
-  /** Persist state whenever it changes meaningfully. */
-  useEffect(() => {
-    if (sessionId) {
-      persistState();
-    }
-  }, [phase, messages, followUps, quota, sessionId, persistState]);
 
   /** On open: restore or fetch fresh data. */
   useEffect(() => {
@@ -220,15 +155,6 @@ export default function ChatWidget() {
     const raf = requestAnimationFrame(() => setPanelReady(true));
 
     if (isFreeUser) return () => cancelAnimationFrame(raf);
-
-    // Attempt restore only once per mount
-    if (!restoredRef.current) {
-      restoredRef.current = true;
-      const restored = restoreState();
-      if (restored) {
-        return () => cancelAnimationFrame(raf);
-      }
-    }
 
     // Fresh load — fetch life areas + saved chart in parallel
     let cancelled = false;
@@ -277,6 +203,44 @@ export default function ChatWidget() {
       if (errorTimerRef.current) clearTimeout(errorTimerRef.current);
     };
   }, []);
+
+  /** Reset any in-memory session state when the authenticated user changes. */
+  useEffect(() => {
+    if (!authScopeRef.current) {
+      authScopeRef.current = authScope;
+      return;
+    }
+    if (authScopeRef.current === authScope) return;
+
+    authScopeRef.current = authScope;
+    setIsOpen(false);
+    setPanelReady(false);
+    setPhase('welcome');
+    setSelectedArea(null);
+    setSessionId(null);
+    setMessages([]);
+    setTemplates([]);
+    setFollowUps([]);
+    setAskedTemplateIds(new Set());
+    setFollowUpText('');
+    setSending(false);
+    setSavedChart(null);
+    setNoChart(false);
+    setQuota({
+      plan: '',
+      questionCount: 0,
+      maxQuestions: 10,
+    });
+    setError(null);
+    setVoiceMode(false);
+    setCustomQuestion('');
+    setShowPartnerForm(false);
+    setPendingArea(null);
+    setPartnerForm({
+      name: '', dob: '', tob_h: '12', tob_m: '0',
+      place_of_birth: '', lat: '', lon: '', tz_id: 'Asia/Kolkata', gender: 'female',
+    });
+  }, [authScope]);
 
   // ────────────────────────── Handlers
 
@@ -579,9 +543,6 @@ export default function ChatWidget() {
       name: '', dob: '', tob_h: '12', tob_m: '0',
       place_of_birth: '', lat: '', lon: '', tz_id: 'Asia/Kolkata', gender: 'female',
     });
-
-    // Clear persisted state so re-open starts fresh
-    localStorage.removeItem(LS_STATE);
 
     // Re-fetch life areas + saved chart in case they were lost
     try {

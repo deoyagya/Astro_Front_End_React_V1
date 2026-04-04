@@ -1,4 +1,4 @@
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { useMemo, useState } from 'react';
 
 /* ===== Display format helpers ===== */
@@ -55,24 +55,13 @@ export default function HouseExplorePage() {
   const { houseNum: houseParam } = useParams();
   const houseNum = parseInt(houseParam, 10);
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [selectedLifeArea, setSelectedLifeArea] = useState(null);
   const [timelineYears, setTimelineYears] = useState(2);
 
-  // Load bundle from sessionStorage
-  const chartBundle = useMemo(() => {
-    try {
-      const raw = sessionStorage.getItem('chartBundle');
-      return raw ? JSON.parse(raw) : null;
-    } catch { return null; }
-  }, []);
-
-  const birthInfo = useMemo(() => {
-    try {
-      const raw = sessionStorage.getItem('chartBirthInfo');
-      return raw ? JSON.parse(raw) : {};
-    } catch { return {}; }
-  }, []);
+  const chartBundle = useMemo(() => location.state?.chartBundle || null, [location.state]);
+  const birthInfo = useMemo(() => location.state?.birthInfo || {}, [location.state]);
 
   const bundle = chartBundle?.bundle || {};
   const natal = bundle.natal || {};
