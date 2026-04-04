@@ -7,6 +7,7 @@
 
 import { useParams } from 'react-router-dom';
 import { SurveyRenderer } from '../lib/survey-builder';
+import { withAcceptanceGateHeaders } from '../api/acceptanceGate';
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
 
@@ -14,7 +15,10 @@ export default function PublicSurveyPage() {
   const { slug } = useParams();
 
   const apiFetch = async (s) => {
-    const res = await fetch(`${API_BASE}/v1/survey/${s}`);
+    const res = await fetch(`${API_BASE}/v1/survey/${s}`, {
+      headers: withAcceptanceGateHeaders(),
+      cache: 'no-store',
+    });
     if (!res.ok) {
       const err = await res.json().catch(() => ({ detail: 'Survey not found' }));
       throw new Error(err.detail || 'Survey not found');
@@ -25,7 +29,7 @@ export default function PublicSurveyPage() {
   const apiSubmit = async (s, payload) => {
     const res = await fetch(`${API_BASE}/v1/survey/${s}/submit`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: withAcceptanceGateHeaders({ 'Content-Type': 'application/json' }),
       body: JSON.stringify(payload),
     });
     if (!res.ok) {

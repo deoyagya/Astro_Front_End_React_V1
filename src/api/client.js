@@ -3,6 +3,10 @@ import {
   getAccessToken,
   refreshStoredSession,
 } from '../auth/session';
+import {
+  announceAcceptanceGateReset,
+  withAcceptanceGateHeaders,
+} from './acceptanceGate';
 
 /**
  * API Client — Centralized fetch wrapper for Vedic Astro backend.
@@ -193,6 +197,10 @@ function clearAuthAndRedirect() {
   window.location.href = '/login';
 }
 
+function handleAcceptanceGateLocked() {
+  announceAcceptanceGateReset();
+}
+
 // ---------- Core request function ----------
 
 /**
@@ -203,13 +211,14 @@ function clearAuthAndRedirect() {
  */
 async function apiRequest(endpoint, options = {}) {
   const token = getAccessToken();
-  const headers = {
+  let headers = {
     'Content-Type': 'application/json',
     ...options.headers,
   };
   if (token) {
     headers['Authorization'] = `Bearer ${token}`;
   }
+  headers = withAcceptanceGateHeaders(headers);
 
   // Timeout: every request gets a deadline (default 15 s)
   const timeoutMs = options._timeoutMs || DEFAULT_TIMEOUT_MS;
@@ -260,6 +269,11 @@ async function apiRequest(endpoint, options = {}) {
     }
     clearAuthAndRedirect();
     throw new Error('Session expired. Please log in again.');
+  }
+
+  if (response.status === 423 || response.headers.get('X-Acceptance-Gate-Required') === '1') {
+    handleAcceptanceGateLocked();
+    throw new Error('A fresh access code is required. Please enter the new code sent to your email.');
   }
 
   // 429 -> rate limited
@@ -374,10 +388,11 @@ export const api = {
    */
   raw: async (endpoint, options = {}) => {
     const token = getAccessToken();
-    const headers = { ...options.headers };
+    let headers = { ...options.headers };
     if (token) {
       headers['Authorization'] = `Bearer ${token}`;
     }
+    headers = withAcceptanceGateHeaders(headers);
 
     const timeoutMs = options._timeoutMs || DOWNLOAD_TIMEOUT_MS;
     const { signal, clear } = createTimeout(timeoutMs);
@@ -403,6 +418,10 @@ export const api = {
       clearAuthAndRedirect();
       throw new Error('Session expired.');
     }
+    if (response.status === 423 || response.headers.get('X-Acceptance-Gate-Required') === '1') {
+      handleAcceptanceGateLocked();
+      throw new Error('A fresh access code is required. Please enter the new code sent to your email.');
+    }
     if (!response.ok) {
       throw new Error(`Request failed (${response.status})`);
     }
@@ -416,10 +435,11 @@ export const api = {
    */
   download: async (endpoint, filename = 'report.pdf') => {
     const token = getAccessToken();
-    const headers = {};
+    let headers = {};
     if (token) {
       headers['Authorization'] = `Bearer ${token}`;
     }
+    headers = withAcceptanceGateHeaders(headers);
 
     const { signal, clear } = createTimeout(DOWNLOAD_TIMEOUT_MS);
 
@@ -441,6 +461,10 @@ export const api = {
       }
       clearAuthAndRedirect();
       throw new Error('Session expired.');
+    }
+    if (response.status === 423 || response.headers.get('X-Acceptance-Gate-Required') === '1') {
+      handleAcceptanceGateLocked();
+      throw new Error('A fresh access code is required. Please enter the new code sent to your email.');
     }
     if (!response.ok) {
       throw new Error(USER_MESSAGES.downloadFail);

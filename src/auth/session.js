@@ -1,3 +1,5 @@
+import { withAcceptanceGateHeaders } from '../api/acceptanceGate';
+
 const ACCESS_TOKEN_KEY = 'auth_token';
 const REFRESH_TOKEN_KEY = 'auth_refresh_token';
 const USER_KEY = 'auth_user';
@@ -117,7 +119,7 @@ export async function refreshStoredSession({ timeoutMs = DEFAULT_REFRESH_TIMEOUT
   try {
     const response = await fetch(`${API_BASE}/v1/auth/refresh`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: withAcceptanceGateHeaders({ 'Content-Type': 'application/json' }),
       body: JSON.stringify({ refresh_token: refreshToken }),
       signal: controller.signal,
     });
