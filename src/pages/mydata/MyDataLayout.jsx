@@ -16,9 +16,8 @@ import PageShell from '../../components/PageShell';
 import VedicChart from '../../components/chart/VedicChart';
 import { useBirthData } from '../../hooks/useBirthData';
 import { MyDataProvider, useMyData } from '../../context/MyDataContext';
-import { useAuth } from '../../context/AuthContext';
 import { api } from '../../api/client';
-import { hasPremiumOrAbove } from '../../utils/planAccess';
+import { useFeatureAccess } from '../../hooks/useFeatureAccess';
 import '../../styles/mydata.css';
 
 const TABS = [
@@ -37,8 +36,7 @@ const TABS = [
 function MyDataInner() {
   const bd = useBirthData({ reportType: 'mydata' });
   const { loadBirthData, clearData, setChartBundle, chartBundle, registerExternalLoadHandler } = useMyData();
-  const { user } = useAuth();
-  const isPremium = hasPremiumOrAbove(user);
+  const { allowed: hasTemporalForecastAccess } = useFeatureAccess('temporal_forecast');
   const [formError, setFormError] = useState('');
   const [chartLoading, setChartLoading] = useState(false);
   const [chartVisible, setChartVisible] = useState(false);
@@ -169,7 +167,7 @@ function MyDataInner() {
   };
 
   // Filter tabs by premium access
-  const visibleTabs = TABS.filter((t) => !t.premium || isPremium);
+  const visibleTabs = TABS.filter((t) => !t.premium || hasTemporalForecastAccess);
 
   // Current tab path for the dropdown value
   const currentTab = visibleTabs.find((t) => location.pathname.startsWith(t.to))?.to || visibleTabs[0].to;

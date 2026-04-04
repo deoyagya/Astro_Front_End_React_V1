@@ -5,6 +5,7 @@ import TemporalForecastPage from './TemporalForecastPage';
 const mocks = vi.hoisted(() => ({
   mockPost: vi.fn(),
   mockPostLong: vi.fn(),
+  mockFeatureAccess: { allowed: false, loading: false },
   mockMyData: {
     birthPayload: null,
     refreshKey: 0,
@@ -28,6 +29,10 @@ vi.mock('../../context/StyleContext', () => ({
   useStyles: () => ({
     getOverride: () => undefined,
   }),
+}));
+
+vi.mock('../../hooks/useFeatureAccess', () => ({
+  useFeatureAccess: () => mocks.mockFeatureAccess,
 }));
 
 vi.mock('../../api/client', () => ({
@@ -56,6 +61,7 @@ describe('TemporalForecastPage', () => {
       hasBirthData: false,
       chartBundle: null,
     };
+    mocks.mockFeatureAccess = { allowed: false, loading: false };
     mocks.mockAuth = {
       user: { role: 'free' },
     };
@@ -77,6 +83,7 @@ describe('TemporalForecastPage', () => {
     mocks.mockAuth = {
       user: { role: 'elite', full_name: 'Gruttu' },
     };
+    mocks.mockFeatureAccess = { allowed: true, loading: false };
     mocks.mockMyData = {
       birthPayload: {
         name: 'Gruttu',
@@ -142,6 +149,7 @@ describe('TemporalForecastPage', () => {
     mocks.mockAuth = {
       user: { role: 'premium', full_name: 'Sonam' },
     };
+    mocks.mockFeatureAccess = { allowed: true, loading: false };
     mocks.mockMyData = {
       birthPayload: {
         name: 'Sonam',

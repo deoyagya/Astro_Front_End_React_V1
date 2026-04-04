@@ -10,6 +10,10 @@ const authState = vi.hoisted(() => ({
   },
 }));
 
+const featureAccessState = vi.hoisted(() => ({
+  value: { allowed: false, loading: false },
+}));
+
 vi.mock('../context/AuthContext', () => ({
   useAuth: () => authState.value,
 }));
@@ -20,6 +24,10 @@ vi.mock('../context/StyleContext', () => ({
   }),
 }));
 
+vi.mock('../hooks/useFeatureAccess', () => ({
+  useFeatureAccess: () => featureAccessState.value,
+}));
+
 describe('SiteHeader', () => {
   beforeEach(() => {
     authState.value = {
@@ -27,6 +35,7 @@ describe('SiteHeader', () => {
       user: null,
       logout: vi.fn(),
     };
+    featureAccessState.value = { allowed: false, loading: false };
   });
 
   it('redirects unauthenticated users to login when opening protected nav items', () => {
@@ -108,6 +117,7 @@ describe('SiteHeader', () => {
       user: { email: 'ria@example.com', role: 'premium' },
       logout: vi.fn(),
     };
+    featureAccessState.value = { allowed: true, loading: false };
 
     render(
       <MemoryRouter initialEntries={['/']}>
@@ -132,6 +142,7 @@ describe('SiteHeader', () => {
       user: { email: 'ria@example.com', role: 'premium' },
       logout: vi.fn(),
     };
+    featureAccessState.value = { allowed: true, loading: false };
 
     render(
       <MemoryRouter initialEntries={['/']}>

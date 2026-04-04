@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useStyles } from '../context/StyleContext';
-import { hasPremiumOrAbove } from '../utils/planAccess';
+import { useFeatureAccess } from '../hooks/useFeatureAccess';
 
 const ADMIN_MENU_ITEMS = [
   { label: 'Observability', icon: 'fa-tachometer-alt',  href: '/admin/observability' },
@@ -57,7 +57,7 @@ export default function SiteHeader({ active = 'home' }) {
   const freeToolsHref = active === 'home' ? '#free-tools' : '/#free-tools';
 
   const isAdmin = user?.role === 'admin';
-  const isPremium = hasPremiumOrAbove(user);
+  const { allowed: hasTemporalForecastAccess } = useFeatureAccess('temporal_forecast');
   const displayName = user?.full_name || user?.email?.split('@')[0] || user?.phone || 'Account';
   const canAccessProtectedMenus = isAuthenticated;
 
@@ -360,7 +360,7 @@ export default function SiteHeader({ active = 'home' }) {
         }}
       >
         {MY_DATA_MENU_ITEMS
-          .filter((item) => !item.premium || isPremium)
+          .filter((item) => !item.premium || hasTemporalForecastAccess)
           .map((item) => (
             <a
               key={item.href}

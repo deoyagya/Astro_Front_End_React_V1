@@ -18,7 +18,7 @@ import { useMyData } from '../../context/MyDataContext';
 import { useAuth } from '../../context/AuthContext';
 import { useStyles } from '../../context/StyleContext';
 import { api } from '../../api/client';
-import { hasPremiumOrAbove } from '../../utils/planAccess';
+import { useFeatureAccess } from '../../hooks/useFeatureAccess';
 import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip,
   ResponsiveContainer, ReferenceDot,
@@ -266,6 +266,7 @@ function buildTimelineSegments(points = []) {
 export default function TemporalForecastPage({ viewMode = 'simple', selectedChartId = '' }) {
   const { birthPayload, refreshKey, hasBirthData, chartBundle } = useMyData();
   const { user } = useAuth();
+  const { allowed: hasTemporalForecastAccess, loading: entitlementLoading } = useFeatureAccess('temporal_forecast');
   const [forecastData, setForecastData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -279,9 +280,6 @@ export default function TemporalForecastPage({ viewMode = 'simple', selectedChar
   const [timelineStartRange, setTimelineStartRange] = useState({});
   const [timelineEndRange, setTimelineEndRange] = useState({});
   const [activeTimelineDrag, setActiveTimelineDrag] = useState(null);
-
-  // Determine if user is premium (for LLM interpretation)
-  const isPremium = hasPremiumOrAbove(user);
 
   // Extract chart data from bundle
   // API response: { bundle: { request: {lat,lon,tz_id,...}, natal: { ascendant: {sign}, planets: {Moon: {sign}} }, dasha_tree: [...] }, manifest }
@@ -351,12 +349,14 @@ export default function TemporalForecastPage({ viewMode = 'simple', selectedChar
     setLoading(true);
     setError('');
 
-    const endpoint = isPremium
+    if (!hasTemporalForecastAccess) return undefined;
+
+    const endpoint = hasTemporalForecastAccess
       ? '/v1/temporal-forecast/interpret'
       : '/v1/temporal-forecast/compute';
 
     // LLM interpretation for 13 life areas can take 60s+ — use extended timeout
-    const fetchCall = isPremium
+    const fetchCall = hasTemporalForecastAccess
       ? api.postLong(endpoint, chartParams, 120_000)
       : api.post(endpoint, chartParams);
 
@@ -375,7 +375,7 @@ export default function TemporalForecastPage({ viewMode = 'simple', selectedChar
       });
 
     return () => { cancelled = true; };
-  }, [refreshKey, chartParams, isPremium]);
+  }, [refreshKey, chartParams, hasTemporalForecastAccess]);
 
   // Clear cached timeline data when chart params change (new chart loaded)
   useEffect(() => {
@@ -521,7 +521,19 @@ export default function TemporalForecastPage({ viewMode = 'simple', selectedChar
   // ── Render states ──
 
   // Premium gate — redirect free/basic users to upgrade prompt
-  if (!isPremium) {
+  if (entitlementLoading) {
+    return (
+      <div className="tf-upgrade-wrap">
+        <div className="tf-upgrade-card">
+          <i className="fas fa-spinner fa-spin tf-upgrade-icon"></i>
+          <h2>Checking Plan Access</h2>
+          <p>Loading your current entitlement state.</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!hasTemporalForecastAccess) {
     return (
       <div className="tf-container">
         <div className="tf-premium-gate">
@@ -885,7 +897,7 @@ export default function TemporalForecastPage({ viewMode = 'simple', selectedChar
                         </div>
                       )}
 
-                      {!f.interpretation && !isPremium && (
+                      {!f.interpretation && !hasTemporalForecastAccess && (
                         <div className="tf-premium-upsell">
                           <i className="fas fa-crown"></i>
                           <span>Upgrade to Premium for AI-powered interpretations of each life area</span>

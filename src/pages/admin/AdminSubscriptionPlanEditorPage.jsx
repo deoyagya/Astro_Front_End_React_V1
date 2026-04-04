@@ -15,7 +15,6 @@ const DEFAULT_PLAN = {
   stripe_price_id_monthly: '',
   stripe_price_id_yearly: '',
   trial_days: 0,
-  features_json: [],
   display_order: 100,
 };
 
@@ -67,7 +66,6 @@ export default function AdminSubscriptionPlanEditorPage() {
         stripe_price_id_monthly: plan.stripe_price_id_monthly || '',
         stripe_price_id_yearly: plan.stripe_price_id_yearly || '',
         trial_days: plan.trial_days || 0,
-        features_json: plan.features_json || [],
         display_order: plan.display_order || 0,
       });
     } catch (err) {
@@ -113,7 +111,6 @@ export default function AdminSubscriptionPlanEditorPage() {
         stripe_price_id_monthly: data.stripe_price_id_monthly || null,
         stripe_price_id_yearly: data.stripe_price_id_yearly || null,
         trial_days: data.trial_days || 0,
-        features_json: data.features_json || [],
         display_order: data.display_order || 0,
       };
 

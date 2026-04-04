@@ -5,7 +5,7 @@ import { api } from '../api/client';
 import { useSharedEffects } from '../hooks/useSharedEffects';
 import { useAuth } from '../context/AuthContext';
 import { useStyles } from '../context/StyleContext';
-import { hasPremiumOrAbove } from '../utils/planAccess';
+import { useFeatureAccess } from '../hooks/useFeatureAccess';
 
 const FALLBACK_LIFE_AREA_CARDS = [
   {
@@ -87,9 +87,9 @@ function buildLifeAreaCards(reports = []) {
 
 export default function HomePage() {
   useSharedEffects();
-  const { isAuthenticated, user } = useAuth();
+  const { isAuthenticated } = useAuth();
   const { getOverride } = useStyles('home');
-  const isPremium = hasPremiumOrAbove(user);
+  const { allowed: hasTemporalForecastAccess } = useFeatureAccess('temporal_forecast');
   const [lifeAreaCards, setLifeAreaCards] = useState(FALLBACK_LIFE_AREA_CARDS);
 
   useEffect(() => {
@@ -320,7 +320,7 @@ export default function HomePage() {
                                     </div>
                                 </div>
                             </div>
-                            {isPremium ? (
+                            {hasTemporalForecastAccess ? (
                                 <Link to="/temporal-forecast" className="btn btn-primary tf-showcase-cta">
                                     <i className="fas fa-hourglass-half"></i> View My Forecast
                                 </Link>

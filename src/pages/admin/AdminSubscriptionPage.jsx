@@ -190,7 +190,6 @@ export default function AdminSubscriptionPage() {
         stripe_price_id_monthly: d.stripe_price_id_monthly || null,
         stripe_price_id_yearly: d.stripe_price_id_yearly || null,
         trial_days: d.trial_days,
-        features_json: d.features_json,
         display_order: d.display_order,
       };
 
@@ -252,24 +251,6 @@ export default function AdminSubscriptionPage() {
           .replace(/^_|_$/g, ''),
       );
     }
-  };
-
-  // Features JSON list management
-  const handleAddFeatureJsonItem = () => {
-    const current = planModal?.data?.features_json || [];
-    updatePlanField('features_json', [...current, '']);
-  };
-
-  const handleUpdateFeatureJsonItem = (idx, val) => {
-    const updated = [...(planModal?.data?.features_json || [])];
-    updated[idx] = val;
-    updatePlanField('features_json', updated);
-  };
-
-  const handleRemoveFeatureJsonItem = (idx) => {
-    const updated = [...(planModal?.data?.features_json || [])];
-    updated.splice(idx, 1);
-    updatePlanField('features_json', updated);
   };
 
   // ==================== PLAN FEATURES ====================
@@ -1295,55 +1276,15 @@ export default function AdminSubscriptionPage() {
               </div>
             </div>
 
-            {/* Features JSON (display strings) */}
             <div className="form-group">
-              <label>Feature Display Strings</label>
+              <label>Plan Feature Display</label>
               <small style={{ color: '#8b949e', display: 'block', marginBottom: 6 }}>
-                These are shown on the pricing page (e.g. "10 AI Questions")
+                Pricing and subscription feature copy now comes from the entitlement matrix and feature catalog.
+                Edit access and limits under the <strong>Entitlements</strong> tab instead of free-text strings.
               </small>
-              {(planModal.data.features_json || []).map((item, idx) => (
-                <div key={idx} style={{ display: 'flex', gap: 6, marginBottom: 4 }}>
-                  <input
-                    type="text"
-                    className="form-input"
-                    style={{ flex: 1 }}
-                    placeholder="e.g. 10 AI Questions"
-                    value={item}
-                    onChange={(e) => handleUpdateFeatureJsonItem(idx, e.target.value)}
-                  />
-                  <button
-                    type="button"
-                    onClick={() => handleRemoveFeatureJsonItem(idx)}
-                    style={{
-                      background: 'rgba(255,71,87,0.15)',
-                      border: '1px solid rgba(255,71,87,0.3)',
-                      color: '#ff6b81',
-                      borderRadius: 6,
-                      padding: '4px 10px',
-                      cursor: 'pointer',
-                      fontSize: 13,
-                    }}
-                  >
-                    <i className="fas fa-times"></i>
-                  </button>
-                </div>
-              ))}
-              <button
-                type="button"
-                onClick={handleAddFeatureJsonItem}
-                style={{
-                  background: 'rgba(157,123,255,0.1)',
-                  border: '1px solid rgba(157,123,255,0.3)',
-                  color: '#a29bfe',
-                  borderRadius: 6,
-                  padding: '4px 12px',
-                  cursor: 'pointer',
-                  fontSize: 12,
-                  marginTop: 4,
-                }}
-              >
-                <i className="fas fa-plus" style={{ marginRight: 4 }}></i>Add String
-              </button>
+              <div className="form-input" style={{ minHeight: 60, color: '#8b949e', display: 'flex', alignItems: 'center' }}>
+                Managed by entitlement rows only.
+              </div>
             </div>
 
             {/* Price Preview */}
