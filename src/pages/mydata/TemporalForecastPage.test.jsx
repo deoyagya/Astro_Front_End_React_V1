@@ -73,6 +73,71 @@ describe('TemporalForecastPage', () => {
     expect(screen.getByRole('link', { name: /Upgrade to Premium/i })).toHaveAttribute('href', '/pricing');
   });
 
+  it('allows elite users through the premium gate', async () => {
+    mocks.mockAuth = {
+      user: { role: 'elite', full_name: 'Gruttu' },
+    };
+    mocks.mockMyData = {
+      birthPayload: {
+        name: 'Gruttu',
+        lat: 28.6139,
+        lon: 77.2090,
+        tz_id: 'Asia/Kolkata',
+      },
+      refreshKey: 0,
+      hasBirthData: true,
+      chartBundle: {
+        bundle: {
+          request: { lat: 28.6139, lon: 77.2090, tz_id: 'Asia/Kolkata' },
+          natal: {
+            ascendant: { sign: 'Aries' },
+            planets: {
+              Moon: { sign: 'Taurus', sign_number: 2 },
+            },
+          },
+          dasha_tree: [
+            {
+              planet: 'Jupiter',
+              start: '2025-01-01T00:00:00Z',
+              end: '2027-12-31T00:00:00Z',
+              sub_periods: [
+                {
+                  planet: 'Venus',
+                  start: '2026-01-01T00:00:00Z',
+                  end: '2026-12-31T00:00:00Z',
+                },
+              ],
+            },
+          ],
+        },
+      },
+    };
+    mocks.mockPostLong.mockResolvedValueOnce({
+      computed_at: '2026-03-17T00:00:00Z',
+      transit_date: '2026-03-17',
+      dasha_path: 'Jupiter/Venus',
+      sade_sati_phase: 'none',
+      forecasts: [],
+      opportunity_count: 0,
+      threat_count: 0,
+      mixed_count: 0,
+      overall_score: 0,
+      overall_type: 'mixed',
+    });
+
+    render(
+      <MemoryRouter>
+        <TemporalForecastPage />
+      </MemoryRouter>,
+    );
+
+    await waitFor(() => {
+      expect(mocks.mockPostLong).toHaveBeenCalled();
+    });
+
+    expect(screen.queryByText('Premium Feature')).not.toBeInTheDocument();
+  });
+
   it('shows simple mode first and lets the user switch to advanced', async () => {
     mocks.mockAuth = {
       user: { role: 'premium', full_name: 'Sonam' },

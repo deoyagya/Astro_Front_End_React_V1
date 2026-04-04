@@ -5,6 +5,7 @@ import { api } from '../api/client';
 import { useSharedEffects } from '../hooks/useSharedEffects';
 import { useAuth } from '../context/AuthContext';
 import { useStyles } from '../context/StyleContext';
+import { hasPremiumOrAbove } from '../utils/planAccess';
 
 const FALLBACK_LIFE_AREA_CARDS = [
   {
@@ -88,7 +89,7 @@ export default function HomePage() {
   useSharedEffects();
   const { isAuthenticated, user } = useAuth();
   const { getOverride } = useStyles('home');
-  const isPremium = user?.role === 'premium' || user?.role === 'admin';
+  const isPremium = hasPremiumOrAbove(user);
   const [lifeAreaCards, setLifeAreaCards] = useState(FALLBACK_LIFE_AREA_CARDS);
 
   useEffect(() => {

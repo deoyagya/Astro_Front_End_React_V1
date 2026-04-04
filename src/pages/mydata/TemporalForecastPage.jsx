@@ -18,6 +18,7 @@ import { useMyData } from '../../context/MyDataContext';
 import { useAuth } from '../../context/AuthContext';
 import { useStyles } from '../../context/StyleContext';
 import { api } from '../../api/client';
+import { hasPremiumOrAbove } from '../../utils/planAccess';
 import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip,
   ResponsiveContainer, ReferenceDot,
@@ -280,7 +281,7 @@ export default function TemporalForecastPage({ viewMode = 'simple', selectedChar
   const [activeTimelineDrag, setActiveTimelineDrag] = useState(null);
 
   // Determine if user is premium (for LLM interpretation)
-  const isPremium = user?.role === 'premium' || user?.role === 'admin';
+  const isPremium = hasPremiumOrAbove(user);
 
   // Extract chart data from bundle
   // API response: { bundle: { request: {lat,lon,tz_id,...}, natal: { ascendant: {sign}, planets: {Moon: {sign}} }, dasha_tree: [...] }, manifest }

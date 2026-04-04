@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useStyles } from '../context/StyleContext';
+import { hasPremiumOrAbove } from '../utils/planAccess';
 
 const ADMIN_MENU_ITEMS = [
   { label: 'Observability', icon: 'fa-tachometer-alt',  href: '/admin/observability' },
@@ -56,7 +57,7 @@ export default function SiteHeader({ active = 'home' }) {
   const freeToolsHref = active === 'home' ? '#free-tools' : '/#free-tools';
 
   const isAdmin = user?.role === 'admin';
-  const isPremium = user?.role === 'premium' || isAdmin;
+  const isPremium = hasPremiumOrAbove(user);
   const displayName = user?.full_name || user?.email?.split('@')[0] || user?.phone || 'Account';
   const canAccessProtectedMenus = isAuthenticated;
 
