@@ -489,9 +489,9 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
 
 .dasha-level-count {
     margin-left: auto;
-    font-weight: 400;
-    font-size: 0.8rem;
-    color: #666;
+    font-weight: 500;
+    font-size: 0.82rem;
+    color: #aeb7cb;
 }
 
 /* Period List */
@@ -506,8 +506,8 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
     display: flex;
     align-items: center;
     gap: 14px;
-    background: rgba(40, 44, 60, 0.5);
-    border: 1px solid rgba(60, 65, 85, 0.4);
+    background: rgba(43, 48, 67, 0.72);
+    border: 1px solid rgba(92, 100, 131, 0.3);
     border-radius: 10px;
     padding: 12px 16px;
     transition: background 0.15s, border-color 0.15s, transform 0.1s;
@@ -544,16 +544,18 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
 .dasha-drill-planet .planet-name {
     display: block;
     font-weight: 700;
-    font-size: 1rem;
+    font-size: 1.03rem;
+    line-height: 1.2;
 }
 
 .dasha-drill-planet .planet-level {
     display: block;
-    font-size: 0.7rem;
-    color: #666;
+    font-size: 0.72rem;
+    color: #aab3c8;
+    font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 0.04em;
-    margin-top: 1px;
+    letter-spacing: 0.06em;
+    margin-top: 3px;
 }
 
 /* Info Section */
@@ -563,20 +565,24 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
 }
 
 .dasha-drill-dates {
-    color: #c7cfdd;
-    font-size: 0.9rem;
+    color: #eef2ff;
+    font-size: 1rem;
+    font-weight: 600;
+    line-height: 1.35;
     white-space: nowrap;
 }
 
 .dasha-drill-duration {
-    color: #666;
-    font-size: 0.8rem;
-    margin-top: 2px;
+    color: #bcc5d9;
+    font-size: 0.84rem;
+    font-weight: 500;
+    margin-top: 5px;
 }
 
 .dasha-drill-duration i {
     margin-right: 4px;
-    font-size: 0.7rem;
+    font-size: 0.74rem;
+    color: #8f9ab1;
 }
 
 /* Right Side (status + arrow) */
@@ -588,8 +594,8 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
 }
 
 .dasha-drill-arrow {
-    color: #555;
-    font-size: 0.9rem;
+    color: #8e97ab;
+    font-size: 0.94rem;
     transition: color 0.15s, transform 0.15s;
 }
 
